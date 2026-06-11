@@ -1,0 +1,202 @@
+import { redirect } from 'next/navigation'
+import { getUserSession } from '@/lib/auth'
+import Link from 'next/link'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase } from 'lucide-react'
+
+export default async function ProfilePage() {
+  const session = await getUserSession()
+  if (!session) redirect('/candidate-login')
+
+  const initials = session.name
+    .split(' ')
+    .map((w: string) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+
+  const accountLabel =
+    session.type === 'candidate' ? 'Candidate'
+    : session.type === 'student' ? 'Student'
+    : 'Member'
+
+  return (
+    <>
+      <style>{`
+        .profile-resource-card {
+          background: #fff;
+          border-radius: 20px;
+          border: 1px solid #e8ecf0;
+          padding: 28px 24px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+          transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+          text-decoration: none;
+          display: block;
+        }
+        .profile-resource-card:hover {
+          box-shadow: 0 12px 40px rgba(30,64,175,0.13);
+          border-color: #BFDBFE;
+          transform: translateY(-3px);
+        }
+        .profile-resource-card.green:hover  { box-shadow: 0 12px 40px rgba(22,163,74,0.12);  border-color: #BBF7D0; }
+        .profile-resource-card.purple:hover { box-shadow: 0 12px 40px rgba(124,58,237,0.12); border-color: #DDD6FE; }
+        .profile-resource-card.amber:hover  { box-shadow: 0 12px 40px rgba(217,119,6,0.12);  border-color: #FDE68A; }
+
+        @media (max-width: 768px) {
+          .profile-layout  { grid-template-columns: 1fr !important; }
+          .profile-grid-2  { grid-template-columns: 1fr !important; }
+          .profile-hero    { padding: 48px 0 80px !important; }
+          .profile-content { margin-top: -50px !important; }
+        }
+      `}</style>
+
+      {/* ── Hero banner ── */}
+      <div className="profile-hero" style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 100%)', padding: '64px 0 100px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -60, right: -60, width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
+        <div style={{ position: 'absolute', bottom: -80, left: -40, width: 240, height: 240, borderRadius: '50%', background: 'rgba(255,255,255,0.03)' }} />
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)' }}>My Account</span>
+            <ChevronRight style={{ width: 12, height: 12, color: 'rgba(255,255,255,0.3)' }} />
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.8)' }}>Profile</span>
+          </div>
+          <h1 style={{ fontSize: 38, fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.15 }}>My Profile</h1>
+          <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', marginTop: 8 }}>Manage your account and access your resources</p>
+        </div>
+      </div>
+
+      {/* ── Main content — pulled up over banner ── */}
+      <div className="profile-content" style={{ maxWidth: 1100, margin: '-60px auto 80px', padding: '0 24px', position: 'relative' }}>
+        <div className="profile-layout" style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: 24, alignItems: 'start' }}>
+
+          {/* ── Left: Identity card ── */}
+          <div style={{ background: '#fff', borderRadius: 24, boxShadow: '0 20px 60px -10px rgba(15,23,42,0.14)', border: '1px solid #e8ecf0', overflow: 'hidden' }}>
+            {/* gradient strip */}
+            <div style={{ height: 80, background: 'linear-gradient(135deg, #1E40AF, #2563EB)' }} />
+
+            <div style={{ padding: '0 28px 28px' }}>
+              {/* avatar straddling the strip */}
+              <div style={{ marginTop: -40, marginBottom: 16 }}>
+                <div style={{
+                  width: 80, height: 80, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #1E40AF, #2563EB)',
+                  border: '4px solid #fff',
+                  boxShadow: '0 8px 24px rgba(30,64,175,0.35)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 26, fontWeight: 800, color: '#fff',
+                }}>
+                  {initials}
+                </div>
+              </div>
+
+              <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.01em', marginBottom: 4 }}>{session.name}</h2>
+              <p style={{ fontSize: 13, color: '#64748B', marginBottom: 16 }}>{session.email}</p>
+
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 14px', borderRadius: 100, background: '#EFF6FF', border: '1px solid #BFDBFE', marginBottom: 24 }}>
+                <Shield style={{ width: 12, height: 12, color: '#1E40AF' }} />
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#1E40AF' }}>{accountLabel}</span>
+              </div>
+
+              {/* info rows */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[
+                  { icon: User,     label: 'Full Name',    value: session.name  },
+                  { icon: Mail,     label: 'Email',        value: session.email, small: true },
+                  { icon: Briefcase,label: 'Account Type', value: accountLabel  },
+                ].map(({ icon: Icon, label, value, small }) => (
+                  <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 12, background: '#F8FAFC', border: '1px solid #F1F5F9' }}>
+                    <Icon style={{ width: 15, height: 15, color: '#64748B', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</p>
+                      <p style={{ fontSize: small ? 12 : 13, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Sign out */}
+              <Link
+                href="/api/auth/candidate/logout"
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 20, padding: '11px', borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+              >
+                <LogOut style={{ width: 14, height: 14 }} />
+                Sign Out
+              </Link>
+            </div>
+          </div>
+
+          {/* ── Right: welcome + resource cards ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Welcome banner */}
+            <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 60%, #2563EB 100%)', borderRadius: 24, padding: '32px 36px', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,255,255,0.05)' }} />
+              <div style={{ position: 'absolute', bottom: -50, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
+              <div style={{ position: 'relative' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 100, background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.18)', marginBottom: 12 }}>
+                  <Award style={{ width: 11, height: 11, color: '#FCD34D' }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)' }}>Welcome back</span>
+                </div>
+                <h3 style={{ fontSize: 22, fontWeight: 800, color: '#fff', letterSpacing: '-0.02em', marginBottom: 8 }}>
+                  Hello, {session.name.split(' ')[0]}!
+                </h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
+                  Access your courses, join the community, and explore our knowledge base below.
+                </p>
+              </div>
+            </div>
+
+            {/* 2×2 resource cards */}
+            <div className="profile-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+
+              <Link href="/community" className="profile-resource-card">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#EFF6FF', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Users style={{ width: 22, height: 22, color: '#1E40AF' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Community</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Ask questions, share insights, and connect with fellow HR professionals.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#1E40AF' }}>
+                  Join Discussion <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
+              <Link href="/knowledge" className="profile-resource-card green">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <BookOpen style={{ width: 22, height: 22, color: '#16A34A' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Knowledge Base</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Explore articles, guides, and resources curated for recruitment professionals.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#16A34A' }}>
+                  Explore Now <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
+              <Link href="/courses" className="profile-resource-card purple">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#F5F3FF', border: '1px solid #DDD6FE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Award style={{ width: 22, height: 22, color: '#7C3AED' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Our Courses</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Browse our HR training courses and upskill with industry-recognized programs.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#7C3AED' }}>
+                  View Courses <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
+              <Link href="/contact" className="profile-resource-card amber">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#FFFBEB', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Briefcase style={{ width: 22, height: 22, color: '#D97706' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Get Support</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Have a question? Reach out to our team and we'll help you get started.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#D97706' }}>
+                  Contact Us <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </>
+  )
+}

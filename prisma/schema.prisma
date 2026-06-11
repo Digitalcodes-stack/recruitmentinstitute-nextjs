@@ -1,0 +1,375 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id         Int       @id @default(autoincrement())
+  name       String
+  middleName String?   @map("m_name")
+  lastName   String?   @map("l_name")
+  email      String    @unique
+  contact    String?
+  password   String
+  role       AdminRole @default(ADMIN)
+  image      String?
+  isActive   Boolean   @default(true) @map("status")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  @@map("user_admin")
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  name      String
+  contact   String?
+  email     String   @unique
+  password  String
+  isActive  Boolean  @default(false) @map("status")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("login_student")
+}
+
+model Membership {
+  id        Int      @id @default(autoincrement())
+  name      String
+  contact   String?
+  email     String   @unique
+  password  String
+  isActive  Boolean  @default(false) @map("status")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("login_membership")
+}
+
+model Candidate {
+  id            Int       @id @default(autoincrement())
+  name          String
+  mobile        String?
+  email         String    @unique
+  password      String
+  birthdate     DateTime?
+  gender        String?
+  address       String?
+  streetAddress String?   @map("street_address")
+  city          String?
+  state         String?
+  zip           String?
+  phone         String?
+  courseSelect  String?   @map("course_select")
+  comments      String?
+  acceptSignin  Int       @default(0) @map("accept_signin")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@map("candidate_login")
+}
+
+model CommunityUser {
+  id        Int        @id @default(autoincrement())
+  name      String
+  mobile    String?
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now()) @map("created_at")
+  answers   Answer[]
+  questions Question[]
+
+  @@map("registers")
+}
+
+model CourseCategory {
+  id        Int            @id @default(autoincrement()) @map("course_category_id")
+  name      String         @map("course_category")
+  slug      String         @unique @map("course_href_tag")
+  createdAt DateTime       @default(now()) @map("cr_date")
+  courses   Course[]
+  experts   Expert[]
+  faqs      Faq[]
+  fees      CourseFee[]
+  reviews   CourseReview[]
+
+  @@map("course_category")
+}
+
+model Course {
+  id            Int            @id @default(autoincrement())
+  title         String
+  description   String         @db.VarChar(5000)
+  categoryId    Int            @map("course_category_id")
+  totalStudents Int            @default(0) @map("total_stud")
+  rating        Decimal?       @db.Decimal(3, 1)
+  review        String?
+  courseBy      String?        @map("course_by")
+  startDate     DateTime?      @map("start_date") @db.Date
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  category      CourseCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("courses")
+}
+
+model Expert {
+  id         Int            @id @default(autoincrement()) @map("e_id")
+  title      String
+  profession String?        @map("prof")
+  image      String?
+  categoryId Int            @map("course_category_id")
+  category   CourseCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("expert")
+}
+
+model CourseFee {
+  id         Int            @id @default(autoincrement())
+  courseName String         @map("course")
+  categoryId Int            @map("course_category_id")
+  fees       Decimal?       @db.Decimal(10, 2)
+  discount   Decimal?       @db.Decimal(10, 2)
+  total      Decimal?       @db.Decimal(10, 2)
+  feeTotal   Decimal?       @map("fee_total") @db.Decimal(10, 2)
+  subtotal   Decimal?       @db.Decimal(10, 2)
+  finalTotal Decimal?       @map("final_total") @db.Decimal(10, 2)
+  couponCode String?        @map("coupon_code")
+  category   CourseCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("fees")
+}
+
+model CourseReview {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  rating      Int            @default(0)
+  review      String?
+  status      String         @default("pending")
+  categoryId  Int            @map("course_category_id")
+  category    CourseCategory @relation(fields: [categoryId], references: [id])
+
+  @@map("reviews")
+}
+
+model Blog {
+  id              Int      @id @default(autoincrement()) @map("blog_id")
+  title           String   @map("blog_title")
+  slug            String   @unique @map("title_url")
+  content         String   @map("blog_desc")
+  publishedAt     String?  @map("blog_date")
+  author          String?  @map("blog_by")
+  metaTitle       String?  @map("meta_title")
+  metaKeywords    String?  @map("meta_keyword")
+  metaDescription String?  @map("meta_desc")
+  canonicalUrl    String?  @map("meta_canonical_href")
+  featuredImage   String?  @map("item_image")
+  isPublished     Boolean  @default(true) @map("status")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  customScript    String?  @map("custom_script")
+  schemaScript    String?  @map("schema_script")
+
+  @@map("blog")
+}
+
+model Faq {
+  id         Int             @id @default(autoincrement()) @map("f_id")
+  question   String
+  answer     String
+  categoryId Int?            @map("course_category_id")
+  createdAt  DateTime        @default(now()) @map("created_at")
+  category   CourseCategory? @relation(fields: [categoryId], references: [id])
+
+  @@map("faq")
+}
+
+model FaqCategory {
+  id    Int    @id @default(autoincrement())
+  title String
+
+  @@map("faq_category")
+}
+
+model KnowledgeItem {
+  id        Int      @id @default(autoincrement()) @map("question_id")
+  question  String
+  answer    String
+  date      String?
+  addedBy   String?  @map("added_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("knowledge_items")
+}
+
+model Question {
+  id        Int           @id @default(autoincrement())
+  userId    Int           @map("user_id")
+  question  String
+  createdAt DateTime      @default(now()) @map("created_at")
+  answers   Answer[]
+  user      CommunityUser @relation(fields: [userId], references: [id])
+
+  @@map("questions")
+}
+
+model Answer {
+  id         Int           @id @default(autoincrement())
+  questionId Int           @map("question_id")
+  userId     Int           @map("user_id")
+  answer     String
+  isApproved Boolean       @default(false) @map("is_approved")
+  createdAt  DateTime      @default(now()) @map("created_at")
+  question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user       CommunityUser @relation(fields: [userId], references: [id])
+
+  @@map("answers")
+}
+
+model ContactSubmission {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String   @db.VarChar(2000)
+  mobile    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("tbl_contactus")
+}
+
+model CourseLead {
+  id        Int      @id @default(autoincrement()) @map("v_id")
+  firstName String   @map("name")
+  lastName  String?  @map("lname")
+  email     String
+  contact   String?
+  flag      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("course_leads")
+}
+
+model FeesLead {
+  id          Int       @id @default(autoincrement()) @map("fv_id")
+  firstName   String    @map("name")
+  lastName    String?   @map("lname")
+  email       String
+  contact     String?
+  visitorDate DateTime? @map("visitor_date") @db.Date
+  flag        String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("fees_leads")
+}
+
+model Subscriber {
+  id        Int      @id @default(autoincrement()) @map("mail_id")
+  email     String   @unique
+  ipAddress String?  @map("ip_address")
+  isActive  Boolean  @default(true) @map("status")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("subscribe_email")
+}
+
+model AboutSection {
+  id          Int      @id @default(autoincrement()) @map("about_us_id")
+  image       String?
+  title       String?
+  subtitle    String?  @map("title1")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("about_us")
+}
+
+model StudyWithUs {
+  id          Int     @id @default(autoincrement()) @map("study_id")
+  image       String?
+  title       String?
+  description String?
+
+  @@map("study_with_us")
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique @map("title_url")
+  description String?
+  image       String?
+  isActive    Boolean  @default(true) @map("status")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("services")
+}
+
+model Testimonial {
+  id          Int      @id @default(autoincrement())
+  title       String?
+  description String?
+  author      String?
+  image       String?
+  rating      Int      @default(5)
+  isActive    Boolean  @default(true) @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("testimonials")
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique @map("title_url")
+  description String?
+  image       String?
+  isActive    Boolean  @default(true) @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("news")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  userType  String?
+  action    String
+  tableName String?  @map("table_name")
+  recordId  Int?     @map("record_id")
+  oldValues Json?    @map("old_values")
+  newValues Json?    @map("new_values")
+  ipAddress String?  @map("ip_address")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("audit_logs")
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  email     String
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("password_reset_tokens")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  ACCOUNTANT
+  EMPLOYEE
+  PURCHASE_MANAGER
+  SALES_MANAGER
+}

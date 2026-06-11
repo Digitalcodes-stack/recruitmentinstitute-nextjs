@@ -1,0 +1,93 @@
+Old URL,New URL,HTTP Status,Notes
+https://recruitmentinstitute.in/,https://recruitmentinstitute.in/,200,Homepage — no change
+https://recruitmentinstitute.in/home,https://recruitmentinstitute.in/,301,CI home controller root
+https://recruitmentinstitute.in/home/about,https://recruitmentinstitute.in/about,301,About page
+https://recruitmentinstitute.in/about,https://recruitmentinstitute.in/about,200,About page — clean URL preserved
+https://recruitmentinstitute.in/home/course_main,https://recruitmentinstitute.in/courses,301,Courses listing
+https://recruitmentinstitute.in/course_main,https://recruitmentinstitute.in/courses,301,Courses listing alias
+https://recruitmentinstitute.in/home/course_single/1,https://recruitmentinstitute.in/courses,301,Old course by numeric ID — no slug available
+https://recruitmentinstitute.in/home/course_single/2,https://recruitmentinstitute.in/courses,301,Old course by numeric ID
+https://recruitmentinstitute.in/home/course_single/3,https://recruitmentinstitute.in/courses,301,Old course by numeric ID
+https://recruitmentinstitute.in/home/course_single/4,https://recruitmentinstitute.in/courses,301,Old course by numeric ID
+https://recruitmentinstitute.in/course_single/:id,https://recruitmentinstitute.in/courses,301,All numeric course IDs
+https://recruitmentinstitute.in/end-to-end-recruitment-training,https://recruitmentinstitute.in/end-to-end-recruitment-training,200,Course landing — preserved slug
+https://recruitmentinstitute.in/hr-courses-for-beginners,https://recruitmentinstitute.in/hr-courses-for-beginners,200,Course landing — preserved slug
+https://recruitmentinstitute.in/hr-entrepreneurship-program,https://recruitmentinstitute.in/hr-entrepreneurship-program,200,Course landing — preserved slug
+https://recruitmentinstitute.in/hr-corporate-training-course,https://recruitmentinstitute.in/hr-corporate-training-course,200,Course landing — preserved slug
+https://recruitmentinstitute.in/home/end_to_end_recruitment_training,https://recruitmentinstitute.in/end-to-end-recruitment-training,301,CI underscore URL
+https://recruitmentinstitute.in/home/hr_courses_for_beginners,https://recruitmentinstitute.in/hr-courses-for-beginners,301,CI underscore URL
+https://recruitmentinstitute.in/home/hr_entrepreneurship_program,https://recruitmentinstitute.in/hr-entrepreneurship-program,301,CI underscore URL
+https://recruitmentinstitute.in/home/hr_corporate_training_course,https://recruitmentinstitute.in/hr-corporate-training-course,301,CI underscore URL
+https://recruitmentinstitute.in/home/blogpage,https://recruitmentinstitute.in/blogs,301,Blog listing page
+https://recruitmentinstitute.in/blogpage,https://recruitmentinstitute.in/blogs,301,Blog listing alias
+https://recruitmentinstitute.in/blog,https://recruitmentinstitute.in/blogs,301,Blog listing alias
+https://recruitmentinstitute.in/blogs,https://recruitmentinstitute.in/blogs,200,Blog listing — preserved slug
+https://recruitmentinstitute.in/home/blog_details/53,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB — see NOTE
+https://recruitmentinstitute.in/home/blog_details/52,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/51,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/50,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/49,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/48,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/46,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/45,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/44,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/43,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/42,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/41,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/40,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/39,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/38,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/37,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/36,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/35,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/34,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/33,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/32,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/31,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/30,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/29,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/28,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/27,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/26,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/25,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/18,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/15,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/14,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/13,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/12,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/11,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/home/blog_details/7,https://recruitmentinstitute.in/blogs/{slug},301,Requires slug lookup from DB
+https://recruitmentinstitute.in/blogs/:slug,https://recruitmentinstitute.in/blogs/:slug,200,New slug-based blog detail pages
+https://recruitmentinstitute.in/home/contact,https://recruitmentinstitute.in/contact,301,Contact page
+https://recruitmentinstitute.in/contact,https://recruitmentinstitute.in/contact,200,Contact page — preserved
+https://recruitmentinstitute.in/home/login_student,https://recruitmentinstitute.in/candidate-login,301,Student login
+https://recruitmentinstitute.in/home/login_student/,https://recruitmentinstitute.in/candidate-login,301,Student login trailing slash
+https://recruitmentinstitute.in/home/login_student/index.html,https://recruitmentinstitute.in/candidate-login,301,Sitemap artefact
+https://recruitmentinstitute.in/home/login_stud,https://recruitmentinstitute.in/candidate-login,301,Login alias
+https://recruitmentinstitute.in/home/login_membership,https://recruitmentinstitute.in/candidate-login,301,Membership login
+https://recruitmentinstitute.in/home/login_membership/,https://recruitmentinstitute.in/candidate-login,301,Membership login trailing slash
+https://recruitmentinstitute.in/home/login_membership/index.html,https://recruitmentinstitute.in/candidate-login,301,Sitemap artefact
+https://recruitmentinstitute.in/home/log_membership,https://recruitmentinstitute.in/candidate-login,301,Membership login alias
+https://recruitmentinstitute.in/home/knowledge,https://recruitmentinstitute.in/knowledge,301,Knowledge base
+https://recruitmentinstitute.in/knowledge,https://recruitmentinstitute.in/knowledge,200,Knowledge base — preserved
+https://recruitmentinstitute.in/knowledges,https://recruitmentinstitute.in/knowledge,301,Paginated knowledge base
+https://recruitmentinstitute.in/knowledges/:page,https://recruitmentinstitute.in/knowledge?page=:page,301,Paginated knowledge alias
+https://recruitmentinstitute.in/community,https://recruitmentinstitute.in/community,200,Community forum
+https://recruitmentinstitute.in/home/community,https://recruitmentinstitute.in/community,301,Community via CI
+https://recruitmentinstitute.in/student_membership,https://recruitmentinstitute.in/student-membership,301,Student membership page
+https://recruitmentinstitute.in/home/Student_Membership,https://recruitmentinstitute.in/student-membership,301,CI student membership
+https://recruitmentinstitute.in/student-membership,https://recruitmentinstitute.in/student-membership,200,Student membership — preserved
+https://recruitmentinstitute.in/home/fees,https://recruitmentinstitute.in/fees,301,Fees page
+https://recruitmentinstitute.in/fees,https://recruitmentinstitute.in/fees,200,Fees page — preserved
+https://recruitmentinstitute.in/home/index,https://recruitmentinstitute.in/,301,CI home index
+https://recruitmentinstitute.in/Chat,https://recruitmentinstitute.in/community,301,Chat page — merged into community
+https://recruitmentinstitute.in/home/chat_page,https://recruitmentinstitute.in/community,301,Chat page alias
+https://recruitmentinstitute.in/Admin,https://recruitmentinstitute.in/admin,301,Admin panel — blocked by robots
+https://recruitmentinstitute.in/Login,https://recruitmentinstitute.in/admin/login,301,Admin login
+https://recruitmentinstitute.in/home/loginpage,https://recruitmentinstitute.in/candidate-login,301,Loginpage alias
+https://recruitmentinstitute.in/thank-you,https://recruitmentinstitute.in/thank-you,200,Thank you page
+
+NOTE: Blog numeric-ID redirects (/home/blog_details/{id}) must be resolved dynamically.
+The CI database field `title_url` is a slug generated from `blog_title`.
+Implement a catch-all route in Next.js: /home/blog_details/[id] → lookup blog by legacy_id → redirect to /blogs/[slug].
+Alternatively, store legacy_id in Prisma Blog model and resolve at runtime.

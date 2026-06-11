@@ -1,0 +1,266 @@
+.addressOneRow{display:flex;justify-content:space-between}
+.addressOneRow .address-item{margin-bottom:0!important}
+.fornavvv{display:flex;justify-content:space-between;align-items:center; position:relative;}
+.uninavvv{position:absolute;z-index:9999; right:0; top:0;}
+.uninavvv ul{display:flex;}
+.uninavvv ul li{padding:4px 10px; border-radius:0 0 5px 5px; margin:0 5px; background:orange;line-height:normal;}
+.uninavvv ul li:last-child{background:skyblue; margin-right:0;}
+.uninavvv ul li a{color:#fff; text-decoration:none;font-size: 13px;}
+.forCommuBtnss{padding:20px; display:flex;justify-content:center;}
+.forCommuBtnss a.contactsubmittt{margin:0 5px;transition:0.6s;border-color:#f4bf00 !important;}
+.forCommuBtnss a.contactsubmittt:hover{background:#171f32 !important;color:#fff;border-color:#171f32!important;}
+.frCommunityPage{margin-top:20px;}
+.frCommunityPage .notice{width:100%;padding: 7px 22px;
+  background: #fffbbb;text-align: center;border: 1px solid #ead643; color: #827302;font-size:13px;margin:0 0 15px 0;}
+.frCommunityPage .notice a{color: #827302;text-decoration:underline;}
+.frCommunityPage .notice a:hover{text-decoration:none;}
+.forForumNav nav.navbar{background:#256db3 !important;}
+.forForumNav nav.navbar li a{color:#fff !important; padding-left:15px !important; padding-right:15px !important;}
+.forForumNav .form-inline .btn-outline-success{border-color:#fff !important; color:#fff !important;}
+.communitytabContent{/*width:100%;*/display:block;}
+.communityTitleTab{background:skyblue; padding:10px 0;}
+.communityTitleTab h6{margin:0;}
+.communitytabContent{border:1px solid #ccc; padding:15px 0;display: flex;
+  align-items: center;}
+.communitytabContentOuterr .communitytabContent:nth-child(even){background:#f2f2f2;}
+.communitytabContent p{margin:0;}
+.communitytabContent .fa-comments::before {content: "\f086";font-size: 40px;
+height: auto;display: block;color: #ccc;}
+.communitytabContent h6{margin:0 0 0 0;}
+.frTopicNamee{display:flex; align-items:center;}
+.frpostDetailsss{display:flex; align-items:center;}
+.frpostDetailsss .fa-user::before {font-size: 40px;
+height: auto;display: block;color: #ccc;margin-right:15px;}
+.statistics{padding:30px 0;}
+.statisticsInn{display:flex;align-items:center;justify-content: space-evenly; padding:15px 0;}
+.statistics-element{display:flex; justify-content:space-evenly; align-items:center;flex-direction: column;width:20%;}
+.statisticsInn .statistics-element{border-right:1px solid #ccc;}
+.statisticsInn .statistics-element:last-child{border:none;}
+.statistics-element .element-number{margin-right:0;}
+.element-number span{margin-right:5px;}
+.frFilterss{margin:0;}
+.frFilterss a{margin:0; padding:0 10px; border-right:1px solid #ccc;}
+.frFilterss a:last-child{border-right:none;}
+.frFilterss a.active{font-weight:bold;} 
+nav.formembersPagination ul.pagination{padding-bottom:10px !important;}
+nav.formembersPagination ul.pagination li a{margin:0 !important;}
+.frMembersAcco .accordion > .card > .card-header{cursor:pointer;}
+.frMembersss{width:100%; border:1px solid #ccc;}
+.frMembersss table {font-family: arial, sans-serif;border-collapse: collapse;
+  width: 100%; margin-bottom:20px;}
+.frMembersss td, .frMembersss th {border: 1px solid #dddddd;
+  text-align: left;padding: 8px; verticle-align:middle;}
+.frMembersss td p, .frMembersss th p{margin-bottom:0;}
+.frMembersss td.fruserr{text-align:center;width:80px; border-right:none !important;}
+.frMembersss td.fruserrTextt{border-left:none !important;}
+.frMembersss td.frPostss{width:80px; text-align:right;}
+.frMembersss td.frSeen{width:190px; font-style:italic;}
+.frMembersss td.fruserr .fa-user{font-size: 30px;background: #e2e2e2;
+width: 60px;height: 60px;display: flex;justify-content: center; align-items: center;border-radius: 50%;}
+.frMembersss tr:nth-child(even) {background-color: #f2f2f2;}
+.forCandiBanner{display:flex;background:20px; background:#ccc;align-items: end;}
+.forCandiBanner .fa-user{width:150px; height:150px; border-radius:50%;border:1px solid #fff;font-size:80px; display:flex;justify-content:center; align-items:center; margin:10px;background: #e2e2e2;}
+.forCandiBanner .userInfo{margin-left:20px;}
+.forCandiBanner .userInfo h3{margin-bottom:10px;}
+.forCandiBanner .userInfo p{margin-bottom:10px;}
+.profileTabb{padding:0px 0;border:1px solid #ccc;margin: 0 0 15px 0;}
+.profileTabb p{border-bottom:1px solid #ccc; margin:0;line-height:45px;}
+.profileTabbOutt{display:flex;align-items:center;justify-content: left; padding:0 0 0 0;}
+.profileTabbInn {width: 15%;text-align: center;border-right:1px solid #ccc;padding-top:10px; padding-bottom:10px;}
+.profileTabbOutt .profileTabbInn:last-child{border-right:none;}
+.profileTabbInn .profilee-element{display:flex; justify-content:space-evenly; align-items:center;flex-direction: column;width:20%;}
+.profileTabbInn .profilee-element{border-right:1px solid #ccc;}
+.profileTabbInn .profilee-element:last-child{border:none;}
+.profilee-element .profilee-number{margin-right:0;}
+.profileTabbInn .profilee-number span{margin-right:5px;}
+.profilee-element .profilee-number .statistics-element-icon{margin-right:5px;}
+.frpostHistory{width:100%;}
+.frpostHistory td, .frpostHistory th {border: 1px solid #dddddd; text-align: left;padding: 15px;}
+.frpostHistory p{margin:0 0 8px 0;}
+.frpostHistory p:last-child{margin:0;}
+.frpostHistory p, .frpostHistory p a{line-height:normal;border:none;}
+
+.frSubscriptionss{width:100%; border:1px solid #ccc;margin-bottom:20px;}
+.frSubscriptionss table {font-family: arial, sans-serif;border-collapse: collapse;
+  width: 100%; margin-bottom:20px;}
+.frSubscriptionss th{background:#256db3 !important;color:#fff;}
+.frSubscriptionss td, .frSubscriptionss th {border: 1px solid #dddddd;
+  text-align: left;padding: 8px; verticle-align:middle;}
+.frSubscriptionss td label{text-align:center;width:100%;line-height:normal;}
+.frSubscriptionss td.frcenter{text-align:center;}
+
+.profileTabb #A2{padding:0;}
+.frAcividyTop{width:100%; border:1px solid #ccc; padding:0;border-radius:5px; margin:0 0 20px 0;}
+.frAcividyTopInn{padding:10px 15px;}
+.frAcividyTopInn p{margin:0;}
+.frAcividyTop h6{line-height:30px; height:30px; background:#256db3; border:1px solid #256db3; border-radius:5px 5px 0 0; margin:0;}
+#statistics-online-users {display: block;text-align: left; padding: 3px 20px;
+  border: 1px solid #eee;background-color: #fafafa;margin-bottom: 10px;
+  width: 100%;font-size: 12px;}
+#statistics-online-users span{margin-right:5px;}
+.forTopicDetailsPara{width:100%;border:1px solid #ccc; padding:15px;}
+.forTopicDetailsPara p:last-child{padding-bottom:0; margin-bottom:0;}
+.forTopicDetailsPara2{width:100%;border:1px solid #ccc; padding:15px; background:#f2f2f2;}
+#rs-categories{margin:0 0 40px 0}
+.afterHomeVideo{margin:70px 0 70px 0}
+.recru_training{display:flex;align-items:center}
+.frTestimoniii{display:flex;align-items:center;margin:50px 0}
+#rs-categories{padding-top:100px}
+.intro-section{padding-top:50px}
+.rs-newsletter{background:#f3f8f9}
+h4.modal-title{font-sizeL:20px}
+#prod-faq-tab{text-transform:uppercase}
+.course-overview .inner-box p{margin-bottom:10px}
+.course-overview .inner-box ul{margin-bottom:15px}
+#contactForm{padding:30px;border:1px solid #ccc;border-radius:15px;margin:0 0 30px 0}
+.enquirnowpopup button{background:#fff;color:#333;border:2px solid #fff;font-weight:700}
+.enquirnowpopup button:hover{border:2px solid #fff}
+.whychooseusul li{list-style:square;margin:0 0 10px 0}
+#space .sec-title3 .title.white-color{margin:0 0 15px 0}
+.video-column .course-features-info{display:none}
+.rs-footer .footer-top .Frquicklinkss li{padding-left:15px;position:relative;margin-bottom:11px}
+.rs-footer .footer-top .Frquicklinkss li a{color:#e8e8e8}
+.rs-footer .footer-top .Frquicklinkss li a:hover{color:#21a7d0}
+.rs-footer .footer-top .Frquicklinkss li:before{position:absolute;content:'';left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;background:#21a7d0}
+.rs-footer .footer-top .Frquicklinkss li:last-child{margin-bottom:0}
+.rs-footer .footer-top .Frquicklinkss li a:hover{color:#f4bf00}
+.rs-footer .footer-top .Frquicklinkss li::before{background:#f4bf00}
+.rs-footer .footer-top .Frquicklinkss li:last-child{margin-bottom:0}
+.footerlogoo{width:170px;height:Auto;margin:3px 0 15px 0}
+footer p{margin:0!important;line-height:20px}
+.footer-social{margin-top:15px;display:flex}
+.rs-inner-blog .blog-item .blog-content p{margin:0}
+.rs-inner-blog .blog-item .blog-content h3{margin:15px 0}
+.blog-btn{margin:15px 0 0 0}
+.blog-item{margin:0 0 15px 0}
+.pagination{display:flex;justify-content:left;align-items:center;padding-bottom:30px}
+.pagination a{padding:5px 15px;margin:0 5px;background:#fff;color:#1c3462;border:1px solid #ccc}
+.pagination strong{padding:5px 15px;margin:0 5px;background:#1c3462;color:#fff;border:1px solid #1c3462}
+.rating .total-rating{display:none}
+.coursesbannerr{padding-top:0!important}
+.frCourseBanner{width:100%;height:auto;position:relative;padding:0;background:#dce7fd}
+.frCourseImgg{padding-top:15px;padding-bottom:15px;text-align:right}
+.frCourseBanner img{width:30%;height:auto}
+.frCourseBannerInn{display:flex;justify-content:center;align-items:center;padding:15px 0}
+.frCourseHeading{padding-top:15px;padding-bottom:15px;display:flex;justify-content:center;align-items:center;flex-direction:column}
+.frCourseHeading p{font-size:25px;font-weight:400;text-transform:capitalize}
+.frCourseHeading h1{width:auto;height:auto;text-align:left;color:#333;font-size:40px;margin:0;background-image:linear-gradient(#f4bf00,#f4bf00);background-position:0 100%;background-repeat:no-repeat;background-size:100% 5px;text-transform:uppercase}
+.courseh1Outer{background:#253e6f;margin:0 0 40px 0}
+.courseh1{margin:0;color:#fff;padding:0;line-height:58px;font-size:35px}
+.frCoursesTabss{margin-top:30px;margin-bottom:30px}
+.frCoursesTabss h2{font-size:15px;margin:0 0 15px 0}
+.frCoursesTabss h3{font-size:15px;margin:0 0 13px 0}
+.frCoursesTabss .tab-content{padding:20px 0;box-shadow:0 30px 50px 0 rgba(51,51,51,.08);border:1px dashed #eee}
+.coursesTab .nav-link{color:#333;background:0 0;margin:0 10px 0 0}
+.coursesTab .nav-link.active{background:#f4bf00;border:none;color:#333}
+#aboutcourse ul,#curriculum ul{padding:0 0 0 20px;list-style:decimal;margin:0 0 15px 0}
+#aboutcourse ul li,#curriculum ul li{margin:0;padding:0}
+.coursesSidebar{box-shadow:0 30px 50px 0 rgba(51,51,51,.08);border:1px dashed #eee;border-top:2px solid #f4bf00;border-radius:4px}
+.coursesSidebar ul{padding:0 0 0 20px;list-style:square;margin:0 0 15px 0}
+.coursesSidebar ul li{margin:0 0 5px 0;padding:0}
+.coursesSidebar h2{font-size:18px;margin:0 0 15px 0}
+.coursesSidebar h3{font-size:18px;margin:0 0 10px 0}
+.coursesSidebar h4{font-size:18px;margin:0 0 10px 0}
+.coursesSidebar h4.sidebarTop{font-size:15px;font-weight:400;text-align:center;padding:15px;background:#e4edfe;margin:0 0 25px 0}
+.coursesSidebar hr{border:1px dashed #ccc;margin:15px 0 10px 0}
+#reviews p{margin-bottom:15px;border-bottom:1px dashed #ccc;padding:0 0 10px 0}
+#reviews .rating{margin-bottom:10px;text-align:left!important}
+#faq #accordion .card-header{background:#e4edfe;padding:10px 15px}
+#faq #accordion .card-header a.card-link{color:#333}
+#faq #accordion .card-body{padding:10px 15px}
+#faq #accordion .card{margin:0 0 15px 0}
+#faq #accordion .card-header a.card-link::after{position:absolute;font-family:FontAwesome;content:"\f077";right:15px;top:22px;transform:translateY(-50%);text-align:center;font-weight:400;color:#111;padding:unset;transition:.3s}
+#faq #accordion .card-header a.collapsed::after{content:"\f078"}
+.recru_training{background:#1c335f}
+.frKnowledgeFaq{padding:40px 0 30px 0}
+.frKnowledgeFaq #accordion .card-header{background:#e4edfe;padding:10px 15px}
+.frKnowledgeFaq #accordion .card-header a.card-link{color:#333}
+.frKnowledgeFaq #accordion .card-body{padding:10px 15px}
+.frKnowledgeFaq #accordion .card{margin:0 0 15px 0}
+.frKnowledgeFaq #accordion .card-header a.card-link::after{position:absolute; font-family:FontAwesome;content:"\f077";right:15px;top:22px;transform: translateY(-50%);text-align:center;font-weight:400;color:#111;padding:unset; transition:.3s}
+.frKnowledgeFaq #accordion .card-header a.collapsed::after{content:"\f078"}
+.frKnowledgeFaq #accordion .card-header a.card-link::after{position:absolute;font-family:FontAwesome;content:"\f077";right:15px;top:22px;transform:translateY(-50%);text-align:center;font-weight:400;color:#111;padding:unset;transition:.3s}
+.frKnowledgeFaq #accordion .card-header a.collapsed::after{content:"\f078"}
+.forloginpagee{display:flex;flex-direction:column;width:100%;padding:20px;border:1px solid #ccc;border-radius:15px;margin-bottom:0}
+.forloginpagee h2{text-align:center}
+.forloginpagee .contactsubmittt{margin:0 auto}
+.signuphereee{display:flex;justify-content:space-between;padding:20px 0 35px 0;flex-direction:column;text-align:center}
+.signuphereee p{margin:7px 0 5px 0;padding:10px 0 0 0;border-top:1px dashed #333}
+#forgotpwww .modal-header{border:none;padding-bottom:0;padding-bottom:0}
+#forgotpwww .modal-dialog{top:50%;left:50%;transform:translate(-50%,-50%);margin:0;background:rgb(0,0,0,.3)}
+#forgotpwww .modal-body{text-align:center;padding-top:0}
+#forgotpwww .modal-body p{margin:0}
+#forgotpwww .modal-body h2{margin:0 0 15px 0;font-size:21px}
+#forgotpwww .modal-body input{margin:15px 0}
+.EnrollNowwwformmm .modal-header{border:none;padding-bottom:0;padding-bottom:0;border-bottom:1px dashed #ccc;margin-bottom:10px}
+.EnrollNowwwformmm .modal-header h2{margin:0;font-size:25px;padding:0 0 10px 0;text-align:center;display:block;width:100%}
+label{font-weight:600}
+b,h1,h2,h3,h4,h5,h6,strong{font-weight:600}
+.EnrollNowwwformmm .modal-dialog{background:rgb(0,0,0,.3)}
+.EnrollNowwwformmm .modal-body{text-align:center;padding-top:0}
+.EnrollNowwwformmm .modal-body .form-group{text-align:left;padding-top:0}
+.EnrollNowwwformmm .modal-body p{margin:0}
+.EnrollNowwwformmm .modal-body h2{margin:0 0 15px 0;font-size:21px}
+.EnrollNowwwformmm .modal-body input{margin:0}
+.EnrollNowwwformmm .form-check{text-align:left;padding:0;display:flex;align-items:center;margin-bottom:15px}
+.EnrollNowwwformmm .form-check input{margin:0 20px 0 0}
+.EnrollNowwwformmm .form-check label{padding-left:18px;padding-right:18px}
+.enrollnowBtnnnn{margin:0 auto;display:inherit;outline:0}
+.EnrollNowwwformmm .frGender{display:flex}
+.rightsideVideoSection{padding:0 0 30px 0}
+.rightsideVideoSection h2{font-size:23px;margin:0 0 15px 0;padding:0;text-align:left;color:#333;font-size:25px;background-image:linear-gradient(#f4bf00,#f4bf00);background-position:0 100%;background-repeat:no-repeat;background-size:100% 3px}
+.rightsideVideoSection p{margin:0 0 15px 0}
+.rightsideVideoSection iframe{margin-bottom:15px!important}
+a:focus,input:focus,select:focus,textarea:focus{outline:0!important;box-shadow:none!important}
+.enrollnowBtnnnn:focus{outline:0!important;box-shadow:none!important}
+
+@media only screen and (max-width:992px){
+.sec-title3 .title{font-size:30px;line-height:normal}
+.rs-banner.style8{min-height:auto;background-position:-163px 0}
+.rs-banner.style8 .banner-content{padding:30px 0;margin:0}
+.search-widget{margin-top:20px}
+#contactForm{padding:0}
+.footer-widget{margin-bottom:0}
+.contact-page-section .rs-quick-contact{padding:70px 0!important}
+.rs-testimonial.home9-style .testi-item p{font-size:17px;line-height:30px}
+.full-width-header .rs-header .menu-area .main-menu .rs-menu ul.nav-menu li:hover{background:#fff}
+.full-width-header .rs-header .menu-area .main-menu .rs-menu ul.nav-menu li.current-menu-item{background:#fff}
+.full-width-header .rs-header .menu-area .main-menu .rs-menu ul.sub-menu li a{padding:10px 25px!important}
+.Frquicklinkss,.site-map{margin-bottom:15px}
+.courseh1Outer{margin:0 0 30px 0}
+.frCourseHeading h1{font-size:19px}
+.frCourseHeading p{font-size:17px;margin-bottom:0;text-align:center;line-height:normal;margin-top:15px}
+.frCoursesTabss{padding:0}
+.coursesTab .nav-link{padding:10px 12px;margin:0}
+.coursesSidebar{margin-top:20px}
+.contact-page-section{padding-top:0!important}
+.contact-page-section .rs-contact-wrap{padding:20px 10px}
+.contact-page-section .rs-contact-wrap .address-item .address-icon{margin-right:10px}
+#faq #accordion .card-header{padding-right:5px;padding-left:5px}
+#faq #accordion .card-header a.card-link::after{right:5px}
+.rs-footer.home9-style .footer-top .widget-title{margin-bottom:20px}
+.courseh1{line-height:33px;font-size:21px}
+#rs-about{padding:30px 0}
+.rs-banner.style8 .banner-content .sl-sub-title{font-size:25px;margin:0;line-height:normal;text-align:center}
+.rs-banner.style8 .banner-content .sl-title{font-size:25px;line-height:normal;padding-right:0;margin:0;text-align:center}
+#rs-banner .fadeInUp{text-align:center;margin:10px 0 0 0}
+#rs-banner .fadeInUp .readon{padding:5px 15px;margin:0 auto}
+#rs-categories{margin-bottom:10px;padding-top:50px}
+.banner-content .sl-btn{text-align:center;margin-top:40px;width:100%}
+.sec-title3 .sub-title{margin-bottom:30px}
+.whychooseusul li{list-style:square inside}
+.afterHomeVideo{margin:40px 0 40px 0}
+.recru_training{background:#1c335f!important;padding-top:15px;padding-bottom:15px}
+.admissionOpennn{padding-top:30px}
+.rs-footer.home9-style .footer-top{padding-top:40px}
+.teamItemOuterrr{margin-bottom:25px}
+.rs-newsletter.style1 .newsletter-wrap{padding:30px 20px}
+#myTabContent{margin-top:20px}
+#rs-team{padding-bottom:10px}
+.footer-social{text-align:center;padding-bottom:20px}
+.footer-logo{text-align:center}
+.w3-bar a{margin:0 5px 10px 5px}
+.intro-section .intro-tabs .tab-btns{width:auto}
+.intro-section{padding-bottom:0}
+h2{font-size:30px}
+}
