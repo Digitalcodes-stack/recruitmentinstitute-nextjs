@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { X, Send, Phone, CheckCircle2, Award, Users, Clock, Shield } from 'lucide-react'
@@ -107,7 +107,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
         }}
       >
 
-        {/* ── Left panel ── */}
+        {/* â"€â"€ Left panel â"€â"€ */}
         <div
           className="relative hidden md:flex flex-col justify-between overflow-hidden shrink-0"
           style={{
@@ -166,19 +166,19 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             <p style={{ fontSize: '10px', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
               Call us directly
             </p>
-            <a href="tel:+919975048884"
+            <a href="tel:+917385204165"
               className="flex items-center gap-2.5 font-bold transition-all"
               style={{ color: 'white', textDecoration: 'none', fontSize: '15px' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#60A5FA' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'white' }}
+
+
             >
               <Phone className="w-4 h-4" style={{ color: '#60A5FA' }} />
-              +91 9975048884
+              +91 7385204165
             </a>
           </div>
         </div>
 
-        {/* ── Right panel ── */}
+        {/* â"€â"€ Right panel â"€â"€ */}
         <div className="flex-1 flex flex-col bg-white overflow-y-auto" style={{ minWidth: 0 }}>
 
           {/* header */}
@@ -195,14 +195,8 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
               onClick={onClose}
               className="flex items-center justify-center rounded-xl cursor-pointer transition-all shrink-0"
               style={{ width: 36, height: 36, background: '#F1F5F9', color: '#64748B', border: 'none' }}
-              onMouseEnter={e => {
-                ;(e.currentTarget as HTMLButtonElement).style.background = '#FEE2E2'
-                ;(e.currentTarget as HTMLButtonElement).style.color = '#EF4444'
-              }}
-              onMouseLeave={e => {
-                ;(e.currentTarget as HTMLButtonElement).style.background = '#F1F5F9'
-                ;(e.currentTarget as HTMLButtonElement).style.color = '#64748B'
-              }}
+
+
               aria-label="Close"
             >
               <X className="w-4 h-4" />
@@ -284,8 +278,8 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
                 opacity: loading ? 0.75 : 1,
                 marginTop: '4px',
               }}
-              onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+
+
             >
               {loading ? (
                 <>
@@ -298,7 +292,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  Send Enquiry — It&apos;s Free
+                  Send Enquiry "" It&apos;s Free
                 </>
               )}
             </button>
@@ -307,7 +301,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
             <div className="flex items-center justify-center gap-2">
               <Shield className="w-3.5 h-3.5" style={{ color: '#10B981', flexShrink: 0 }} />
               <p style={{ fontSize: '11px', color: '#94A3B8', textAlign: 'center' }}>
-                Your details are safe with us — no spam, ever.
+                Your details are safe with us "" no spam, ever.
               </p>
             </div>
           </form>

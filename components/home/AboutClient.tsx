@@ -9,19 +9,32 @@ import {
   BadgeCheck,
   BookOpenCheck,
   BriefcaseBusiness,
+  CalendarDays,
   Check,
   CheckCircle2,
   ChevronRight,
   GraduationCap,
   Handshake,
+  IndianRupee,
   MapPin,
   Sparkles,
   TrendingUp,
   Users,
 } from 'lucide-react'
 
+
+interface TestimonialItem {
+  id: number
+  author: string | null
+  title: string | null
+  description: string | null
+  rating: number | null
+  image: string | null
+}
+
 interface Props {
   sections: AboutSection[]
+  testimonials?: TestimonialItem[]
 }
 
 const fallbackSections: AboutSection[] = [
@@ -104,7 +117,7 @@ function cleanText(value?: string | null) {
     .trim()
 }
 
-export default function AboutClient({ sections }: Props) {
+export default function AboutClient({ sections, testimonials = [] }: Props) {
   const displaySections = sections.length > 0 ? sections : fallbackSections
 
   return (
@@ -129,8 +142,8 @@ export default function AboutClient({ sections }: Props) {
           <div className="flex items-center gap-2 mb-8" style={{ fontSize: '12px', color: '#64748B' }}>
             <Link href="/"
               style={{ color: '#64748B', textDecoration: 'none' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#93C5FD' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#64748B' }}
+
+
             >Home</Link>
             <ChevronRight className="w-3 h-3" />
             <span style={{ color: '#94A3B8' }}>About Us</span>
@@ -160,8 +173,8 @@ export default function AboutClient({ sections }: Props) {
                   href="/courses"
                   className="inline-flex items-center gap-2 font-bold text-white rounded-xl transition-all duration-200"
                   style={{ background: 'linear-gradient(135deg, #1E40AF, #2563EB)', padding: '14px 28px', fontSize: '14px', boxShadow: '0 8px 24px rgba(30,64,175,0.4)', textDecoration: 'none' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+
+
                 >
                   Explore Courses
                   <ArrowRight className="w-4 h-4" />
@@ -170,8 +183,8 @@ export default function AboutClient({ sections }: Props) {
                   href="/contact"
                   className="inline-flex items-center gap-2 font-bold rounded-xl transition-all duration-200"
                   style={{ border: '1.5px solid rgba(255,255,255,0.25)', color: 'white', padding: '14px 28px', fontSize: '14px', background: 'rgba(255,255,255,0.06)', textDecoration: 'none' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.12)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)' }}
+
+
                 >
                   Talk to Admissions
                 </Link>
@@ -262,18 +275,8 @@ export default function AboutClient({ sections }: Props) {
                   transition: 'all 0.3s ease',
                   minWidth: 0,
                 }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLDivElement
-                  el.style.transform = 'translateY(-6px)'
-                  el.style.boxShadow = '0 20px 56px rgba(30,64,175,0.13)'
-                  el.style.borderColor = '#BFDBFE'
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLDivElement
-                  el.style.transform = 'translateY(0)'
-                  el.style.boxShadow = '0 4px 24px rgba(0,0,0,0.06)'
-                  el.style.borderColor = '#E2E8F0'
-                }}
+
+
               >
                 {/* icon box */}
                 <div style={{
@@ -494,24 +497,8 @@ export default function AboutClient({ sections }: Props) {
                   position: 'relative',
                   overflow: 'hidden',
                 }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLDivElement
-                  el.style.background = 'rgba(255,255,255,0.08)'
-                  el.style.borderColor = 'rgba(96,165,250,0.3)'
-                  el.style.transform = 'translateY(-8px)'
-                  el.style.boxShadow = '0 32px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(96,165,250,0.15)'
-                  const glow = el.querySelector('.pillar-glow') as HTMLDivElement
-                  if (glow) glow.style.opacity = '1'
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLDivElement
-                  el.style.background = 'rgba(255,255,255,0.04)'
-                  el.style.borderColor = 'rgba(255,255,255,0.09)'
-                  el.style.transform = 'translateY(0)'
-                  el.style.boxShadow = 'none'
-                  const glow = el.querySelector('.pillar-glow') as HTMLDivElement
-                  if (glow) glow.style.opacity = '0'
-                }}
+
+
               >
                 {/* corner glow on hover */}
                 <div className="pillar-glow" style={{
@@ -647,68 +634,182 @@ export default function AboutClient({ sections }: Props) {
       </section>
 
       {/* ── CTA Section ── */}
-      <section style={{ background: '#F8FAFC', padding: '80px 0' }}>
-        <div className="container">
-          <div className="rounded-3xl overflow-hidden" style={{ border: '1px solid #E2E8F0', boxShadow: '0 8px 32px rgba(0,0,0,0.06)' }}>
-            <div className="grid lg:grid-cols-2">
-              {/* left */}
-              <div className="bg-white p-10 lg:p-14">
-                <div className="flex items-center justify-center w-14 h-14 rounded-2xl mb-6"
-                  style={{ background: 'linear-gradient(135deg, #1E40AF, #2563EB)' }}>
-                  <GraduationCap className="w-6 h-6 text-white" />
+      <section style={{ background: '#F0F5FF', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
+        {/* soft background blobs */}
+        <div style={{ position: 'absolute', top: -120, right: -120, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, #DBEAFE 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -80, left: -80, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, #EDE9FE 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+
+          {/* ── Top label ── */}
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 100, padding: '6px 20px', marginBottom: 0 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#2563EB', display: 'inline-block' }} />
+              <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: '#1D4ED8' }}>Take the Next Step</span>
+            </div>
+          </div>
+
+          {/* ── Main card ── */}
+          <div style={{ background: '#fff', borderRadius: 32, border: '1px solid #E2E8F0', boxShadow: '0 24px 80px rgba(30,64,175,0.10)', overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }} className="cta-grid">
+
+              {/* ── Left: CTA ── */}
+              <div style={{ padding: '64px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                {/* icon */}
+                <div style={{ width: 60, height: 60, borderRadius: 18, background: 'linear-gradient(135deg,#1E40AF,#3B82F6)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 28, boxShadow: '0 10px 28px rgba(30,64,175,0.30)' }}>
+                  <GraduationCap style={{ width: 28, height: 28, color: '#fff' }} />
                 </div>
-                <h2 style={{ fontSize: 'clamp(24px,2.5vw,36px)', fontWeight: 800, color: '#0F172A', lineHeight: 1.2, marginBottom: '16px' }}>
-                  Ready to start your HR journey?
+
+                <h2 style={{ fontSize: 'clamp(26px,2.8vw,40px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.18, letterSpacing: '-0.03em', marginBottom: 16 }}>
+                  Ready to start your<br />
+                  <span style={{ background: 'linear-gradient(135deg,#1E40AF,#2563EB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>HR journey?</span>
                 </h2>
-                <p style={{ fontSize: '15px', color: '#64748B', lineHeight: 1.8, marginBottom: '32px' }}>
+
+                <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.85, marginBottom: 36, maxWidth: 400 }}>
                   Speak with our admissions coordinator about batches, syllabus, eligibility, course fees, and placement support.
                 </p>
-                <div className="flex flex-wrap gap-3">
+
+                {/* buttons */}
+                <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 12, marginBottom: 40 }}>
                   <Link href="/contact"
-                    className="inline-flex items-center gap-2 font-bold text-white rounded-xl transition-all duration-200"
-                    style={{ background: 'linear-gradient(135deg, #1E40AF, #2563EB)', padding: '14px 28px', fontSize: '14px', boxShadow: '0 8px 24px rgba(30,64,175,0.3)', textDecoration: 'none' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
-                  >
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'linear-gradient(135deg,#1E40AF,#2563EB)', color: '#fff', padding: '14px 28px', borderRadius: 14, fontSize: 14, fontWeight: 700, textDecoration: 'none', boxShadow: '0 8px 24px rgba(30,64,175,0.32)' }}>
                     Enquire Now
-                    <BadgeCheck className="w-4 h-4" />
+                    <BadgeCheck style={{ width: 16, height: 16 }} />
                   </Link>
                   <Link href="/courses"
-                    className="inline-flex items-center gap-2 font-semibold rounded-xl transition-all duration-200"
-                    style={{ border: '1.5px solid #E2E8F0', color: '#0F172A', padding: '14px 28px', fontSize: '14px', background: 'white', textDecoration: 'none' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#1E40AF'; (e.currentTarget as HTMLAnchorElement).style.color = '#1E40AF' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = '#E2E8F0'; (e.currentTarget as HTMLAnchorElement).style.color = '#0F172A' }}
-                  >
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1.5px solid #BFDBFE', color: '#1D4ED8', padding: '14px 28px', borderRadius: 14, fontSize: 14, fontWeight: 600, textDecoration: 'none', background: '#EFF6FF' }}>
                     View Courses
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight style={{ width: 16, height: 16 }} />
                   </Link>
+                </div>
+
+                {/* mini trust row */}
+                <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '10px 24px', paddingTop: 24, borderTop: '1px solid #F1F5F9' }}>
+                  {[
+                    { v: '5,000+', l: 'Graduates' },
+                    { v: '95%', l: 'Placement' },
+                    { v: '10+ Yrs', l: 'Experience' },
+                  ].map(({ v, l }) => (
+                    <div key={l} style={{ display: 'flex', alignItems: 'baseline', gap: 5 }}>
+                      <span style={{ fontSize: 20, fontWeight: 900, color: '#1E40AF', letterSpacing: '-0.03em' }}>{v}</span>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.1em' }}>{l}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* right — dark panel */}
-              <div className="relative overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #0F172A, #1E40AF)', padding: '40px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div className="absolute top-0 right-0 pointer-events-none"
-                  style={{ width: 240, height: 240, background: 'rgba(255,255,255,0.06)', borderRadius: '50%', transform: 'translate(30%,-30%)' }} />
-                <p style={{ fontSize: '13px', fontWeight: 700, color: '#93C5FD', textTransform: 'uppercase', letterSpacing: '0.16em', marginBottom: '24px' }}>
-                  What you get
-                </p>
-                <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-                  {['Dedicated admissions counselor', 'Course fee & EMI details', 'Batch schedule & timings', 'Syllabus walkthrough', 'Placement track record'].map((item) => (
-                    <li key={item} className="flex items-center gap-3" style={{ marginBottom: '14px' }}>
-                      <div className="flex items-center justify-center w-5 h-5 rounded-full shrink-0"
-                        style={{ background: 'rgba(96,165,250,0.2)', color: '#60A5FA' }}>
-                        <Check className="w-3 h-3" />
+              {/* ── Right: What You Get ── */}
+              <div style={{ background: 'linear-gradient(145deg,#EFF6FF 0%,#F5F3FF 100%)', borderLeft: '1px solid #E2E8F0', padding: '64px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#fff', border: '1px solid #BFDBFE', borderRadius: 100, padding: '5px 14px', marginBottom: 28, alignSelf: 'flex-start' as const }}>
+                  <Sparkles style={{ width: 12, height: 12, color: '#2563EB' }} />
+                  <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase' as const, color: '#1D4ED8' }}>What You Get</span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {[
+                    { icon: Users,          text: 'Dedicated admissions counselor',  color: '#1D4ED8', bg: '#EFF6FF' },
+                    { icon: IndianRupee,    text: 'Course fee & EMI details',         color: '#059669', bg: '#F0FDF4' },
+                    { icon: CalendarDays,  text: 'Batch schedule & timings',         color: '#7C3AED', bg: '#F5F3FF' },
+                    { icon: BookOpenCheck,  text: 'Syllabus walkthrough',             color: '#D97706', bg: '#FFFBEB' },
+                    { icon: TrendingUp,     text: 'Placement track record',           color: '#0891B2', bg: '#ECFEFF' },
+                  ].map(({ icon: Icon, text, color, bg }) => (
+                    <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#fff', borderRadius: 14, padding: '14px 18px', border: '1px solid #E8EDF5', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <div style={{ width: 38, height: 38, borderRadius: 11, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Icon style={{ width: 17, height: 17, color }} />
                       </div>
-                      <span style={{ fontSize: '14px', color: '#CBD5E1' }}>{item}</span>
-                    </li>
+                      <span style={{ fontSize: 14, fontWeight: 600, color: '#1E293B' }}>{text}</span>
+                      <div style={{ marginLeft: 'auto', width: 20, height: 20, borderRadius: '50%', background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Check style={{ width: 11, height: 11, color }} />
+                      </div>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
+
             </div>
           </div>
         </div>
+
+        <style>{`
+          @media (max-width: 900px) {
+            .cta-grid { grid-template-columns: 1fr !important; }
+            .cta-grid > div { padding: 40px 28px !important; border-left: none !important; border-top: 1px solid #E2E8F0 !important; }
+          }
+        `}</style>
       </section>
+
+      {/* TESTIMONIALS */}
+      {testimonials.length > 0 && (
+        <section style={{ background: '#F8FAFC', padding: '80px 0', borderTop: '1px solid #E2E8F0' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', maxWidth: 620, margin: '0 auto 52px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 16px', borderRadius: 50, background: '#FFFBEB', border: '1px solid #FDE68A', color: '#D97706', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase' as const, marginBottom: 18 }}>
+                <Award style={{ width: 11, height: 11, color: '#D97706' }} /> Alumni Reviews
+              </div>
+              <h2 style={{ fontSize: 'clamp(26px,3vw,40px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 14px' }}>
+                What Our Students{' '}
+                <span style={{ background: 'linear-gradient(120deg,#1D4ED8,#2563EB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Say
+                </span>
+              </h2>
+              <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
+                Real stories from HR professionals and career switchers who trained with us.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 22 }}>
+              {testimonials.map((t, i) => {
+                const tColors = [
+                  { border: '#BFDBFE', badge: '#EFF6FF', accent: '#1D4ED8' },
+                  { border: '#BBF7D0', badge: '#F0FDF4', accent: '#059669' },
+                  { border: '#DDD6FE', badge: '#F5F3FF', accent: '#7C3AED' },
+                  { border: '#FDE68A', badge: '#FFFBEB', accent: '#D97706' },
+                ]
+                const c = tColors[i % tColors.length]
+                const name = t.author || 'Alumni'
+                const role = t.title || 'Student'
+                const imgSrc = t.image ? (t.image.startsWith('http') ? t.image : `/${t.image.replace(/^\/+/, '')}`) : null
+                const initials = name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
+                return (
+                  <div key={t.id} style={{ background: '#fff', border: `1.5px solid ${c.border}`, borderRadius: 20, padding: '26px 24px', display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 2px 12px rgba(15,23,42,.05)' }}>
+                    <div style={{ display: 'flex', gap: 3 }}>
+                      {[...Array(5)].map((_, si) => (
+                        <span key={si} style={{ fontSize: 14, color: si < (t.rating ?? 5) ? '#F59E0B' : '#E2E8F0' }}>★</span>
+                      ))}
+                    </div>
+                    <p style={{ fontSize: 14, color: '#334155', lineHeight: 1.8, fontStyle: 'italic', flex: 1, margin: 0 }}>
+                      &ldquo;{t.description}&rdquo;
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 11, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
+                      {imgSrc ? (
+                        <img src={imgSrc} alt={name} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' as const, border: `2px solid ${c.border}` }} />
+                      ) : (
+                        <div style={{ width: 42, height: 42, borderRadius: '50%', background: c.badge, border: `2px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: c.accent }}>{initials}</span>
+                        </div>
+                      )}
+                      <div>
+                        <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', margin: 0, lineHeight: 1.3 }}>{name}</p>
+                        <p style={{ fontSize: 12, color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>{role}</p>
+                      </div>
+                      <div style={{ marginLeft: 'auto', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 50, padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <CheckCircle2 style={{ width: 10, height: 10, color: '#059669' }} />
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', textTransform: 'uppercase' as const, letterSpacing: '.1em' }}>Verified</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: 40 }}>
+              <Link href="/testimonials" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EFF6FF', border: '1.5px solid #BFDBFE', color: '#1D4ED8', padding: '11px 24px', borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
+                View All Reviews <ArrowRight style={{ width: 15, height: 15 }} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }

@@ -117,8 +117,8 @@ function ViewAllBtn({ href }: { href: string }) {
         transition: 'background 120ms',
         whiteSpace: 'nowrap',
       }}
-      onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = '#eff6ff' }}
-      onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'transparent' }}
+
+
     >
       View all <ArrowUpRight size={12} />
     </Link>
@@ -325,14 +325,8 @@ export default function AdminDashboard() {
                         cursor: 'pointer',
                         transition: 'box-shadow 180ms, transform 180ms',
                       }}
-                      onMouseEnter={e => {
-                        (e.currentTarget as HTMLDivElement).style.boxShadow = C.shadowLg
-                        ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(-2px)'
-                      }}
-                      onMouseLeave={e => {
-                        (e.currentTarget as HTMLDivElement).style.boxShadow = C.shadow
-                        ;(e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'
-                      }}
+
+
                     >
                       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
                         <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.textSoft }}>
@@ -381,8 +375,8 @@ export default function AdminDashboard() {
                   {stats.recent.candidates.map(c => (
                     <tr key={c.id}
                       style={{ transition: 'background 120ms' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = '#fafbfd' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
+
+
                     >
                       <td style={TD_STYLE}>
                         <p style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{c.name}</p>
@@ -438,8 +432,8 @@ export default function AdminDashboard() {
                   {stats.recent.courseLeads.map(l => (
                     <tr key={l.id}
                       style={{ transition: 'background 120ms' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.background = '#fafbfd' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.background = 'transparent' }}
+
+
                     >
                       <td style={{ ...TD_STYLE, fontWeight: 600, color: C.text }}>
                         {l.firstName}{l.lastName ? ` ${l.lastName}` : ''}
@@ -475,14 +469,8 @@ export default function AdminDashboard() {
                     border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
                     transition: 'border-color 120ms, box-shadow 120ms',
                   }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLDivElement).style.borderColor = '#dbeafe'
-                      ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 8px rgba(37,99,235,0.07)'
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLDivElement).style.borderColor = C.borderSoft
-                      ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
-                    }}
+
+
                   >
                     <div style={{
                       width: 40, height: 40, borderRadius: 12, flexShrink: 0,
@@ -530,14 +518,8 @@ export default function AdminDashboard() {
                     border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
                     transition: 'border-color 120ms, box-shadow 120ms',
                   }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLDivElement).style.borderColor = '#e0e7ff'
-                      ;(e.currentTarget as HTMLDivElement).style.boxShadow = '0 2px 8px rgba(79,70,229,0.07)'
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLDivElement).style.borderColor = C.borderSoft
-                      ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
-                    }}
+
+
                   >
                     <div style={{
                       width: 40, height: 40, borderRadius: 12, flexShrink: 0,
@@ -595,18 +577,8 @@ export default function AdminDashboard() {
                   textDecoration: 'none',
                   transition: 'border-color 150ms, box-shadow 150ms, background 150ms',
                 }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLAnchorElement
-                  el.style.borderColor = item.color + '44'
-                  el.style.background = item.bg
-                  el.style.boxShadow = C.shadowMd
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLAnchorElement
-                  el.style.borderColor = C.borderSoft
-                  el.style.background = '#fafbfd'
-                  el.style.boxShadow = 'none'
-                }}
+
+
               >
                 <div style={{
                   width: 38, height: 38, borderRadius: 10, flexShrink: 0,

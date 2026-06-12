@@ -122,12 +122,12 @@ export default function QuestionDetailClient({ question }: Props) {
           {/* Breadcrumb */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '20px', fontSize: '12px', fontWeight: 600 }}>
             <Link href="/" style={{ color: '#64748B', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#64748B')}>Home</Link>
+
+>Home</Link>
             <ChevronRight style={{ width: 12, height: 12, color: '#475569' }} />
             <Link href="/community" style={{ color: '#64748B', textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#64748B')}>Community</Link>
+
+>Community</Link>
             <ChevronRight style={{ width: 12, height: 12, color: '#475569' }} />
             <span style={{ color: '#94A3B8' }}>Discussion</span>
           </div>
@@ -138,8 +138,8 @@ export default function QuestionDetailClient({ question }: Props) {
             color: '#94A3B8', textDecoration: 'none', fontSize: '13px',
             fontWeight: 600, marginBottom: '24px', transition: 'color 0.2s',
           }}
-            onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}
+
+
           >
             <ArrowLeft style={{ width: 14, height: 14 }} />
             Back to Community
@@ -313,8 +313,8 @@ export default function QuestionDetailClient({ question }: Props) {
                         boxShadow: loading ? 'none' : '0 4px 16px rgba(30,64,175,0.3)',
                         transition: 'all 0.2s ease',
                       }}
-                      onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-1px)' } }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+
+
                     >
                       <Send style={{ width: 14, height: 14 }} />
                       {loading ? 'Posting...' : 'Post Answer'}
@@ -407,8 +407,8 @@ export default function QuestionDetailClient({ question }: Props) {
                   textDecoration: 'none', boxShadow: '0 4px 16px rgba(30,64,175,0.4)',
                   transition: 'all 0.2s',
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+
+
                 >
                   Login to Answer
                 </Link>
@@ -418,8 +418,8 @@ export default function QuestionDetailClient({ question }: Props) {
                   textDecoration: 'none', marginTop: '10px',
                   transition: 'color 0.2s',
                 }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#64748B')}
+
+
                 >
                   ← Back to all discussions
                 </Link>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ import {
 
 type Tab = 'login' | 'signup' | 'forgot'
 
-/* ─── Shared field styles ──────────────────────────────────── */
+/* â"€â"€â"€ Shared field styles â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const fieldLabel: React.CSSProperties = {
   display: 'block',
   fontSize: 11,
@@ -40,7 +40,7 @@ const inputIcon: React.CSSProperties = {
   flexShrink: 0,
 }
 
-/* ─── Trust sidebar data ───────────────────────────────────── */
+/* â"€â"€â"€ Trust sidebar data â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const trustPoints = [
   { icon: Users,        val: '5,000+', lbl: 'Trained professionals',  color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
   { icon: Award,        val: '95%',    lbl: 'Placement success rate',  color: '#059669', bg: '#F0FDF4', border: '#BBF7D0' },
@@ -55,9 +55,9 @@ const courseOptions = [
   { value: 'corporate',        label: 'HR Corporate Training Course' },
 ]
 
-/* ══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    ROOT COMPONENT
-══════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function CandidateLoginClient() {
   const [tab, setTab] = useState<Tab>('login')
 
@@ -138,9 +138,9 @@ export default function CandidateLoginClient() {
         }
       `}</style>
 
-      {/* ══════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           HERO / HEADER BAND
-      ══════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div style={{
         background: 'linear-gradient(130deg,#060D1C 0%,#0B1629 40%,#0E1F3A 72%,#071120 100%)',
         position: 'relative', overflow: 'hidden',
@@ -172,14 +172,14 @@ export default function CandidateLoginClient() {
         <div aria-hidden className="absolute bottom-0 left-0 right-0" style={{ height: 44, background: '#F1F5F9', clipPath: 'ellipse(55% 100% at 50% 100%)', zIndex: 10 }} />
       </div>
 
-      {/* ══════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           MAIN CONTENT
-      ══════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#F1F5F9', padding: '56px 0 80px' }}>
         <div className="container">
           <div className="cl-outer-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 320px', gap: 28, alignItems: 'start' }}>
 
-            {/* ── FORM CARD ── */}
+            {/* â"€â"€ FORM CARD â"€â"€ */}
             <div style={{ background: '#fff', borderRadius: 22, border: '1.5px solid #E2E8F0', boxShadow: '0 8px 40px rgba(15,23,42,.09)', overflow: 'hidden' }}>
 
               {/* Tab strip */}
@@ -207,7 +207,7 @@ export default function CandidateLoginClient() {
               </div>
             </div>
 
-            {/* ── SIDEBAR ── */}
+            {/* â"€â"€ SIDEBAR â"€â"€ */}
             <div className="cl-sidebar" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
               {/* Why join card */}
@@ -278,11 +278,11 @@ export default function CandidateLoginClient() {
               <div style={{ background: '#fff', borderRadius: 14, border: '1.5px solid #E2E8F0', padding: '18px 18px', boxShadow: '0 2px 12px rgba(15,23,42,.05)' }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', margin: '0 0 6px' }}>Need help registering?</p>
                 <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.65, margin: '0 0 12px' }}>Our team is available to guide you through the registration process.</p>
-                <a href="https://wa.me/919975048884" target="_blank" rel="noopener noreferrer" style={{
+                <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" style={{
                   display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 700,
                   color: '#059669', textDecoration: 'none',
                 }}>
-                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>💬</span>
+                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>ðŸ’¬</span>
                   WhatsApp Us
                 </a>
               </div>
@@ -294,9 +294,9 @@ export default function CandidateLoginClient() {
   )
 }
 
-/* ══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    LOGIN FORM
-══════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function LoginForm({ onForgot }: { onForgot: () => void }) {
   const [form, setForm] = useState({ email: '', password: '' })
   const [showPass, setShowPass] = useState(false)
@@ -387,7 +387,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       <div style={{ textAlign: 'center', background: '#F8FAFC', border: '1.5px solid #E2E8F0', borderRadius: 11, padding: '14px 16px' }}>
         <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 4px' }}>Don&apos;t have an account yet?</p>
         <p style={{ fontSize: 13, fontWeight: 700, color: '#1D4ED8', margin: 0, cursor: 'pointer' }}
-          onClick={() => { /* trigger tab switch via parent — label acts as hint */ }}>
+          onClick={() => { /* trigger tab switch via parent "" label acts as hint */ }}>
           Switch to <strong style={{ color: '#1D4ED8' }}>Register Account</strong> tab above
         </p>
       </div>
@@ -395,9 +395,9 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
   )
 }
 
-/* ══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SIGNUP FORM
-══════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function SignupForm({ onSuccess }: { onSuccess: () => void }) {
   const [form, setForm] = useState({
     name: '', email: '', password: '', confirmPassword: '',
@@ -444,7 +444,7 @@ function SignupForm({ onSuccess }: { onSuccess: () => void }) {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
-        {/* Row 1 — Name + Email */}
+        {/* Row 1 "" Name + Email */}
         <div className="cl-form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <label style={fieldLabel}>Full Name *</label>
@@ -464,7 +464,7 @@ function SignupForm({ onSuccess }: { onSuccess: () => void }) {
           </div>
         </div>
 
-        {/* Row 2 — Password + Confirm */}
+        {/* Row 2 "" Password + Confirm */}
         <div className="cl-form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <label style={fieldLabel}>Password *</label>
@@ -499,7 +499,7 @@ function SignupForm({ onSuccess }: { onSuccess: () => void }) {
           <div style={{ flex: 1, height: 1, background: '#F1F5F9' }} />
         </div>
 
-        {/* Row 3 — DOB + Gender */}
+        {/* Row 3 "" DOB + Gender */}
         <div className="cl-form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <label style={fieldLabel}>Date of Birth</label>
@@ -524,7 +524,7 @@ function SignupForm({ onSuccess }: { onSuccess: () => void }) {
           </div>
         </div>
 
-        {/* Row 4 — Phone + City */}
+        {/* Row 4 "" Phone + City */}
         <div className="cl-form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <div>
             <label style={fieldLabel}>Phone Number</label>
@@ -588,9 +588,9 @@ function SignupForm({ onSuccess }: { onSuccess: () => void }) {
   )
 }
 
-/* ══════════════════════════════════════════════════════════════
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    FORGOT PASSWORD
-══════════════════════════════════════════════════════════════ */
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -628,7 +628,7 @@ function ForgotPasswordForm({ onBack }: { onBack: () => void }) {
       {sent ? (
         <div style={{ textAlign: 'center', padding: '32px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
           <div style={{ width: 64, height: 64, borderRadius: '50%', background: '#EFF6FF', border: '2px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28 }}>
-            📧
+            ðŸ"§
           </div>
           <div>
             <p style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: '0 0 6px' }}>Check your inbox</p>

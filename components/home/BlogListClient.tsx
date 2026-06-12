@@ -268,8 +268,8 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
                             <div style={{ width: 3, height: 'auto', minHeight: 36, borderRadius: 2, background: accent.color, flexShrink: 0, marginTop: 3 }} />
                             <h2 style={{ fontSize: isFeatured ? 'clamp(19px,1.9vw,24px)' : 'clamp(16px,1.6vw,20px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.25, letterSpacing: '-.022em', margin: 0 }}>
                               <Link href={`/blogs/${blog.slug}`} style={{ color: 'inherit', textDecoration: 'none', transition: 'color .18s' }}
-                                onMouseEnter={e => (e.currentTarget.style.color = accent.color)}
-                                onMouseLeave={e => (e.currentTarget.style.color = '#0F172A')}>
+
+>
                                 {blog.title}
                               </Link>
                             </h2>
@@ -398,8 +398,8 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
                     color: '#0F172A', fontWeight: 800, fontSize: 13, textDecoration: 'none',
                     transition: 'background .2s',
                   }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#FCD34D')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#fff')}>
+
+>
                     View All Programs <ArrowRight style={{ width: 14, height: 14 }} />
                   </Link>
                 </div>

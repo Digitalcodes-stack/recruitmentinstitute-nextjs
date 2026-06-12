@@ -167,8 +167,8 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                   borderBottom: idx < filtered.length - 1 ? '1px solid #f8fafc' : 'none',
                   transition: 'background 0.12s',
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = '#fafbfc' }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+
+
               >
                 {/* Name */}
                 <div style={{ paddingRight: 16, minWidth: 0 }}>
@@ -221,8 +221,8 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                       onClick={() => handleApprove(c.id)}
                       title="Approve"
                       style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e8ecf0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#94a3b8', transition: 'all 0.15s' }}
-                      onMouseEnter={(e) => { const el = e.currentTarget; el.style.color = '#059669'; el.style.background = '#f0fdf4'; el.style.borderColor = '#bbf7d0' }}
-                      onMouseLeave={(e) => { const el = e.currentTarget; el.style.color = '#94a3b8'; el.style.background = '#fff'; el.style.borderColor = '#e8ecf0' }}
+
+
                     >
                       <CheckCircle style={{ width: 13, height: 13 }} />
                     </button>
@@ -231,8 +231,8 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                     onClick={() => handleReject(c.id)}
                     title="Remove"
                     style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e8ecf0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#94a3b8', transition: 'all 0.15s' }}
-                    onMouseEnter={(e) => { const el = e.currentTarget; el.style.color = '#e11d48'; el.style.background = '#fff1f2'; el.style.borderColor = '#fecdd3' }}
-                    onMouseLeave={(e) => { const el = e.currentTarget; el.style.color = '#94a3b8'; el.style.background = '#fff'; el.style.borderColor = '#e8ecf0' }}
+
+
                   >
                     <XCircle style={{ width: 13, height: 13 }} />
                   </button>

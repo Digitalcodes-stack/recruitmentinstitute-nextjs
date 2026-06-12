@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
@@ -15,7 +15,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Recruitment Institute — HR & Recruitment Training in Pune, India',
+    default: 'Recruitment Institute "" HR & Recruitment Training in Pune, India',
     template: '%s | Recruitment Institute',
   },
   description:
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: BASE_URL,
     siteName: 'Recruitment Institute',
-    title: 'Recruitment Institute — HR & Recruitment Training in Pune, India',
+    title: 'Recruitment Institute "" HR & Recruitment Training in Pune, India',
     description:
       'India\'s #1 recruitment training institute. Expert-led HR courses, end-to-end recruitment training, entrepreneurship programs and corporate upskilling.',
     images: [
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/assets/images/og-default.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Recruitment Institute — HR Training in Pune',
+        alt: 'Recruitment Institute "" HR Training in Pune',
       },
     ],
   },
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@recruitmentinstitute',
     creator: '@recruitmentinstitute',
-    title: 'Recruitment Institute — HR & Recruitment Training',
+    title: 'Recruitment Institute "" HR & Recruitment Training',
     description:
       'India\'s #1 recruitment training institute. Expert-led HR courses in Pune.',
     images: [`${BASE_URL}/assets/images/og-default.jpg`],
@@ -114,20 +114,20 @@ const organizationSchema = {
       contactPoint: [
         {
           '@type': 'ContactPoint',
-          telephone: '+91-9975048884',
+          telephone: '+91-7385204165',
           contactType: 'customer service',
           areaServed: 'IN',
           availableLanguage: ['English', 'Hindi', 'Marathi'],
         },
         {
           '@type': 'ContactPoint',
-          telephone: '+91-9975048884',
+          telephone: '+91-7385204165',
           contactType: 'sales',
           areaServed: 'IN',
         },
       ],
       email: 'support@recruitmentinstitute.in',
-      telephone: '+91-9975048884',
+      telephone: '+91-7385204165',
       sameAs: [
         'https://www.facebook.com/recruitmentinstitute',
         'https://www.linkedin.com/company/recruitment-institute',
@@ -164,7 +164,7 @@ const organizationSchema = {
         addressRegion: 'Maharashtra',
         addressCountry: 'IN',
       },
-      telephone: '+91-9975048884',
+      telephone: '+91-7385204165',
       email: 'support@recruitmentinstitute.in',
     },
     {
@@ -174,7 +174,7 @@ const organizationSchema = {
       image: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
       '@context': 'https://schema.org',
       url: BASE_URL,
-      telephone: '+91-9975048884',
+      telephone: '+91-7385204165',
       priceRange: '₹₹',
       address: {
         '@type': 'PostalAddress',
@@ -229,7 +229,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="geo.placename" content="Pune" />
         <meta name="geo.position" content="18.5204;73.8567" />
         <meta name="ICBM" content="18.5204, 73.8567" />
-        {/* Google Analytics 4 — replace G-XXXXXXXXXX with your Measurement ID */}
+        {/* Google Analytics 4 "" replace G-XXXXXXXXXX with your Measurement ID */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
             <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, Loader2 } from 'lucide-react'
+import ImageUploadField from './ImageUploadField'
 
 interface Service {
   id: number
@@ -117,16 +118,15 @@ export default function ServiceModal({ service, onClose }: Props) {
               />
             </div>
 
-            {/* Image URL */}
-            <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Image URL</label>
-              <input
-                style={inputStyle}
-                value={form.image}
-                onChange={(e) => set('image', e.target.value)}
-                placeholder="/assets/images/..."
-              />
-            </div>
+            {/* Image */}
+            <ImageUploadField
+              label="Image"
+              value={form.image}
+              onChange={url => set('image', url)}
+              folder="services"
+              previewShape="rect"
+              placeholder="Paste URL or click Browse…"
+            />
 
             {/* Sort Order + Status row */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

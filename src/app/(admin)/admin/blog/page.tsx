@@ -10,6 +10,9 @@ export default async function AdminBlogPage() {
   const blogs = await prisma.blog.findMany({
     orderBy: { createdAt: 'desc' },
     take: 50,
+    include: {
+      _count: { select: { blogFaqs: true } },
+    },
   })
 
   return <AdminBlogList blogs={blogs} />

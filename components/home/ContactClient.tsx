@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -34,7 +34,7 @@ export default function ContactClient() {
 
   return (
     <>
-      {/* ── Hero / Breadcrumb ── */}
+      {/* â"€â"€ Hero / Breadcrumb â"€â"€ */}
       <div
         className="relative text-white overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1a2744 60%, #0F172A 100%)', paddingTop: '72px', paddingBottom: '80px' }}
@@ -50,8 +50,8 @@ export default function ContactClient() {
           {/* breadcrumb */}
           <div className="flex items-center gap-2 mb-6" style={{ fontSize: '12px', color: '#94A3B8' }}>
             <Link href="/"
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#60A5FA' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#94A3B8' }}
+
+
             >Home</Link>
             <ChevronRight className="w-3 h-3" />
             <span style={{ color: '#CBD5E1' }}>Contact Us</span>
@@ -85,12 +85,12 @@ export default function ContactClient() {
         <div className="absolute bottom-0 left-0 right-0 bg-white" style={{ height: '48px', clipPath: 'ellipse(55% 100% at 50% 100%)' }} />
       </div>
 
-      {/* ── Main Content ── */}
+      {/* â"€â"€ Main Content â"€â"€ */}
       <section style={{ padding: '80px 0', background: '#F8FAFC' }}>
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
 
-            {/* ── Contact Form ── */}
+            {/* â"€â"€ Contact Form â"€â"€ */}
             <div className="lg:col-span-7">
               <div className="bg-white rounded-3xl overflow-hidden"
                 style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.08)', border: '1px solid #F1F5F9' }}>
@@ -172,8 +172,8 @@ export default function ContactClient() {
                       opacity: loading ? 0.75 : 1,
                       border: 'none',
                     }}
-                    onMouseEnter={e => { if (!loading) (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+
+
                   >
                     <Send className="w-4 h-4" />
                     {loading ? 'Sending...' : 'Send Message'}
@@ -186,7 +186,7 @@ export default function ContactClient() {
               </div>
             </div>
 
-            {/* ── Sidebar ── */}
+            {/* â"€â"€ Sidebar â"€â"€ */}
             <div className="lg:col-span-5 flex flex-col gap-6">
 
               {/* Contact Info Card */}
@@ -199,7 +199,7 @@ export default function ContactClient() {
 
                 <div style={{ padding: '8px 0' }}>
                   {[
-                    { icon: <Phone className="w-4 h-4" />, label: 'Phone', value: '+91 9975048884', href: 'tel:+919975048884', iconBg: '#EFF6FF', iconColor: '#1E40AF' },
+                    { icon: <Phone className="w-4 h-4" />, label: 'Phone', value: '+91 7385204165', href: 'tel:+917385204165', iconBg: '#EFF6FF', iconColor: '#1E40AF' },
                     { icon: <Mail className="w-4 h-4" />, label: 'General Enquiry', value: 'support@recruitmentinstitute.in', href: 'mailto:support@recruitmentinstitute.in', iconBg: '#EFF6FF', iconColor: '#3B82F6' },
                     { icon: <Mail className="w-4 h-4" />, label: 'Admissions Desk', value: 'admissions@recruitmentinstitute.in', href: 'mailto:admissions@recruitmentinstitute.in', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
                     { icon: <Clock className="w-4 h-4" />, label: 'Working Hours', value: 'Mon–Sat: 9:00 AM – 7:00 PM', href: undefined, iconBg: '#F0FDF4', iconColor: '#16A34A' },
@@ -219,8 +219,8 @@ export default function ContactClient() {
                         {item.href ? (
                           <a href={item.href}
                             style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', textDecoration: 'none' }}
-                            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#1E40AF' }}
-                            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#0F172A' }}
+
+
                           >{item.value}</a>
                         ) : (
                           <p style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A' }}>{item.value}</p>
@@ -271,13 +271,13 @@ export default function ContactClient() {
                         Message our team directly for batch enrollment, fees, and course queries.
                       </p>
                       <a
-                        href="https://wa.me/919975048884"
+                        href="https://wa.me/917385204165"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 font-bold rounded-xl transition-all"
                         style={{ background: 'white', color: '#059669', padding: '10px 20px', fontSize: '13px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)' }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+
+
                       >
                         Chat on WhatsApp →
                       </a>

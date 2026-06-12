@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+﻿import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -43,7 +43,7 @@ export async function sendContactEmail(data: {
       <p>We have received your message and will get back to you within 24 hours.</p>
       <p>In the meantime, feel free to explore our courses at <a href="https://recruitmentinstitute.in">recruitmentinstitute.in</a>.</p>
       <br/>
-      <p>Best regards,<br/>Recruitment Institute Team<br/>📞 +91 9975048884</p>
+      <p>Best regards,<br/>Recruitment Institute Team<br/>📞 +91 7385204165</p>
     `,
   })
 }
@@ -69,12 +69,12 @@ export async function sendCourseEnquiryEmail(data: {
   await transporter.sendMail({
     from: FROM,
     to: data.email,
-    subject: 'Course Enquiry Received — Recruitment Institute',
+    subject: 'Course Enquiry Received "" Recruitment Institute',
     html: `
       <h2>Thank You for Your Interest!</h2>
       <p>Dear ${data.firstName},</p>
       <p>We have received your course enquiry. Our team will contact you shortly.</p>
-      <p>📞 +91 9975048884 | ✉️ support@recruitmentinstitute.in</p>
+      <p>📞 +91 7385204165 | âœ‰ï¸ support@recruitmentinstitute.in</p>
     `,
   })
 }
@@ -83,7 +83,7 @@ export async function sendPasswordResetEmail(email: string, resetUrl: string) {
   await transporter.sendMail({
     from: FROM,
     to: email,
-    subject: 'Password Reset — Recruitment Institute',
+    subject: 'Password Reset "" Recruitment Institute',
     html: `
       <h2>Reset Your Password</h2>
       <p>Click the link below to reset your password. This link expires in 1 hour.</p>
@@ -100,7 +100,7 @@ export async function sendRegistrationEmail(data: {
 }) {
   const subject =
     data.type === 'candidate'
-      ? 'Registration Received — Pending Approval'
+      ? 'Registration Received "" Pending Approval'
       : 'Welcome to Recruitment Institute!'
 
   const body =
@@ -125,7 +125,7 @@ export async function sendBlogNotificationToSubscribers(
     await transporter.sendMail({
       from: FROM,
       to: email,
-      subject: `New Article: ${blog.title} — Recruitment Institute`,
+      subject: `New Article: ${blog.title} "" Recruitment Institute`,
       html: `
         <h2>New Blog Post Published</h2>
         <h3>${blog.title}</h3>

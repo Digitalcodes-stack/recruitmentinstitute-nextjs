@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
@@ -27,19 +27,19 @@ import {
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Student Membership — Unlock Exclusive HR Career Benefits | Recruitment Institute',
+  title: 'Student Membership "" Unlock Exclusive HR Career Benefits | Recruitment Institute',
   description:
     'Join the Recruitment Institute student membership program for exclusive access to premium resources, HR community, placement support, certification, knowledge base, and industry events.',
   alternates: { canonical: `${BASE_URL}/student-membership` },
   openGraph: {
-    title: 'Student Membership — Recruitment Institute',
+    title: 'Student Membership "" Recruitment Institute',
     description: 'Unlock exclusive HR career benefits. Join 5,000+ professionals in our student membership community.',
     url: `${BASE_URL}/student-membership`,
     type: 'website',
   },
 }
 
-/* ─── Benefit cards ────────────────────────────────────────── */
+/* â"€â"€â"€ Benefit cards â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const defaultBenefits = [
   {
     icon: BookOpen,
@@ -80,7 +80,7 @@ const defaultBenefits = [
   {
     icon: Lightbulb,
     title: 'Knowledge Base',
-    desc: 'Unlock a curated HR knowledge repository — articles, case studies, interview frameworks, and hiring playbooks.',
+    desc: 'Unlock a curated HR knowledge repository "" articles, case studies, interview frameworks, and hiring playbooks.',
     color: '#D97706',
     bg: '#FFFBEB',
     border: '#FDE68A',
@@ -97,7 +97,7 @@ const defaultBenefits = [
   },
 ]
 
-/* ─── Testimonials ─────────────────────────────────────────── */
+/* â"€â"€â"€ Testimonials â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const defaultTestimonials = [
   {
     name: 'Priya Sharma',
@@ -122,7 +122,7 @@ const defaultTestimonials = [
   },
 ]
 
-/* ─── Plans ────────────────────────────────────────────────── */
+/* â"€â"€â"€ Plans â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 const defaultPlans = [
   {
     name: 'Starter',
@@ -141,7 +141,7 @@ const defaultPlans = [
     name: 'Pro Member',
     price: '₹999',
     period: '/ month',
-    desc: 'The full membership experience — for serious HR professionals ready to accelerate.',
+    desc: 'The full membership experience "" for serious HR professionals ready to accelerate.',
     color: '#1D4ED8',
     bg: '#EFF6FF',
     border: '#1D4ED8',
@@ -154,7 +154,7 @@ const defaultPlans = [
     name: 'Annual',
     price: '₹7,999',
     period: '/ year',
-    desc: 'Best value — save 33% and unlock everything Pro has to offer for a full year.',
+    desc: 'Best value "" save 33% and unlock everything Pro has to offer for a full year.',
     color: '#059669',
     bg: '#F0FDF4',
     border: '#059669',
@@ -230,7 +230,7 @@ export default async function StudentMembershipPage() {
 
   return (
     <>
-      {/* ── CSS ── */}
+      {/* â"€â"€ CSS â"€â"€ */}
       <style>{`
         /* Breadcrumb */
         .sm-crumb { color: #94A3B8; text-decoration: none; font-size: 13px; font-weight: 500; transition: color .18s; }
@@ -347,9 +347,9 @@ export default async function StudentMembershipPage() {
         }
       `}</style>
 
-      {/* ══════════════════════════════════════════
-          HERO — dark navy, split layout
-      ══════════════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          HERO "" dark navy, split layout
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{
         background: 'linear-gradient(130deg,#060D1C 0%,#0B1629 40%,#0E1F3A 72%,#071120 100%)',
         position: 'relative', overflow: 'hidden',
@@ -410,7 +410,7 @@ export default async function StudentMembershipPage() {
 
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <Link href="/candidate-login" className="sm-hero-cta">
-                  Join Now — It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
+                  Join Now "" It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
                 <Link href="#benefits" className="sm-hero-ghost">
                   <PlayCircle style={{ width: 15, height: 15 }} /> See Benefits
@@ -418,16 +418,16 @@ export default async function StudentMembershipPage() {
               </div>
             </div>
 
-            {/* Right — visual card */}
+            {/* Right "" visual card */}
             <div className="sm-hero-right" style={{ position: 'relative' }}>
               <div aria-hidden style={{ position: 'absolute', inset: -18, borderRadius: 30, background: 'linear-gradient(135deg,rgba(29,78,216,.2),rgba(13,148,136,.12),rgba(245,158,11,.07))', filter: 'blur(2px)' }} />
               <div style={{ position: 'relative', borderRadius: 22, overflow: 'hidden', border: '1px solid rgba(255,255,255,.08)', boxShadow: '0 48px 110px rgba(0,0,0,.68)' }}>
 
                 {/* Photo */}
                 <div style={{ position: 'relative', height: 320, background: '#0B1629' }}>
-                  <Image src="/assets/images/banner/home15/banner-1.jpg" alt="HR students community" fill priority sizes="460px"
-                    style={{ objectFit: 'cover', objectPosition: 'top center' }} />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,transparent 35%,rgba(7,17,32,.95) 100%)' }} />
+                  <Image src="/assets/images/banner/home-students-banner.jpg" alt="HR students and recruitment community at Recruitment Institute" fill priority sizes="460px"
+                    style={{ objectFit: 'cover', objectPosition: 'center top' }} />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,rgba(6,13,28,.15) 0%,transparent 40%,rgba(7,17,32,.92) 100%)' }} />
                   {/* Live badge */}
                   <div style={{ position: 'absolute', top: 16, left: 16, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 14px', borderRadius: 50, background: 'rgba(29,78,216,.2)', border: '1px solid rgba(29,78,216,.45)', backdropFilter: 'blur(10px)' }}>
                     <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#60A5FA', boxShadow: '0 0 8px #60A5FA', display: 'block' }} />
@@ -437,6 +437,19 @@ export default async function StudentMembershipPage() {
                   <div style={{ position: 'absolute', top: 16, right: 16, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 13px', borderRadius: 50, background: 'rgba(255,255,255,.14)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.2)' }}>
                     <Users style={{ width: 12, height: 12, color: '#fff' }} />
                     <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>5,000+</span>
+                  </div>
+                  {/* Floating member avatars */}
+                  <div style={{ position: 'absolute', bottom: 20, left: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ display: 'flex' }}>
+                      {[1,2,3,4,5].map((i) => (
+                        <div key={i} style={{ width: 34, height: 34, borderRadius: '50%', border: '2px solid rgba(255,255,255,.8)', overflow: 'hidden', marginLeft: i > 1 ? -10 : 0, position: 'relative', flexShrink: 0 }}>
+                          <Image src={`/assets/images/team/style${i <= 3 ? 1 : 2}/${i <= 3 ? i : i - 3}.jpg`} alt="" fill sizes="34px" style={{ objectFit: 'cover' }} />
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(8px)', borderRadius: 50, padding: '4px 10px', border: '1px solid rgba(255,255,255,.15)' }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>+4,995 members</span>
+                    </div>
                   </div>
                 </div>
 
@@ -465,9 +478,9 @@ export default async function StudentMembershipPage() {
         <div aria-hidden className="absolute bottom-0 left-0 right-0" style={{ height: 54, background: '#F8FAFC', clipPath: 'ellipse(55% 100% at 50% 100%)', zIndex: 10 }} />
       </section>
 
-      {/* ══════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           TRUST STRIP
-      ══════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#F8FAFC', paddingTop: 64, paddingBottom: 0 }}>
         <div className="container">
           <div className="sm-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
@@ -490,9 +503,9 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           BENEFITS SECTION
-      ══════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section id="benefits" style={{ background: '#F8FAFC', padding: '80px 0 88px' }}>
         <div className="container">
 
@@ -506,11 +519,11 @@ export default async function StudentMembershipPage() {
               Student Membership Benefits
             </h2>
             <p style={{ fontSize: 17, color: '#64748B', lineHeight: 1.82, margin: 0 }}>
-              Become a member of Recruitment Institute and unlock exclusive benefits to accelerate your HR career — from day one.
+              Become a member of Recruitment Institute and unlock exclusive benefits to accelerate your HR career "" from day one.
             </p>
           </div>
 
-          {/* 3 × 2 benefit grid */}
+          {/* 3 Ã— 2 benefit grid */}
           <div className="sm-benefits-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22, marginBottom: 56 }}>
             {benefits.map((b) => {
               const Icon = b.icon
@@ -558,7 +571,7 @@ export default async function StudentMembershipPage() {
                 padding: '15px 34px', borderRadius: 11, textDecoration: 'none',
                 boxShadow: '0 8px 28px rgba(29,78,216,.42)',
               }}>
-                Join Now — Free <ArrowRight style={{ width: 16, height: 16 }} />
+                Join Now "" Free <ArrowRight style={{ width: 16, height: 16 }} />
               </Link>
               <Link href="/contact" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 9,
@@ -574,9 +587,9 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           MEMBERSHIP PLANS
-      ══════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#fff', padding: '88px 0 96px', borderTop: '1px solid #E2E8F0' }}>
         <div className="container">
 
@@ -646,9 +659,9 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           TESTIMONIALS
-      ══════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#F8FAFC', padding: '88px 0 96px' }}>
         <div className="container">
 
@@ -698,9 +711,9 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          HOW IT WORKS — 3 steps
-      ══════════════════════════════════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+          HOW IT WORKS "" 3 steps
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#fff', padding: '80px 0 88px', borderTop: '1px solid #E2E8F0' }}>
         <div className="container">
           <div style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto 56px' }}>
@@ -738,9 +751,9 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           BOTTOM CTA BANNER
-      ══════════════════════════════════════════ */}
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#F8FAFC', padding: '0 0 88px' }}>
         <div className="container">
           <div style={{ borderRadius: 24, background: 'linear-gradient(130deg,#0B1629 0%,#0F172A 50%,#0D1F3A 100%)', border: '1px solid rgba(255,255,255,.07)', overflow: 'hidden', position: 'relative' }}>
@@ -767,7 +780,7 @@ export default async function StudentMembershipPage() {
                 <Link href="/candidate-login" className="sm-cta-red">
                   Join Free Now <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
-                <a href="https://wa.me/919975048884" target="_blank" rel="noopener noreferrer" className="sm-cta-outline">
+                <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="sm-cta-outline">
                   <MessageCircle style={{ width: 15, height: 15 }} /> WhatsApp Us
                 </a>
               </div>

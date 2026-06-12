@@ -157,24 +157,36 @@ model CourseReview {
 }
 
 model Blog {
-  id              Int      @id @default(autoincrement()) @map("blog_id")
-  title           String   @map("blog_title")
-  slug            String   @unique @map("title_url")
-  content         String   @map("blog_desc")
-  publishedAt     String?  @map("blog_date")
-  author          String?  @map("blog_by")
-  metaTitle       String?  @map("meta_title")
-  metaKeywords    String?  @map("meta_keyword")
-  metaDescription String?  @map("meta_desc")
-  canonicalUrl    String?  @map("meta_canonical_href")
-  featuredImage   String?  @map("item_image")
-  isPublished     Boolean  @default(true) @map("status")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
-  customScript    String?  @map("custom_script")
-  schemaScript    String?  @map("schema_script")
+  id              Int       @id @default(autoincrement()) @map("blog_id")
+  title           String    @map("blog_title")
+  slug            String    @unique @map("title_url")
+  content         String    @map("blog_desc")
+  publishedAt     String?   @map("blog_date")
+  author          String?   @map("blog_by")
+  metaTitle       String?   @map("meta_title")
+  metaKeywords    String?   @map("meta_keyword")
+  metaDescription String?   @map("meta_desc")
+  canonicalUrl    String?   @map("meta_canonical_href")
+  featuredImage   String?   @map("item_image")
+  isPublished     Boolean   @default(true) @map("status")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  customScript    String?   @map("custom_script")
+  schemaScript    String?   @map("schema_script")
+  blogFaqs        BlogFaq[]
 
   @@map("blog")
+}
+
+model BlogFaq {
+  id       Int    @id @default(autoincrement())
+  blogId   Int    @map("blog_id")
+  question String
+  answer   String
+  sortOrder Int   @default(0) @map("sort_order")
+  blog     Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+
+  @@map("blog_faqs")
 }
 
 model Faq {
@@ -324,6 +336,19 @@ model Testimonial {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("testimonials")
+}
+
+model ClientLogo {
+  id        Int      @id @default(autoincrement())
+  name      String
+  logo      String
+  website   String?
+  isActive  Boolean  @default(true) @map("status")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("client_logos")
 }
 
 model News {

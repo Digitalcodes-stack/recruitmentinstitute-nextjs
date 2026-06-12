@@ -83,8 +83,8 @@ export default function EntityAdminTable({
               borderBottom: idx < rows.length - 1 ? '1px solid #f8fafc' : 'none',
               transition: 'background 0.12s',
             }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.background = '#fafbfc' }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
+
+
           >
             {/* Name */}
             <div style={{ paddingRight: 16, minWidth: 0 }}>
@@ -140,14 +140,8 @@ export default function EntityAdminTable({
                     ? { background: '#f1f5f9', color: '#374151' }
                     : { background: '#2563eb', color: '#fff', boxShadow: '0 2px 8px rgba(37,99,235,0.25)' }),
                 }}
-                onMouseEnter={(e) => {
-                  if (row.isActive) { e.currentTarget.style.background = '#e2e8f0' }
-                  else { e.currentTarget.style.background = '#1d4ed8' }
-                }}
-                onMouseLeave={(e) => {
-                  if (row.isActive) { e.currentTarget.style.background = '#f1f5f9' }
-                  else { e.currentTarget.style.background = '#2563eb' }
-                }}
+
+
               >
                 {row.isActive ? 'Suspend' : 'Activate'}
               </button>

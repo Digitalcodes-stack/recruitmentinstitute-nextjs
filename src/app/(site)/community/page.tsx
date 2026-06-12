@@ -20,7 +20,7 @@ export default async function CommunityPage({ searchParams }: Props) {
   const params = await searchParams
   const page = parseInt(params.page || '1')
   const query = params.q || ''
-  const limit = 4
+  const limit = 10
 
   const where = query
     ? { question: { contains: query, mode: 'insensitive' as const } }

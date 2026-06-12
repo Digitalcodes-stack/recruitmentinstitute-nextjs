@@ -23,14 +23,8 @@ export default function MembershipActions({ id, isActive }: { id: number; isActi
           ? { background: '#f1f5f9', color: '#374151' }
           : { background: '#2563eb', color: '#fff', boxShadow: '0 2px 8px rgba(37,99,235,0.25)' }),
       }}
-      onMouseEnter={(e) => {
-        if (isActive) { e.currentTarget.style.background = '#e2e8f0' }
-        else { e.currentTarget.style.background = '#1d4ed8' }
-      }}
-      onMouseLeave={(e) => {
-        if (isActive) { e.currentTarget.style.background = '#f1f5f9' }
-        else { e.currentTarget.style.background = '#2563eb' }
-      }}
+
+
     >
       {isActive ? 'Suspend' : 'Activate'}
     </button>

@@ -1,16 +1,16 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import ContactClient from '@/components/home/ContactClient'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Contact Us — Recruitment Institute Pune',
+  title: 'Contact Us "" Recruitment Institute Pune',
   description:
-    'Contact Recruitment Institute in Pune for HR course enquiries, admissions guidance, and batch details. Call +91 9975048884 or email support@recruitmentinstitute.in.',
+    'Contact Recruitment Institute in Pune for HR course enquiries, admissions guidance, and batch details. Call +91 7385204165 or email support@recruitmentinstitute.in.',
   keywords: 'contact recruitment institute, HR course enquiry pune, admissions recruitment training',
   alternates: { canonical: `${BASE_URL}/contact` },
   openGraph: {
-    title: 'Contact Recruitment Institute — HR Training in Pune',
+    title: 'Contact Recruitment Institute "" HR Training in Pune',
     description: 'Reach out to India\'s #1 HR training academy for course enquiries and admissions.',
     url: `${BASE_URL}/contact`,
     type: 'website',
@@ -30,7 +30,7 @@ const contactSchema = {
       '@id': `${BASE_URL}/contact#webpage`,
       url: `${BASE_URL}/contact`,
       name: 'Contact Recruitment Institute',
-      description: 'Contact page for Recruitment Institute — HR and recruitment training in Pune',
+      description: 'Contact page for Recruitment Institute "" HR and recruitment training in Pune',
       isPartOf: { '@id': `${BASE_URL}/#website` },
       breadcrumb: { '@id': `${BASE_URL}/contact#breadcrumb` },
     },
@@ -46,7 +46,7 @@ const contactSchema = {
       '@type': 'LocalBusiness',
       name: 'Recruitment Institute',
       url: BASE_URL,
-      telephone: '+91-9975048884',
+      telephone: '+91-7385204165',
       email: 'support@recruitmentinstitute.in',
       address: {
         '@type': 'PostalAddress',

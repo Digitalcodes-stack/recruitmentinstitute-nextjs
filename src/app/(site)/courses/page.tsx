@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
@@ -8,10 +8,10 @@ import {
   BadgeCheck,
   BookOpen,
   Briefcase,
-  Building2,
   CheckCircle2,
-  Clock,
   ChevronRight,
+  Clock,
+  GraduationCap,
   MessageCircle,
   Monitor,
   Phone,
@@ -40,6 +40,129 @@ export const metadata: Metadata = {
   },
 }
 
+/* â"€â"€ Slug → route mapping â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+const SLUG_TO_ROUTE: Record<string, string> = {
+  degree_tag:            '/end-to-end-recruitment-training',
+  certification_tag:     '/hr-courses-for-beginners',
+  entrepreneur_tag:      '/hr-entrepreneurship-program',
+  corporate_traning_tag: '/hr-corporate-training-course',
+}
+function getCourseRoute(slug: string) {
+  return SLUG_TO_ROUTE[slug] ?? `/${slug}`
+}
+
+/* â"€â"€ Static card data (visual identity per course) â"€â"€â"€â"€â"€â"€â"€ */
+const COURSE_META: Record<string, {
+  tagline: string
+  badge: string
+  badgeColor: string
+  badgeBg: string
+  badgeBorder: string
+  accent: string
+  accentLight: string
+  accentBorder: string
+  accentGlow: string
+  gradient: string
+  icon: string
+  tags: string[]
+  highlight: string
+  image: string
+  duration: string
+  mode: string
+}> = {
+  degree_tag: {
+    tagline: 'End-to-End Recruitment Training',
+    badge: 'Most Popular',
+    badgeColor: '#DC2626',
+    badgeBg: 'rgba(220,38,38,.15)',
+    badgeBorder: 'rgba(220,38,38,.35)',
+    accent: '#DC2626',
+    accentLight: '#FEF2F2',
+    accentBorder: '#FECACA',
+    accentGlow: 'rgba(220,38,38,.2)',
+    gradient: 'linear-gradient(135deg,#7F1D1D,#DC2626,#B91C1C)',
+    icon: '🎯',
+    tags: ['3 Months', 'Online & Offline', 'Certificate'],
+    highlight: '5,000+ Trained',
+    image: '/assets/images/courses/home14/2.jpg',
+    duration: '3 Months',
+    mode: 'Online & Offline',
+  },
+  certification_tag: {
+    tagline: 'HR Courses for Beginners',
+    badge: 'Beginner Friendly',
+    badgeColor: '#0EA5E9',
+    badgeBg: 'rgba(14,165,233,.15)',
+    badgeBorder: 'rgba(14,165,233,.35)',
+    accent: '#0EA5E9',
+    accentLight: '#F0F9FF',
+    accentBorder: '#BAE6FD',
+    accentGlow: 'rgba(14,165,233,.2)',
+    gradient: 'linear-gradient(135deg,#075985,#0EA5E9,#0284C7)',
+    icon: '📚',
+    tags: ['4 Weeks', '100% Online', 'No Prereqs'],
+    highlight: 'Zero to Hero',
+    image: '/assets/images/about/tab1.jpg',
+    duration: '4 Weeks',
+    mode: '100% Online',
+  },
+  entrepreneur_tag: {
+    tagline: 'HR Entrepreneurship Program',
+    badge: 'Business Track',
+    badgeColor: '#D97706',
+    badgeBg: 'rgba(217,119,6,.15)',
+    badgeBorder: 'rgba(217,119,6,.35)',
+    accent: '#D97706',
+    accentLight: '#FFFBEB',
+    accentBorder: '#FDE68A',
+    accentGlow: 'rgba(217,119,6,.2)',
+    gradient: 'linear-gradient(135deg,#78350F,#D97706,#B45309)',
+    icon: '🚀',
+    tags: ['6 Months', 'Mentorship', 'Business-Ready'],
+    highlight: 'Launch Your Firm',
+    image: '/assets/images/courses/style4/4.jpg',
+    duration: '6 Months',
+    mode: 'Blended',
+  },
+  corporate_traning_tag: {
+    tagline: 'HR Corporate Training Course',
+    badge: 'Enterprise',
+    badgeColor: '#7C3AED',
+    badgeBg: 'rgba(124,58,237,.15)',
+    badgeBorder: 'rgba(124,58,237,.35)',
+    accent: '#7C3AED',
+    accentLight: '#F5F3FF',
+    accentBorder: '#DDD6FE',
+    accentGlow: 'rgba(124,58,237,.2)',
+    gradient: 'linear-gradient(135deg,#3B0764,#7C3AED,#6D28D9)',
+    icon: '🏢',
+    tags: ['Flexible', 'On-site / Online', 'Bespoke'],
+    highlight: '20+ Industries',
+    image: '/assets/images/courses/home14/3.jpg',
+    duration: 'Flexible',
+    mode: 'On-site / Online',
+  },
+}
+
+const FALLBACK_META = {
+  tagline: 'Professional HR Program',
+  badge: 'Available Now',
+  badgeColor: '#0D9488',
+  badgeBg: 'rgba(13,148,136,.15)',
+  badgeBorder: 'rgba(13,148,136,.35)',
+  accent: '#0D9488',
+  accentLight: '#F0FDFA',
+  accentBorder: '#99F6E4',
+  accentGlow: 'rgba(13,148,136,.2)',
+  gradient: 'linear-gradient(135deg,#134E4A,#0D9488,#0F766E)',
+  icon: '🎓',
+  tags: ['Flexible', 'Online', 'Certified'],
+  highlight: 'Expert Faculty',
+  image: '/assets/images/courses/home14/4.jpg',
+  duration: 'Flexible',
+  mode: 'Online',
+}
+
 function stripHtml(value: string) {
   return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 }
@@ -54,153 +177,47 @@ function Stars({ rating }: { rating: number }) {
   )
 }
 
-function getCourseImage(categorySlug: string, index: number) {
-  const bySlug: Record<string, string> = {
-    degree_tag:            '/assets/images/courses/main-home/1.jpg',
-    certification_tag:     '/assets/images/courses/main-home/2.jpg',
-    entrepreneur_tag:      '/assets/images/courses/home8/3.jpg',
-    corporate_traning_tag: '/assets/images/courses/home8/1.jpg',
-  }
-  if (bySlug[categorySlug]) return bySlug[categorySlug]
-
-  const fallbacks = [
-    '/assets/images/courses/home12/1.jpg',
-    '/assets/images/courses/home12/2.jpg',
-    '/assets/images/courses/home12/3.jpg',
-    '/assets/images/courses/home12/4.jpg',
-    '/assets/images/courses/home13/1.jpg',
-    '/assets/images/courses/home13/2.jpg',
-    '/assets/images/courses/home14/1.jpg',
-    '/assets/images/courses/home14/2.jpg',
-  ]
-  return fallbacks[index % fallbacks.length]
-}
+/* â"€â"€ Page â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
 
 export default async function CoursesPage() {
-  const [categories, courses, fees, reviews] = await Promise.all([
-    prisma.courseCategory.findMany({
-      orderBy: { id: 'asc' },
-      include: {
-        courses: { orderBy: { id: 'asc' } },
-        fees: { orderBy: { id: 'asc' } },
-      },
-    }),
-    prisma.course.findMany({
-      orderBy: { id: 'asc' },
-      include: { category: true },
-    }),
-    prisma.courseFee.findMany({
-      orderBy: { id: 'asc' },
-      include: { category: { include: { courses: true } } },
-    }),
-    prisma.courseReview.findMany({
-      orderBy: { id: 'asc' },
-      include: { category: true },
-    }),
+  const [categories, courses, fees, reviews, testimonials] = await Promise.all([
+    prisma.courseCategory.findMany({ orderBy: { id: 'asc' }, include: { courses: { orderBy: { id: 'asc' } }, fees: { orderBy: { id: 'asc' } } } }),
+    prisma.course.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
+    prisma.courseFee.findMany({ orderBy: { id: 'asc' }, include: { category: { include: { courses: true } } } }),
+    prisma.courseReview.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
+    prisma.testimonial.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' }, take: 4 }),
   ])
 
-  const primaryCards = courses.slice(0, 2).map((course, index) => {
-    const categorySlug = course.category.slug
-    const categoryName = course.category.name
-    const relatedFee = fees.find((fee) => fee.categoryId === course.categoryId)
-    const relatedReviews = reviews.filter((review) => review.categoryId === course.categoryId)
+  /* Build unified card list: one card per category */
+  const allCards = categories.map((cat, index) => {
+    const meta = COURSE_META[cat.slug] ?? FALLBACK_META
+    const linkedCourse = courses.find(c => c.categoryId === cat.id)
+    const linkedFee = fees.find(f => f.categoryId === cat.id)
+    const catReviews = reviews.filter(r => r.categoryId === cat.id)
+    const avgRating = catReviews.length
+      ? Math.min(5, catReviews.reduce((s, r) => s + Number(r.rating ?? 0), 0) / catReviews.length)
+      : 4.8
+    const description = linkedCourse ? stripHtml(linkedCourse.description) : `${cat.name} – a professional recruitment training program at Recruitment Institute.`
 
     return {
-      slug: categorySlug,
-      id: course.id,
-      title: course.title,
-      badge: index === 0 ? 'Most Popular' : 'Beginner Friendly',
-      level: categoryName,
-      accent: index === 0 ? '#1D4ED8' : '#0D9488',
-      accentMid: index === 0 ? '#2563EB' : '#14B8A6',
-      accentLight: index === 0 ? '#EFF6FF' : '#F0FDFA',
-      accentBorder: index === 0 ? '#BFDBFE' : '#99F6E4',
-      accentKey: index === 0 ? 'blue' : 'teal',
-      description: stripHtml(course.description),
-      image: getCourseImage(categorySlug, index),
-      features: [
-        relatedFee ? `Fee from database: INR ${Number(relatedFee.finalTotal ?? relatedFee.fees ?? 0).toLocaleString('en-IN')}` : 'Live pricing available',
-        `${course.totalStudents.toLocaleString('en-IN')} enrolled students`,
-        `${relatedReviews.length} course reviews`,
-        `Category: ${categoryName}`,
-      ],
-      duration: course.startDate ? new Date(course.startDate).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Rolling intake',
-      mode: course.courseBy || 'Recruitment training',
-      rating: Number(course.rating ?? 4.8),
-      reviews: relatedReviews.length || 0,
-      enrolled: `${course.totalStudents.toLocaleString('en-IN')}+`,
+      index,
+      slug: cat.slug,
+      route: getCourseRoute(cat.slug),
+      name: cat.name,
+      title: meta.tagline ?? linkedCourse?.title ?? cat.name,
+      description: description.slice(0, 200) + (description.length > 200 ? '…' : ''),
+      enrolled: linkedCourse ? `${Number(linkedCourse.totalStudents).toLocaleString('en-IN')}+` : '500+',
+      rating: avgRating,
+      reviewCount: catReviews.length,
+      meta,
     }
   })
-
-  const secondaryCards = fees.slice(0, 2).map((fee, index) => {
-    const categorySlug = fee.category.slug
-    const linkedCourse = courses.find((course) => course.categoryId === fee.categoryId)
-    const relatedReviews = reviews.filter((review) => review.categoryId === fee.categoryId)
-    const description = linkedCourse ? stripHtml(linkedCourse.description) : `${fee.courseName} is part of the ${fee.category.name} program line-up.`
-
-    return {
-      slug: categorySlug,
-      id: fee.id,
-      title: fee.courseName,
-      badge: index === 0 ? 'Business Track' : 'Enterprise',
-      level: fee.category.name,
-      accent: index === 0 ? '#B45309' : '#6D28D9',
-      accentMid: index === 0 ? '#D97706' : '#7C3AED',
-      accentLight: index === 0 ? '#FFFBEB' : '#F5F3FF',
-      accentBorder: index === 0 ? '#FDE68A' : '#DDD6FE',
-      accentKey: index === 0 ? 'amber' : 'purple',
-      description,
-      image: getCourseImage(categorySlug, index + 2),
-      features: [
-        fee.fees ? `Fee: INR ${Number(fee.fees).toLocaleString('en-IN')}` : 'Fee available in database',
-        fee.discount ? `Discount: INR ${Number(fee.discount).toLocaleString('en-IN')}` : 'Discount available in database',
-        fee.finalTotal ? `Final total: INR ${Number(fee.finalTotal).toLocaleString('en-IN')}` : 'Final total available in database',
-        `${relatedReviews.length} reviews in database`,
-      ],
-      duration: fee.couponCode || 'Current batch',
-      mode: linkedCourse?.courseBy || 'Live training',
-      rating: relatedReviews.length ? Math.min(5, 4 + relatedReviews.length / 10) : 4.5,
-      reviews: relatedReviews.length,
-      enrolled: fee.category.courses.length ? `${fee.category.courses.length} programs` : 'Database-driven',
-    }
-  })
-
-  const stats = [
-    { icon: Users, value: `${categories.length}`, label: 'Program Categories', color: '#DC2626', bg: '#FEF2F2', border: '#FECACA' },
-    { icon: BookOpen, value: `${courses.length}`, label: 'Live Courses', color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
-    { icon: Award, value: `${reviews.length}`, label: 'Course Reviews', color: '#B45309', bg: '#FFFBEB', border: '#FDE68A' },
-    { icon: TrendingUp, value: `${fees.length}`, label: 'Pricing Records', color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4' },
-  ]
-
-  const itemList = [...primaryCards, ...secondaryCards]
 
   const coursesSchema = {
     '@context': 'https://schema.org',
     '@graph': [
-      {
-        '@type': 'CollectionPage',
-        '@id': `${BASE_URL}/courses#webpage`,
-        url: `${BASE_URL}/courses`,
-        name: 'HR & Recruitment Training Courses - Recruitment Institute',
-        description: 'All HR and recruitment training programs at Recruitment Institute Pune',
-        isPartOf: { '@id': `${BASE_URL}/#website` },
-      },
-      {
-        '@type': 'ItemList',
-        name: 'HR & Recruitment Training Programs',
-        numberOfItems: itemList.length,
-        itemListElement: itemList.map((course, index) => ({
-          '@type': 'ListItem',
-          position: index + 1,
-          item: {
-            '@type': 'Course',
-            name: course.title,
-            description: course.description,
-            url: `${BASE_URL}/${course.slug}`,
-            provider: { '@type': 'Organization', name: 'Recruitment Institute', url: BASE_URL },
-          },
-        })),
-      },
+      { '@type': 'CollectionPage', '@id': `${BASE_URL}/courses#webpage`, url: `${BASE_URL}/courses`, name: 'HR & Recruitment Training Courses - Recruitment Institute', description: 'All HR and recruitment training programs at Recruitment Institute Pune', isPartOf: { '@id': `${BASE_URL}/#website` } },
+      { '@type': 'ItemList', name: 'HR & Recruitment Training Programs', numberOfItems: allCards.length, itemListElement: allCards.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Course', name: c.title, description: c.description, url: `${BASE_URL}${c.route}`, provider: { '@type': 'Organization', name: 'Recruitment Institute', url: BASE_URL } } })) },
     ],
   }
 
@@ -209,329 +226,306 @@ export default async function CoursesPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(coursesSchema) }} />
 
       <style>{`
-        .c-crumb { color: #94A3B8; text-decoration: none; font-size: 13px; font-weight: 500; transition: color .18s; }
-        .c-crumb:hover { color: #CBD5E1; }
-        .c-hero-cta, .c-hero-ghost, .c-cta-primary, .c-cta-ghost, .c-btn-dark, .c-btn-red {
-          text-decoration: none;
-        }
-        .c-hero-cta {
-          display: inline-flex; align-items: center; gap: 9px;
-          background: linear-gradient(135deg,#1D4ED8,#2563EB);
-          color: #fff; font-weight: 700; font-size: 14px;
-          padding: 14px 30px; border-radius: 10px;
-          box-shadow: 0 8px 28px rgba(29,78,216,.45);
-        }
-        .c-hero-ghost {
-          display: inline-flex; align-items: center; gap: 9px;
-          border: 1.5px solid rgba(255,255,255,.16); color: #fff;
-          font-weight: 600; font-size: 14px; padding: 13px 24px;
-          border-radius: 10px; background: rgba(255,255,255,.05);
-        }
-        .c-stat-card, .c-card-primary, .c-card-secondary { transition: transform .25s, box-shadow .25s; }
-        .c-stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(15,23,42,.12) !important; }
-        .c-card-primary, .c-card-secondary {
-          background: #fff; border-radius: 20px; border: 1.5px solid #E2E8F0;
-          box-shadow: 0 4px 28px rgba(15,23,42,.07); overflow: hidden;
-        }
-        .c-card-primary:hover, .c-card-secondary:hover { transform: translateY(-5px); box-shadow: 0 22px 56px rgba(15,23,42,.12); }
-        .c-card-img { transition: transform .55s ease; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-        .c-card-primary:hover .c-card-img, .c-card-secondary:hover .c-card-img { transform: scale(1.05); }
-        .c-btn-dark {
-          flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-          background: #0F172A; color: #fff; font-weight: 700; font-size: 13px;
-          padding: 13px 16px; border-radius: 9px;
-        }
-        .c-btn-red {
-          flex: 1; display: flex; align-items: center; justify-content: center; gap: 7px;
-          background: linear-gradient(135deg,#DC2626,#EF4444);
-          color: #fff; font-weight: 700; font-size: 13px;
-          padding: 13px 16px; border-radius: 9px;
-        }
-        @media (max-width: 1100px) { .c-hero-grid { grid-template-columns: 1fr !important; } .c-hero-visual { display: none !important; } }
-        @media (max-width: 980px) { .c-primary-grid, .c-secondary-grid, .c-stats-grid { grid-template-columns: 1fr !important; } .c-card-secondary { flex-direction: column !important; } .c-sec-img-wrap { width: 100% !important; height: 220px !important; } .c-feat-grid, .c-cta-grid { grid-template-columns: 1fr !important; } }
-        @media (max-width: 700px) { .c-feat-grid { grid-template-columns: 1fr !important; } .c-stats-grid { grid-template-columns: repeat(2,1fr) !important; } }
-        @media (max-width: 480px) { .c-stats-grid { grid-template-columns: 1fr !important; } }
+        body { font-family: 'Poppins', sans-serif; }
+        .cp-crumb { color: #64748B; text-decoration: none; font-size: 12px; font-weight: 500; transition: color .18s; }
+        .cp-crumb:hover { color: #CBD5E1; }
+        .cp-cta { display:inline-flex; align-items:center; gap:9px; background:linear-gradient(135deg,#DC2626,#EF4444); color:#fff; font-weight:700; font-size:14px; padding:14px 30px; border-radius:11px; text-decoration:none; box-shadow:0 8px 28px rgba(220,38,38,.38); transition:transform .2s,box-shadow .2s; }
+        .cp-cta:hover { transform:translateY(-2px); box-shadow:0 14px 40px rgba(220,38,38,.48); }
+        .cp-ghost { display:inline-flex; align-items:center; gap:9px; border:1.5px solid rgba(255,255,255,.16); color:#fff; font-weight:600; font-size:14px; padding:13px 24px; border-radius:11px; text-decoration:none; background:rgba(255,255,255,.05); transition:background .2s,border-color .2s; }
+        .cp-ghost:hover { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.3); }
+
+        /* Course cards */
+        .cp-card { background:#fff; border-radius:24px; border:1.5px solid #E2E8F0; overflow:hidden; box-shadow:0 4px 24px rgba(15,23,42,.07); transition:transform .3s,box-shadow .3s,border-color .3s; display:flex; flex-direction:column; }
+        .cp-card:hover { transform:translateY(-8px); box-shadow:0 28px 64px rgba(15,23,42,.14); }
+        .cp-card-img { transition:transform .6s ease; }
+        .cp-card:hover .cp-card-img { transform:scale(1.07); }
+        .cp-card-btn { display:flex; align-items:center; justify-content:center; gap:8px; flex:1; font-weight:700; font-size:13px; padding:13px 16px; border-radius:10px; text-decoration:none; transition:transform .18s,box-shadow .18s; border:none; cursor:pointer; }
+        .cp-card-btn:hover { transform:translateY(-1px); }
+
+        /* Trust bar */
+        .cp-trust-item { display:flex; align-items:flex-start; gap:18px; padding:28px 32px; }
+
+        /* Bottom CTA */
+        .cp-bottom-cta-btn { display:flex; align-items:center; justify-content:center; gap:9px; font-weight:700; font-size:14px; padding:15px 36px; border-radius:11px; text-decoration:none; transition:transform .2s,box-shadow .2s; }
+        .cp-bottom-cta-btn:hover { transform:translateY(-2px); }
+
+        @media(max-width:1100px){ .cp-hero-grid{grid-template-columns:1fr !important;} .cp-hero-right{display:none !important;} }
+        @media(max-width:960px){ .cp-cards-grid{grid-template-columns:repeat(2,1fr) !important;} .cp-stats-grid{grid-template-columns:repeat(2,1fr) !important;} }
+        @media(max-width:640px){ .cp-cards-grid{grid-template-columns:1fr !important;} .cp-trust-grid{grid-template-columns:1fr !important;} .cp-cta-row{flex-direction:column !important;} }
+        @media(max-width:560px){ .cp-stats-grid{grid-template-columns:repeat(2,1fr) !important;} }
       `}</style>
 
-      <section
-        style={{
-          background: 'linear-gradient(130deg,#060D1C 0%,#0B1629 40%,#0E1F3A 70%,#071120 100%)',
-          position: 'relative',
-          overflow: 'hidden',
-          minHeight: '580px',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <div aria-hidden className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.025) 1px, transparent 1px)', backgroundSize: '28px 28px', zIndex: 1 }} />
-        <div aria-hidden className="absolute top-0 left-0 right-0" style={{ height: 2, background: 'linear-gradient(90deg,transparent 0%,#D97706 28%,#14B8A6 72%,transparent 100%)', zIndex: 3 }} />
+      {/* â•â• HERO â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <section style={{ background:'linear-gradient(140deg,#04091A 0%,#080F22 40%,#0C1830 70%,#04081A 100%)', position:'relative', overflow:'hidden', minHeight:600, display:'flex', alignItems:'center' }}>
+        <div aria-hidden style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(rgba(255,255,255,.022) 1px,transparent 1px)', backgroundSize:'28px 28px' }} />
+        <div aria-hidden style={{ position:'absolute', top:0, left:0, right:0, height:2, background:'linear-gradient(90deg,transparent,#DC2626 20%,#F59E0B 50%,#0EA5E9 80%,transparent)', zIndex:3 }} />
+        <div aria-hidden style={{ position:'absolute', top:-120, left:-60, width:600, height:600, background:'radial-gradient(circle,rgba(220,38,38,.13) 0%,transparent 65%)', pointerEvents:'none' }} />
+        <div aria-hidden style={{ position:'absolute', bottom:-80, right:'15%', width:500, height:500, background:'radial-gradient(circle,rgba(14,165,233,.1) 0%,transparent 65%)', pointerEvents:'none' }} />
 
-        <div className="container" style={{ position: 'relative', zIndex: 10, padding: '80px 0 88px' }}>
-          <div className="c-hero-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 430px', gap: '60px', alignItems: 'center' }}>
+        <div className="container" style={{ position:'relative', zIndex:10, padding:'80px 0 100px' }}>
+          <div className="cp-hero-grid" style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) 460px', gap:'68px', alignItems:'center' }}>
             <div>
-              <nav aria-label="breadcrumb" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 28 }}>
-                <Link href="/" className="c-crumb">Home</Link>
-                <ChevronRight style={{ width: 13, height: 13, color: '#475569' }} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#F59E0B' }}>All Courses</span>
+              <nav style={{ display:'flex', alignItems:'center', gap:6, marginBottom:30 }}>
+                <Link href="/" className="cp-crumb">Home</Link>
+                <ChevronRight style={{ width:13, height:13, color:'#475569' }} />
+                <span style={{ fontSize:12, fontWeight:700, color:'#F59E0B' }}>All Courses</span>
               </nav>
 
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 50, background: 'rgba(245,158,11,.12)', border: '1px solid rgba(245,158,11,.28)', marginBottom: 22 }}>
-                <Sparkles style={{ width: 12, height: 12, color: '#F59E0B' }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: '#FCD34D', letterSpacing: '.18em', textTransform: 'uppercase' }}>HR & Recruitment Training</span>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 16px', borderRadius:50, background:'rgba(245,158,11,.12)', border:'1px solid rgba(245,158,11,.3)', marginBottom:22 }}>
+                <Sparkles style={{ width:12, height:12, color:'#F59E0B' }} />
+                <span style={{ fontSize:11, fontWeight:800, color:'#FCD34D', letterSpacing:'.18em', textTransform:'uppercase' }}>HR & Recruitment Training</span>
               </div>
 
-              <h1 style={{ fontSize: 'clamp(30px,3.8vw,54px)', fontWeight: 900, color: '#fff', lineHeight: 1.1, letterSpacing: '-.035em', marginBottom: 20 }}>
-                Recruitment programs
-                <br />
-                <span style={{ background: 'linear-gradient(120deg,#60A5FA 0%,#5EEAD4 55%,#FCD34D 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                  backed by live database content.
-                </span>
+              <h1 style={{ fontSize:'clamp(32px,4vw,58px)', fontWeight:900, color:'#fff', lineHeight:1.07, letterSpacing:'-.04em', marginBottom:22 }}>
+                India&apos;s Leading{' '}
+                <span style={{ background:'linear-gradient(120deg,#F87171 0%,#FBBF24 40%,#38BDF8 80%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
+                  Recruitment Training
+                </span>{' '}Programs
               </h1>
 
-              <p style={{ fontSize: 16, color: '#94A3B8', lineHeight: 1.85, maxWidth: 520, marginBottom: 34 }}>
-                Every program card on this page is pulled from the database. Images are limited to recruitment and HR visuals only.
+              <p style={{ fontSize:17, color:'#94A3B8', lineHeight:1.85, maxWidth:530, marginBottom:36 }}>
+                From beginner foundations to corporate transformation "" find the right program to launch or level up your recruitment career.
               </p>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 38 }}>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginBottom:42 }}>
                 {[
-                  { label: 'Live database content', color: '#5EEAD4', bg: 'rgba(94,234,212,.09)', border: 'rgba(94,234,212,.2)' },
-                  { label: 'Recruitment visuals only', color: '#FCD34D', bg: 'rgba(252,211,77,.09)', border: 'rgba(252,211,77,.2)' },
-                  { label: 'Pricing from database', color: '#86EFAC', bg: 'rgba(134,239,172,.09)', border: 'rgba(134,239,172,.2)' },
-                  { label: 'HR course catalog', color: '#93C5FD', bg: 'rgba(147,197,253,.09)', border: 'rgba(147,197,253,.2)' },
+                  { label:'4 Specialised Programs',  color:'#F87171', bg:'rgba(248,113,113,.09)', border:'rgba(248,113,113,.22)' },
+                  { label:'5,000+ Students Trained',  color:'#FCD34D', bg:'rgba(252,211,77,.09)',  border:'rgba(252,211,77,.22)'  },
+                  { label:'Industry Certified',        color:'#6EE7B7', bg:'rgba(110,231,183,.09)', border:'rgba(110,231,183,.22)' },
+                  { label:'Placement Support',         color:'#93C5FD', bg:'rgba(147,197,253,.09)', border:'rgba(147,197,253,.22)' },
                 ].map(({ label, color, bg, border }) => (
-                  <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 14px', borderRadius: 50, background: bg, border: `1px solid ${border}`, fontSize: 12, fontWeight: 600, color }}>
-                    <CheckCircle2 style={{ width: 12, height: 12 }} />
-                    {label}
+                  <span key={label} style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'7px 14px', borderRadius:50, background:bg, border:`1px solid ${border}`, fontSize:12, fontWeight:600, color }}>
+                    <CheckCircle2 style={{ width:12, height:12 }} />{label}
                   </span>
                 ))}
               </div>
 
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="#programs" className="c-hero-cta">
-                  View Courses <ArrowRight style={{ width: 16, height: 16 }} />
+              <div className="cp-cta-row" style={{ display:'flex', gap:14, flexWrap:'wrap' }}>
+                <Link href="#programs" className="cp-cta">
+                  Explore Programs <ArrowRight style={{ width:16, height:16 }} />
                 </Link>
-                <Link href="/contact" className="c-hero-ghost">
-                  <Phone style={{ width: 14, height: 14 }} /> Free Counselling
+                <Link href="/contact" className="cp-ghost">
+                  <Phone style={{ width:14, height:14 }} /> Free Counselling
                 </Link>
               </div>
             </div>
 
-            <div className="c-hero-visual" style={{ position: 'relative' }}>
-              <div style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(255,255,255,.08)', boxShadow: '0 44px 100px rgba(0,0,0,.65)' }}>
-                <div style={{ position: 'relative', height: 330, background: '#0B1629' }}>
-                  <Image src="/assets/images/coursesBanner.jpg" alt="Recruitment and HR training team" fill priority sizes="430px" style={{ objectFit: 'cover', objectPosition: 'center top' }} />
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,transparent 40%,rgba(7,17,32,.95) 100%)' }} />
-                  <div style={{ position: 'absolute', top: 16, left: 16, display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 13px', borderRadius: 50, background: 'rgba(245,158,11,.15)', border: '1px solid rgba(245,158,11,.35)', backdropFilter: 'blur(10px)' }}>
-                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#F59E0B', boxShadow: '0 0 8px #F59E0B', display: 'block' }} />
-                    <span style={{ fontSize: 10, fontWeight: 800, color: '#FCD34D', letterSpacing: '.12em', textTransform: 'uppercase' }}>{categories.length} Program Categories</span>
+            <div className="cp-hero-right" style={{ position:'relative' }}>
+              <div aria-hidden style={{ position:'absolute', inset:-22, borderRadius:32, background:'linear-gradient(135deg,rgba(220,38,38,.2),rgba(245,158,11,.12),rgba(14,165,233,.12))', filter:'blur(2px)' }} />
+              <div style={{ position:'relative', borderRadius:24, overflow:'hidden', border:'1px solid rgba(255,255,255,.09)', boxShadow:'0 52px 120px rgba(0,0,0,.65)' }}>
+                <div style={{ position:'relative', height:320, background:'#060D1C' }}>
+                  <Image src="/assets/images/coursesBanner.jpg" alt="HR & Recruitment Training Programs at Recruitment Institute" fill priority sizes="460px" style={{ objectFit:'cover', objectPosition:'center top' }} />
+                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(4,9,26,.08) 0%,transparent 38%,rgba(4,9,26,.9) 100%)' }} />
+                  <div style={{ position:'absolute', top:16, left:16, display:'inline-flex', alignItems:'center', gap:7, padding:'6px 13px', borderRadius:50, background:'rgba(220,38,38,.2)', border:'1px solid rgba(220,38,38,.4)', backdropFilter:'blur(12px)' }}>
+                    <span style={{ width:6, height:6, borderRadius:'50%', background:'#EF4444', boxShadow:'0 0 8px #EF4444', display:'block' }} />
+                    <span style={{ fontSize:10, fontWeight:800, color:'#FCA5A5', letterSpacing:'.12em', textTransform:'uppercase' }}>{allCards.length} Programs</span>
                   </div>
-                  <div style={{ position: 'absolute', top: 16, right: 16, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 50, background: 'rgba(255,255,255,.13)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.2)' }}>
-                    <Star style={{ width: 12, height: 12, color: '#FBBF24', fill: '#FBBF24' }} />
-                    <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>{courses.length || 0} live courses</span>
+                  <div style={{ position:'absolute', top:16, right:16, display:'inline-flex', alignItems:'center', gap:5, padding:'6px 12px', borderRadius:50, background:'rgba(255,255,255,.13)', backdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.2)' }}>
+                    <Star style={{ width:12, height:12, color:'#FBBF24', fill:'#FBBF24' }} />
+                    <span style={{ fontSize:12, fontWeight:800, color:'#fff' }}>4.8 Avg Rating</span>
                   </div>
                 </div>
-                <div style={{ background: '#071120', padding: '20px 24px 22px', borderTop: '1px solid rgba(255,255,255,.06)' }}>
-                  <p style={{ fontSize: 10, fontWeight: 800, color: '#14B8A6', textTransform: 'uppercase', letterSpacing: '.2em', margin: '0 0 6px' }}>Database-driven catalog</p>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: '#fff', lineHeight: 1.55, margin: '0 0 14px' }}>
-                    {reviews.length} reviews, {fees.length} fee records, and {categories.length} categories loaded from the database.
-                  </p>
+                <div style={{ background:'#050C1C', padding:'22px 26px 24px', borderTop:'1px solid rgba(255,255,255,.07)' }}>
+                  <p style={{ fontSize:10, fontWeight:800, color:'#F59E0B', textTransform:'uppercase', letterSpacing:'.2em', margin:'0 0 14px' }}>Programs at a Glance</p>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10 }}>
+                    {[
+                      { val:`${courses.length}`, lbl:'Courses', color:'#F87171' },
+                      { val:`${categories.length}`, lbl:'Tracks', color:'#FCD34D' },
+                      { val:`${reviews.length}`, lbl:'Reviews', color:'#6EE7B7' },
+                      { val:'100%', lbl:'Practical', color:'#93C5FD' },
+                    ].map(({ val, lbl, color }) => (
+                      <div key={lbl} style={{ textAlign:'center' }}>
+                        <p style={{ fontSize:20, fontWeight:900, color, lineHeight:1, margin:'0 0 3px', letterSpacing:'-.03em' }}>{val}</p>
+                        <p style={{ fontSize:9, fontWeight:700, color:'#475569', textTransform:'uppercase', letterSpacing:'.1em', margin:0 }}>{lbl}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div aria-hidden style={{ position:'absolute', bottom:0, left:0, right:0, height:56, background:'#F8FAFC', clipPath:'ellipse(55% 100% at 50% 100%)' }} />
       </section>
 
-      <section style={{ background: '#F8FAFC', paddingTop: 64 }}>
+      {/* â•â• STATS STRIP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <section style={{ background:'#F8FAFC', paddingTop:64 }}>
         <div className="container">
-          <div className="c-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16 }}>
-            {stats.map(({ icon: Icon, value, label, color, bg, border }) => (
-              <div key={label} className="c-stat-card" style={{ background: '#fff', borderRadius: 16, border: '1.5px solid #E2E8F0', padding: '26px 22px', boxShadow: '0 2px 14px rgba(15,23,42,.06)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <div style={{ width: 46, height: 46, borderRadius: 12, background: bg, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-                  <Icon style={{ width: 20, height: 20, color }} />
+          <div className="cp-stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
+            {[
+              { icon:GraduationCap, value:'5,000+', label:'Students Trained',    color:'#DC2626', bg:'#FEF2F2', border:'#FECACA' },
+              { icon:BookOpen,      value:`${allCards.length}`,  label:'Specialised Programs', color:'#0EA5E9', bg:'#F0F9FF', border:'#BAE6FD' },
+              { icon:Award,         value:`${reviews.length || '100'}+`, label:'Course Reviews',    color:'#D97706', bg:'#FFFBEB', border:'#FDE68A' },
+              { icon:TrendingUp,    value:'95%',   label:'Placement Rate',       color:'#059669', bg:'#F0FDF4', border:'#BBF7D0' },
+            ].map(({ icon:Icon, value, label, color, bg, border }) => (
+              <div key={label} style={{ background:'#fff', borderRadius:16, border:'1.5px solid #E2E8F0', padding:'26px 22px', boxShadow:'0 2px 14px rgba(15,23,42,.06)', display:'flex', flexDirection:'column', alignItems:'flex-start', transition:'transform .25s,box-shadow .25s' }}>
+                <div style={{ width:44, height:44, borderRadius:12, background:bg, border:`1px solid ${border}`, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:14 }}>
+                  <Icon style={{ width:20, height:20, color }} />
                 </div>
-                <p style={{ fontSize: 'clamp(26px,2.4vw,36px)', fontWeight: 900, color, lineHeight: 1, margin: 0, letterSpacing: '-.03em', whiteSpace: 'nowrap' }}>{value}</p>
-                <div style={{ width: 24, height: 2, borderRadius: 2, background: color, opacity: .28, margin: '10px 0' }} />
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.12em', margin: 0, lineHeight: 1.5 }}>{label}</p>
+                <p style={{ fontSize:'clamp(26px,2.4vw,36px)', fontWeight:900, color, lineHeight:1, margin:0, letterSpacing:'-.03em' }}>{value}</p>
+                <div style={{ width:24, height:2.5, borderRadius:2, background:color, opacity:.28, margin:'10px 0 8px' }} />
+                <p style={{ fontSize:11, fontWeight:700, color:'#64748B', textTransform:'uppercase', letterSpacing:'.12em', margin:0 }}>{label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="programs" style={{ background: '#F8FAFC', paddingTop: 72, paddingBottom: 80 }}>
+      {/* â•â• COURSE CARDS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <section id="programs" style={{ background:'#F8FAFC', padding:'72px 0 96px' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 60px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 15px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
-              <BookOpen style={{ width: 11, height: 11 }} />
+          <div style={{ textAlign:'center', maxWidth:680, margin:'0 auto 64px' }}>
+            <div style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'5px 16px', borderRadius:50, background:'#EFF6FF', border:'1px solid #BFDBFE', color:'#1D4ED8', fontSize:11, fontWeight:800, letterSpacing:'.18em', textTransform:'uppercase', marginBottom:20 }}>
+              <BookOpen style={{ width:11, height:11 }} />
               All Programs
             </div>
-            <h2 style={{ fontSize: 'clamp(26px,3vw,42px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 16px' }}>
-              Pick the program built for your next step.
+            <h2 style={{ fontSize:'clamp(28px,3.2vw,46px)', fontWeight:900, color:'#0F172A', lineHeight:1.1, letterSpacing:'-.04em', margin:'0 0 18px' }}>
+              Find Your Perfect{' '}
+              <span style={{ background:'linear-gradient(120deg,#DC2626,#F59E0B)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
+                Recruitment Program
+              </span>
             </h2>
-            <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
-              Every course and fee card below is sourced from the database.
+            <p style={{ fontSize:16, color:'#64748B', lineHeight:1.82, margin:0 }}>
+              Every course is designed by recruitment practitioners with 10+ years of industry experience. Pick the track that matches your career stage.
             </p>
           </div>
 
-          {itemList.length === 0 ? (
-            <div className="rounded-3xl border border-slate-200 bg-white p-10 text-center text-slate-600">
-              No course records were found in the database yet.
+          {allCards.length === 0 ? (
+            <div style={{ background:'#fff', borderRadius:24, border:'1.5px solid #E2E8F0', padding:48, textAlign:'center', color:'#64748B', fontSize:15 }}>
+              No programs found. Please check back soon.
             </div>
           ) : (
-            <>
-              <div className="c-primary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, marginBottom: 24 }}>
-                {primaryCards.map((course) => {
-                  return (
-                    <article key={course.id} className="c-card-primary" data-accent={course.accentKey}>
-                      <div style={{ position: 'relative', height: 300, background: '#0F172A', overflow: 'hidden' }}>
-                        <img src={course.image} alt={course.title} className="c-card-img" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom,rgba(0,0,0,.08) 0%,transparent 38%,rgba(0,0,0,.52) 100%)' }} />
-                        <div style={{ position: 'absolute', top: 18, left: 18, padding: '5px 13px', borderRadius: 50, background: `${course.accent}28`, border: `1px solid ${course.accentBorder}`, backdropFilter: 'blur(10px)' }}>
-                          <span style={{ fontSize: 10, fontWeight: 800, color: course.accent, textTransform: 'uppercase', letterSpacing: '.14em' }}>{course.badge}</span>
+            <div className="cp-cards-grid" style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:28 }}>
+              {allCards.map((card) => {
+                const m = card.meta
+                return (
+                  <article key={card.slug} className="cp-card">
+                    {/* Image header */}
+                    <div style={{ position:'relative', height:280, background:'#0F172A', overflow:'hidden', flexShrink:0 }}>
+                      <Image
+                        src={m.image}
+                        alt={card.title}
+                        fill sizes="(max-width:960px) 100vw, 50vw"
+                        className="cp-card-img"
+                        style={{ objectFit:'cover', objectPosition:'center top' }}
+                      />
+                      {/* Dark overlay */}
+                      <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(0,0,0,.05) 0%,transparent 38%,rgba(0,0,0,.7) 100%)' }} />
+                      {/* Accent top-left glow */}
+                      <div aria-hidden style={{ position:'absolute', bottom:-40, right:-40, width:200, height:200, background:`radial-gradient(circle,${m.accentGlow} 0%,transparent 70%)`, pointerEvents:'none' }} />
+
+                      {/* Badge */}
+                      <div style={{ position:'absolute', top:18, left:18, display:'inline-flex', alignItems:'center', gap:6, padding:'6px 13px', borderRadius:50, background:m.badgeBg, border:`1px solid ${m.badgeBorder}`, backdropFilter:'blur(12px)' }}>
+                        <span style={{ width:5, height:5, borderRadius:'50%', background:m.badgeColor, flexShrink:0, display:'block', boxShadow:`0 0 6px ${m.badgeColor}` }} />
+                        <span style={{ fontSize:10, fontWeight:800, color:m.badgeColor, textTransform:'uppercase', letterSpacing:'.14em' }}>{m.badge}</span>
+                      </div>
+
+                      {/* Rating */}
+                      <div style={{ position:'absolute', top:18, right:18, display:'inline-flex', alignItems:'center', gap:5, padding:'6px 12px', borderRadius:50, background:'rgba(255,255,255,.14)', backdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.22)' }}>
+                        <Star style={{ width:12, height:12, color:'#FBBF24', fill:'#FBBF24' }} />
+                        <span style={{ fontSize:12, fontWeight:800, color:'#fff' }}>{card.rating.toFixed(1)}</span>
+                      </div>
+
+                      {/* Bottom highlight */}
+                      <div style={{ position:'absolute', bottom:18, left:18, display:'flex', alignItems:'center', gap:10 }}>
+                        <div style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:42, height:42, borderRadius:12, background:m.badgeBg, border:`1px solid ${m.badgeBorder}`, backdropFilter:'blur(12px)', fontSize:19 }}>
+                          {m.icon}
                         </div>
-                        <div style={{ position: 'absolute', top: 18, right: 18, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 11px', borderRadius: 50, background: 'rgba(255,255,255,.14)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.2)' }}>
-                          <Star style={{ width: 12, height: 12, color: '#FBBF24', fill: '#FBBF24' }} />
-                          <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>{course.rating}</span>
-                        </div>
-                        <div style={{ position: 'absolute', bottom: 18, right: 18, width: 42, height: 42, borderRadius: 11, background: `${course.accent}40`, border: `1px solid ${course.accent}55`, backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {course.accentKey === 'blue' ? <Briefcase style={{ width: 19, height: 19, color: '#fff' }} /> : <Building2 style={{ width: 19, height: 19, color: '#fff' }} />}
-                        </div>
-                        <div style={{ position: 'absolute', bottom: 18, left: 18, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 11px', borderRadius: 50, background: 'rgba(0,0,0,.45)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.12)' }}>
-                          <Users style={{ width: 11, height: 11, color: '#94A3B8' }} />
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#CBD5E1' }}>{course.enrolled} enrolled</span>
+                        <div>
+                          <p style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,.55)', textTransform:'uppercase', letterSpacing:'.1em', margin:'0 0 2px' }}>Highlight</p>
+                          <p style={{ fontSize:13, fontWeight:800, color:'#fff', margin:0 }}>{m.highlight}</p>
                         </div>
                       </div>
 
-                      <div style={{ padding: '30px 30px 26px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <div style={{ marginBottom: 16 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                            <div style={{ width: 3, height: 13, borderRadius: 2, background: course.accent, flexShrink: 0 }} />
-                            <span style={{ fontSize: 10, fontWeight: 800, color: course.accent, textTransform: 'uppercase', letterSpacing: '.16em' }}>{course.level}</span>
+                      {/* Enrolled bottom-right */}
+                      <div style={{ position:'absolute', bottom:18, right:18, display:'inline-flex', alignItems:'center', gap:6, padding:'5px 12px', borderRadius:50, background:'rgba(0,0,0,.5)', backdropFilter:'blur(10px)', border:'1px solid rgba(255,255,255,.14)' }}>
+                        <Users style={{ width:11, height:11, color:'#94A3B8' }} />
+                        <span style={{ fontSize:11, fontWeight:700, color:'#CBD5E1' }}>{card.enrolled} enrolled</span>
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    <div style={{ padding:'28px 28px 24px', display:'flex', flexDirection:'column', flex:1 }}>
+                      {/* Course label + title */}
+                      <div style={{ marginBottom:16 }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:8 }}>
+                          <div style={{ width:3, height:14, borderRadius:2, background:m.accent, flexShrink:0 }} />
+                          <span style={{ fontSize:10, fontWeight:800, color:m.accent, textTransform:'uppercase', letterSpacing:'.16em' }}>{m.tagline}</span>
+                        </div>
+                        <h3 style={{ fontSize:'clamp(18px,1.8vw,22px)', fontWeight:900, color:'#0F172A', lineHeight:1.22, letterSpacing:'-.025em', margin:0 }}>{card.title}</h3>
+                      </div>
+
+                      {/* Stars + reviews */}
+                      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, paddingBottom:14, borderBottom:'1px solid #F1F5F9' }}>
+                        <Stars rating={card.rating} />
+                        <span style={{ fontSize:12, fontWeight:700, color:'#0F172A' }}>{card.rating.toFixed(1)}</span>
+                        <span style={{ fontSize:12, color:'#94A3B8' }}>({card.reviewCount} reviews)</span>
+                      </div>
+
+                      {/* Tags */}
+                      <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:16 }}>
+                        {m.tags.map(tag => (
+                          <span key={tag} style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'5px 12px', borderRadius:50, background:m.accentLight, border:`1px solid ${m.accentBorder}`, fontSize:11, fontWeight:700, color:m.accent }}>
+                            {tag === m.tags[0] ? <Clock style={{ width:10, height:10 }} /> : tag === m.tags[1] ? <Monitor style={{ width:10, height:10 }} /> : <BadgeCheck style={{ width:10, height:10 }} />}
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Description */}
+                      <p style={{ fontSize:14, color:'#475569', lineHeight:1.82, marginBottom:22, flex:1 }}>{card.description}</p>
+
+                      {/* Key features */}
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 12px', marginBottom:22, paddingBottom:20, borderBottom:'1px solid #F1F5F9' }}>
+                        {[
+                          `${m.duration} duration`,
+                          `${m.mode} delivery`,
+                          'Industry certificate',
+                          'Placement support',
+                        ].map(f => (
+                          <div key={f} style={{ display:'flex', alignItems:'flex-start', gap:7 }}>
+                            <div style={{ width:17, height:17, borderRadius:'50%', flexShrink:0, background:m.accentLight, border:`1px solid ${m.accentBorder}`, display:'flex', alignItems:'center', justifyContent:'center', marginTop:1 }}>
+                              <CheckCircle2 style={{ width:10, height:10, color:m.accent }} />
+                            </div>
+                            <span style={{ fontSize:12, fontWeight:600, color:'#334155', lineHeight:1.5 }}>{f}</span>
                           </div>
-                          <h3 style={{ fontSize: 'clamp(19px,1.9vw,24px)', fontWeight: 800, color: '#0F172A', lineHeight: 1.22, letterSpacing: '-.022em', margin: 0 }}>{course.title}</h3>
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18, paddingBottom: 16, borderBottom: '1px solid #F1F5F9' }}>
-                          <Stars rating={course.rating} />
-                          <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>{course.rating}</span>
-                          <span style={{ fontSize: 12, color: '#94A3B8' }}>({course.reviews} reviews)</span>
-                        </div>
-
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 18 }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 50, background: '#FEF2F2', border: '1px solid #FECACA', fontSize: 11, fontWeight: 700, color: '#DC2626' }}>
-                            <Clock style={{ width: 11, height: 11 }} /> {course.duration}
-                          </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', fontSize: 11, fontWeight: 700, color: '#1D4ED8' }}>
-                            <Monitor style={{ width: 11, height: 11 }} /> {course.mode}
-                          </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 50, background: '#F0FDF4', border: '1px solid #BBF7D0', fontSize: 11, fontWeight: 700, color: '#059669' }}>
-                            <BadgeCheck style={{ width: 11, height: 11 }} /> Certified
-                          </span>
-                        </div>
-
-                        <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.82, marginBottom: 20 }}>{course.description}</p>
-
-                        <ul className="c-feat-grid" style={{ listStyle: 'none', margin: '0 0 22px', padding: 0, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 12px', flex: 1 }}>
-                          {course.features.map((f) => (
-                            <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 7 }}>
-                              <div style={{ width: 17, height: 17, borderRadius: '50%', flexShrink: 0, background: course.accentLight, border: `1px solid ${course.accentBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
-                                <CheckCircle2 style={{ width: 10, height: 10, color: course.accent }} />
-                              </div>
-                              <span style={{ fontSize: 12, fontWeight: 600, color: '#334155', lineHeight: 1.55 }}>{f}</span>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div style={{ display: 'flex', gap: 10, marginTop: 'auto', paddingTop: 20, borderTop: '1px solid #F1F5F9' }}>
-                          <Link href={`/${course.slug}`} className="c-btn-dark">
-                            Learn More <ArrowRight style={{ width: 14, height: 14 }} />
-                          </Link>
-                          <Link href="/contact" className="c-btn-red">
-                            <Phone style={{ width: 13, height: 13 }} /> Enquire Now
-                          </Link>
-                        </div>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-
-              <div className="c-secondary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24 }}>
-                {secondaryCards.map((course) => {
-                  return (
-                    <article key={course.id} className="c-card-secondary" data-accent={course.accentKey} style={{ display: 'flex' }}>
-                      <div className="c-sec-img-wrap" style={{ width: 220, flexShrink: 0, position: 'relative', background: '#0F172A', overflow: 'hidden' }}>
-                        <img src={course.image} alt={course.title} className="c-card-img" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-                        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 55%, rgba(0,0,0,.35) 100%)' }} />
-                        <div style={{ position: 'absolute', top: 14, left: 12, padding: '4px 10px', borderRadius: 50, background: `${course.accent}30`, border: `1px solid ${course.accentBorder}`, backdropFilter: 'blur(8px)' }}>
-                          <span style={{ fontSize: 9, fontWeight: 800, color: course.accent, textTransform: 'uppercase', letterSpacing: '.12em' }}>{course.badge}</span>
-                        </div>
-                        <div style={{ position: 'absolute', bottom: 14, left: 12, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 9px', borderRadius: 50, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,.15)' }}>
-                          <Star style={{ width: 11, height: 11, color: '#FBBF24', fill: '#FBBF24' }} />
-                          <span style={{ fontSize: 11, fontWeight: 800, color: '#fff' }}>{course.rating.toFixed(1)}</span>
-                        </div>
+                        ))}
                       </div>
 
-                      <div style={{ padding: '26px 26px 22px', display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
-                          <div style={{ width: 3, height: 12, borderRadius: 2, background: course.accent, flexShrink: 0 }} />
-                          <span style={{ fontSize: 10, fontWeight: 800, color: course.accent, textTransform: 'uppercase', letterSpacing: '.14em' }}>{course.level}</span>
-                        </div>
-                        <h3 style={{ fontSize: 'clamp(16px,1.6vw,20px)', fontWeight: 800, color: '#0F172A', lineHeight: 1.25, letterSpacing: '-.02em', margin: '0 0 8px' }}>{course.title}</h3>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-                          <Stars rating={course.rating} />
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B' }}>({course.reviews} reviews)</span>
-                        </div>
-
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 50, background: '#FEF2F2', border: '1px solid #FECACA', fontSize: 10, fontWeight: 700, color: '#DC2626' }}>
-                            <Clock style={{ width: 10, height: 10 }} /> {course.duration}
-                          </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', fontSize: 10, fontWeight: 700, color: '#1D4ED8' }}>
-                            <Monitor style={{ width: 10, height: 10 }} /> {course.mode}
-                          </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 50, background: '#F0FDF4', border: '1px solid #BBF7D0', fontSize: 10, fontWeight: 700, color: '#059669' }}>
-                            <Users style={{ width: 10, height: 10 }} /> {course.enrolled}
-                          </span>
-                        </div>
-
-                        <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.75, marginBottom: 18, flex: 1 }}>{course.description}</p>
-
-                        <div style={{ display: 'flex', gap: 9 }}>
-                          <Link href={`/${course.slug}`} className="c-btn-dark" style={{ padding: '11px 14px', fontSize: 12 }}>
-                            Learn More <ArrowRight style={{ width: 13, height: 13 }} />
-                          </Link>
-                          <Link href="/contact" className="c-btn-red" style={{ padding: '11px 14px', fontSize: 12 }}>
-                            <Phone style={{ width: 12, height: 12 }} /> Enquire Now
-                          </Link>
-                        </div>
+                      {/* CTAs */}
+                      <div style={{ display:'flex', gap:10 }}>
+                        <Link href={card.route} className="cp-card-btn" style={{ background:m.gradient, color:'#fff', boxShadow:`0 6px 20px ${m.accentGlow}` }}>
+                          Learn More <ArrowRight style={{ width:14, height:14 }} />
+                        </Link>
+                        <Link href="/contact" className="cp-card-btn" style={{ background:'#0F172A', color:'#fff', boxShadow:'0 4px 14px rgba(15,23,42,.22)' }}>
+                          <Phone style={{ width:13, height:13 }} /> Enquire Now
+                        </Link>
                       </div>
-                    </article>
-                  )
-                })}
-              </div>
-            </>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
           )}
         </div>
       </section>
 
-      <section style={{ background: '#fff', borderTop: '1px solid #E2E8F0', borderBottom: '1px solid #E2E8F0', padding: '40px 0' }}>
+      {/* â•â• TRUST BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      <section style={{ background:'#fff', borderTop:'1px solid #E2E8F0', borderBottom:'1px solid #E2E8F0' }}>
         <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
+          <div className="cp-trust-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', borderRight:'1px solid #E2E8F0' }}>
             {[
-              { icon: ShieldCheck, color: '#1D4ED8', bg: '#EFF6FF', title: 'Industry-Recognised Certificate', desc: 'Certificates and course data come from the live database.' },
-              { icon: MessageCircle, color: '#0D9488', bg: '#F0FDFA', title: 'Live, Hands-On Sessions', desc: 'Recruitment and HR learning paths are structured for practical hiring workflows.' },
-              { icon: TrendingUp, color: '#D97706', bg: '#FFFBEB', title: 'Placement-Focused Training', desc: 'Programs are aligned with hiring outcomes and recruiter skill-building.' },
-            ].map(({ icon: Icon, color, bg, title, desc }, i) => (
-              <div key={title} style={{ padding: '28px 36px', borderLeft: i > 0 ? '1px solid #E2E8F0' : 'none', display: 'flex', alignItems: 'flex-start', gap: 18 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon style={{ width: 22, height: 22, color }} />
+              { icon:ShieldCheck, color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE', title:'Industry-Recognised Certificate', desc:"Every graduate receives a certificate trusted by India's top companies and recruitment agencies." },
+              { icon:MessageCircle, color:'#0D9488', bg:'#F0FDFA', border:'#99F6E4', title:'Live, Hands-On Training', desc:'Practice real hiring scenarios, ATS tools, and interview techniques with live practitioner sessions.' },
+              { icon:TrendingUp, color:'#D97706', bg:'#FFFBEB', border:'#FDE68A', title:'Placement-Focused Outcomes', desc:'95% of graduates secure a recruitment role within 90 days of completing the program.' },
+            ].map(({ icon:Icon, color, bg, border, title, desc }, i) => (
+              <div key={title} className="cp-trust-item" style={{ borderLeft:'1px solid #E2E8F0', borderBottom:'none' }}>
+                <div style={{ width:50, height:50, borderRadius:14, background:bg, border:`1.5px solid ${border}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <Icon style={{ width:23, height:23, color }} />
                 </div>
                 <div>
-                  <p style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: '0 0 6px', lineHeight: 1.35 }}>{title}</p>
-                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.7, margin: 0 }}>{desc}</p>
+                  <p style={{ fontSize:14, fontWeight:800, color:'#0F172A', margin:'0 0 7px', lineHeight:1.3 }}>{title}</p>
+                  <p style={{ fontSize:13, color:'#64748B', lineHeight:1.75, margin:0 }}>{desc}</p>
                 </div>
               </div>
             ))}
@@ -539,34 +533,117 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      <section style={{ background: '#F8FAFC', padding: '72px 0 88px' }}>
-        <div className="container">
-          <div style={{ borderRadius: 22, background: 'linear-gradient(130deg,#0B1629 0%,#0F172A 50%,#0D1F3A 100%)', border: '1px solid rgba(255,255,255,.07)', overflow: 'hidden', position: 'relative' }}>
-            <div aria-hidden className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px)', backgroundSize: '24px 24px' }} />
-            <div style={{ padding: '52px 52px', position: 'relative', zIndex: 10 }}>
-              <div className="c-cta-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto', gap: 44, alignItems: 'center' }}>
-                <div>
-                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 14px', borderRadius: 50, background: 'rgba(245,158,11,.12)', border: '1px solid rgba(245,158,11,.25)', marginBottom: 18 }}>
-                    <Zap style={{ width: 11, height: 11, color: '#F59E0B' }} />
-                    <span style={{ fontSize: 10, fontWeight: 800, color: '#FCD34D', textTransform: 'uppercase', letterSpacing: '.18em' }}>Need help choosing?</span>
-                  </div>
-                  <h2 style={{ fontSize: 'clamp(22px,2.5vw,34px)', fontWeight: 900, color: '#fff', lineHeight: 1.2, letterSpacing: '-.025em', marginBottom: 14 }}>
-                    Need the right recruitment path?
-                  </h2>
-                  <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.8, maxWidth: 500, marginBottom: 24 }}>
-                    Talk to our counsellors for free. We will guide you using the live course, fee, and review data already stored in the database.
-                  </p>
-                </div>
+      {/* â•â• BOTTOM CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* TESTIMONIALS */}
+      {testimonials.length > 0 && (
+        <section style={{ background: '#fff', padding: '80px 0', borderTop: '1px solid #E2E8F0' }}>
+          <div className="container">
+            <div style={{ textAlign: 'center', maxWidth: 620, margin: '0 auto 52px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 16px', borderRadius: 50, background: '#FFFBEB', border: '1px solid #FDE68A', color: '#D97706', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase' as const, marginBottom: 18 }}>
+                <Star style={{ width: 11, height: 11, fill: '#D97706' }} /> Alumni Reviews
+              </div>
+              <h2 style={{ fontSize: 'clamp(26px,3vw,40px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 14px' }}>
+                What Our Students{' '}
+                <span style={{ background: 'linear-gradient(120deg,#1D4ED8,#2563EB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  Say
+                </span>
+              </h2>
+              <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
+                Real feedback from HR professionals and career switchers who trained with us.
+              </p>
+            </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flexShrink: 0 }}>
-                  <Link href="/contact" className="c-cta-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, background: 'linear-gradient(135deg,#DC2626,#EF4444)', color: '#fff', fontWeight: 700, fontSize: 14, padding: '15px 34px', borderRadius: 10 }}>
-                    <MessageCircle style={{ width: 16, height: 16 }} />
-                    Talk to an Expert
-                  </Link>
-                  <a href="https://wa.me/919975048884" target="_blank" rel="noopener noreferrer" className="c-cta-ghost" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 9, border: '1.5px solid rgba(255,255,255,.18)', color: '#fff', fontWeight: 600, fontSize: 14, padding: '14px 32px', borderRadius: 10, background: 'rgba(255,255,255,.05)' }}>
-                    WhatsApp Us
-                  </a>
-                </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 22 }}>
+              {testimonials.map((t, i) => {
+                const tColors = [
+                  { border: '#BFDBFE', badge: '#EFF6FF', accent: '#1D4ED8' },
+                  { border: '#BBF7D0', badge: '#F0FDF4', accent: '#059669' },
+                  { border: '#DDD6FE', badge: '#F5F3FF', accent: '#7C3AED' },
+                  { border: '#FDE68A', badge: '#FFFBEB', accent: '#D97706' },
+                ]
+                const c = tColors[i % tColors.length]
+                const name = t.author || 'Alumni'
+                const role = t.title || 'Student'
+                const imgSrc = t.image ? (t.image.startsWith('http') ? t.image : `/${t.image.replace(/^\/+/, '')}`) : null
+                const initials = name.split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2)
+                return (
+                  <div key={t.id} style={{ background: '#FAFBFF', border: `1.5px solid ${c.border}`, borderRadius: 20, padding: '26px 24px', display: 'flex', flexDirection: 'column', gap: 16, boxShadow: '0 2px 12px rgba(15,23,42,.05)' }}>
+                    <div style={{ display: 'flex', gap: 3 }}>
+                      {[...Array(5)].map((_, si) => (
+                        <Star key={si} style={{ width: 13, height: 13, color: si < (t.rating ?? 5) ? '#F59E0B' : '#E2E8F0', fill: si < (t.rating ?? 5) ? '#F59E0B' : '#E2E8F0' }} />
+                      ))}
+                    </div>
+                    <p style={{ fontSize: 14, color: '#334155', lineHeight: 1.8, fontStyle: 'italic', flex: 1, margin: 0 }}>
+                      &ldquo;{t.description}&rdquo;
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 11, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
+                      {imgSrc ? (
+                        <img src={imgSrc} alt={name} style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' as const, border: `2px solid ${c.border}` }} />
+                      ) : (
+                        <div style={{ width: 42, height: 42, borderRadius: '50%', background: c.badge, border: `2px solid ${c.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: c.accent }}>{initials}</span>
+                        </div>
+                      )}
+                      <div>
+                        <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', margin: 0, lineHeight: 1.3 }}>{name}</p>
+                        <p style={{ fontSize: 12, color: '#64748B', margin: '2px 0 0', fontWeight: 500 }}>{role}</p>
+                      </div>
+                      <div style={{ marginLeft: 'auto', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 50, padding: '3px 10px', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <Award style={{ width: 10, height: 10, color: '#059669' }} />
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#059669', textTransform: 'uppercase' as const, letterSpacing: '.1em' }}>Verified</span>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: 40 }}>
+              <Link href="/testimonials" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#EFF6FF', border: '1.5px solid #BFDBFE', color: '#1D4ED8', padding: '11px 24px', borderRadius: 12, fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
+                View All Reviews <ChevronRight style={{ width: 15, height: 15 }} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section style={{ background:'#F8FAFC', padding:'80px 0 96px' }}>
+        <div className="container">
+          <div style={{ borderRadius:26, background:'linear-gradient(135deg,#04091A 0%,#080F22 50%,#04081A 100%)', border:'1px solid rgba(255,255,255,.07)', overflow:'hidden', position:'relative' }}>
+            <div aria-hidden style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(rgba(255,255,255,.022) 1px,transparent 1px)', backgroundSize:'26px 26px' }} />
+            <div aria-hidden style={{ position:'absolute', top:-80, right:-60, width:480, height:480, background:'radial-gradient(circle,rgba(220,38,38,.18) 0%,transparent 65%)', pointerEvents:'none' }} />
+            <div aria-hidden style={{ position:'absolute', bottom:-60, left:'10%', width:380, height:380, background:'radial-gradient(circle,rgba(14,165,233,.1) 0%,transparent 65%)', pointerEvents:'none' }} />
+            <div aria-hidden style={{ height:2, background:'linear-gradient(90deg,#DC2626,#F59E0B 40%,#0EA5E9 80%,#7C3AED)' }} />
+
+            <div style={{ padding:'64px 60px', position:'relative', zIndex:10, textAlign:'center' }}>
+              <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 16px', borderRadius:50, background:'rgba(220,38,38,.12)', border:'1px solid rgba(220,38,38,.28)', marginBottom:22 }}>
+                <Zap style={{ width:11, height:11, color:'#EF4444' }} />
+                <span style={{ fontSize:11, fontWeight:800, color:'#FCA5A5', letterSpacing:'.18em', textTransform:'uppercase' }}>Not sure which program?</span>
+              </div>
+
+              <h2 style={{ fontSize:'clamp(26px,3vw,46px)', fontWeight:900, color:'#fff', lineHeight:1.1, letterSpacing:'-.035em', marginBottom:18 }}>
+                Talk to a career counsellor "" it&apos;s free.
+              </h2>
+              <p style={{ fontSize:16, color:'#94A3B8', lineHeight:1.85, maxWidth:520, margin:'0 auto 40px' }}>
+                Our experts will match you to the right program based on your experience, goals, and timeline. No obligation, just genuine guidance.
+              </p>
+
+              <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap', marginBottom:32 }}>
+                <Link href="/contact" className="cp-bottom-cta-btn" style={{ background:'linear-gradient(135deg,#DC2626,#EF4444)', color:'#fff', boxShadow:'0 8px 28px rgba(220,38,38,.38)' }}>
+                  <MessageCircle style={{ width:16, height:16 }} /> Talk to an Expert
+                </Link>
+                <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="cp-bottom-cta-btn" style={{ background:'linear-gradient(135deg,#059669,#0D9488)', color:'#fff', boxShadow:'0 8px 24px rgba(5,150,105,.32)', textDecoration:'none' }}>
+                  WhatsApp Admissions
+                </a>
+              </div>
+
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:24, flexWrap:'wrap' }}>
+                {['Free 30-min consultation', 'No pressure, no commitment', 'Instant WhatsApp response'].map(t => (
+                  <div key={t} style={{ display:'flex', alignItems:'center', gap:7 }}>
+                    <CheckCircle2 style={{ width:13, height:13, color:'#6EE7B7' }} />
+                    <span style={{ fontSize:12, fontWeight:600, color:'#64748B' }}>{t}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

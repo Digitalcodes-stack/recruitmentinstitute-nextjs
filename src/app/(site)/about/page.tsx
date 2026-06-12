@@ -70,11 +70,22 @@ async function getAboutSections() {
 }
 
 export default async function AboutPage() {
-  const sections = await getAboutSections()
+  const [sections, testimonials] = await Promise.all([
+    getAboutSections(),
+    prisma.testimonial.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' }, take: 4 }),
+  ])
+  const testimonialData = testimonials.map(t => ({
+    id: t.id,
+    author: t.author,
+    title: t.title,
+    description: t.description,
+    rating: t.rating,
+    image: t.image,
+  }))
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
-      <AboutClient sections={sections} />
+      <AboutClient sections={sections} testimonials={testimonialData} />
     </>
   )
 }

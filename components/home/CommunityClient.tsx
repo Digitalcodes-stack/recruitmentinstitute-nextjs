@@ -162,8 +162,8 @@ export default function CommunityClient({
               {/* Breadcrumb */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '28px', fontSize: '12px', fontWeight: 600 }}>
                 <Link href="/" style={{ color: '#64748B', textDecoration: 'none', transition: 'color 0.2s' }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#94A3B8')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#64748B')}>
+
+>
                   Home
                 </Link>
                 <span style={{ color: '#F59E0B', fontSize: '5px' }}>●</span>
@@ -234,8 +234,8 @@ export default function CommunityClient({
                     cursor: 'pointer', boxShadow: '0 8px 32px rgba(30,64,175,0.4)',
                     transition: 'all 0.2s ease',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 12px 40px rgba(30,64,175,0.5)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 32px rgba(30,64,175,0.4)' }}
+
+
                 >
                   <PlusCircle style={{ width: 16, height: 16 }} />
                   Ask a Question
@@ -247,8 +247,8 @@ export default function CommunityClient({
                   borderRadius: '12px', textDecoration: 'none',
                   background: 'rgba(255,255,255,0.05)', transition: 'all 0.2s ease',
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.25)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.05)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.15)' }}
+
+
                 >
                   Browse Discussions
                   <ArrowRight style={{ width: 15, height: 15 }} />
@@ -506,8 +506,8 @@ export default function CommunityClient({
                         cursor: 'pointer', whiteSpace: 'nowrap',
                         transition: 'opacity 0.2s',
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
-                      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+
+
                     >
                       Search
                     </button>
@@ -570,8 +570,8 @@ export default function CommunityClient({
                           transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
                           cursor: 'default',
                         }}
-                        onMouseEnter={() => setHoveredCard(q.id)}
-                        onMouseLeave={() => setHoveredCard(null)}
+
+
                       >
                         <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
                           {/* Avatar */}
@@ -872,14 +872,8 @@ export default function CommunityClient({
                     textDecoration: 'none', boxShadow: '0 6px 20px rgba(30,64,175,0.4)',
                     transition: 'all 0.2s ease',
                   }}
-                    onMouseEnter={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'
-                      ;(e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 10px 28px rgba(30,64,175,0.5)'
-                    }}
-                    onMouseLeave={e => {
-                      (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)'
-                      ;(e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 6px 20px rgba(30,64,175,0.4)'
-                    }}
+
+
                   >
                     Register / Login
                     <ArrowRight style={{ width: 15, height: 15 }} />

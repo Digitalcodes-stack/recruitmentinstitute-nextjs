@@ -7,9 +7,8 @@ import {
   LayoutDashboard, FileText, BookOpen, MessageSquare, Lightbulb,
   Mail, LogOut, Menu, Info, Star, HelpCircle, Settings2, ExternalLink,
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
-  MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown,
+  MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
 } from 'lucide-react'
-import { cn } from '@/utils/cn'
 import toast from 'react-hot-toast'
 
 const navGroups = [
@@ -56,6 +55,7 @@ const navGroups = [
       { label: 'About Us',     href: '/admin/about',        icon: Info },
       { label: 'Testimonials', href: '/admin/testimonials', icon: Star },
       { label: 'Services',     href: '/admin/services',     icon: Settings2 },
+      { label: 'Client Logos', href: '/admin/clients',      icon: Building2 },
     ],
   },
   {
@@ -175,18 +175,8 @@ export default function AdminLayout({ children, title }: { children: React.React
                       transition: 'color 120ms, background 120ms',
                     }}
                     className="group"
-                    onMouseEnter={e => {
-                      if (!active) {
-                        (e.currentTarget as HTMLAnchorElement).style.color = '#c8dff0'
-                        ;(e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.04)'
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!active) {
-                        (e.currentTarget as HTMLAnchorElement).style.color = '#5a7b96'
-                        ;(e.currentTarget as HTMLAnchorElement).style.background = 'transparent'
-                      }
-                    }}
+
+
                   >
                     {active && (
                       <span style={{
@@ -215,14 +205,8 @@ export default function AdminLayout({ children, title }: { children: React.React
               color: '#5a7b96', background: 'transparent',
               border: 'none', cursor: 'pointer', transition: 'color 120ms, background 120ms',
             }}
-            onMouseEnter={e => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = '#fca5a5'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(239,68,68,0.08)'
-            }}
-            onMouseLeave={e => {
-              ;(e.currentTarget as HTMLButtonElement).style.color = '#5a7b96'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'transparent'
-            }}
+
+
             title={!open ? 'Logout' : undefined}
           >
             <LogOut style={{ width: 15, height: 15, flexShrink: 0 }} />
@@ -253,8 +237,8 @@ export default function AdminLayout({ children, title }: { children: React.React
               background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', color: '#64748b', flexShrink: 0, transition: 'background 120ms',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#f1f5f9' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = '#fff' }}
+
+
             aria-label="Toggle sidebar"
           >
             <Menu style={{ width: 16, height: 16 }} />
@@ -339,8 +323,8 @@ export default function AdminLayout({ children, title }: { children: React.React
             style={{ display: 'flex', alignItems: 'center', gap: 5,
               fontSize: 12, fontWeight: 600, color: '#64748b',
               textDecoration: 'none', flexShrink: 0 }}
-            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#2563eb' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#64748b' }}
+
+
           >
             <ExternalLink style={{ width: 13, height: 13 }} />
             View Website

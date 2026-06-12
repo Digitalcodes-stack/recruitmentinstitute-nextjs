@@ -1,12 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AdminLayout from './AdminLayout'
-import { ArrowLeft, Save, Eye, EyeOff, ImageIcon, Search, FileText, Globe, Code2, Braces } from 'lucide-react'
+import { ArrowLeft, Save, Eye, EyeOff, ImageIcon, Search, FileText, Globe, Code2, Braces, HelpCircle, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { BlogPost } from '@/types'
+
+interface BlogFaqItem { id: number; question: string; answer: string; sortOrder: number }
+const EMPTY_FAQ = { question: '', answer: '', sortOrder: 0 }
 
 interface Props {
   blog?: BlogPost
@@ -33,6 +36,42 @@ export default function AdminBlogForm({ blog }: Props) {
   const set = (key: string, value: string | boolean) =>
     setForm((f) => ({ ...f, [key]: value }))
 
+  // ── Blog FAQs ────────────────────────────────────────────
+  const [faqs, setFaqs]         = useState<BlogFaqItem[]>([])
+  const [faqForm, setFaqForm]   = useState(EMPTY_FAQ)
+  const [editingFaq, setEditingFaq] = useState<BlogFaqItem | null>(null)
+  const [faqOpen, setFaqOpen]   = useState<number | null>(null)
+
+  const loadFaqs = useCallback(async () => {
+    if (!blog?.id) return
+    const res = await fetch(`/api/admin/blog-faqs?blogId=${blog.id}`)
+    const json = await res.json()
+    setFaqs(json.data || [])
+  }, [blog?.id])
+
+  useEffect(() => { if (isEdit) loadFaqs() }, [isEdit, loadFaqs])
+
+  const saveFaq = async () => {
+    if (!faqForm.question.trim() || !faqForm.answer.trim()) { toast.error('Question and answer are required'); return }
+    try {
+      if (editingFaq) {
+        await fetch(`/api/admin/blog-faqs/${editingFaq.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(faqForm) })
+        toast.success('FAQ updated')
+      } else {
+        await fetch('/api/admin/blog-faqs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...faqForm, blogId: blog!.id }) })
+        toast.success('FAQ added')
+      }
+      setFaqForm(EMPTY_FAQ); setEditingFaq(null); loadFaqs()
+    } catch { toast.error('Failed to save FAQ') }
+  }
+
+  const deleteFaq = async (id: number) => {
+    if (!confirm('Delete this FAQ?')) return
+    await fetch(`/api/admin/blog-faqs/${id}`, { method: 'DELETE' })
+    toast.success('FAQ deleted'); loadFaqs()
+  }
+  // ────────────────────────────────────────────────────────
+
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -45,8 +84,13 @@ export default function AdminBlogForm({ blog }: Props) {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success(isEdit ? 'Blog updated!' : 'Blog created!')
-        router.push('/admin/blog')
+        toast.success(isEdit ? 'Blog updated!' : 'Blog created! Add FAQs below.')
+        if (isEdit) {
+          router.push('/admin/blog')
+        } else {
+          // redirect to edit so FAQs can be added right away
+          router.push(`/admin/blog/${data.data.id}/edit`)
+        }
       } else {
         toast.error(data.message || 'Failed to save')
       }
@@ -114,8 +158,8 @@ export default function AdminBlogForm({ blog }: Props) {
         <Link
           href="/admin/blog"
           style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: '#94a3b8', textDecoration: 'none', transition: 'color 0.15s' }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#475569' }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = '#94a3b8' }}
+
+
         >
           <ArrowLeft style={{ width: 13, height: 13 }} />
           Blog Posts
@@ -323,6 +367,79 @@ export default function AdminBlogForm({ blog }: Props) {
 
               </div>
             </div>
+            {/* FAQ card — only shown when editing an existing post */}
+            {isEdit && (
+              <div style={card}>
+                {sectionHeader('Blog FAQs', <HelpCircle style={{ width: 15, height: 15, color: '#475569' }} />)}
+                <div style={{ padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                  {/* Existing FAQs accordion */}
+                  {faqs.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {faqs.map((faq) => (
+                        <div key={faq.id} style={{ border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
+                          {/* div instead of button — avoids nested <button> hydration error */}
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => setFaqOpen(faqOpen === faq.id ? null : faq.id)}
+                            onKeyDown={(e) => e.key === 'Enter' && setFaqOpen(faqOpen === faq.id ? null : faq.id)}
+                            style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '12px 16px', background: faqOpen === faq.id ? '#f8fafc' : '#fff', cursor: 'pointer' }}>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', flex: 1 }}>{faq.question}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); setEditingFaq(faq); setFaqForm({ question: faq.question, answer: faq.answer, sortOrder: faq.sortOrder }) }}
+                                style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', fontSize: 11, fontWeight: 600, color: '#374151', cursor: 'pointer' }}>Edit</button>
+                              <button type="button" onClick={(e) => { e.stopPropagation(); deleteFaq(faq.id) }}
+                                style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid #fecaca', background: '#fff', fontSize: 11, fontWeight: 600, color: '#dc2626', cursor: 'pointer' }}>
+                                <Trash2 style={{ width: 11, height: 11 }} />
+                              </button>
+                              {faqOpen === faq.id
+                                ? <ChevronUp style={{ width: 14, height: 14, color: '#94a3b8' }} />
+                                : <ChevronDown style={{ width: 14, height: 14, color: '#94a3b8' }} />}
+                            </div>
+                          </div>
+                          {faqOpen === faq.id && (
+                            <div style={{ padding: '12px 16px', borderTop: '1px solid #f1f5f9', fontSize: 13, color: '#374151', lineHeight: 1.7, background: '#fafbfc' }}>
+                              {faq.answer}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Add / Edit FAQ form */}
+                  <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 12, padding: '16px' }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 12 }}>
+                      {editingFaq ? 'Edit FAQ' : 'Add New FAQ'}
+                    </p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <input value={faqForm.question} onChange={(e) => setFaqForm((f) => ({ ...f, question: e.target.value }))}
+                        placeholder="Question" style={{ ...inputStyle, fontSize: 13 }} onFocus={focusIn} onBlur={focusOut} />
+                      <textarea value={faqForm.answer} onChange={(e) => setFaqForm((f) => ({ ...f, answer: e.target.value }))}
+                        placeholder="Answer" rows={3} style={{ ...inputStyle, resize: 'vertical', fontSize: 13 }} onFocus={focusIn} onBlur={focusOut} />
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <input type="number" value={faqForm.sortOrder} onChange={(e) => setFaqForm((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
+                          placeholder="Order" style={{ ...inputStyle, width: 80 }} onFocus={focusIn} onBlur={focusOut} />
+                        <button type="button" onClick={saveFaq}
+                          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '9px 16px', borderRadius: 10, border: 'none', background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                          <Plus style={{ width: 13, height: 13 }} />
+                          {editingFaq ? 'Update FAQ' : 'Add FAQ'}
+                        </button>
+                        {editingFaq && (
+                          <button type="button" onClick={() => { setEditingFaq(null); setFaqForm(EMPTY_FAQ) }}
+                            style={{ padding: '9px 14px', borderRadius: 10, border: '1.5px solid #e2e8f0', background: '#fff', fontSize: 13, fontWeight: 600, color: '#64748b', cursor: 'pointer' }}>
+                            Cancel
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            )}
+
           </div>
 
           {/* ── Right sidebar ────────────────────────────────── */}
@@ -374,8 +491,8 @@ export default function AdminBlogForm({ blog }: Props) {
                     boxShadow: loading ? 'none' : '0 4px 14px rgba(37,99,235,0.3)',
                     transition: 'all 0.2s',
                   }}
-                  onMouseEnter={(e) => { if (!loading) e.currentTarget.style.boxShadow = '0 6px 20px rgba(37,99,235,0.4)' }}
-                  onMouseLeave={(e) => { if (!loading) e.currentTarget.style.boxShadow = '0 4px 14px rgba(37,99,235,0.3)' }}
+
+
                 >
                   <Save style={{ width: 14, height: 14 }} />
                   {loading ? 'Saving…' : isEdit ? 'Update Post' : 'Publish Post'}
@@ -385,8 +502,8 @@ export default function AdminBlogForm({ blog }: Props) {
                 <Link
                   href="/admin/blog"
                   style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '10px 20px', borderRadius: 12, border: '1px solid #e8ecf0', background: '#f8fafc', color: '#475569', fontSize: 13, fontWeight: 600, textDecoration: 'none', textAlign: 'center' as const, transition: 'background 0.15s' }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = '#f1f5f9' }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.background = '#f8fafc' }}
+
+
                 >
                   Cancel
                 </Link>

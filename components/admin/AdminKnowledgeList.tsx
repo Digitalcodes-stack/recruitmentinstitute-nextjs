@@ -119,8 +119,8 @@ export default function AdminKnowledgeList({ items: initial }: Props) {
             <button
               onClick={resetForm}
               style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid #e8ecf0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#94a3b8' }}
-              onMouseEnter={(e) => { const el = e.currentTarget; el.style.background = '#f1f5f9'; el.style.color = '#475569' }}
-              onMouseLeave={(e) => { const el = e.currentTarget; el.style.background = '#fff'; el.style.color = '#94a3b8' }}
+
+
             >
               <X style={{ width: 14, height: 14 }} />
             </button>
@@ -197,8 +197,8 @@ export default function AdminKnowledgeList({ items: initial }: Props) {
             <div
               key={item.id}
               style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '20px 24px', transition: 'border-color 0.15s, box-shadow 0.15s' }}
-              onMouseEnter={(e) => { const el = e.currentTarget; el.style.borderColor = '#cbd5e1'; el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.06)' }}
-              onMouseLeave={(e) => { const el = e.currentTarget; el.style.borderColor = '#e8ecf0'; el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)' }}
+
+
             >
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14, flex: 1, minWidth: 0 }}>
@@ -224,8 +224,8 @@ export default function AdminKnowledgeList({ items: initial }: Props) {
                     onClick={() => handleEdit(item)}
                     title="Edit"
                     style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e8ecf0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#94a3b8', transition: 'all 0.15s' }}
-                    onMouseEnter={(e) => { const el = e.currentTarget; el.style.color = '#2563eb'; el.style.background = '#eff6ff'; el.style.borderColor = '#bfdbfe' }}
-                    onMouseLeave={(e) => { const el = e.currentTarget; el.style.color = '#94a3b8'; el.style.background = '#fff'; el.style.borderColor = '#e8ecf0' }}
+
+
                   >
                     <Edit2 style={{ width: 12, height: 12 }} />
                   </button>
@@ -233,8 +233,8 @@ export default function AdminKnowledgeList({ items: initial }: Props) {
                     onClick={() => handleDelete(item.id)}
                     title="Delete"
                     style={{ width: 30, height: 30, borderRadius: 8, border: '1px solid #e8ecf0', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#94a3b8', transition: 'all 0.15s' }}
-                    onMouseEnter={(e) => { const el = e.currentTarget; el.style.color = '#e11d48'; el.style.background = '#fff1f2'; el.style.borderColor = '#fecdd3' }}
-                    onMouseLeave={(e) => { const el = e.currentTarget; el.style.color = '#94a3b8'; el.style.background = '#fff'; el.style.borderColor = '#e8ecf0' }}
+
+
                   >
                     <Trash2 style={{ width: 12, height: 12 }} />
                   </button>

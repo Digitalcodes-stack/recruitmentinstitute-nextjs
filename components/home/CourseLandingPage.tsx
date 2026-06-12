@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -82,7 +82,7 @@ export default function CourseLandingPage({
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* â"€â"€ Hero â"€â"€ */}
       <div
         className="relative overflow-hidden text-white"
         style={{
@@ -104,14 +104,14 @@ export default function CourseLandingPage({
           {/* breadcrumb */}
           <div className="flex items-center gap-2 mb-8" style={{ fontSize: '12px', color: '#64748B' }}>
             <Link href="/" style={{ color: '#64748B', textDecoration: 'none' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#93C5FD' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#64748B' }}>
+
+>
               Home
             </Link>
             <ChevronRight className="w-3 h-3" />
             <Link href="/courses" style={{ color: '#64748B', textDecoration: 'none' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#93C5FD' }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#64748B' }}>
+
+>
               Courses
             </Link>
             <ChevronRight className="w-3 h-3" />
@@ -169,8 +169,8 @@ export default function CourseLandingPage({
                     boxShadow: '0 8px 24px rgba(30,64,175,0.4)',
                     border: 'none',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+
+
                 >
                   Enquire Now
                   <ArrowRight className="w-4 h-4" />
@@ -182,15 +182,15 @@ export default function CourseLandingPage({
                     color: 'white', padding: '14px 32px', fontSize: '14px',
                     background: 'rgba(255,255,255,0.06)', textDecoration: 'none',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.12)' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.06)' }}
+
+
                 >
                   Request Call Back
                 </Link>
               </div>
             </div>
 
-            {/* Right — trust signals */}
+            {/* Right "" trust signals */}
             <div className="lg:col-span-4 hidden lg:flex flex-col gap-4">
               {[
                 { icon: <BadgeCheck className="w-5 h-5" />, title: 'Industry Certificate', sub: 'Verified & recognized', color: '#1E40AF', bg: 'rgba(30,64,175,0.2)' },
@@ -219,12 +219,12 @@ export default function CourseLandingPage({
           style={{ height: '52px', clipPath: 'ellipse(55% 100% at 50% 100%)' }} />
       </div>
 
-      {/* ── Main Content ── */}
+      {/* â"€â"€ Main Content â"€â"€ */}
       <section style={{ background: '#F8FAFC', padding: '72px 0' }}>
         <div className="container">
           <div className="grid lg:grid-cols-3 gap-10 items-start">
 
-            {/* ── Left: Tabs ── */}
+            {/* â"€â"€ Left: Tabs â"€â"€ */}
             <div className="lg:col-span-2">
 
               {/* Tab bar */}
@@ -240,8 +240,8 @@ export default function CourseLandingPage({
                         ? { background: 'linear-gradient(135deg, #1E40AF, #2563EB)', color: 'white', padding: '10px 20px', fontSize: '13px', border: 'none', boxShadow: '0 4px 12px rgba(30,64,175,0.25)' }
                         : { background: 'transparent', color: '#64748B', padding: '10px 20px', fontSize: '13px', border: 'none' }
                     }
-                    onMouseEnter={e => { if (activeTab !== tab.id) (e.currentTarget as HTMLButtonElement).style.color = '#1E40AF' }}
-                    onMouseLeave={e => { if (activeTab !== tab.id) (e.currentTarget as HTMLButtonElement).style.color = '#64748B' }}
+
+
                   >
                     {tab.icon}
                     {tab.label}
@@ -249,7 +249,7 @@ export default function CourseLandingPage({
                 ))}
               </div>
 
-              {/* ── Overview ── */}
+              {/* â"€â"€ Overview â"€â"€ */}
               {activeTab === 'overview' && (
                 <div className="flex flex-col gap-6">
                   {/* What you'll learn */}
@@ -294,7 +294,7 @@ export default function CourseLandingPage({
                 </div>
               )}
 
-              {/* ── Curriculum ── */}
+              {/* â"€â"€ Curriculum â"€â"€ */}
               {activeTab === 'curriculum' && (
                 <div className="flex flex-col gap-4">
                   <div className="bg-white rounded-3xl overflow-hidden"
@@ -302,7 +302,7 @@ export default function CourseLandingPage({
                     <div style={{ background: 'linear-gradient(135deg, #0F172A, #1E293B)', padding: '24px 28px' }}>
                       <h3 style={{ fontSize: '17px', fontWeight: 700, color: 'white' }}>Detailed Course Modules</h3>
                       <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '4px' }}>
-                        {curriculum.length} modules — click to expand each topic
+                        {curriculum.length} modules "" click to expand each topic
                       </p>
                     </div>
                     <div style={{ padding: '16px' }}>
@@ -315,8 +315,8 @@ export default function CourseLandingPage({
                               onClick={() => setExpandedWeek(isExpanded ? null : i)}
                               className="w-full flex items-center justify-between text-left cursor-pointer"
                               style={{ padding: '18px 20px', background: 'transparent', border: 'none' }}
-                              onMouseEnter={e => { if (!isExpanded) (e.currentTarget as HTMLButtonElement).style.background = '#F8FAFC' }}
-                              onMouseLeave={e => { if (!isExpanded) (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+
+
                             >
                               <div className="flex items-center gap-4">
                                 <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 font-bold"
@@ -369,7 +369,7 @@ export default function CourseLandingPage({
                 </div>
               )}
 
-              {/* ── FAQs ── */}
+              {/* â"€â"€ FAQs â"€â"€ */}
               {activeTab === 'faqs' && (
                 <div className="flex flex-col gap-4">
                   <div className="bg-white rounded-3xl overflow-hidden"
@@ -413,7 +413,7 @@ export default function CourseLandingPage({
               )}
             </div>
 
-            {/* ── Sidebar ── */}
+            {/* â"€â"€ Sidebar â"€â"€ */}
             <aside className="sticky top-24">
               <div className="bg-white rounded-3xl overflow-hidden"
                 style={{ border: '1px solid #E2E8F0', boxShadow: '0 20px 60px rgba(0,0,0,0.10)' }}>
@@ -454,14 +454,14 @@ export default function CourseLandingPage({
                       boxShadow: '0 8px 20px rgba(30,64,175,0.3)',
                       border: 'none',
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)' }}
+
+
                   >
                     Enquire About Batches
                     <ArrowRight className="w-4 h-4" />
                   </button>
                   <a
-                    href="https://wa.me/919975048884"
+                    href="https://wa.me/917385204165"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full flex items-center justify-center gap-2 font-bold rounded-xl transition-all duration-200"
@@ -471,8 +471,8 @@ export default function CourseLandingPage({
                       textDecoration: 'none',
                       boxShadow: '0 4px 12px rgba(5,150,105,0.25)',
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)' }}
+
+
                   >
                     <MessageSquare className="w-4 h-4" />
                     WhatsApp Admissions

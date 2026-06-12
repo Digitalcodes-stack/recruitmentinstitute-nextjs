@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Users2, ArrowLeft, Save, Loader2 } from 'lucide-react'
+import ImageUploadField from './ImageUploadField'
 
 interface Category { id: number; name: string }
 
@@ -128,14 +129,15 @@ export default function ExpertForm({ categories, expert }: Props) {
             <input type="text" value={form.profession} onChange={set('profession')} placeholder="e.g. Senior HR Consultant" style={inputStyle('profession')} />
           </div>
 
-          {/* Photo URL */}
-          <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Photo URL</label>
-            <input type="url" value={form.image} onChange={set('image')} placeholder="https://…" style={inputStyle('image')} />
-            {form.image && (
-              <img src={form.image} alt="preview" style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', marginTop: 8, border: '2px solid #e2e8f0' }} />
-            )}
-          </div>
+          {/* Photo */}
+          <ImageUploadField
+            label="Photo"
+            value={form.image}
+            onChange={url => setForm(f => ({ ...f, image: url }))}
+            folder="experts"
+            previewShape="circle"
+            placeholder="Paste URL or click Browse…"
+          />
 
           {/* Category */}
           <div>

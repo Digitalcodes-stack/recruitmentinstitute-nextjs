@@ -3,12 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import AdminLayout from './AdminLayout'
-import { Plus, Edit2, Trash2, Eye, EyeOff, ArrowUpRight, FileText, Search } from 'lucide-react'
+import { Plus, Edit2, Trash2, Eye, EyeOff, ArrowUpRight, FileText, Search, HelpCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { BlogPost } from '@/types'
 
+type BlogWithFaqCount = BlogPost & { _count?: { blogFaqs: number } }
+
 interface Props {
-  blogs: BlogPost[]
+  blogs: BlogWithFaqCount[]
 }
 
 /* ── tiny helpers ───────────────────────────────────────── */
@@ -62,8 +64,8 @@ function ActionBtn({
         target={newTab ? '_blank' : undefined}
         rel={newTab ? 'noopener noreferrer' : undefined}
         style={base}
-        onMouseEnter={handleEnter}
-        onMouseLeave={handleLeave}
+
+
       >
         {children}
       </Link>
@@ -74,8 +76,8 @@ function ActionBtn({
       onClick={onClick}
       title={title}
       style={base}
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
+
+
     >
       {children}
     </button>
@@ -84,7 +86,7 @@ function ActionBtn({
 
 /* ── main component ─────────────────────────────────────── */
 export default function AdminBlogList({ blogs: initialBlogs }: Props) {
-  const [blogs,  setBlogs]  = useState(initialBlogs)
+  const [blogs,  setBlogs]  = useState<BlogWithFaqCount[]>(initialBlogs)
   const [search, setSearch] = useState('')
 
   const published = blogs.filter((b) => b.isPublished).length
@@ -163,16 +165,8 @@ export default function AdminBlogList({ blogs: initialBlogs }: Props) {
             boxShadow:  '0 4px 14px rgba(37,99,235,0.32)',
             textDecoration: 'none',
           }}
-          onMouseEnter={(e) => {
-            ;(e.currentTarget as HTMLAnchorElement).style.background  = '#1d4ed8'
-            ;(e.currentTarget as HTMLAnchorElement).style.boxShadow   = '0 6px 20px rgba(37,99,235,0.42)'
-            ;(e.currentTarget as HTMLAnchorElement).style.transform   = 'translateY(-1px)'
-          }}
-          onMouseLeave={(e) => {
-            ;(e.currentTarget as HTMLAnchorElement).style.background  = '#2563eb'
-            ;(e.currentTarget as HTMLAnchorElement).style.boxShadow   = '0 4px 14px rgba(37,99,235,0.32)'
-            ;(e.currentTarget as HTMLAnchorElement).style.transform   = 'translateY(0)'
-          }}
+
+
         >
           <Plus style={{ width: 15, height: 15 }} />
           New Post
@@ -271,13 +265,13 @@ export default function AdminBlogList({ blogs: initialBlogs }: Props) {
         <div
           style={{
             display:         'grid',
-            gridTemplateColumns: '1fr 160px 130px 110px 130px',
+            gridTemplateColumns: '1fr 130px 120px 110px 100px 130px',
             padding:         '12px 24px',
             background:      '#f8fafc',
             borderBottom:    '1px solid #e8ecf0',
           }}
         >
-          {['Title', 'Author', 'Status', 'Date', 'Actions'].map((col) => (
+          {['Title', 'Author', 'Status', 'Date', 'FAQs', 'Actions'].map((col) => (
             <span
               key={col}
               style={{
@@ -330,19 +324,15 @@ export default function AdminBlogList({ blogs: initialBlogs }: Props) {
                 key={blog.id}
                 style={{
                   display:         'grid',
-                  gridTemplateColumns: '1fr 160px 130px 110px 130px',
+                  gridTemplateColumns: '1fr 130px 120px 110px 100px 130px',
                   alignItems:      'center',
                   padding:         '16px 24px',
                   borderBottom:    idx < visible.length - 1 ? '1px solid #f1f5f9' : 'none',
                   transition:      'background 0.12s',
                   cursor:          'default',
                 }}
-                onMouseEnter={(e) => {
-                  ;(e.currentTarget as HTMLDivElement).style.background = '#fafbfc'
-                }}
-                onMouseLeave={(e) => {
-                  ;(e.currentTarget as HTMLDivElement).style.background = 'transparent'
-                }}
+
+
               >
                 {/* Title */}
                 <div style={{ paddingRight: 24, minWidth: 0 }}>
@@ -436,6 +426,41 @@ export default function AdminBlogList({ blogs: initialBlogs }: Props) {
                   <span style={{ fontSize: 12, color: '#94a3b8', fontWeight: 500 }}>
                     {fmtDate(blog.createdAt)}
                   </span>
+                </div>
+
+                {/* FAQ count */}
+                <div>
+                  {(blog._count?.blogFaqs ?? 0) > 0 ? (
+                    <Link
+                      href={`/admin/blog/${blog.id}/edit`}
+                      title="Edit FAQs"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '3px 10px', borderRadius: 20,
+                        background: '#eff6ff', border: '1px solid #bfdbfe',
+                        color: '#1d4ed8', fontSize: 11, fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <HelpCircle style={{ width: 11, height: 11 }} />
+                      {blog._count!.blogFaqs}
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/admin/blog/${blog.id}/edit`}
+                      title="Add FAQs"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '3px 10px', borderRadius: 20,
+                        background: '#fff7ed', border: '1px solid #fed7aa',
+                        color: '#c2410c', fontSize: 11, fontWeight: 700,
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <HelpCircle style={{ width: 11, height: 11 }} />
+                      0
+                    </Link>
+                  )}
                 </div>
 
                 {/* Actions */}

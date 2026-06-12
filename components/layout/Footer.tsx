@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import Link from 'next/link'
 import Image from 'next/image'
@@ -74,7 +74,7 @@ export default function Footer() {
       <div className="container relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12" style={{ padding: '64px 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
 
-          {/* Col 1 — Brand */}
+          {/* Col 1 "" Brand */}
           <div className="flex flex-col gap-6">
             <Link href="/">
               <div style={{ position: 'relative', width: 180, height: 48 }}>
@@ -88,13 +88,13 @@ export default function Footer() {
 
             <div className="flex flex-col gap-3">
               {[
-                { href: 'tel:+919975048884', Icon: Phone, text: '+91 9975048884' },
+                { href: 'tel:+917385204165', Icon: Phone, text: '+91 7385204165' },
                 { href: 'mailto:support@recruitmentinstitute.in', Icon: Mail, text: 'support@recruitmentinstitute.in' },
               ].map(({ href, Icon, text }) => (
                 <a key={text} href={href}
                   style={{ ...linkStyle }}
-                  onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
                   <span className="flex items-center justify-center shrink-0" style={{ width: 32, height: 32, borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <Icon className="w-3.5 h-3.5" style={{ color: '#3B82F6' }} />
                   </span>
@@ -114,15 +114,15 @@ export default function Footer() {
                 <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
                   className="flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5"
                   style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#64748B' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#1E40AF'; (e.currentTarget as HTMLElement).style.color = 'white'; (e.currentTarget as HTMLElement).style.border = '1px solid #1E40AF' }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.05)'; (e.currentTarget as HTMLElement).style.color = '#64748B'; (e.currentTarget as HTMLElement).style.border = '1px solid rgba(255,255,255,0.08)' }}>
+
+>
                   {s.icon}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Col 2 — Courses */}
+          {/* Col 2 "" Courses */}
           <div className="flex flex-col gap-5">
             <div>
               <h3 style={{ color: 'white', fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em', margin: 0 }}>Our Courses</h3>
@@ -133,8 +133,8 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link href={link.href}
                     style={{ ...linkStyle }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0 transition-transform duration-200" style={{ color: '#1E40AF' }} />
                     {link.label}
                   </Link>
@@ -143,7 +143,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 3 — Quick Links */}
+          {/* Col 3 "" Quick Links */}
           <div className="flex flex-col gap-5">
             <div>
               <h3 style={{ color: 'white', fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em', margin: 0 }}>Quick Links</h3>
@@ -154,8 +154,8 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link href={link.href}
                     style={{ ...linkStyle }}
-                    onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
                     <ArrowRight className="w-3.5 h-3.5 shrink-0" style={{ color: '#1E40AF' }} />
                     {link.label}
                   </Link>
@@ -164,7 +164,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 4 — Newsletter */}
+          {/* Col 4 "" Newsletter */}
           <div className="flex flex-col gap-5">
             <div>
               <h3 style={{ color: 'white', fontWeight: 700, fontSize: '15px', letterSpacing: '-0.01em', margin: 0 }}>Stay Updated</h3>
@@ -207,13 +207,13 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3" style={{ padding: '20px 0', fontSize: '12px', color: '#475569' }}>
-          <p style={{ margin: 0 }}>© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
+          <p style={{ margin: 0 }}>Â© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
           <div className="flex items-center gap-5">
             {[['Privacy Policy','/privacy'],['Terms of Service','/terms'],['Sitemap','/sitemap.xml']].map(([label,href]) => (
               <Link key={label} href={href}
                 style={{ color: '#475569', textDecoration: 'none', fontSize: '12px', transition: 'color 0.2s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#475569')}>
+
+>
                 {label}
               </Link>
             ))}

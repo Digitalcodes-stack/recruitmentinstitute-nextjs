@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
@@ -81,22 +81,22 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full"
       style={{ transition: 'box-shadow 0.3s', boxShadow: scrolled ? '0 4px 24px rgba(15,23,42,0.10)' : 'none' }}>
 
-      {/* ── Top Bar ─────────────────────────────────── */}
+      {/* â"€â"€ Top Bar â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */}
       <div style={{ background: '#0F172A', height: '40px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="container h-full flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="tel:+919975048884" className="flex items-center gap-1.5 transition-colors"
+            <a href="tel:+917385204165" className="flex items-center gap-1.5 transition-colors"
               style={{ color: '#94A3B8', fontSize: '12px', fontWeight: 500, textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
               <Phone className="w-3 h-3" style={{ color: '#3B82F6' }} />
-              +91 9975048884
+              +91 7385204165
             </a>
             <a href="mailto:support@recruitmentinstitute.in"
               className="hidden sm:flex items-center gap-1.5 transition-colors"
               style={{ color: '#94A3B8', fontSize: '12px', fontWeight: 500, textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
               <Mail className="w-3 h-3" style={{ color: '#3B82F6' }} />
               support@recruitmentinstitute.in
             </a>
@@ -104,22 +104,22 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <Link href="/student-membership" className="hidden sm:block transition-colors"
               style={{ color: '#94A3B8', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
               Student Membership
             </Link>
             <span className="hidden sm:block" style={{ color: '#374151' }}>|</span>
             <Link href="/candidate-login" className="flex items-center gap-1.5 transition-colors"
               style={{ color: '#94A3B8', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'white')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#94A3B8')}>
+
+>
               <User className="w-3 h-3" /> Login
             </Link>
           </div>
         </div>
       </div>
 
-      {/* ── Main Nav ────────────────────────────────── */}
+      {/* â"€â"€ Main Nav â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */}
       <nav style={{
         background: scrolled ? 'rgba(255,255,255,0.97)' : '#ffffff',
         backdropFilter: scrolled ? 'blur(20px)' : 'none',
@@ -149,15 +149,15 @@ export default function Header() {
                       background: isCourseActive ? '#EFF6FF' : 'transparent',
                       color: isCourseActive ? '#1D4ED8' : '#334155',
                     }}
-                    onMouseEnter={e => { setCoursesOpen(true); if (!isCourseActive) { e.currentTarget.style.background = '#F8FAFC'; e.currentTarget.style.color = '#1D4ED8' } }}
-                    onMouseLeave={e => { if (!isCourseActive) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#334155' } }}
+
+
                     aria-expanded={coursesOpen}>
                     Courses
                     <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${coursesOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {coursesOpen && (
-                    <div onMouseLeave={() => setCoursesOpen(false)}
+                    <div
                       className="absolute z-50" style={{ top: '100%', left: '50%', transform: 'translateX(-50%)', paddingTop: '8px', width: 480 }}>
                       <div style={{ background: 'white', borderRadius: '20px', boxShadow: '0 20px 60px rgba(15,23,42,0.15)', border: '1px solid #F1F5F9', overflow: 'hidden' }}>
                         <div style={{ background: 'linear-gradient(135deg,#0F172A,#1E293B)', padding: '18px 24px' }}>
@@ -169,8 +169,8 @@ export default function Header() {
                             <Link key={child.href} href={child.href}
                               className="flex items-center gap-3 rounded-xl transition-colors group/item"
                               style={{ padding: '12px', background: pathname === child.href ? '#EFF6FF' : 'transparent', textDecoration: 'none' }}
-                              onMouseEnter={e => { if (pathname !== child.href) e.currentTarget.style.background = '#F8FAFC' }}
-                              onMouseLeave={e => { if (pathname !== child.href) e.currentTarget.style.background = 'transparent' }}
+
+
                               onClick={() => setCoursesOpen(false)}>
                               <div className="rounded-xl flex items-center justify-center shrink-0" style={{ width: 40, height: 40, ...child.iconStyle }}>
                                 {child.icon}
@@ -199,8 +199,8 @@ export default function Header() {
                     style={{ padding: '8px 14px', fontSize: '14px', fontWeight: 600, textDecoration: 'none', display: 'block',
                       background: isActive(link.href) ? '#EFF6FF' : 'transparent',
                       color: isActive(link.href) ? '#1D4ED8' : '#334155' }}
-                    onMouseEnter={e => { if (!isActive(link.href)) { (e.currentTarget as HTMLElement).style.background = '#F8FAFC'; (e.currentTarget as HTMLElement).style.color = '#1D4ED8' } }}
-                    onMouseLeave={e => { if (!isActive(link.href)) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = '#334155' } }}>
+
+>
                     {link.label}
                   </Link>
                 </li>
@@ -226,7 +226,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* ── Mobile Drawer ────────────────────────────── */}
+      {/* â"€â"€ Mobile Drawer â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */}
       <div className={`lg:hidden fixed inset-0 z-40 transition-all duration-300 ${mobileOpen ? 'visible' : 'invisible'}`}>
         <div className={`absolute inset-0 transition-opacity duration-300 ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
           style={{ background: 'rgba(0,0,0,0.50)', backdropFilter: 'blur(4px)' }}
@@ -291,8 +291,8 @@ export default function Header() {
           </div>
 
           <div className="p-4 space-y-3" style={{ borderTop: '1px solid #F1F5F9', background: '#F8FAFC' }}>
-            <a href="tel:+919975048884" className="flex items-center gap-2 font-bold" style={{ fontSize: '14px', color: '#0F172A', textDecoration: 'none' }}>
-              <Phone className="w-4 h-4" style={{ color: '#1D4ED8' }} /> +91 9975048884
+            <a href="tel:+917385204165" className="flex items-center gap-2 font-bold" style={{ fontSize: '14px', color: '#0F172A', textDecoration: 'none' }}>
+              <Phone className="w-4 h-4" style={{ color: '#1D4ED8' }} /> +91 7385204165
             </a>
             <div className="grid grid-cols-2 gap-2">
               <Link href="/candidate-login" className="text-center font-bold rounded-xl transition-all hover:-translate-y-0.5"

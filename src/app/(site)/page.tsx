@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const [categories, testimonials, totalCourses, totalStudents] = await Promise.all([
+  const [categories, testimonials, totalCourses, totalStudents, services, experts, clients] = await Promise.all([
     prisma.courseCategory.findMany({
       orderBy: { id: 'asc' },
       include: {
@@ -42,6 +42,21 @@ export default async function Page() {
     }),
     prisma.course.count(),
     prisma.student.count({ where: { isActive: true } }),
+    prisma.service.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+      take: 6,
+    }),
+    prisma.expert.findMany({
+      include: { category: true },
+      orderBy: { id: 'asc' },
+      take: 8,
+    }),
+    prisma.clientLogo.findMany({
+      where: { isActive: true },
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+      select: { id: true, name: true, logo: true, website: true },
+    }),
   ])
 
   const courses = categories
@@ -49,10 +64,10 @@ export default async function Page() {
     .map((category, index) => {
       const course = category.courses[0]
       const courseImages = [
-        '/assets/images/courses/main-home/1.jpg',
-        '/assets/images/courses/main-home/2.jpg',
-        '/assets/images/courses/home8/3.jpg',
-        '/assets/images/courses/home8/1.jpg',
+        '/assets/images/banner/home9.jpg',          // End-to-End: office team working on laptops
+        '/assets/images/about/tab1.jpg',             // HR Beginners: students learning at laptop
+        '/assets/images/bg/about-bg.jpg',            // Entrepreneurship: professional on call
+        '/assets/images/about/tab2.jpg',             // Corporate: team collaborating
       ]
       const badgeMap = ['Most Popular', 'Beginner Friendly', 'Business Track', 'Enterprise']
       const levelMap = ['Advanced / Professional', 'Foundational', 'Advanced / Business', 'Tailored / Executive']
@@ -64,9 +79,10 @@ export default async function Page() {
         ['Team Assessment', 'Process Optimisation', 'ATS Implementation'],
       ]
       const slugs = ['end-to-end-recruitment-training', 'hr-courses-for-beginners', 'hr-entrepreneurship-program', 'hr-corporate-training-course']
+      const titleMap = ['End-to-End Recruitment Training', 'HR Courses for Beginners', 'HR Entrepreneurship Program', 'HR Corporate Training']
       return {
         id: course.id,
-        title: course.title,
+        title: titleMap[index] ?? course.title,
         badge: badgeMap[index] || 'Featured',
         badgeCls: ['bg-red-500 text-white', 'bg-blue-600 text-white', 'bg-emerald-600 text-white', 'bg-purple-600 text-white'][index] || 'bg-slate-700 text-white',
         level: levelMap[index] || category.name,
@@ -95,5 +111,23 @@ export default async function Page() {
     text: t.description || '',
   }))
 
-  return <HomePage courses={courses} stats={stats} testimonials={testimonialData} />
+  const serviceData = services.map((s) => ({
+    id: s.id,
+    title: s.title,
+    description: s.description || '',
+    image: s.image || '',
+    slug: s.slug,
+  }))
+
+  const expertData = experts.map((e) => ({
+    id: e.id,
+    name: e.title,
+    profession: e.profession || '',
+    image: e.image || '',
+    category: e.category.name,
+  }))
+
+  const clientData = clients.map(c => ({ id: c.id, name: c.name, logo: c.logo, website: c.website || '' }))
+
+  return <HomePage courses={courses} stats={stats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
 }
