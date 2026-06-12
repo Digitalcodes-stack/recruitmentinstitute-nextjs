@@ -11,6 +11,17 @@ import {
 
 /* ── Types ──────────────────────────────────────────────────── */
 
+interface ChartData {
+  labels: string[]
+  series: {
+    candidates: number[]
+    leads: number[]
+    contacts: number[]
+    students: number[]
+    subscribers: number[]
+  }
+}
+
 interface RecentCandidate {
   id: number; name: string; email: string
   courseSelect: string | null; createdAt: string; acceptSignin: number
@@ -155,17 +166,104 @@ function Empty({ msg }: { msg: string }) {
   )
 }
 
+/* ── Bar Chart ──────────────────────────────────────────────── */
+
+interface BarSeries { label: string; color: string; data: number[] }
+
+function BarChart({
+  title, labels, bars, loading,
+}: { title: string; labels: string[]; bars: BarSeries[]; loading: boolean }) {
+  const allValues = bars.flatMap(b => b.data)
+  const maxVal = Math.max(...allValues, 1)
+  const chartH = 160
+
+  return (
+    <Card>
+      <PanelHeader title={title} sub="Last 6 months" />
+      <div style={{ padding: '24px 28px 20px' }}>
+        {loading ? (
+          <div style={{ height: chartH, borderRadius: C.radiusSm, background: 'linear-gradient(90deg,#f1f5f9 25%,#e8ecf2 50%,#f1f5f9 75%)', animation: 'pulse 1.6s ease-in-out infinite' }} />
+        ) : (
+          <>
+            {/* chart area */}
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: chartH, borderBottom: `2px solid ${C.borderSoft}` }}>
+              {labels.map((label, mi) => (
+                <div key={label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, height: '100%', justifyContent: 'flex-end' }}>
+                  <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', justifyContent: 'center', height: '100%' }}>
+                    {bars.map(bar => {
+                      const pct = (bar.data[mi] ?? 0) / maxVal
+                      const h = Math.max(pct * (chartH - 24), bar.data[mi] ? 4 : 0)
+                      return (
+                        <div
+                          key={bar.label}
+                          title={`${bar.label}: ${bar.data[mi] ?? 0}`}
+                          style={{
+                            flex: 1,
+                            height: h,
+                            background: bar.color,
+                            borderRadius: '4px 4px 0 0',
+                            opacity: 0.85,
+                            cursor: 'default',
+                            transition: 'height 400ms ease',
+                            position: 'relative',
+                          }}
+                        >
+                          {bar.data[mi] > 0 && (
+                            <span style={{
+                              position: 'absolute', top: -18, left: '50%', transform: 'translateX(-50%)',
+                              fontSize: 10, fontWeight: 700, color: bar.color, whiteSpace: 'nowrap',
+                            }}>
+                              {bar.data[mi]}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* x-axis labels */}
+            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+              {labels.map(label => (
+                <div key={label} style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: 600, color: C.textSoft }}>
+                  {label}
+                </div>
+              ))}
+            </div>
+
+            {/* legend */}
+            <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
+              {bars.map(bar => (
+                <div key={bar.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: 3, background: bar.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: 11, fontWeight: 600, color: C.textMid }}>{bar.label}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </Card>
+  )
+}
+
 /* ── Main ───────────────────────────────────────────────────── */
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [chartData, setChartData] = useState<ChartData | null>(null)
 
   useEffect(() => {
     fetch('/api/admin/stats')
       .then(r => r.json())
       .then(d => { if (d.success) setStats(d.data) })
       .finally(() => setLoading(false))
+    fetch('/api/admin/chart-data')
+      .then(r => r.json())
+      .then(d => { if (d.success) setChartData(d.data) })
   }, [])
 
   const today = useMemo(() =>
@@ -352,7 +450,37 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* ── 3. Recent Candidates + Course Enquiries ──────── */}
+        {/* ── 3. Activity Charts ───────────────────────────── */}
+        <div>
+          <p style={{
+            fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: C.textSoft, marginBottom: 20,
+          }}>
+            6-Month Activity
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+            <BarChart
+              title="Course Leads & Candidates"
+              labels={chartData?.labels ?? []}
+              bars={[
+                { label: 'Course Leads', color: '#7c3aed', data: chartData?.series.leads ?? [] },
+                { label: 'Candidates',   color: '#2563eb', data: chartData?.series.candidates ?? [] },
+              ]}
+              loading={!chartData}
+            />
+            <BarChart
+              title="Contacts & Subscribers"
+              labels={chartData?.labels ?? []}
+              bars={[
+                { label: 'Contacts',    color: '#0891b2', data: chartData?.series.contacts ?? [] },
+                { label: 'Subscribers', color: '#ca8a04', data: chartData?.series.subscribers ?? [] },
+              ]}
+              loading={!chartData}
+            />
+          </div>
+        </div>
+
+        {/* ── 4. Recent Candidates + Course Enquiries ──────── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
 
           {/* Recent Candidates */}
