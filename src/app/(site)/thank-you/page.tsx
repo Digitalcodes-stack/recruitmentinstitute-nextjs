@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Thank You',
-  robots: { index: false },
+  robots: { index: false, follow: false },
 }
 
 export default function ThankYouPage() {

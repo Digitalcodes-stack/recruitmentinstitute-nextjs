@@ -38,6 +38,11 @@ export const metadata: Metadata = {
     type: 'website',
     images: [{ url: `${BASE_URL}/assets/images/og-courses.jpg`, width: 1200, height: 630, alt: 'HR Training Courses at Recruitment Institute' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'HR & Recruitment Courses in Pune - Recruitment Institute',
+    description: "India's #1 recruitment training institute. Expert programs for every career stage.",
+  },
 }
 
 /* â"€â"€ Slug → route mapping â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
@@ -217,6 +222,14 @@ export default async function CoursesPage() {
     '@context': 'https://schema.org',
     '@graph': [
       { '@type': 'CollectionPage', '@id': `${BASE_URL}/courses#webpage`, url: `${BASE_URL}/courses`, name: 'HR & Recruitment Training Courses - Recruitment Institute', description: 'All HR and recruitment training programs at Recruitment Institute Pune', isPartOf: { '@id': `${BASE_URL}/#website` } },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${BASE_URL}/courses#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Courses', item: `${BASE_URL}/courses` },
+        ],
+      },
       { '@type': 'ItemList', name: 'HR & Recruitment Training Programs', numberOfItems: allCards.length, itemListElement: allCards.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Course', name: c.title, description: c.description, url: `${BASE_URL}${c.route}`, provider: { '@type': 'Organization', name: 'Recruitment Institute', url: BASE_URL } } })) },
     ],
   }

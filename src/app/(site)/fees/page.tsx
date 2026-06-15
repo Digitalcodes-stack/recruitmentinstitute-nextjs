@@ -6,12 +6,26 @@ import { Check, MessageSquare, ArrowRight, ShieldCheck, Tag } from 'lucide-react
 export const metadata: Metadata = {
   title: 'Course Fees & Pricing',
   description: 'View transparent course pricing, payment plans, and discount options for all Recruitment Institute training courses.',
+  alternates: { canonical: 'https://recruitmentinstitute.in/fees' },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Course Fees & Pricing',
+    description: 'View transparent course pricing, payment plans, and discount options for all Recruitment Institute training courses.',
+  },
 }
 
 export const revalidate = 3600
 
 export default async function FeesPage() {
-  let dbFees: any[] = []
+  let dbFees: Array<{
+    id: number
+    courseName: string
+    categoryName: string
+    fees: number
+    discount: number
+    finalTotal: number
+    couponCode: string | null
+  }> = []
   try {
     const fetchedFees = await prisma.courseFee.findMany({
       include: { category: true },

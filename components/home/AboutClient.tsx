@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { AboutSection } from '@/types'
+import styles from './AboutClient.module.css'
 import {
   ArrowRight,
   Award,
@@ -235,7 +236,7 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
       </div>
 
       {/* ── Stats Bar ── */}
-      <section style={{ background: '#F8FAFC', padding: '80px 0' }}>
+      <section className={`${styles.sectionLight} ${styles.sectionPadStats}`}>
         <div className="container">
           {/* section label */}
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
@@ -252,13 +253,7 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
             </h2>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '20px',
-          }}
-            className="stats-grid"
-          >
+          <div className={styles.statsGrid}>
             {stats.map((item) => (
               <div
                 key={item.label}
@@ -319,18 +314,10 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
           </div>
         </div>
 
-        <style>{`
-          @media (max-width: 1024px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          }
-          @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr !important; }
-          }
-        `}</style>
       </section>
 
       {/* ── About Sections (from DB) ── */}
-      <section style={{ background: '#F8FAFC', padding: '80px 0 64px' }}>
+      <section className={`${styles.sectionLight} ${styles.sectionPadAbout}`}>
         <div className="container">
           {displaySections.map((section, index) => {
             const title = cleanText(section.title) || 'About Recruitment Institute'
@@ -413,21 +400,11 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
       </section>
 
       {/* ── Pillars Section ── */}
-      <section className="pillars-section" style={{
-        background: 'linear-gradient(160deg, #0A1628 0%, #0F172A 40%, #111827 70%, #0A1628 100%)',
-        padding: '96px 0',
-        position: 'relative',
-        overflow: 'hidden',
-      }}>
-        {/* dot grid */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px)',
-          backgroundSize: '30px 30px',
-        }} />
-        {/* ambient glows */}
-        <div className="absolute pointer-events-none" style={{ top: '-80px', left: '-80px', width: 480, height: 480, background: 'radial-gradient(circle, rgba(30,64,175,0.18) 0%, transparent 70%)', filter: 'blur(1px)' }} />
-        <div className="absolute pointer-events-none" style={{ bottom: '-60px', right: '-60px', width: 400, height: 400, background: 'radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%)', filter: 'blur(1px)' }} />
-        <div className="absolute pointer-events-none" style={{ top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, background: 'radial-gradient(ellipse, rgba(30,64,175,0.07) 0%, transparent 70%)' }} />
+      <section className={styles.pillarsSection}>
+        <div className={styles.pillarsDotGrid} />
+        <div className={styles.pillarsGlow1} />
+        <div className={styles.pillarsGlow2} />
+        <div className={styles.pillarsGlow3} />
 
         <div className="container" style={{ position: 'relative', zIndex: 10 }}>
 
@@ -474,11 +451,7 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
           </div>
 
           {/* ── Cards ── */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '24px',
-          }} className="pillars-grid">
+          <div className={styles.pillarsGrid}>
             {pillars.map((item, idx) => (
               <div
                 key={item.title}
@@ -582,20 +555,12 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
           </div>
         </div>
 
-        <style>{`
-          @media (max-width: 900px) {
-            .pillars-grid { grid-template-columns: 1fr !important; }
-          }
-        `}</style>
       </section>
 
       {/* ── Outcomes Dark Section ── */}
-      <section className="relative overflow-hidden text-white"
-        style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)', padding: '80px 0' }}>
-        <div className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-        <div className="absolute top-0 right-0 pointer-events-none"
-          style={{ width: 400, height: 400, background: 'rgba(30,64,175,0.12)', filter: 'blur(80px)' }} />
+      <section className={styles.outcomesSection}>
+        <div className={styles.outcomesDotGrid} />
+        <div className={styles.outcomesGlow} />
 
         <div className="container relative z-10">
           <div className="grid lg:grid-cols-2 gap-14 items-center">
@@ -634,10 +599,9 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
       </section>
 
       {/* ── CTA Section ── */}
-      <section style={{ background: '#F0F5FF', padding: '100px 0', position: 'relative', overflow: 'hidden' }}>
-        {/* soft background blobs */}
-        <div style={{ position: 'absolute', top: -120, right: -120, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, #DBEAFE 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -80, left: -80, width: 360, height: 360, borderRadius: '50%', background: 'radial-gradient(circle, #EDE9FE 0%, transparent 70%)', pointerEvents: 'none' }} />
+      <section className={styles.ctaSection}>
+        <div className={styles.ctaBlob1} />
+        <div className={styles.ctaBlob2} />
 
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 
@@ -651,7 +615,7 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
 
           {/* ── Main card ── */}
           <div style={{ background: '#fff', borderRadius: 32, border: '1px solid #E2E8F0', boxShadow: '0 24px 80px rgba(30,64,175,0.10)', overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }} className="cta-grid">
+            <div className={styles.ctaGrid}>
 
               {/* ── Left: CTA ── */}
               <div style={{ padding: '64px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
@@ -730,12 +694,6 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
           </div>
         </div>
 
-        <style>{`
-          @media (max-width: 900px) {
-            .cta-grid { grid-template-columns: 1fr !important; }
-            .cta-grid > div { padding: 40px 28px !important; border-left: none !important; border-top: 1px solid #E2E8F0 !important; }
-          }
-        `}</style>
       </section>
 
       {/* TESTIMONIALS */}

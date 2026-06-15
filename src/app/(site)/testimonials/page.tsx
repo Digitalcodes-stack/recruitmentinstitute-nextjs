@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Star, Quote, ChevronRight, Users, Award, TrendingUp } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Student Testimonials — Recruitment Institute',
+  title: 'Student Testimonials - Recruitment Institute',
   description: 'Read what our alumni say about their HR and recruitment training experience at Recruitment Institute, Pune.',
 }
 
@@ -106,7 +106,7 @@ export default async function TestimonialsPage() {
                 <Quote style={{ width: 28, height: 28, color: '#1E40AF' }} />
               </div>
               <p style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 8 }}>No testimonials yet</p>
-              <p style={{ fontSize: 14, color: '#64748B' }}>Check back soon — student reviews will appear here.</p>
+              <p style={{ fontSize: 14, color: '#64748B' }}>Check back soon - student reviews will appear here.</p>
             </div>
           ) : (
             <>

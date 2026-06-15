@@ -181,7 +181,7 @@ export default function HRBeginnerPage() {
                 <span style={{ background:'linear-gradient(120deg,#7DD3FC 0%,#A78BFA 55%,#6EE7B7 100%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
                   Recruitment Expert
                 </span>
-                <br />"" Starting from Zero
+                <br /> Starting from Zero
               </h1>
 
               <p style={{ fontSize:17, color:'#94A3B8', lineHeight:1.82, maxWidth:520, marginBottom:36 }}>

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
-// Course landing pages — high-priority, manually maintained
+// Course landing pages - high-priority, manually maintained
 const coursePages = [
   { url: `${BASE_URL}/end-to-end-recruitment-training`, priority: 0.95 },
   { url: `${BASE_URL}/hr-courses-for-beginners`, priority: 0.95 },
@@ -95,7 +95,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }))
   } catch {
-    // DB not connected during build — blogs served from dynamic route
+    // DB not connected during build - blogs served from dynamic route
   }
 
   return [...staticPages, ...courseEntries, ...blogPages]

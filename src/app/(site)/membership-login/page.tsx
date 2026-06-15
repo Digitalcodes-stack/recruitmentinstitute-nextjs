@@ -4,6 +4,7 @@ import PortalLoginClient from '@/components/home/PortalLoginClient'
 export const metadata: Metadata = {
   title: 'Membership Login',
   description: 'Access exclusive membership benefits at Recruitment Institute.',
+  robots: { index: false, follow: false },
 }
 
 export default function MembershipLoginPage() {

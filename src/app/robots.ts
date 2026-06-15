@@ -34,7 +34,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'CCBot',
         disallow: ['/'],
       },
-      // Allow Google Extended (AI Overviews) — for AI search visibility
+      // Allow Google Extended (AI Overviews) for AI search visibility
       {
         userAgent: 'Google-Extended',
         allow: '/',

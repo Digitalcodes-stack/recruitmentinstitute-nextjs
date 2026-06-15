@@ -15,7 +15,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'Recruitment Institute "" HR & Recruitment Training in Pune, India',
+    default: 'Recruitment Institute - HR & Recruitment Training in Pune, India',
     template: '%s | Recruitment Institute',
   },
   description:
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: BASE_URL,
     siteName: 'Recruitment Institute',
-    title: 'Recruitment Institute "" HR & Recruitment Training in Pune, India',
+    title: 'Recruitment Institute - HR & Recruitment Training in Pune, India',
     description:
       'India\'s #1 recruitment training institute. Expert-led HR courses, end-to-end recruitment training, entrepreneurship programs and corporate upskilling.',
     images: [
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/assets/images/og-default.jpg`,
         width: 1200,
         height: 630,
-        alt: 'Recruitment Institute "" HR Training in Pune',
+        alt: 'Recruitment Institute - HR Training in Pune',
       },
     ],
   },
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@recruitmentinstitute',
     creator: '@recruitmentinstitute',
-    title: 'Recruitment Institute "" HR & Recruitment Training',
+    title: 'Recruitment Institute - HR & Recruitment Training',
     description:
       'India\'s #1 recruitment training institute. Expert-led HR courses in Pune.',
     images: [`${BASE_URL}/assets/images/og-default.jpg`],

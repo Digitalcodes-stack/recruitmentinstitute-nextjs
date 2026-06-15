@@ -4,6 +4,7 @@ import PortalLoginClient from '@/components/home/PortalLoginClient'
 export const metadata: Metadata = {
   title: 'Student Membership Login',
   description: 'Access your student learning portal at Recruitment Institute.',
+  robots: { index: false, follow: false },
 }
 
 export default function StudentLoginPage() {

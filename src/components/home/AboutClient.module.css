@@ -1,0 +1,235 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(135deg, #0f172a 0%, #1a2744 60%, #0f172a 100%);
+  padding-top: 80px;
+  padding-bottom: 100px;
+}
+
+.heroDotGrid,
+.heroGlowLeft,
+.heroGlowRight,
+.heroBottomWave,
+.pillarsDotGrid,
+.pillarsGlow1,
+.pillarsGlow2,
+.pillarsGlow3,
+.outcomesDotGrid,
+.outcomesGlow,
+.ctaBlob1,
+.ctaBlob2 {
+  position: absolute;
+  pointer-events: none;
+}
+
+.heroDotGrid {
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.heroGlowLeft {
+  top: 0;
+  left: 0;
+  width: 500px;
+  height: 500px;
+  background: rgba(30, 64, 175, 0.12);
+  filter: blur(100px);
+  transform: translate(-30%, -20%);
+}
+
+.heroGlowRight {
+  bottom: 0;
+  right: 0;
+  width: 400px;
+  height: 400px;
+  background: rgba(30, 64, 175, 0.1);
+  filter: blur(80px);
+  transform: translate(20%, 20%);
+}
+
+.heroBottomWave {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  height: 56px;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.sectionLight {
+  background: #f8fafc;
+}
+
+.sectionPadStats {
+  padding: 80px 0;
+}
+
+.sectionPadAbout {
+  padding: 80px 0 64px;
+}
+
+.pillarsSection {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #0a1628 0%, #0f172a 40%, #111827 70%, #0a1628 100%);
+  padding: 96px 0;
+}
+
+.pillarsDotGrid {
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+.pillarsGlow1 {
+  top: -80px;
+  left: -80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(30, 64, 175, 0.18) 0%, transparent 70%);
+  filter: blur(1px);
+}
+
+.pillarsGlow2 {
+  bottom: -60px;
+  right: -60px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.14) 0%, transparent 70%);
+  filter: blur(1px);
+}
+
+.pillarsGlow3 {
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 300px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(30, 64, 175, 0.07) 0%, transparent 70%);
+}
+
+.outcomesSection {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  padding: 80px 0;
+}
+
+.outcomesDotGrid {
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.outcomesGlow {
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 400px;
+  background: rgba(30, 64, 175, 0.12);
+  filter: blur(80px);
+}
+
+.ctaSection {
+  position: relative;
+  overflow: hidden;
+  background: #f0f5ff;
+  padding: 100px 0;
+}
+
+.ctaBlob1 {
+  top: -120px;
+  right: -120px;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #dbeafe 0%, transparent 70%);
+}
+
+.ctaBlob2 {
+  bottom: -80px;
+  left: -80px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ede9fe 0%, transparent 70%);
+}
+
+.containerZ {
+  position: relative;
+  z-index: 1;
+}
+
+.sectionLabel {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 50px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.statsCard {
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.aboutGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4rem;
+  align-items: center;
+}
+
+.pillarsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.ctaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 1024px) {
+  .statsGrid,
+  .pillarsGrid,
+  .ctaGrid,
+  .aboutGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+}

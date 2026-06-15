@@ -3,11 +3,7 @@ import { prisma } from '@/lib/prisma'
 import BlogListClient from '@/components/home/BlogListClient'
 import { getPaginationData } from '@/utils/pagination'
 
-export const metadata: Metadata = {
-  title: 'Blog — HR & Recruitment Insights',
-  description:
-    'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
-}
+const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const revalidate = 600
 
@@ -15,11 +11,38 @@ interface Props {
   searchParams: Promise<{ page?: string; s?: string; month?: string }>
 }
 
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams
+  const page = Number(params.page || '1')
+  const search = params.s || ''
+  const filtered = page > 1 || Boolean(search)
+
+  return {
+    title: 'Blog - HR & Recruitment Insights',
+    description:
+      'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+    alternates: { canonical: `${BASE_URL}/blogs` },
+    robots: filtered ? { index: false, follow: true } : { index: true, follow: true },
+    openGraph: {
+      title: 'Blog - HR & Recruitment Insights',
+      description:
+        'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+      url: `${BASE_URL}/blogs`,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Blog - HR & Recruitment Insights',
+      description:
+        'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+    },
+  }
+}
+
 export default async function BlogsPage({ searchParams }: Props) {
   const params = await searchParams
   const page = parseInt(params.page || '1')
   const search = params.s || ''
-  const month = params.month || ''
   const limit = 5
 
   let whereClause: Record<string, unknown> = { isPublished: true }

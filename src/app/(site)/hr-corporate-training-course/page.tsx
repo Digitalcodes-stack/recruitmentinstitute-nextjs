@@ -136,15 +136,40 @@ export default function CorporateTrainingPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         '@context': 'https://schema.org',
-        '@type': 'Course',
-        name: 'HR Corporate Training Course',
-        description: 'Premium bespoke recruitment training programme for HR teams and talent acquisition departments across all major industries.',
-        url: 'https://recruitmentinstitute.in/hr-corporate-training-course',
-        provider: { '@type': 'Organization', name: 'Recruitment Institute', url: 'https://recruitmentinstitute.in' },
-        educationalLevel: 'Professional', inLanguage: 'en-IN',
-        courseMode: ['online', 'onsite'],
-        audience: { '@type': 'Audience', audienceType: 'HR Professionals, Talent Acquisition Teams, Corporate HR Departments' },
-        offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', priceCurrency: 'INR' },
+        '@graph': [
+          {
+            '@type': 'BreadcrumbList',
+            '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#breadcrumb',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://recruitmentinstitute.in' },
+              { '@type': 'ListItem', position: 2, name: 'Courses', item: 'https://recruitmentinstitute.in/courses' },
+              { '@type': 'ListItem', position: 3, name: 'HR Corporate Training Course', item: 'https://recruitmentinstitute.in/hr-corporate-training-course' },
+            ],
+          },
+          {
+            '@type': 'Course',
+            '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#course',
+            name: 'HR Corporate Training Course',
+            description: 'Premium bespoke recruitment training programme for HR teams and talent acquisition departments across all major industries.',
+            url: 'https://recruitmentinstitute.in/hr-corporate-training-course',
+            provider: { '@type': 'Organization', name: 'Recruitment Institute', url: 'https://recruitmentinstitute.in' },
+            educationalLevel: 'Professional', inLanguage: 'en-IN',
+            courseMode: ['online', 'onsite'],
+            audience: { '@type': 'Audience', audienceType: 'HR Professionals, Talent Acquisition Teams, Corporate HR Departments' },
+            breadcrumb: { '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#breadcrumb' },
+            offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', priceCurrency: 'INR' },
+          },
+          {
+            '@type': 'WebPage',
+            '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#webpage',
+            url: 'https://recruitmentinstitute.in/hr-corporate-training-course',
+            name: 'HR Corporate Training Course',
+            description: 'Tailored recruitment training for corporate HR and talent acquisition teams.',
+            isPartOf: { '@id': 'https://recruitmentinstitute.in/#website' },
+            about: { '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#course' },
+            breadcrumb: { '@id': 'https://recruitmentinstitute.in/hr-corporate-training-course#breadcrumb' },
+          },
+        ],
       }) }} />
 
       <style>{`

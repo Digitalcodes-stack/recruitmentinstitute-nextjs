@@ -16,12 +16,12 @@ function stripHtml(input: string) {
 }
 
 export const metadata: Metadata = {
-  title: 'Recruitment Institute — HR & Recruitment Training Courses',
+  title: 'Recruitment Institute - HR & Recruitment Training Courses',
   description:
     'Master HR and recruitment skills with expert-led courses. End-to-end recruitment training, HR for beginners, entrepreneurship programs, and corporate training in Pune.',
   keywords: 'recruitment training pune, HR courses, end to end recruitment, recruitment institute',
   openGraph: {
-    title: 'Recruitment Institute — HR & Recruitment Training',
+    title: 'Recruitment Institute - HR & Recruitment Training',
     description: 'Master HR and recruitment skills with expert-led courses.',
     url: 'https://recruitmentinstitute.in',
   },

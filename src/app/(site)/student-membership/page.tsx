@@ -27,15 +27,20 @@ import {
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Student Membership "" Unlock Exclusive HR Career Benefits | Recruitment Institute',
+  title: 'Student Membership - Unlock Exclusive HR Career Benefits | Recruitment Institute',
   description:
     'Join the Recruitment Institute student membership program for exclusive access to premium resources, HR community, placement support, certification, knowledge base, and industry events.',
   alternates: { canonical: `${BASE_URL}/student-membership` },
   openGraph: {
-    title: 'Student Membership "" Recruitment Institute',
+    title: 'Student Membership - Recruitment Institute',
     description: 'Unlock exclusive HR career benefits. Join 5,000+ professionals in our student membership community.',
     url: `${BASE_URL}/student-membership`,
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Student Membership - Recruitment Institute',
+    description: 'Unlock exclusive HR career benefits. Join 5,000+ professionals in our student membership community.',
   },
 }
 
@@ -80,7 +85,7 @@ const defaultBenefits = [
   {
     icon: Lightbulb,
     title: 'Knowledge Base',
-    desc: 'Unlock a curated HR knowledge repository "" articles, case studies, interview frameworks, and hiring playbooks.',
+    desc: 'Unlock a curated HR knowledge repository - articles, case studies, interview frameworks, and hiring playbooks.',
     color: '#D97706',
     bg: '#FFFBEB',
     border: '#FDE68A',
@@ -141,7 +146,7 @@ const defaultPlans = [
     name: 'Pro Member',
     price: '₹999',
     period: '/ month',
-    desc: 'The full membership experience "" for serious HR professionals ready to accelerate.',
+    desc: 'The full membership experience - for serious HR professionals ready to accelerate.',
     color: '#1D4ED8',
     bg: '#EFF6FF',
     border: '#1D4ED8',
@@ -154,7 +159,7 @@ const defaultPlans = [
     name: 'Annual',
     price: '₹7,999',
     period: '/ year',
-    desc: 'Best value "" save 33% and unlock everything Pro has to offer for a full year.',
+    desc: 'Best value - save 33% and unlock everything Pro has to offer for a full year.',
     color: '#059669',
     bg: '#F0FDF4',
     border: '#059669',
@@ -410,7 +415,7 @@ export default async function StudentMembershipPage() {
 
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                 <Link href="/candidate-login" className="sm-hero-cta">
-                  Join Now "" It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
+                  Join Now - It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
                 <Link href="#benefits" className="sm-hero-ghost">
                   <PlayCircle style={{ width: 15, height: 15 }} /> See Benefits
@@ -418,7 +423,7 @@ export default async function StudentMembershipPage() {
               </div>
             </div>
 
-            {/* Right "" visual card */}
+            {/* Right visual card */}
             <div className="sm-hero-right" style={{ position: 'relative' }}>
               <div aria-hidden style={{ position: 'absolute', inset: -18, borderRadius: 30, background: 'linear-gradient(135deg,rgba(29,78,216,.2),rgba(13,148,136,.12),rgba(245,158,11,.07))', filter: 'blur(2px)' }} />
               <div style={{ position: 'relative', borderRadius: 22, overflow: 'hidden', border: '1px solid rgba(255,255,255,.08)', boxShadow: '0 48px 110px rgba(0,0,0,.68)' }}>
@@ -519,7 +524,7 @@ export default async function StudentMembershipPage() {
               Student Membership Benefits
             </h2>
             <p style={{ fontSize: 17, color: '#64748B', lineHeight: 1.82, margin: 0 }}>
-              Become a member of Recruitment Institute and unlock exclusive benefits to accelerate your HR career "" from day one.
+              Become a member of Recruitment Institute and unlock exclusive benefits to accelerate your HR career from day one.
             </p>
           </div>
 
@@ -571,7 +576,7 @@ export default async function StudentMembershipPage() {
                 padding: '15px 34px', borderRadius: 11, textDecoration: 'none',
                 boxShadow: '0 8px 28px rgba(29,78,216,.42)',
               }}>
-                Join Now "" Free <ArrowRight style={{ width: 16, height: 16 }} />
+                Join Now - Free <ArrowRight style={{ width: 16, height: 16 }} />
               </Link>
               <Link href="/contact" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 9,
@@ -712,7 +717,7 @@ export default async function StudentMembershipPage() {
       </section>
 
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-          HOW IT WORKS "" 3 steps
+          HOW IT WORKS - 3 steps
       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <section style={{ background: '#fff', padding: '80px 0 88px', borderTop: '1px solid #E2E8F0' }}>
         <div className="container">

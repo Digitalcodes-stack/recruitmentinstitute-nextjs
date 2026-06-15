@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import Link from 'next/link'
 import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Profile',
+  robots: { index: false, follow: false },
+}
 
 export default async function ProfilePage() {
   const session = await getUserSession()

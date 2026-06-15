@@ -554,6 +554,9 @@ export default async function BlogDetailPage({ params }: Props) {
                   const initials = (t.author || 'U').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
                   const colors = ['#2563EB', '#7C3AED', '#059669', '#D97706', '#DB2777']
                   const color = colors[t.id % colors.length]
+                  const imageSrc = t.image
+                    ? (t.image.startsWith('http') ? t.image : `/${t.image.replace(/^\/+/, '')}`)
+                    : null
                   return (
                     <div key={t.id} className="bd-testi-card">
                       {/* Stars */}
@@ -568,9 +571,9 @@ export default async function BlogDetailPage({ params }: Props) {
                       </p>
                       {/* Author */}
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 14, borderTop: '1px solid #F1F5F9' }}>
-                        {t.image ? (
+                        {imageSrc ? (
                           <Image
-                            src={t.image}
+                            src={imageSrc}
                             alt={`${t.author || 'Student'} — Recruitment Institute testimonial`}
                             width={36} height={36}
                             style={{ borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}

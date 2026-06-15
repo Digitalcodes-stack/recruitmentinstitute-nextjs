@@ -769,7 +769,17 @@ export default function EntrepreneurshipPage() {
         '@context': 'https://schema.org',
         '@graph': [
           {
+            '@type': 'BreadcrumbList',
+            '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#breadcrumb',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://recruitmentinstitute.in' },
+              { '@type': 'ListItem', position: 2, name: 'Courses', item: 'https://recruitmentinstitute.in/courses' },
+              { '@type': 'ListItem', position: 3, name: 'HR Entrepreneurship Program', item: 'https://recruitmentinstitute.in/hr-entrepreneurship-program' },
+            ],
+          },
+          {
             '@type': 'Course',
+            '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#course',
             name: 'Become a Hiring Master and Start Your Own Business',
             description: 'Learn how to build and scale your own recruitment consultancy. From legal setup to client acquisition, everything you need as an HR entrepreneur.',
             url: 'https://recruitmentinstitute.in/hr-entrepreneurship-program',
@@ -778,7 +788,18 @@ export default function EntrepreneurshipPage() {
             timeRequired: 'P2M',
             inLanguage: 'en-IN',
             courseMode: ['online', 'offline'],
+            breadcrumb: { '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#breadcrumb' },
             offers: { '@type': 'Offer', availability: 'https://schema.org/InStock', priceCurrency: 'INR' },
+          },
+          {
+            '@type': 'WebPage',
+            '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#webpage',
+            url: 'https://recruitmentinstitute.in/hr-entrepreneurship-program',
+            name: 'HR Entrepreneurship Program',
+            description: 'A practical business-focused HR program for aspiring recruitment entrepreneurs.',
+            isPartOf: { '@id': 'https://recruitmentinstitute.in/#website' },
+            about: { '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#course' },
+            breadcrumb: { '@id': 'https://recruitmentinstitute.in/hr-entrepreneurship-program#breadcrumb' },
           },
         ],
       }) }} />
