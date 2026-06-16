@@ -599,6 +599,7 @@ export default function HomePage({
                 const src = s.image
                   ? (s.image.startsWith('http') ? s.image : `/${s.image.replace(/^\/+/, '')}`)
                   : fallbackImgs[i % fallbackImgs.length]
+                const href = '/contact'
 
                 return (
                   <div key={s.id} className="service-card">
@@ -621,14 +622,14 @@ export default function HomePage({
                         <p className="service-card-desc">{s.description}</p>
                       )}
 
-                      <div className="service-card-footer" style={{ borderTop: `1px solid ${acc}18` }}>
+                      <Link href={href} className="service-card-footer" style={{ borderTop: `1px solid ${acc}18`, textDecoration: 'none' }}>
                         <span className="service-card-footer-label" style={{ color: acc }}>Learn More</span>
                         <div className="service-card-arrow" style={{ background: lbg, border: `1.5px solid ${acc}30` }}>
                           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
                             <path d="M2 6h8M6 2l4 4-4 4" stroke={acc} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                           </svg>
                         </div>
-                      </div>
+                      </Link>
                     </div>
                   </div>
                 )
