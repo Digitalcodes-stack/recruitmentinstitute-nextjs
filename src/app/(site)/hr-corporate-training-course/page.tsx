@@ -132,6 +132,13 @@ export default function CorporateTrainingPage() {
   const [expandedModule, setExpandedModule] = useState<number | null>(0)
   const [expandedFaq, setExpandedFaq]       = useState<number | null>(null)
 
+  const openSyllabus = () => {
+    setActiveTab('curriculum')
+    requestAnimationFrame(() => {
+      document.getElementById('syllabus-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -409,10 +416,24 @@ export default function CorporateTrainingPage() {
                         <span style={{ display:'inline-block', fontSize:10, fontWeight:800, color:p.color, textTransform:'uppercase', letterSpacing:'.22em', marginBottom:10, opacity:.75, position:'relative', zIndex:1 }}>{p.num}</span>
                         <h3 style={{ fontSize:16, fontWeight:800, color:'#0F172A', lineHeight:1.26, margin:'0 0 12px', position:'relative', zIndex:1 }}>{title}</h3>
                         <p style={{ fontSize:13, color:'#64748B', lineHeight:1.84, margin:'0 0 20px', position:'relative', zIndex:1 }}>{desc}</p>
-                        <div style={{ display:'flex', alignItems:'center', gap:6, position:'relative', zIndex:1 }}>
+                        <button
+                          type="button"
+                          onClick={openSyllabus}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            position: 'relative',
+                            zIndex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                          }}
+                        >
                           <span style={{ fontSize:12, fontWeight:700, color:p.color }}>Covered in programme</span>
                           <ArrowRight style={{ width:13, height:13, color:p.color }} />
-                        </div>
+                        </button>
                       </div>
                     </div>
                   )
@@ -444,7 +465,7 @@ export default function CorporateTrainingPage() {
       </section>
 
       {/* â•â• TABS + SIDEBAR â•â• */}
-      <section className="corp" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
+      <section id="syllabus-section" className="corp" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
         <div className="container">
           <div className="corp-content-grid" style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) 360px', gap:36, alignItems:'start' }}>
             <div>

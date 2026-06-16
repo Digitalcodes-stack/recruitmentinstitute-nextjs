@@ -141,6 +141,13 @@ export default function EndToEndRecruitmentPage() {
   const [expandedModule, setExpandedModule] = useState<number | null>(0)
   const [expandedFaq, setExpandedFaq]     = useState<number | null>(null)
 
+  const openSyllabus = () => {
+    setActiveTab('curriculum')
+    requestAnimationFrame(() => {
+      document.getElementById('syllabus-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
   const ldJson = JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
@@ -531,10 +538,24 @@ export default function EndToEndRecruitmentPage() {
                         <h3 style={{ fontSize:16, fontWeight:800, color:'#0F172A', lineHeight:1.26, margin:'0 0 12px', position:'relative', zIndex:1 }}>{title}</h3>
                         <p style={{ fontSize:13, color:'#64748B', lineHeight:1.84, margin:'0 0 20px', position:'relative', zIndex:1 }}>{desc}</p>
                         {/* Bottom learn-more link */}
-                        <div style={{ display:'flex', alignItems:'center', gap:6, position:'relative', zIndex:1 }}>
+                        <button
+                          type="button"
+                          onClick={openSyllabus}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            position: 'relative',
+                            zIndex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                          }}
+                        >
                           <span style={{ fontSize:12, fontWeight:700, color:p.color }}>Covered in syllabus</span>
                           <ArrowRight style={{ width:13, height:13, color:p.color }} />
-                        </div>
+                        </button>
                       </div>
                     </div>
                   )
@@ -566,7 +587,7 @@ export default function EndToEndRecruitmentPage() {
       </section>
 
       {/* â•â• TABS + SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      <section className="e2e" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
+      <section id="syllabus-section" className="e2e" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
         <div className="container">
           <div className="e2e-content-grid" style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) 360px', gap:36, alignItems:'start' }}>
 

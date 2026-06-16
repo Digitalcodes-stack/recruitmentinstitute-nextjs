@@ -103,6 +103,13 @@ export default function EntrepreneurshipPage() {
   const [expandedModule, setExpandedModule] = useState<number | null>(0)
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null)
 
+  const openSyllabus = () => {
+    setActiveTab('curriculum')
+    requestAnimationFrame(() => {
+      document.getElementById('syllabus-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
+
   return (
     <>
       <style>{`
@@ -395,7 +402,7 @@ export default function EntrepreneurshipPage() {
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           FEATURES GRID Premium redesign
       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      <section className="ep-page" style={{ background: '#fff', padding: '96px 0 104px', borderTop: '1px solid #E2E8F0' }}>
+      <section id="syllabus-section" className="ep-page" style={{ background: '#fff', padding: '96px 0 104px', borderTop: '1px solid #E2E8F0' }}>
         <div className="container">
 
           {/* Split header */}
@@ -467,10 +474,24 @@ export default function EntrepreneurshipPage() {
                         <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 800, color: p.color, textTransform: 'uppercase', letterSpacing: '.22em', marginBottom: 10, opacity: .75, position: 'relative', zIndex: 1 }}>{p.num}</span>
                         <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', lineHeight: 1.26, margin: '0 0 12px', position: 'relative', zIndex: 1 }}>{title}</h3>
                         <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.84, margin: '0 0 20px', position: 'relative', zIndex: 1 }}>{desc}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative', zIndex: 1 }}>
+                        <button
+                          type="button"
+                          onClick={openSyllabus}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            position: 'relative',
+                            zIndex: 1,
+                            background: 'transparent',
+                            border: 'none',
+                            padding: 0,
+                            cursor: 'pointer',
+                          }}
+                        >
                           <span style={{ fontSize: 12, fontWeight: 700, color: p.color }}>Covered in syllabus</span>
                           <ArrowRight style={{ width: 13, height: 13, color: p.color }} />
-                        </div>
+                        </button>
                       </div>
                     </div>
                   )

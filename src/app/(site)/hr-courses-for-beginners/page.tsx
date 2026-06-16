@@ -356,7 +356,7 @@ export default function HRBeginnerPage() {
       </section>
 
       {/* â•â• TABS + SIDEBAR â•â• */}
-      <section className="beg" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
+      <section id="syllabus-section" className="beg" style={{ background:'#fff', padding:'80px 0 96px', borderTop:'1px solid #E2E8F0' }}>
         <div className="container">
           <div className="beg-content-grid" style={{ display:'grid', gridTemplateColumns:'minmax(0,1fr) 360px', gap:36, alignItems:'start' }}>
             <div>
