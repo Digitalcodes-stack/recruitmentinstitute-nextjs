@@ -50,6 +50,7 @@ const defaultBenefits = [
     icon: BookOpen,
     title: 'Premium Resources',
     desc: 'Access exclusive study materials, JD templates, sourcing scripts, and recruiter toolkits curated by industry experts.',
+    href: '/knowledge',
     color: '#1D4ED8',
     bg: '#EFF6FF',
     border: '#BFDBFE',
@@ -59,6 +60,7 @@ const defaultBenefits = [
     icon: Users,
     title: 'Community Access',
     desc: 'Connect, collaborate, and grow alongside 500+ active HR professionals, recruiters, and peers in your city and online.',
+    href: '/community',
     color: '#0D9488',
     bg: '#F0FDFA',
     border: '#99F6E4',
@@ -68,6 +70,7 @@ const defaultBenefits = [
     icon: Briefcase,
     title: 'Career Support',
     desc: 'Get dedicated placement assistance, resume reviews, mock interviews, and one-on-one career guidance sessions.',
+    href: '/contact',
     color: '#DC2626',
     bg: '#FEF2F2',
     border: '#FECACA',
@@ -77,6 +80,7 @@ const defaultBenefits = [
     icon: GraduationCap,
     title: 'Certification',
     desc: 'Earn industry-recognised certificates trusted by 200+ hiring companies across India. Verifiable, shareable, valuable.',
+    href: '/testimonials',
     color: '#7C3AED',
     bg: '#F5F3FF',
     border: '#DDD6FE',
@@ -86,6 +90,7 @@ const defaultBenefits = [
     icon: Lightbulb,
     title: 'Knowledge Base',
     desc: 'Unlock a curated HR knowledge repository - articles, case studies, interview frameworks, and hiring playbooks.',
+    href: '/knowledge',
     color: '#D97706',
     bg: '#FFFBEB',
     border: '#FDE68A',
@@ -95,6 +100,7 @@ const defaultBenefits = [
     icon: CalendarDays,
     title: 'Webinars & Events',
     desc: 'Receive exclusive invitations to live webinars, HR conclaves, hiring fairs, and industry networking events.',
+    href: '/contact',
     color: '#059669',
     bg: '#F0FDF4',
     border: '#BBF7D0',
@@ -558,8 +564,10 @@ export default async function StudentMembershipPage() {
 
                   {/* Bottom link */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 20, paddingTop: 16, borderTop: '1px solid #F1F5F9' }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: b.color }}>Learn more</span>
-                    <ArrowRight style={{ width: 13, height: 13, color: b.color }} />
+                    <Link href={b.href} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, textDecoration: 'none' }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: b.color }}>Learn more</span>
+                      <ArrowRight style={{ width: 13, height: 13, color: b.color }} />
+                    </Link>
                   </div>
                 </div>
               )

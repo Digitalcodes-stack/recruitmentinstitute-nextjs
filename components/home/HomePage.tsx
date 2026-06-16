@@ -130,6 +130,13 @@ const T_COLORS = [
   { border: '#FDE68A', badge: '#FFFBEB', accent: '#D97706', top: '#D97706' },
 ]
 
+const FALLBACK_TESTIMONIAL_PHOTOS = [
+  '/assets/images/testimonial/home12/1.jpg',
+  '/assets/images/testimonial/home12/2.jpg',
+  '/assets/images/testimonial/home12/3.jpg',
+  '/assets/images/testimonial/home12/4.jpg',
+]
+
 /* ─── Hero avatar colours ───────────────────────────────────── */
 const AVATAR_COLORS = ['#F59E0B', '#1D4ED8', '#10B981', '#7C3AED', '#DC2626']
 const AVATAR_LETTERS = ['P', 'R', 'A', 'S', 'M']
@@ -692,7 +699,7 @@ export default function HomePage({
                 ? (((t as { image?: string | null }).image as string).startsWith('http')
                   ? ((t as { image?: string | null }).image as string)
                   : `/${((t as { image?: string | null }).image as string).replace(/^\/+/, '')}`)
-                : null
+                : FALLBACK_TESTIMONIAL_PHOTOS[i % FALLBACK_TESTIMONIAL_PHOTOS.length]
               return (
                 <div
                   key={i}

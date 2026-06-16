@@ -109,6 +109,8 @@ export default async function Page() {
     initial: (t.author || 'A').slice(0, 1).toUpperCase(),
     grad: 'from-blue-500 to-indigo-600',
     text: t.description || '',
+    image: t.image || '',
+    rating: t.rating || 5,
   }))
 
   const serviceData = services.map((s) => ({
