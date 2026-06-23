@@ -6,7 +6,7 @@ import AdminLayout from './AdminLayout'
 import {
   BookOpen, FileText, GraduationCap, Lightbulb, Mail, MessageCircle,
   Users2, CreditCard, UserCheck, HelpCircle, ArrowUpRight,
-  CheckCircle2, Clock, Users, TrendingUp, Wifi,
+  CheckCircle2, Clock, Users, TrendingUp, Wifi, Presentation, Layers3,
 } from 'lucide-react'
 
 /* ── Types ──────────────────────────────────────────────────── */
@@ -44,7 +44,8 @@ interface Stats {
   candidates: { total: number; pending: number }
   community: { questions: number }
   knowledge: number; leads: { course: number }
-  students: number; memberships: number; experts: number; faqs: number
+  students: number; memberships: number; experts: number; faqs: number; trainers: number
+  batches: { total: number; active: number }
   recent: {
     candidates: RecentCandidate[]
     contacts: RecentContact[]
@@ -283,6 +284,8 @@ export default function AdminDashboard() {
     { label: 'Q&A Questions',    value: stats?.community.questions?? 0, sub: 'Community',                                    icon: HelpCircle,   bg: '#f7fee7', color: '#65a30d', href: '/admin/questions'   },
     { label: 'Knowledge Items',  value: stats?.knowledge          ?? 0, sub: 'Articles',                                     icon: Lightbulb,    bg: '#fff7ed', color: '#ea580c', href: '/admin/knowledge'   },
     { label: 'Experts',          value: stats?.experts            ?? 0, sub: 'Faculty',                                      icon: Users2,       bg: '#ecfeff', color: '#0891b2', href: '/admin/experts'     },
+    { label: 'Trainers',         value: stats?.trainers           ?? 0, sub: 'Batch Trainers',                               icon: Presentation, bg: '#f5f3ff', color: '#7c3aed', href: '/admin/trainers'    },
+    { label: 'Batches',          value: stats?.batches.total      ?? 0, sub: `${stats?.batches.active ?? 0} active`,         icon: Layers3,      bg: '#eff6ff', color: '#2563eb', href: '/admin/batches'     },
     { label: 'FAQs',             value: stats?.faqs               ?? 0, sub: 'Questions',                                    icon: Users,        bg: '#f0fdf4', color: '#15803d', href: '/admin/faqs'        },
   ]
 

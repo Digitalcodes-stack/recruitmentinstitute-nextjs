@@ -5,9 +5,16 @@
  */
 
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { Pool } from 'pg'
 import * as bcrypt from 'bcryptjs'
+import * as dotenv from 'dotenv'
 
-const prisma = new PrismaClient()
+dotenv.config()
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   console.log('🌱  Seeding database…\n')
@@ -255,29 +262,30 @@ async function main() {
     },
   })
   // Add a second section
-  await prisma.aboutSection.createMany({
-    skipDuplicates: false,
-    data: [
-      {
-        title:       'Our Mission',
-        subtitle:    'Empowering Every Talent',
-        image:       '/assets/images/about/home11/about.png',
-        description: 'Our mission is to democratize recruitment knowledge across India. We believe every individual deserves world-class training that transforms their career trajectory. With over 10,000 graduates and growing, we are building the largest HR talent community in India.',
-      },
-      {
-        title:       'Why Choose Us?',
-        subtitle:    '10,000+ Placements | 98% Satisfaction | 50+ Expert Trainers',
-        image:       '/assets/images/about/home13/about.png',
-        description: 'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships, and lifetime placement support. Our trainers are active HR professionals - not just academics.',
-      },
-      {
-        title:       'Hands-On Learning',
-        subtitle:    'Practice with Real Workflows',
-        image:       '/assets/images/about/home5/about-main.png',
-        description: 'Every learner gets practical exposure to sourcing, screening, interview preparation, and HR operations so the transition to work feels natural.',
-      },
-    ],
-  })
+  const extraAboutSections = [
+    {
+      title:       'Our Mission',
+      subtitle:    'Empowering Every Talent',
+      image:       '/assets/images/about/home11/about.png',
+      description: 'Our mission is to democratize recruitment knowledge across India. We believe every individual deserves world-class training that transforms their career trajectory. With over 10,000 graduates and growing, we are building the largest HR talent community in India.',
+    },
+    {
+      title:       'Why Choose Us?',
+      subtitle:    '10,000+ Placements | 98% Satisfaction | 50+ Expert Trainers',
+      image:       '/assets/images/about/home13/about.png',
+      description: 'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships, and lifetime placement support. Our trainers are active HR professionals - not just academics.',
+    },
+    {
+      title:       'Hands-On Learning',
+      subtitle:    'Practice with Real Workflows',
+      image:       '/assets/images/about/home5/about-main.png',
+      description: 'Every learner gets practical exposure to sourcing, screening, interview preparation, and HR operations so the transition to work feels natural.',
+    },
+  ]
+  for (const section of extraAboutSections) {
+    const existing = await prisma.aboutSection.findFirst({ where: { title: section.title } })
+    if (!existing) await prisma.aboutSection.create({ data: section })
+  }
   console.log('✅  About Us seeded')
 
   // ─── 16. COURSE LEADS ────────────────────────────────────────────────────
@@ -304,6 +312,309 @@ async function main() {
   })
   console.log('✅  Fees Leads seeded')
 
+  // ─── 18. TRAINERS ─────────────────────────────────────────────────────────
+  const trainerPw = await bcrypt.hash('Trainer@123', 10)
+  const trainerSeeds = [
+    { name: 'Suresh Bansal',   email: 'suresh.bansal@institute.com',   phone: '9870001001', specialization: 'Recruitment & Sourcing', bio: 'Certified recruiter trainer with 12+ years in talent acquisition across IT and BFSI sectors.' },
+    { name: 'Priti Shah',      email: 'priti.shah@institute.com',      phone: '9870001002', specialization: 'Learning & Development',  bio: 'L&D specialist focused on building structured onboarding and upskilling programs for HR teams.' },
+    { name: 'Rohit Malhotra',  email: 'rohit.malhotra@institute.com',  phone: '9870001003', specialization: 'Entrepreneurship & HR',    bio: 'Startup mentor and HR leader who has scaled people functions for three early-stage companies.' },
+    { name: 'Vivek Srivastava',email: 'vivek.srivastava@institute.com',phone: '9870001004', specialization: 'Corporate Training',       bio: 'Corporate trainer specializing in mass hiring, interview panels, and HR analytics workshops.' },
+  ]
+  const trainers: Awaited<ReturnType<typeof prisma.trainer.upsert>>[] = []
+  for (const t of trainerSeeds) {
+    trainers.push(await prisma.trainer.upsert({
+      where: { email: t.email },
+      update: {},
+      create: { ...t, password: trainerPw, isActive: true },
+    }))
+  }
+  console.log('✅  Trainers seeded')
+
+  // ─── 19. BATCHES ──────────────────────────────────────────────────────────
+  const courses = await prisma.course.findMany({ select: { id: true } })
+  const today = new Date()
+  const daysFromNow = (n: number) => new Date(today.getTime() + n * 86400000)
+
+  const batchSeeds = courses.flatMap((course, i) => [
+    {
+      name: `Batch A — ${daysFromNow(-60).toLocaleString('en-IN', { month: 'short', year: 'numeric' })}`,
+      courseId: course.id,
+      trainerId: trainers[i % trainers.length].id,
+      capacity: 25,
+      mode: 'ONLINE' as const,
+      startDate: daysFromNow(-60),
+      endDate: daysFromNow(-10),
+      schedule: 'Mon–Fri, 7–9 PM IST',
+      status: 'COMPLETED' as const,
+    },
+    {
+      name: `Batch B — ${today.toLocaleString('en-IN', { month: 'short', year: 'numeric' })}`,
+      courseId: course.id,
+      trainerId: trainers[(i + 1) % trainers.length].id,
+      capacity: 30,
+      mode: i % 2 === 0 ? 'ONLINE' as const : 'HYBRID' as const,
+      startDate: daysFromNow(-14),
+      endDate: daysFromNow(45),
+      schedule: 'Mon/Wed/Fri, 6–8 PM IST',
+      status: 'ACTIVE' as const,
+    },
+  ])
+
+  const batches = []
+  for (const b of batchSeeds) {
+    let batch = await prisma.batch.findFirst({ where: { name: b.name, courseId: b.courseId } })
+    if (!batch) batch = await prisma.batch.create({ data: b })
+    batches.push(batch)
+  }
+  console.log('✅  Batches seeded')
+
+  // ─── 20. ENROLLMENTS ──────────────────────────────────────────────────────
+  const seededStudents = await prisma.student.findMany({ where: { isActive: true }, select: { id: true } })
+  const enrollments = []
+  for (const batch of batches) {
+    // enroll roughly half the active students into each batch, staggered
+    const picks = seededStudents.filter((_, idx) => (idx + batch.id) % 2 === 0)
+    for (const s of picks) {
+      const enrollment = await prisma.enrollment.upsert({
+        where: { studentId_batchId: { studentId: s.id, batchId: batch.id } },
+        update: {},
+        create: {
+          studentId: s.id,
+          batchId: batch.id,
+          status: batch.status === 'COMPLETED' ? 'COMPLETED' : 'ENROLLED',
+        },
+      })
+      enrollments.push(enrollment)
+    }
+  }
+  console.log('✅  Enrollments seeded')
+
+  // ─── 21. SESSIONS ─────────────────────────────────────────────────────────
+  const sessionTitles = [
+    'Orientation & Course Overview', 'Core Concepts Deep Dive', 'Hands-on Workshop',
+    'Case Study Discussion', 'Practical Application Session', 'Doubt Clearing & Review',
+    'Guest Expert Talk', 'Mock Practice Session', 'Module Wrap-up & Assessment Prep',
+  ]
+  const sessionsByBatch = new Map<number, { id: number; startTime: Date; status: string }[]>()
+  for (const batch of batches) {
+    const isCompleted = batch.status === 'COMPLETED'
+    const offsets = isCompleted ? [-55, -45, -35, -25, -15] : [-10, -3, 4, 11, 18]
+    const list = []
+    for (let i = 0; i < offsets.length; i++) {
+      const sessionDate = daysFromNow(offsets[i])
+      const startTime = new Date(sessionDate); startTime.setHours(19, 0, 0, 0)
+      const endTime = new Date(sessionDate); endTime.setHours(21, 0, 0, 0)
+      const title = sessionTitles[i % sessionTitles.length]
+
+      let session = await prisma.session.findFirst({ where: { batchId: batch.id, title, sessionDate } })
+      if (!session) {
+        session = await prisma.session.create({
+          data: {
+            batchId: batch.id,
+            trainerId: batch.trainerId,
+            title,
+            description: `${title} for ${batch.name}.`,
+            sessionDate,
+            startTime,
+            endTime,
+            meetLink: offsets[i] <= 0 ? 'https://meet.google.com/sample-link' : null,
+            status: offsets[i] < 0 ? 'COMPLETED' : offsets[i] === 0 ? 'LIVE' : 'UPCOMING',
+          },
+        })
+      }
+      list.push({ id: session.id, startTime: session.startTime, status: session.status })
+    }
+    sessionsByBatch.set(batch.id, list)
+  }
+  console.log('✅  Sessions seeded')
+
+  // ─── 22. ATTENDANCE ───────────────────────────────────────────────────────
+  let attendanceCount = 0
+  for (const enrollment of enrollments) {
+    const sessions = sessionsByBatch.get(enrollment.batchId) ?? []
+    for (const session of sessions.filter((s) => s.status === 'COMPLETED')) {
+      const present = (enrollment.id + session.id) % 5 !== 0 // ~80% attendance
+      const existing = await prisma.attendance.findUnique({
+        where: { enrollmentId_sessionId: { enrollmentId: enrollment.id, sessionId: session.id } },
+      })
+      if (!existing) {
+        await prisma.attendance.create({
+          data: {
+            enrollmentId: enrollment.id,
+            sessionId: session.id,
+            present,
+            joinedAt: present ? session.startTime : null,
+          },
+        })
+        attendanceCount++
+      }
+    }
+  }
+  console.log('✅  Attendance seeded')
+
+  // ─── 23. LMS CURRICULUM (Module → Chapter → Topic → Lesson → Resource) ───
+  const curriculumByCourse: Record<number, { modules: { title: string; chapters: { title: string; topics: { title: string; lessons: { title: string; type: 'VIDEO' | 'PDF' | 'QUIZ'; durationSec?: number }[] }[] }[] }[] }> = {}
+  for (const course of courses) {
+    curriculumByCourse[course.id] = {
+      modules: [
+        {
+          title: 'Foundations',
+          chapters: [
+            {
+              title: 'Getting Started',
+              topics: [
+                { title: 'Introduction & Industry Overview', lessons: [
+                  { title: 'Welcome to the Program', type: 'VIDEO', durationSec: 480 },
+                  { title: 'Industry Landscape Overview', type: 'VIDEO', durationSec: 720 },
+                  { title: 'Glossary & Key Terms (PDF)', type: 'PDF' },
+                ] },
+                { title: 'Core Terminology', lessons: [
+                  { title: 'Key Concepts Explained', type: 'VIDEO', durationSec: 600 },
+                  { title: 'Terminology Quiz', type: 'QUIZ' },
+                ] },
+              ],
+            },
+          ],
+        },
+        {
+          title: 'Practical Application',
+          chapters: [
+            {
+              title: 'Real-world Workflows',
+              topics: [
+                { title: 'Hands-on Practice', lessons: [
+                  { title: 'Workflow Walkthrough', type: 'VIDEO', durationSec: 900 },
+                  { title: 'Practice Worksheet (PDF)', type: 'PDF' },
+                ] },
+                { title: 'Case Studies', lessons: [
+                  { title: 'Case Study Analysis', type: 'VIDEO', durationSec: 660 },
+                  { title: 'Case Study Quiz', type: 'QUIZ' },
+                ] },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+  }
+
+  const allLessonIds: number[] = []
+  for (const course of courses) {
+    const def = curriculumByCourse[course.id]
+    for (let mi = 0; mi < def.modules.length; mi++) {
+      const modDef = def.modules[mi]
+      let mod = await prisma.module.findFirst({ where: { courseId: course.id, title: modDef.title } })
+      if (!mod) mod = await prisma.module.create({ data: { courseId: course.id, title: modDef.title, sortOrder: mi } })
+
+      for (let ci = 0; ci < modDef.chapters.length; ci++) {
+        const chapDef = modDef.chapters[ci]
+        let chapter = await prisma.chapter.findFirst({ where: { moduleId: mod.id, title: chapDef.title } })
+        if (!chapter) chapter = await prisma.chapter.create({ data: { moduleId: mod.id, title: chapDef.title, sortOrder: ci } })
+
+        for (let ti = 0; ti < chapDef.topics.length; ti++) {
+          const topicDef = chapDef.topics[ti]
+          let topic = await prisma.topic.findFirst({ where: { chapterId: chapter.id, title: topicDef.title } })
+          if (!topic) topic = await prisma.topic.create({ data: { chapterId: chapter.id, title: topicDef.title, sortOrder: ti } })
+
+          for (let li = 0; li < topicDef.lessons.length; li++) {
+            const lessonDef = topicDef.lessons[li]
+            let lesson = await prisma.lesson.findFirst({ where: { topicId: topic.id, title: lessonDef.title } })
+            if (!lesson) {
+              lesson = await prisma.lesson.create({
+                data: {
+                  topicId: topic.id,
+                  title: lessonDef.title,
+                  type: lessonDef.type,
+                  videoUrl: lessonDef.type === 'VIDEO' ? 'https://www.youtube.com/watch?v=sample' : null,
+                  durationSec: lessonDef.durationSec,
+                  sortOrder: li,
+                  isPreview: mi === 0 && ci === 0 && ti === 0 && li === 0,
+                },
+              })
+            }
+            allLessonIds.push(lesson.id)
+
+            if (lessonDef.type === 'PDF') {
+              const existingResource = await prisma.resource.findFirst({ where: { lessonId: lesson.id } })
+              if (!existingResource) {
+                await prisma.resource.create({
+                  data: { lessonId: lesson.id, title: `${lessonDef.title} — download`, fileUrl: '/uploads/lms/sample-resource.pdf', fileType: 'PDF' },
+                })
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  console.log('✅  LMS curriculum seeded')
+
+  // ─── 24. LESSON PROGRESS ──────────────────────────────────────────────────
+  let progressCount = 0
+  for (const enrollment of enrollments) {
+    // students complete roughly the first half of all lessons in courses they're enrolled in
+    const halfway = Math.floor(allLessonIds.length / 2)
+    const completedLessons = allLessonIds.slice(0, halfway + (enrollment.id % 3))
+    for (const lessonId of completedLessons) {
+      const existing = await prisma.lessonProgress.findUnique({
+        where: { studentId_lessonId: { studentId: enrollment.studentId, lessonId } },
+      })
+      if (!existing) {
+        await prisma.lessonProgress.create({
+          data: { studentId: enrollment.studentId, lessonId, isCompleted: true, completedAt: daysFromNow(-5) },
+        })
+        progressCount++
+      }
+    }
+  }
+  console.log('✅  Lesson progress seeded')
+
+  // ─── 25. ASSIGNMENTS + SUBMISSIONS ────────────────────────────────────────
+  const assignmentTitles = ['Sourcing Strategy Brief', 'Mock Job Description Draft', 'Candidate Screening Exercise', 'Case Study Write-up']
+  let submissionCount = 0
+  for (const batch of batches) {
+    for (let i = 0; i < 2; i++) {
+      const title = assignmentTitles[(batch.id + i) % assignmentTitles.length]
+      let assignment = await prisma.assignment.findFirst({ where: { batchId: batch.id, title } })
+      if (!assignment) {
+        assignment = await prisma.assignment.create({
+          data: {
+            batchId: batch.id,
+            title,
+            description: `Complete the "${title}" exercise and submit your work as a PDF or document before the deadline.`,
+            dueAt: daysFromNow(batch.status === 'COMPLETED' ? -40 + i * 10 : 7 + i * 10),
+          },
+        })
+      }
+
+      const batchEnrollments = enrollments.filter((e) => e.batchId === batch.id)
+      for (const enrollment of batchEnrollments) {
+        const shouldSubmit = (enrollment.id + i) % 3 !== 0 // ~2/3 of students submit
+        if (!shouldSubmit) continue
+
+        const existing = await prisma.assignmentSubmission.findUnique({
+          where: { assignmentId_studentId: { assignmentId: assignment.id, studentId: enrollment.studentId } },
+        })
+        if (existing) continue
+
+        const isGraded = (enrollment.id + i) % 2 === 0
+        await prisma.assignmentSubmission.create({
+          data: {
+            assignmentId: assignment.id,
+            studentId: enrollment.studentId,
+            fileUrl: '/uploads/assignments/sample-submission.pdf',
+            note: 'Submitted as per the brief shared in class.',
+            score: isGraded ? 78 + ((enrollment.id * 3) % 20) : null,
+            feedback: isGraded ? 'Good structure, add more data-backed examples next time.' : null,
+            gradedAt: isGraded ? daysFromNow(-2) : null,
+          },
+        })
+        submissionCount++
+      }
+    }
+  }
+  console.log('✅  Assignments & submissions seeded')
+
   // ─── Final count ──────────────────────────────────────────────────────────
   console.log('\n📊  Final row counts:')
   const models = [
@@ -324,6 +635,19 @@ async function main() {
     ['AboutSections',  await prisma.aboutSection.count()],
     ['CourseLeads',    await prisma.courseLead.count()],
     ['FeesLeads',      await prisma.feesLead.count()],
+    ['Trainers',       await prisma.trainer.count()],
+    ['Batches',        await prisma.batch.count()],
+    ['Enrollments',    await prisma.enrollment.count()],
+    ['Sessions',       await prisma.session.count()],
+    ['Attendance',     await prisma.attendance.count()],
+    ['Modules',        await prisma.module.count()],
+    ['Chapters',       await prisma.chapter.count()],
+    ['Topics',         await prisma.topic.count()],
+    ['Lessons',        await prisma.lesson.count()],
+    ['LmsResources',   await prisma.resource.count()],
+    ['LessonProgress', await prisma.lessonProgress.count()],
+    ['Assignments',    await prisma.assignment.count()],
+    ['Submissions',    await prisma.assignmentSubmission.count()],
   ] as [string, number][]
 
   models.forEach(([name, count]) => console.log(`   ${name.padEnd(18)} ${count}`))

@@ -1,0 +1,281 @@
+================================================================================
+  RECRUITMENT INSTITUTE - NEXTJS PROJECT
+  DAILY DEVELOPMENT REPORT
+  Date        : Thursday, 18 June 2026
+  Developer   : Claude (AI Coding Assistant)
+  Project     : d:\xampp\htdocs\recruitmentinstitute-nextjs
+  Focus       : Platform V2 architecture planning + LMS/Batch/Trainer module
+                implementation (Sprints 1-5)
+================================================================================
+
+
+================================================================================
+  EXECUTIVE SUMMARY
+================================================================================
+
+Today's session covered the full path from requirements to working code for
+the "Recruitment Institute Platform V2" upgrade: an ERP + LMS + Virtual
+Classroom + Placement ecosystem layered on top of the existing Next.js 16 /
+Prisma / PostgreSQL site.
+
+Key outcomes from this session:
+
+  1. Produced a full functionality audit of the existing platform (public
+     site, admin panel, database, auth, API surface) on request.
+  2. Reconciled a 15-phase V2 product spec against a pre-existing
+     "Implementation Plan recruitment.pdf" (a simpler V1 RTMS plan already
+     sitting untracked in the repo) and against explicit stakeholder
+     decisions: stay inside the existing Next.js/Prisma stack (no FastAPI/
+     Celery/RabbitMQ microservices), and treat all paid third-party APIs
+     (OpenAI, Google Meet/Calendar, WhatsApp, Razorpay/Stripe) as pluggable
+     adapters with no credentials configured yet.
+  3. Wrote docs/v2-architecture-plan.md: ~35 new Prisma models, ER diagram,
+     API architecture, integration-adapter pattern, in-platform job queue
+     design (replacing Celery/RabbitMQ), 18-sprint plan, cost estimate, AWS
+     deployment design, and scaling strategy.
+  4. Implemented Sprints 1-5 end-to-end against the real schema and codebase
+     (not just the plan document): Trainer management, Batch/Session/
+     Enrollment/Attendance (the V1 MVP), an in-database reminder job queue
+     with email notifications, student and trainer dashboards, and a full
+     LMS curriculum builder + student course player.
+  5. Verified every sprint with `tsc --noEmit` and a full `npm run build`
+     before moving on; all builds are currently green.
+
+
+================================================================================
+  PART 1 - PLANNING
+================================================================================
+
+1. Functionality audit
+   - Produced a structured report of the existing platform: public site
+     pages, admin panel modules, Prisma schema (25 models at the time),
+     custom JWT auth, ~35 API endpoints, key libraries, SEO/redirects.
+
+2. Spec reconciliation
+   - User supplied a 15-phase "Platform V2" spec (LMS, batches, trainers,
+     Google Meet automation, AI session notes, assignments, assessments,
+     placement/ATS, AI resume builder, AI mock interviews, knowledge AI
+     assistant, certificates, communication center, finance, analytics).
+   - Discovered "Implementation Plan recruitment.pdf" already in the repo
+     (untracked) describing a simpler, free-tier V1 (RTMS): manual Google
+     Meet links pasted by trainers, email-only reminders, no AI - explicitly
+     listing AI/WhatsApp/LMS-assignments/certificates as "Future Scope, not
+     V1". Asked the user how to treat it; decision: PDF's module set is the
+     real V1 baseline, and the V2 spec builds on top of it rather than
+     replacing it.
+   - Asked and confirmed: stay on Next.js/Prisma/Postgres (no microservices);
+     design third-party integrations as pluggable adapters since no
+     credentials exist yet.
+
+3. Architecture document
+   - File: docs/v2-architecture-plan.md
+   - Contents: reconciliation table (PDF module -> plan phase), ~35 new
+     Prisma models grouped by phase, ER diagram, API route table, integration
+     adapter pattern (lib/integrations/{calendar,ai,messaging,payments}),
+     in-platform JobQueue design (polling cron instead of Celery/RabbitMQ),
+     folder structure additions, an 18-sprint dependency-ordered plan, rough
+     cost estimate (43-55 dev-weeks), AWS deployment architecture, and a
+     production scaling strategy.
+
+
+================================================================================
+  PART 2 - IMPLEMENTATION (SPRINTS 1-5)
+================================================================================
+
+SPRINT 1 - Trainer Management
+   Schema:
+     - Added Trainer model (trainers table) with login credentials.
+     - Extended AuthSession.type with 'trainer'.
+   Database:
+     - Synced via `prisma db push` (project has no migration history; this
+       matches the existing workflow). No data loss - confirmed before
+       running.
+   API:
+     - Full CRUD: src/app/api/admin/trainers/route.ts (+ [id]/route.ts),
+       with bcrypt password hashing on create/update.
+     - Login: src/app/api/auth/trainer/login/route.ts, reusing the existing
+       JWT + cookie session machinery (same pattern as student/membership).
+   Admin UI:
+     - /admin/trainers (list with active/inactive badges), /new, /[id]/edit.
+     - components/admin/TrainerForm.tsx, TrainerActions.tsx.
+   Wiring:
+     - Added "Trainers" to the admin sidebar (People group) and a stat card
+       on /admin/dashboard.
+
+SPRINT 2 - Batch / Session / Enrollment / Attendance (V1 MVP core)
+   Schema:
+     - Added Batch, Enrollment, Session, Attendance models plus BatchMode,
+       BatchStatus, EnrollmentStatus, SessionStatus enums.
+   API:
+     - Batch CRUD: /api/admin/batches (+ [id]).
+     - Session CRUD: /api/admin/sessions (+ [id]), filterable by batchId,
+       with a plain meetLink string field (manual paste, per PDF V1; later
+       swappable for automated Meet creation behind the same field).
+     - Enrollment: /api/admin/enrollments (+ [id]) - enforces batch capacity
+       and prevents duplicate enrollment.
+     - Student-facing: POST /api/sessions/[id]/join - verifies enrollment,
+       returns the Meet link, upserts an Attendance row with joinedAt/
+       present (click-to-join attendance per PDF Module 14).
+   Admin UI:
+     - /admin/batches (table list with student/session counts, status
+       badges), /new, /[id]/edit, and /admin/batches/[id] - a batch
+       dashboard to enroll students and add sessions with an inline,
+       manually-pasted Meet link.
+     - components/admin/BatchForm.tsx, BatchActions.tsx, BatchDetail.tsx.
+   Wiring:
+     - New "Training" sidebar group; Batches stat card on the dashboard.
+
+SPRINT 3 - Reminder Engine (JobQueue + Cron + Email)
+   Schema:
+     - Added JobQueue model (job_queue table), indexed on (status, runAfter)
+       for the polling hot path. This replaces the originally-specified
+       Celery/RabbitMQ stack with an in-database queue, per the "stay in
+       Next.js/Prisma" decision.
+   Email:
+     - lib/email.ts: added sendSessionReminderEmail (24h / 1h / 15m lead
+       times).
+   Jobs:
+     - lib/jobs/sendReminder.ts - fans out to all ENROLLED students in a
+       session's batch, skips cancelled sessions.
+     - lib/jobs/queue.ts - enqueueSessionReminders / cancelSessionReminders,
+       computes the three reminder run-times from a session's start time.
+     - Wired into session create (enqueue), update (reschedule on time
+       change, cancel on CANCELLED status), and delete (cancel pending jobs).
+   Cron:
+     - POST /api/internal/cron/tick - transactionally claims due pending
+       jobs (prevents double-processing), dispatches by job type, retries
+       up to 3 times with a 5-minute backoff before marking failed.
+     - vercel.json added with a */5 * * * * schedule.
+     - CRON_SECRET documented in .env.example (Vercel auto-sends it as a
+       Bearer token on cron-triggered requests).
+
+SPRINT 5 - Student & Trainer Dashboards (built before Sprint 4 by request)
+   Student side:
+     - Extended /profile (existing page) to query the logged-in student's
+       enrollments (batch -> course/trainer/sessions, plus attendance) and
+       render a new "My Training" section.
+     - components/site/StudentTrainingPanel.tsx - upcoming sessions with a
+       "Join Class" button (calls the join/attendance endpoint, then opens
+       the Meet link), completed sessions with present/not-marked status,
+       and a per-batch attendance percentage badge.
+   Trainer side:
+     - New (trainer) route group (pass-through layout, mirroring the
+       existing (admin) group's pattern).
+     - /trainer-login - dedicated login page (components/trainer/
+       TrainerLoginClient.tsx) posting to /api/auth/trainer/login.
+     - /trainer/dashboard - stat cards (assigned batches, total students,
+       upcoming sessions) plus "My Batches" and "Upcoming Sessions" panels
+       with Meet-link status, scoped to the logged-in trainer only.
+     - components/trainer/TrainerLayout.tsx - lightweight header/logout
+       chrome for the trainer portal.
+
+SPRINT 4 - LMS Curriculum (Module -> Chapter -> Topic -> Lesson -> Resource)
+   Schema:
+     - Added Module, Chapter, Topic, Lesson, Resource, LessonProgress models
+       (6 new tables) cascading from Course; LessonType and ResourceType
+       enums. Resource can attach to either a Lesson or a Session, so live-
+       session materials reuse the same model later.
+   Admin API:
+     - Full CRUD for all four curriculum levels: /api/admin/modules,
+       /chapters, /topics, /lessons, plus /api/admin/lms-resources.
+     - Single nested-fetch endpoint /api/admin/courses/[id]/curriculum to
+       avoid 4 round-trips from the builder UI.
+   Admin UI:
+     - components/admin/CurriculumBuilder.tsx - collapsible 4-level tree
+       with inline add/delete at every level and resource attachment per
+       lesson.
+     - New /admin/courses/[id]/curriculum page, reachable via a new
+       "Curriculum" button added to each course row in /admin/courses
+       (components/admin/CourseActions.tsx).
+   Student API:
+     - /api/student/courses/[id] - enrollment-gated nested curriculum fetch.
+     - /api/lms/progress - mark a lesson complete/incomplete; access is
+       checked by walking Lesson -> Topic -> Chapter -> Module -> Course and
+       confirming the student has an enrollment in that course.
+   Student UI:
+     - components/site/CoursePlayer.tsx - sidebar curriculum tree with
+       progress checkmarks and a percent-complete bar; main pane renders
+       video (iframe embed), rich text, or resource downloads depending on
+       lesson type, with a "Mark Complete" toggle.
+     - New /profile/courses/[id] page; linked from the course title inside
+       StudentTrainingPanel on /profile.
+
+
+================================================================================
+  VERIFICATION
+================================================================================
+
+   - Every sprint above was checked with `npx tsc --noEmit` and a full
+     `npm run build` before moving to the next sprint. All builds completed
+     successfully with every new route appearing in the Next.js route map
+     (admin, trainer, student, and internal/cron routes).
+   - No destructive database operations were run. The existing PostgreSQL
+     database (which had no Prisma migration history) was synced with
+     `prisma db push` rather than `prisma migrate dev`, specifically to
+     avoid the destructive reset that `migrate dev` would have required.
+
+
+================================================================================
+  FILES ADDED OR CHANGED TODAY (HIGH LEVEL)
+================================================================================
+
+   New documentation:
+     - docs/v2-architecture-plan.md
+
+   Schema:
+     - prisma/schema.prisma (Trainer, Batch, Enrollment, Session,
+       Attendance, JobQueue, Module, Chapter, Topic, Lesson, Resource,
+       LessonProgress, plus related enums and back-relations)
+
+   New libraries:
+     - lib/jobs/queue.ts, lib/jobs/sendReminder.ts
+     - lib/email.ts (sendSessionReminderEmail added)
+     - lib/validations.ts (trainer/batch/session/enrollment/LMS schemas)
+
+   New admin routes/components:
+     - src/app/(admin)/admin/trainers/**
+     - src/app/(admin)/admin/batches/**
+     - src/app/(admin)/admin/courses/[id]/curriculum/**
+     - components/admin/{Trainer,Batch,Curriculum}*.tsx
+
+   New trainer portal:
+     - src/app/(trainer)/** , src/app/(site)/trainer-login/**
+     - components/trainer/**
+
+   New student-facing routes/components:
+     - src/app/(site)/profile/courses/[id]/**
+     - components/site/{StudentTrainingPanel,CoursePlayer}.tsx
+
+   New API routes:
+     - src/app/api/admin/{trainers,batches,sessions,enrollments,modules,
+       chapters,topics,lessons,lms-resources}/**
+     - src/app/api/admin/courses/[id]/curriculum/**
+     - src/app/api/auth/trainer/**
+     - src/app/api/sessions/[id]/join/**
+     - src/app/api/student/courses/[id]/**
+     - src/app/api/lms/progress/**
+     - src/app/api/internal/cron/tick/**
+
+   Infra:
+     - vercel.json (cron schedule)
+     - .env.example (CRON_SECRET documented)
+
+
+================================================================================
+  NEXT STEPS
+================================================================================
+
+   1. Manual end-to-end test of the flows built today (create a course ->
+      build curriculum -> create a batch/trainer -> enroll a student ->
+      verify the course player and session join/attendance) before further
+      development, since this session prioritized breadth across Sprints
+      1-5 over manual UI testing.
+   2. Remaining sprints per docs/v2-architecture-plan.md: assignments,
+      assessments, certificates, Google Meet automation, AI session notes,
+      placement/ATS, AI resume builder, AI mock interviews, knowledge AI
+      assistant, communication center (WhatsApp/SMS/push), finance
+      (Razorpay/Stripe), and advanced analytics dashboards.
+
+================================================================================
+  END OF REPORT
+================================================================================

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/internal/cron/tick",
+      "schedule": "*/5 * * * *"
+    }
+  ]
+}

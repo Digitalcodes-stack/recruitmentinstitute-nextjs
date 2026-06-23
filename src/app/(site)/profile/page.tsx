@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList } from 'lucide-react'
+import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
+import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -12,6 +15,34 @@ export const metadata: Metadata = {
 export default async function ProfilePage() {
   const session = await getUserSession()
   if (!session) redirect('/candidate-login')
+
+  const enrollments = session.type === 'student'
+    ? await prisma.enrollment.findMany({
+        where: { studentId: session.userId },
+        include: {
+          batch: {
+            include: {
+              course: { select: { id: true, title: true } },
+              trainer: { select: { name: true } },
+              sessions: { orderBy: [{ sessionDate: 'asc' }, { startTime: 'asc' }] },
+            },
+          },
+          attendance: { select: { sessionId: true, present: true } },
+        },
+        orderBy: { enrolledAt: 'desc' },
+      })
+    : []
+
+  const assignments = session.type === 'student'
+    ? await prisma.assignment.findMany({
+        where: { batch: { enrollments: { some: { studentId: session.userId } } } },
+        include: {
+          batch: { select: { name: true, course: { select: { title: true } } } },
+          submissions: { where: { studentId: session.userId } },
+        },
+        orderBy: { dueAt: 'asc' },
+      })
+    : []
 
   const initials = session.name
     .split(' ')
@@ -150,6 +181,33 @@ export default async function ProfilePage() {
                 </p>
               </div>
             </div>
+
+            {/* My Training — enrolled batches, sessions, attendance */}
+            {enrollments.length > 0 && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <GraduationCap style={{ width: 16, height: 16, color: '#1E40AF' }} />
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>My Training</h3>
+                </div>
+                <StudentTrainingPanel enrollments={enrollments} />
+              </div>
+            )}
+
+            {/* My Assignments — coursework due, submission status, grades */}
+            {assignments.length > 0 && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <ClipboardList style={{ width: 16, height: 16, color: '#1E40AF' }} />
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>My Assignments</h3>
+                </div>
+                <AssignmentsPanel
+                  assignments={assignments.map((a) => ({
+                    ...a,
+                    submissions: a.submissions.map((s) => ({ ...s, score: s.score?.toString() ?? null })),
+                  }))}
+                />
+              </div>
+            )}
 
             {/* 2×2 resource cards */}
             <div className="profile-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>

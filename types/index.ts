@@ -198,7 +198,19 @@ export interface AuthSession {
   email: string
   name: string
   role: AdminRole
-  type: 'admin' | 'student' | 'membership' | 'candidate' | 'community'
+  type: 'admin' | 'student' | 'membership' | 'candidate' | 'community' | 'trainer'
+}
+
+export interface Trainer {
+  id: number
+  name: string
+  email: string
+  phone: string | null
+  specialization: string | null
+  bio: string | null
+  image: string | null
+  isActive: boolean
+  createdAt: Date
 }
 
 // Form Types

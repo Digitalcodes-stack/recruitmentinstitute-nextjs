@@ -136,3 +136,109 @@ export async function sendBlogNotificationToSubscribers(
     })
   }
 }
+
+const REMINDER_LABEL: Record<'24h' | '1h' | '15m', string> = {
+  '24h': 'tomorrow',
+  '1h': 'in 1 hour',
+  '15m': 'in 15 minutes',
+}
+
+export async function sendSessionReminderEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  sessionDate: string
+  startTime: string
+  meetLink: string | null
+  lead: '24h' | '1h' | '15m'
+}) {
+  await transporter.sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Reminder: ${data.sessionTitle} starts ${REMINDER_LABEL[data.lead]}`,
+    html: `
+      <h2>Upcoming Training Session</h2>
+      <p>Hi ${data.studentName},</p>
+      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}) starts ${REMINDER_LABEL[data.lead]}.</p>
+      <p><strong>Date:</strong> ${data.sessionDate}<br/><strong>Time:</strong> ${data.startTime}</p>
+      ${data.meetLink
+        ? `<a href="${data.meetLink}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Join Session</a>`
+        : `<p>The trainer will add the meeting link shortly before the session starts — check your dashboard.</p>`}
+      <br/>
+      <p>Best regards,<br/>Recruitment Institute Team</p>
+    `,
+  })
+}
+
+export async function sendSessionScheduledEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  meetLink: string | null
+}) {
+  await transporter.sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `New Session Scheduled: ${data.sessionTitle}`,
+    html: `
+      <h2>New Training Session Scheduled</h2>
+      <p>Hi ${data.studentName},</p>
+      <p>A new session <strong>${data.sessionTitle}</strong> has been scheduled for ${data.batchName}.</p>
+      ${data.meetLink
+        ? `<a href="${data.meetLink}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Join Session</a>`
+        : `<p>The trainer will add the meeting link shortly before the session starts — check your dashboard.</p>`}
+      <p>You should also receive a separate calendar invite from Google — please accept it to add this to your calendar.</p>
+      <br/>
+      <p>Best regards,<br/>Recruitment Institute Team</p>
+    `,
+  })
+}
+
+export async function sendSessionRescheduledEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  meetLink: string | null
+}) {
+  await transporter.sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Session Rescheduled: ${data.sessionTitle}`,
+    html: `
+      <h2>Training Session Updated</h2>
+      <p>Hi ${data.studentName},</p>
+      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}) has been rescheduled. Check your calendar invite or dashboard for the new date and time.</p>
+      ${data.meetLink
+        ? `<a href="${data.meetLink}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Join Session</a>`
+        : ''}
+      <br/>
+      <p>Best regards,<br/>Recruitment Institute Team</p>
+    `,
+  })
+}
+
+export async function sendSessionCancelledEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  sessionDate: string
+  startTime: string
+}) {
+  await transporter.sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Session Cancelled: ${data.sessionTitle}`,
+    html: `
+      <h2>Training Session Cancelled</h2>
+      <p>Hi ${data.studentName},</p>
+      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}), originally scheduled for ${data.sessionDate} at ${data.startTime}, has been cancelled.</p>
+      <p>It has also been removed from your Google Calendar.</p>
+      <br/>
+      <p>Best regards,<br/>Recruitment Institute Team</p>
+    `,
+  })
+}

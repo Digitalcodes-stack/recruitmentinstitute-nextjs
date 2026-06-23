@@ -25,6 +25,9 @@ export async function GET(req: NextRequest) {
       totalMemberships,
       totalExperts,
       totalFaqs,
+      totalTrainers,
+      totalBatches,
+      activeBatches,
       recentCandidates,
       recentContacts,
       recentCourseLeads,
@@ -45,6 +48,9 @@ export async function GET(req: NextRequest) {
       prisma.membership.count(),
       prisma.expert.count(),
       prisma.faq.count(),
+      prisma.trainer.count(),
+      prisma.batch.count(),
+      prisma.batch.count({ where: { status: 'ACTIVE' } }),
       prisma.candidate.findMany({
         orderBy: { createdAt: 'desc' },
         take: 5,
@@ -82,6 +88,8 @@ export async function GET(req: NextRequest) {
         memberships: totalMemberships,
         experts: totalExperts,
         faqs: totalFaqs,
+        trainers: totalTrainers,
+        batches: { total: totalBatches, active: activeBatches },
         recent: {
           candidates: recentCandidates,
           contacts: recentContacts,

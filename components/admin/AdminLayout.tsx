@@ -8,6 +8,7 @@ import {
   Mail, LogOut, Menu, Info, Star, HelpCircle, Settings2, ExternalLink,
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
   MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
+  Presentation, Layers3, ClipboardList,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -27,10 +28,18 @@ const navGroups = [
     ],
   },
   {
+    label: 'Training',
+    items: [
+      { label: 'Batches', href: '/admin/batches', icon: Layers3 },
+      { label: 'Assignments', href: '/admin/assignments', icon: ClipboardList },
+    ],
+  },
+  {
     label: 'People',
     items: [
       { label: 'Candidates',  href: '/admin/candidates',  icon: UserCheck },
       { label: 'Students',    href: '/admin/students',    icon: GraduationCap },
+      { label: 'Trainers',    href: '/admin/trainers',    icon: Presentation },
       { label: 'Memberships', href: '/admin/memberships', icon: CreditCard },
       { label: 'Subscribers', href: '/admin/subscribers', icon: Mail },
       { label: 'Experts',     href: '/admin/experts',     icon: Users2 },
@@ -39,6 +48,7 @@ const navGroups = [
   {
     label: 'Finance',
     items: [
+      { label: 'Finance Dashboard', href: '/admin/finance', icon: CreditCard },
       { label: 'Fees',    href: '/admin/fees',    icon: IndianRupee },
       { label: 'Reviews', href: '/admin/reviews', icon: BarChart3 },
     ],
@@ -60,7 +70,10 @@ const navGroups = [
   },
   {
     label: 'System',
-    items: [{ label: 'Database', href: '/admin/database', icon: Database }],
+    items: [
+      { label: 'Settings', href: '/admin/settings', icon: Settings2 },
+      { label: 'Database', href: '/admin/database', icon: Database },
+    ],
   },
 ]
 
