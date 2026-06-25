@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import {
   ChevronDown, ChevronRight, CheckCircle2, Circle, Video, FileText,
-  ClipboardList, HelpCircle, Download, Paperclip, Loader2,
+  ClipboardList, HelpCircle, Download, Paperclip, Loader2, Award,
 } from 'lucide-react'
 
 interface ResourceRow { id: number; title: string; fileUrl: string }
@@ -91,6 +92,24 @@ export default function CoursePlayer({ courseId }: { courseId: number }) {
           </div>
           <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 6 }}>{completedCount}/{totalLessons} lessons complete ({progressPct}%)</p>
         </div>
+
+        {progressPct === 100 && (
+          <div style={{ padding: '14px 18px', borderTop: '1px solid #f1f5f9', background: '#f0fdf4' }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: '#15803d', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Award style={{ width: 13, height: 13 }} /> Course Complete!
+            </p>
+            <Link
+              href={`/profile/courses/${courseId}/assessment`}
+              style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px 14px',
+                borderRadius: 10, background: 'linear-gradient(135deg,#1d4ed8,#2563eb)', color: '#fff',
+                fontSize: 12, fontWeight: 700, textDecoration: 'none',
+              }}
+            >
+              Take Assessment
+            </Link>
+          </div>
+        )}
 
         <div style={{ maxHeight: 560, overflowY: 'auto' }}>
           {data.modules.map((mod) => (

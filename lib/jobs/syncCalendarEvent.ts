@@ -23,7 +23,7 @@ async function getSessionWithRelations(sessionId: number) {
 }
 
 function getAttendees(session: NonNullable<Awaited<ReturnType<typeof getSessionWithRelations>>>) {
-  const activeEnrollments = session.batch.enrollments.filter((e) => e.status === 'ENROLLED' && e.student.isActive)
+  const activeEnrollments = session.batch.enrollments.filter((e) => ['APPROVED', 'ACTIVE', 'ENROLLED'].includes(e.status) && e.student.isActive)
   const emails = new Map<string, { email: string }>()
 
   emails.set(session.trainer.email, { email: session.trainer.email })

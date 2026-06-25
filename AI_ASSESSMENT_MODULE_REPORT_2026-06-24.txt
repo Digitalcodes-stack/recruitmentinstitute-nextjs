@@ -1,0 +1,270 @@
+================================================================================
+RECRUITMENT INSTITUTE — AI-POWERED ASSESSMENT MODULE
+DAILY DEEP REPORT — 2026-06-24
+================================================================================
+
+SCOPE OF TODAY'S WORK
+--------------------------------------------------------------------------------
+1. Continued FastAPI V2 Sprint 0 verification (carried over from prior session).
+2. Built the full AI-Powered Student Assessment & Personalized Learning module
+   as a FastAPI microservice extension, per explicit user spec:
+   - Adapter/Strategy pattern for pluggable AI providers (Claude default,
+     OpenAI / Gemini / local Ollama as alternates).
+   - Assessment submission workflow: score calculation -> AI performance
+     analysis -> AI-generated notes (per weak topic) -> AI study plan ->
+     AI recommendations -> atomic persistence.
+   - New Postgres tables, new API endpoints, Redis caching for notes.
+3. Found and root-caused a transactional-integrity bug in the submit()
+   workflow, fixed it, and verified the fix live end-to-end.
+4. Answered a follow-up question on how to obtain a CLAUDE_API_KEY.
+
+================================================================================
+PART 1 — ARCHITECTURE DELIVERED
+================================================================================
+
+1.1 Folder structure (new)
+--------------------------------------------------------------------------------
+services/fastapi-backend/
+  app/
+    models/
+      assessment.py                 Assessment, StudentAssessment
+      ai_assessment.py               AIAssessmentAnalysis, AIGeneratedNote,
+                                      StudentStudyPlan
+    services/
+      ai/
+        base.py                      AIProvider ABC + TopicScore,
+                                      PerformanceAnalysis dataclasses
+        ai_service.py                get_ai_provider() factory, env-driven,
+                                      lru_cache'd singleton
+        providers/
+          claude_provider.py         Default. AsyncAnthropic, structured
+                                      JSON-schema outputs, prompt caching
+                                      (cache_control: ephemeral on system block)
+          openai_provider.py         AsyncOpenAI, response_format json_schema
+                                      strict mode. Reuses Claude's schemas/
+                                      prompt by import (single source of truth).
+          local_llm_provider.py      Ollama via httpx.AsyncClient,
+                                      format: "json"
+      assessment_service.py          Orchestration: submit(), get_result(),
+                                      get_notes(), get_study_plan()
+    repositories/
+      assessment_repository.py       flush()-based writes, single commit()
+    schemas/
+      assessment.py                  Pydantic request/response models
+    api/v1/endpoints/
+      assessment.py                  4 REST endpoints
+  alembic/versions/
+    0004_add_assessment_and_ai_tables.py   5 new tables, full downgrade()
+
+1.2 Design pattern
+--------------------------------------------------------------------------------
+Mirrors the existing app/integrations/meetings/{factory,provider}.py pattern
+already used in the codebase — an ABC interface (AIProvider) with one
+concrete class per backend, selected at runtime by a factory function reading
+AI_PROVIDER from settings. No endpoint or service code references a specific
+provider class directly; everything depends on the abstract interface.
+
+AIProvider interface (app/services/ai/base.py):
+  async def analyze_performance(score, percentage, topic_scores) -> PerformanceAnalysis
+  async def generate_notes(topic_name) -> str
+  async def generate_study_plan(weak_topics, strong_topics) -> dict
+  async def generate_recommendations(percentage) -> list[str]
+
+1.3 Database schema added (migration 0004, applied live to Postgres)
+--------------------------------------------------------------------------------
+assessments
+  id, course_id, assessment_name, total_marks, duration_minutes, created_at
+
+student_assessments                  (one row per student attempt)
+  id, student_id, assessment_id (FK -> assessments.id), started_at,
+  completed_at, score, percentage, status
+
+ai_assessment_analysis               (FK -> student_assessments.id, NOT
+                                       assessments.id — corrected during
+                                       design since results belong to one
+                                       attempt, not the shared template)
+  id, student_id, assessment_id, score, percentage, strong_topics (JSON),
+  weak_topics (JSON), analysis_json (JSON), created_at
+
+ai_generated_notes                   (FK -> student_assessments.id)
+  id, student_id, assessment_id, topic_name, notes_content, created_at
+
+student_study_plans                  (FK -> student_assessments.id)
+  id, student_id, assessment_id, plan_json (JSON), created_at
+
+Verified live via information_schema — all 5 tables exist in the running
+Postgres database (`recruitmentinstitute`), alembic_version head =
+0004_add_assessment_and_ai_tables.
+
+1.4 API contract (prefix /api/v1/assessment, all behind Bearer JWT)
+--------------------------------------------------------------------------------
+POST /submit
+  Body: { assessment_id, topic_scores: [{topic_name, correct, total}] }
+  Flow: validate assessment exists -> compute score/percentage -> persist
+        StudentAssessment -> call provider.analyze_performance() ->
+        persist AIAssessmentAnalysis -> for each weak topic, fetch-or-
+        generate cached notes (Redis, 7-day TTL) -> persist AIGeneratedNote
+        rows -> call provider.generate_study_plan() -> persist
+        StudentStudyPlan -> call provider.generate_recommendations() ->
+        commit everything atomically -> return full result.
+  Returns 201 with student_assessment_id, analysis, notes, study_plan,
+  recommendations.
+
+GET /result/{id}        -> student_assessment + analysis
+GET /notes/{id}         -> list of AI-generated notes for that attempt
+GET /study-plan/{id}    -> the generated study plan
+
+1.5 Environment variables
+--------------------------------------------------------------------------------
+AI_PROVIDER=claude            # claude | openai | gemini | local
+CLAUDE_API_KEY=               # required for default provider
+CLAUDE_MODEL=claude-sonnet-4-6
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.0-flash
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llama3
+
+Both .env and .env.example updated identically (.env.example has blank
+secrets, as expected for a committed template).
+
+================================================================================
+PART 2 — BUG FOUND, ROOT-CAUSED, AND FIXED TODAY
+================================================================================
+
+2.1 Symptom
+--------------------------------------------------------------------------------
+Live-tested POST /api/v1/assessment/submit with no real CLAUDE_API_KEY
+configured. Got the expected 500 (Anthropic SDK's auth validation:
+TypeError "Could not resolve authentication method..."). But the
+student_assessments row that had already been written before the AI call
+failed was found STILL COMMITTED afterward — an orphaned "completed"
+assessment row with no analysis, no notes, no study plan. This breaks the
+intended all-or-nothing semantics of submit().
+
+2.2 User decision
+--------------------------------------------------------------------------------
+User explicitly chose: "Wrap the whole submit() in a DB transaction /
+rollback on AI failure" over alternative approaches (e.g. marking the row
+as failed/partial instead of preventing the insert).
+
+2.3 Fix implemented
+--------------------------------------------------------------------------------
+- app/repositories/assessment_repository.py: every write method
+  (add_student_assessment, add_analysis, add_notes, add_study_plan) changed
+  from individually calling db.commit() to calling db.flush() only. Added a
+  single new commit() method.
+- app/services/assessment_service.py: submit() now calls
+  self.repo.commit() exactly once, at the very end, only after
+  generate_recommendations() has succeeded — then refreshes all returned
+  ORM objects from the DB.
+- Effect: if any step (DB lookup, any of the 4 AI provider calls) raises,
+  nothing written via flush() during that request is ever committed;
+  Postgres rolls back the whole transaction when the session closes on
+  exception.
+
+2.4 Investigation: a confusing false alarm, then the real fix verified
+--------------------------------------------------------------------------------
+After implementing the fix, a live retest via curl against
+http://localhost:8000 still showed an orphaned row — appearing to prove the
+fix didn't work, despite an isolated standalone reproduction of the exact
+SQLAlchemy flush+exception pattern showing correct rollback (0 rows).
+
+Root-caused today by elimination, in order:
+  1. Confirmed the DI dependency chain itself (get_db_session wrapping
+     get_db(), which wraps `async with async_session_factory() as session`)
+     rolls back correctly in isolation — both as a raw two-layer generator
+     test and via AsyncSession.__aexit__ internals (calls close(), which
+     calls SessionTransaction.close(), which rolls back if uncommitted).
+  2. Confirmed Postgres itself saw a real ROLLBACK statement
+     (pg_stat_activity showed `query: ROLLBACK; state: idle` on the
+     relevant backend).
+  3. Called AssessmentService.submit() directly (bypassing FastAPI's HTTP
+     layer entirely) against the real DB and the real failing Claude
+     provider call -> 0 rows survived. Service/repository logic confirmed
+     100% correct.
+  4. Called the real FastAPI app in-process via httpx's ASGITransport
+     (exercises the full Starlette/FastAPI routing + AsyncExitStack +
+     exception-handler stack, without going through uvicorn/the network
+     stack) -> 0 rows survived. Full HTTP-equivalent stack confirmed
+     correct.
+  5. Conclusion: the orphaned row in the earlier retest came from a STALE
+     uvicorn process still bound to port 8000, started before the
+     repository/service refactor was made, and invisible to this session's
+     process-inspection tools (ps / wmic / Get-Process all returned
+     nothing for the PID netstat reported as LISTENING — indicating a
+     process from an earlier, now-detached shell context rather than a
+     code defect).
+  6. Started a fresh uvicorn process on a new port (8010), repeated the
+     full live test with a real Next.js-issued JWT (student "Rahul Verma",
+     id=11) -> real 500 from the missing Claude API key -> 0 rows in
+     student_assessments afterward. Bug confirmed fixed.
+
+2.5 Final verification performed today
+--------------------------------------------------------------------------------
+- uv run pytest -> 7/7 passed (includes the mocked end-to-end
+  test_assessment_submit_runs_ai_pipeline in tests/test_workflows.py,
+  unaffected by the repository refactor).
+- Live test #1 (stale server, port 8000): exposed the false alarm above.
+- Live test #2 (fresh server, port 8010): real student login -> real JWT ->
+  real HTTP POST /submit -> real Claude SDK auth failure -> 0 orphaned
+  rows. PASS.
+- Live test #3 (in-process ASGI call via httpx, bypassing uvicorn/network
+  entirely): same result, 0 orphaned rows. PASS.
+- pg_stat_activity cross-check: confirmed an actual ROLLBACK was issued at
+  the Postgres protocol level, not just inferred from application logs.
+- Test data cleanup: all synthetic rows (student_id 33333, 55555, 77777,
+  88888, 99998, 99999, and the original orphan for student_id=10) deleted
+  from student_assessments before sign-off. Table is currently empty.
+
+================================================================================
+PART 3 — CURRENT LIVE STATE (verified at time of this report)
+================================================================================
+- Alembic head: 0004_add_assessment_and_ai_tables
+- All 5 new tables present in Postgres (recruitmentinstitute database):
+  assessments, student_assessments, ai_assessment_analysis,
+  ai_generated_notes, student_study_plans
+- pytest: 7 passed, 0 failed
+- AI_PROVIDER=claude, CLAUDE_API_KEY is currently BLANK in .env — this is
+  the only reason /submit cannot complete successfully end-to-end right
+  now (every other step of the pipeline — DB writes, repository,
+  transaction handling, JWT auth, FastAPI routing — is confirmed working).
+- A fresh uvicorn process is the verified-correct one (started on port
+  8010 during today's investigation). The original port-8000 process is
+  stale/unverifiable from this shell and should be killed and restarted
+  before any further live testing, to avoid repeating today's false alarm.
+
+================================================================================
+PART 4 — FOLLOW-UP Q&A (today)
+================================================================================
+Q: "Where can I get CLAUDE_API_KEY?"
+A: Anthropic Console (console.anthropic.com) -> sign in/create account
+   (separate from a claude.ai consumer account) -> add a billing method
+   (API usage is pay-as-you-go) -> Settings -> API Keys -> Create Key ->
+   copy immediately (shown once) -> paste into
+   services/fastapi-backend/.env as CLAUDE_API_KEY=sk-ant-... -> restart
+   the FastAPI server. Flagged: do not commit a real key in .env; verify
+   .gitignore covers it (.env.example remains the tracked template with
+   blank secrets).
+
+================================================================================
+PART 5 — OUTSTANDING / NOT YET DONE
+================================================================================
+1. CLAUDE_API_KEY is not yet set — /submit cannot produce a real AI result
+   until a key is added and the server restarted.
+2. The stale port-8000 uvicorn process has not been explicitly killed;
+   only confirmed to be serving old code. Recommend stopping it manually
+   before relying on port 8000 again.
+3. Not built (explicitly out of scope per the most recent, narrower user
+   instruction, which superseded the original mega-spec's full endpoint
+   list): PDF report generation endpoint, trainer analytics endpoints,
+   Swagger documentation polish. Should only be built if requested.
+4. OpenAI / Gemini / local providers are implemented but not live-tested
+   end-to-end today (no API keys configured for them) — only Claude's
+   failure path was exercised live; all four pass static review against
+   the shared AIProvider interface.
+
+================================================================================
+END OF REPORT
+================================================================================

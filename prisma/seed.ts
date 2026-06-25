@@ -4,7 +4,7 @@
  * Safe to re-run: uses upsert / skipDuplicates where possible.
  */
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma, EnrollmentStatus } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import * as bcrypt from 'bcryptjs'
@@ -615,6 +615,390 @@ async function main() {
   }
   console.log('✅  Assignments & submissions seeded')
 
+  // ─── 27. NOTIFICATION TEMPLATES ─────────────────────────────────────────────
+  const templateSeeds = [
+    {
+      key: 'session_reminder',
+      name: 'Session Reminder',
+      channel: 'EMAIL' as const,
+      subject: 'Reminder: {{sessionTitle}} starts {{startTime}}',
+      bodyHtml: '<p>Hi {{studentName}},</p><p>Your session <strong>{{sessionTitle}}</strong> for {{batchName}} starts at {{startTime}}.</p>',
+      variables: ['studentName', 'sessionTitle', 'batchName', 'startTime'],
+    },
+    {
+      key: 'fee_due_reminder',
+      name: 'Fee Due Reminder',
+      channel: 'EMAIL' as const,
+      subject: 'Your fee for {{courseName}} is due on {{dueDate}}',
+      bodyHtml: '<p>Hi {{studentName}},</p><p>This is a reminder that an amount of ₹{{amount}} is due on {{dueDate}} for {{courseName}}.</p>',
+      variables: ['studentName', 'courseName', 'amount', 'dueDate'],
+    },
+    {
+      key: 'new_batch_announcement',
+      name: 'New Batch Announcement',
+      channel: 'EMAIL' as const,
+      subject: 'New batch starting: {{courseName}}',
+      bodyHtml: '<p>Hi {{candidateName}},</p><p>A new batch for <strong>{{courseName}}</strong> starts on {{startDate}}. Limited seats available — enroll now!</p>',
+      variables: ['candidateName', 'courseName', 'startDate'],
+    },
+    {
+      key: 'session_reminder_sms',
+      name: 'Session Reminder (SMS)',
+      channel: 'SMS' as const,
+      bodyText: 'Hi {{studentName}}, your session {{sessionTitle}} starts at {{startTime}}. - Recruitment Institute',
+      variables: ['studentName', 'sessionTitle', 'startTime'],
+    },
+    {
+      key: 'assignment_due_whatsapp',
+      name: 'Assignment Due (WhatsApp)',
+      channel: 'WHATSAPP' as const,
+      bodyText: 'Hi {{studentName}}, your assignment "{{assignmentTitle}}" is due on {{dueDate}}. Please submit on time.',
+      whatsappTemplateName: 'assignment_due_en',
+      variables: ['studentName', 'assignmentTitle', 'dueDate'],
+    },
+    {
+      key: 'live_session_push',
+      name: 'Live Session Starting (Push)',
+      channel: 'PUSH' as const,
+      subject: 'Session starting now',
+      bodyText: '{{sessionTitle}} is starting now. Tap to join.',
+      variables: ['sessionTitle'],
+    },
+    {
+      key: 'grading_complete_inapp',
+      name: 'Assignment Graded (In-App)',
+      channel: 'IN_APP' as const,
+      subject: 'Your assignment was graded',
+      bodyText: 'Your submission for "{{assignmentTitle}}" was graded: {{score}}/100.',
+      variables: ['assignmentTitle', 'score'],
+    },
+  ]
+  const templates: Awaited<ReturnType<typeof prisma.notificationTemplate.upsert>>[] = []
+  for (const t of templateSeeds) {
+    templates.push(await prisma.notificationTemplate.upsert({
+      where: { key: t.key },
+      update: {},
+      create: t,
+    }))
+  }
+  console.log('✅  Notification templates seeded')
+
+  // ─── 28. NOTIFICATIONS + RECIPIENTS ─────────────────────────────────────────
+  const tplByKey = (key: string) => templates.find((t) => t.key === key)!
+  const seededCandidates = await prisma.candidate.findMany({ select: { id: true, name: true, email: true } })
+  const allStudents = await prisma.student.findMany({ where: { isActive: true }, select: { id: true, name: true, email: true, contact: true } })
+  const firstBatch = batches[0]
+
+  type RecipientSeed = {
+    recipientType: 'STUDENT' | 'CANDIDATE'
+    recipientId: number
+    channel: 'EMAIL' | 'SMS' | 'WHATSAPP' | 'PUSH' | 'IN_APP'
+    address: string
+    status: 'PENDING' | 'QUEUED' | 'SENT' | 'DELIVERED' | 'FAILED' | 'BOUNCED' | 'READ'
+    error?: string
+  }
+
+  const notificationSeeds: {
+    title: string
+    templateKey: string
+    channels: ('EMAIL' | 'SMS' | 'WHATSAPP' | 'PUSH' | 'IN_APP')[]
+    audienceType: 'SINGLE' | 'SEGMENT' | 'ALL_STUDENTS' | 'ALL_CANDIDATES' | 'CUSTOM_LIST'
+    audienceFilter?: Record<string, unknown>
+    status: 'DRAFT' | 'SCHEDULED' | 'PROCESSING' | 'COMPLETED' | 'PARTIALLY_FAILED' | 'FAILED' | 'CANCELLED'
+    scheduledAt?: Date
+    variables: Record<string, unknown>
+    recipients: RecipientSeed[]
+  }[] = [
+    {
+      title: 'Morning Batch — Session Reminder',
+      templateKey: 'session_reminder',
+      channels: ['EMAIL'],
+      audienceType: 'SEGMENT',
+      audienceFilter: { batchId: firstBatch.id },
+      status: 'COMPLETED',
+      variables: { sessionTitle: 'Sourcing Strategies Workshop', batchName: firstBatch.name, startTime: '7:00 PM IST' },
+      recipients: allStudents.slice(0, 5).map((s, i) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'EMAIL', address: s.email,
+        status: i === 4 ? 'BOUNCED' : 'DELIVERED', error: i === 4 ? 'Mailbox does not exist' : undefined,
+      })),
+    },
+    {
+      title: 'June Fee Due Reminder',
+      templateKey: 'fee_due_reminder',
+      channels: ['EMAIL', 'SMS'],
+      audienceType: 'ALL_STUDENTS',
+      status: 'PARTIALLY_FAILED',
+      variables: { courseName: 'HR Generalist Program', amount: '15,000', dueDate: '30 Jun 2026' },
+      recipients: allStudents.slice(0, 6).flatMap((s) => [
+        { recipientType: 'STUDENT' as const, recipientId: s.id, channel: 'EMAIL' as const, address: s.email, status: 'DELIVERED' as const },
+        { recipientType: 'STUDENT' as const, recipientId: s.id, channel: 'SMS' as const, address: s.contact ?? '9000000000', status: (s.id % 3 === 0 ? 'FAILED' : 'SENT') as 'FAILED' | 'SENT', error: s.id % 3 === 0 ? 'SMS provider not configured: missing TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_SMS_FROM' : undefined },
+      ]),
+    },
+    {
+      title: 'New HR Corporate Batch — Enrollment Open',
+      templateKey: 'new_batch_announcement',
+      channels: ['EMAIL'],
+      audienceType: 'ALL_CANDIDATES',
+      status: 'COMPLETED',
+      variables: { courseName: 'HR Corporate Training Course', startDate: '15 Jul 2026' },
+      recipients: seededCandidates.slice(0, 5).map((c) => ({
+        recipientType: 'CANDIDATE', recipientId: c.id, channel: 'EMAIL', address: c.email, status: 'DELIVERED',
+      })),
+    },
+    {
+      title: 'Evening Batch — SMS Session Reminder',
+      templateKey: 'session_reminder_sms',
+      channels: ['SMS'],
+      audienceType: 'SEGMENT',
+      audienceFilter: { batchId: batches[1]?.id ?? firstBatch.id },
+      status: 'FAILED',
+      variables: { sessionTitle: 'Mock Interview Panel', startTime: '6:00 PM IST' },
+      recipients: allStudents.slice(2, 6).map((s) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'SMS', address: s.contact ?? '9000000000', status: 'FAILED',
+        error: 'SMS provider not configured: missing TWILIO_ACCOUNT_SID / TWILIO_AUTH_TOKEN / TWILIO_SMS_FROM',
+      })),
+    },
+    {
+      title: 'Assignment Due Tomorrow — WhatsApp Alert',
+      templateKey: 'assignment_due_whatsapp',
+      channels: ['WHATSAPP'],
+      audienceType: 'ALL_STUDENTS',
+      status: 'PROCESSING',
+      variables: { assignmentTitle: 'Sourcing Strategies Exercise', dueDate: 'Tomorrow, 11:59 PM' },
+      recipients: allStudents.slice(0, 4).map((s, i) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'WHATSAPP', address: s.contact ?? '9000000000',
+        status: i < 2 ? 'SENT' : 'PENDING',
+      })),
+    },
+    {
+      title: 'Live Session Starting — Push Alert',
+      templateKey: 'live_session_push',
+      channels: ['PUSH'],
+      audienceType: 'SEGMENT',
+      audienceFilter: { batchId: firstBatch.id },
+      status: 'FAILED',
+      variables: { sessionTitle: 'Resume Screening Masterclass' },
+      recipients: allStudents.slice(0, 3).map((s) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'PUSH', address: `device-token-${s.id}`, status: 'FAILED',
+        error: 'Push provider not configured: missing FCM_PROJECT_ID / FCM_SERVER_KEY',
+      })),
+    },
+    {
+      title: 'Assignment Graded Notice',
+      templateKey: 'grading_complete_inapp',
+      channels: ['IN_APP'],
+      audienceType: 'ALL_STUDENTS',
+      status: 'COMPLETED',
+      variables: { assignmentTitle: 'Sourcing Strategies Exercise', score: '86' },
+      recipients: allStudents.slice(0, 5).map((s, i) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'IN_APP', address: String(s.id),
+        status: i < 3 ? 'READ' : 'DELIVERED',
+      })),
+    },
+    {
+      title: 'July Batch Promo Blast',
+      templateKey: 'new_batch_announcement',
+      channels: ['EMAIL'],
+      audienceType: 'ALL_CANDIDATES',
+      status: 'SCHEDULED',
+      scheduledAt: new Date(Date.now() + 3 * 86400000),
+      variables: { courseName: 'HR Entrepreneurship Program', startDate: '1 Aug 2026' },
+      recipients: [],
+    },
+    {
+      title: 'August Re-engagement Draft',
+      templateKey: 'new_batch_announcement',
+      channels: ['EMAIL', 'SMS'],
+      audienceType: 'ALL_CANDIDATES',
+      status: 'DRAFT',
+      variables: { courseName: 'HR Courses for Beginners', startDate: '15 Aug 2026' },
+      recipients: [],
+    },
+  ]
+
+  for (const n of notificationSeeds) {
+    const existing = await prisma.notification.findFirst({ where: { title: n.title } })
+    if (existing) continue
+
+    const created = await prisma.notification.create({
+      data: {
+        title: n.title,
+        templateId: tplByKey(n.templateKey).id,
+        channels: n.channels,
+        audienceType: n.audienceType,
+        audienceFilter: (n.audienceFilter ?? Prisma.JsonNull) as Prisma.InputJsonValue,
+        variables: n.variables as Prisma.InputJsonValue,
+        status: n.status,
+        scheduledAt: n.scheduledAt,
+      },
+    })
+
+    if (n.recipients.length > 0) {
+      const tpl = tplByKey(n.templateKey)
+      const fill = (text: string) => text.replace(/\{\{\s*(\w+)\s*\}\}/g, (m, key) => String(n.variables[key] ?? m))
+      const renderedSubject = tpl.subject ? fill(tpl.subject) : null
+      const renderedBody = fill(tpl.channel === 'EMAIL' ? (tpl.bodyHtml ?? tpl.bodyText ?? '') : (tpl.bodyText ?? ''))
+
+      await prisma.notificationRecipient.createMany({
+        data: n.recipients.map((r) => ({
+          notificationId: created.id,
+          recipientType: r.recipientType,
+          recipientId: r.recipientId,
+          channel: r.channel,
+          address: r.address,
+          renderedSubject,
+          renderedBody,
+          status: r.status,
+          attempts: r.status === 'FAILED' || r.status === 'BOUNCED' ? 3 : r.status === 'PENDING' ? 0 : 1,
+          error: r.error ?? null,
+          sentAt: r.status === 'PENDING' || r.status === 'QUEUED' ? null : new Date(),
+          deliveredAt: ['DELIVERED', 'READ'].includes(r.status) ? new Date() : null,
+          readAt: r.status === 'READ' ? new Date() : null,
+          failedAt: ['FAILED', 'BOUNCED'].includes(r.status) ? new Date() : null,
+        })),
+      })
+    }
+  }
+  console.log('✅  Notifications & recipients seeded')
+
+  // ─── 29. IN-APP NOTIFICATIONS (standalone feed entries) ─────────────────────
+  const inAppSeeds = allStudents.slice(0, 6).flatMap((s, i) => [
+    { recipientType: 'STUDENT' as const, recipientId: s.id, title: 'Assignment graded', body: 'Your submission for "Sourcing Strategies Exercise" was graded: 86/100.', link: '/profile/courses', isRead: i < 3 },
+    { recipientType: 'STUDENT' as const, recipientId: s.id, title: 'New session scheduled', body: 'A new session "Resume Screening Masterclass" has been added to your batch.', link: '/profile/courses', isRead: i < 2 },
+  ])
+  await prisma.inAppNotification.createMany({ data: inAppSeeds })
+  console.log('✅  In-app notification feed seeded')
+
+  // ─── 30. QA TEST STUDENTS (10 accounts, each exercising a distinct state) ──
+  const qaPw = await bcrypt.hash('Test@1234', 10)
+  const activeBatch = batches.find((b) => b.status === 'ACTIVE')!
+  const completedBatch = batches.find((b) => b.status === 'COMPLETED')!
+  const secondActiveBatch = batches.filter((b) => b.status === 'ACTIVE')[1] ?? activeBatch
+
+  const qaStudentSeeds = [
+    { name: 'QA Not Enrolled',      email: 'qa.notenrolled@test.com',  contact: '9000000101', note: 'No enrollments — tests course catalog & EnrollButton flow' },
+    { name: 'QA Pending Review',    email: 'qa.pending@test.com',      contact: '9000000102', note: 'Enrollment status PENDING — tests admin-approval-required view' },
+    { name: 'QA On Hold',           email: 'qa.onhold@test.com',       contact: '9000000103', note: 'Enrollment status ON_HOLD' },
+    { name: 'QA Rejected',          email: 'qa.rejected@test.com',     contact: '9000000104', note: 'Enrollment status REJECTED with review note' },
+    { name: 'QA Active Learner',    email: 'qa.active@test.com',       contact: '9000000105', note: 'ENROLLED in active batch — sessions, lessons in progress' },
+    { name: 'QA High Attendance',   email: 'qa.highattendance@test.com', contact: '9000000106', note: 'Active batch, ~100% attendance, all assignments submitted+graded' },
+    { name: 'QA Low Attendance',    email: 'qa.lowattendance@test.com', contact: '9000000107', note: 'Active batch, poor attendance, missing assignment submissions' },
+    { name: 'QA Multi Course',      email: 'qa.multicourse@test.com',  contact: '9000000108', note: 'Enrolled in 2 different course batches simultaneously' },
+    { name: 'QA Fee Overdue',       email: 'qa.feeoverdue@test.com',   contact: '9000000109', note: 'Completed batch with OVERDUE fee account' },
+    { name: 'QA Fee Paid',          email: 'qa.feepaid@test.com',      contact: '9000000110', note: 'Completed batch with fully PAID fee account + certificate-ready' },
+  ]
+
+  const qaStudents: Record<string, { id: number }> = {}
+  for (const s of qaStudentSeeds) {
+    const student = await prisma.student.upsert({
+      where: { email: s.email },
+      update: {},
+      create: { name: s.name, email: s.email, contact: s.contact, password: qaPw, isActive: true },
+    })
+    qaStudents[s.email] = student
+  }
+  // QA Blocked Login — kept inactive on purpose to verify login correctly rejects disabled accounts
+  const qaBlocked = await prisma.student.upsert({
+    where: { email: 'qa.blocked@test.com' },
+    update: {},
+    create: { name: 'QA Blocked Login', email: 'qa.blocked@test.com', contact: '9000000111', password: qaPw, isActive: false },
+  })
+  qaStudents['qa.blocked@test.com'] = qaBlocked
+  console.log('✅  QA test students seeded (11 accounts, password: Test@1234)')
+
+  const qaEnroll = async (email: string, batchId: number, status: EnrollmentStatus, reviewNote?: string) =>
+    prisma.enrollment.upsert({
+      where: { studentId_batchId: { studentId: qaStudents[email].id, batchId } },
+      update: {},
+      create: { studentId: qaStudents[email].id, batchId, status, reviewNote },
+    })
+
+  const qaPending = await qaEnroll('qa.pending@test.com', activeBatch.id, 'PENDING')
+  const qaOnHold = await qaEnroll('qa.onhold@test.com', activeBatch.id, 'ON_HOLD')
+  const qaRejected = await qaEnroll('qa.rejected@test.com', activeBatch.id, 'REJECTED', 'Incomplete documents submitted — please resubmit ID proof and resend your application.')
+  const qaActive = await qaEnroll('qa.active@test.com', activeBatch.id, 'ENROLLED')
+  const qaHighAtt = await qaEnroll('qa.highattendance@test.com', activeBatch.id, 'ENROLLED')
+  const qaLowAtt = await qaEnroll('qa.lowattendance@test.com', activeBatch.id, 'ENROLLED')
+  const qaMultiA = await qaEnroll('qa.multicourse@test.com', activeBatch.id, 'ENROLLED')
+  const qaMultiB = await qaEnroll('qa.multicourse@test.com', secondActiveBatch.id, 'ENROLLED')
+  const qaFeeOverdue = await qaEnroll('qa.feeoverdue@test.com', completedBatch.id, 'COMPLETED')
+  const qaFeePaid = await qaEnroll('qa.feepaid@test.com', completedBatch.id, 'COMPLETED')
+  console.log('✅  QA enrollments seeded')
+
+  // Attendance for the high/low attendance QA students against the active batch's sessions
+  const activeSessions = (sessionsByBatch.get(activeBatch.id) ?? []).filter((s) => s.status === 'COMPLETED')
+  for (const session of activeSessions) {
+    await prisma.attendance.upsert({
+      where: { enrollmentId_sessionId: { enrollmentId: qaHighAtt.id, sessionId: session.id } },
+      update: {},
+      create: { enrollmentId: qaHighAtt.id, sessionId: session.id, present: true, joinedAt: session.startTime },
+    })
+    await prisma.attendance.upsert({
+      where: { enrollmentId_sessionId: { enrollmentId: qaLowAtt.id, sessionId: session.id } },
+      update: {},
+      create: { enrollmentId: qaLowAtt.id, sessionId: session.id, present: false, joinedAt: null },
+    })
+  }
+  console.log('✅  QA attendance seeded')
+
+  // Lesson progress: high-attendance student completes everything, low-attendance student completes very little
+  for (const lessonId of allLessonIds) {
+    await prisma.lessonProgress.upsert({
+      where: { studentId_lessonId: { studentId: qaHighAtt.studentId, lessonId } },
+      update: {},
+      create: { studentId: qaHighAtt.studentId, lessonId, isCompleted: true, completedAt: daysFromNow(-1) },
+    })
+  }
+  for (const lessonId of allLessonIds.slice(0, 1)) {
+    await prisma.lessonProgress.upsert({
+      where: { studentId_lessonId: { studentId: qaLowAtt.studentId, lessonId } },
+      update: {},
+      create: { studentId: qaLowAtt.studentId, lessonId, isCompleted: true, completedAt: daysFromNow(-1) },
+    })
+  }
+  console.log('✅  QA lesson progress seeded')
+
+  // Assignments on the active batch — high-attendance student submits & gets graded; low-attendance student has none
+  const activeBatchAssignments = await prisma.assignment.findMany({ where: { batchId: activeBatch.id } })
+  for (const assignment of activeBatchAssignments) {
+    await prisma.assignmentSubmission.upsert({
+      where: { assignmentId_studentId: { assignmentId: assignment.id, studentId: qaHighAtt.studentId } },
+      update: {},
+      create: {
+        assignmentId: assignment.id,
+        studentId: qaHighAtt.studentId,
+        fileUrl: '/uploads/assignments/sample-submission.pdf',
+        note: 'Submitted ahead of the deadline.',
+        score: 92,
+        feedback: 'Excellent and thorough work.',
+        gradedAt: daysFromNow(-1),
+      },
+    })
+  }
+  console.log('✅  QA assignment submissions seeded')
+
+  // Fee accounts: one OVERDUE on the completed batch, one fully PAID on the completed batch
+  const completedCourseId = courses.find((c) => c.id === completedBatch.courseId)!.id
+
+  const existingOverdueFee = await prisma.studentFeeAccount.findFirst({ where: { studentId: qaFeeOverdue.studentId, batchId: completedBatch.id } })
+  if (!existingOverdueFee) {
+    await prisma.studentFeeAccount.create({
+      data: { studentId: qaFeeOverdue.studentId, batchId: completedBatch.id, courseId: completedCourseId, planName: 'Standard Plan', grossAmount: 60000, discountAmount: 5000, gstAmount: 0, netPayable: 55000, paidAmount: 15000, outstandingAmount: 40000, status: 'OVERDUE', dueDate: daysFromNow(-20) },
+    })
+  }
+
+  const existingPaidFee = await prisma.studentFeeAccount.findFirst({ where: { studentId: qaFeePaid.studentId, batchId: completedBatch.id } })
+  if (!existingPaidFee) {
+    await prisma.studentFeeAccount.create({
+      data: { studentId: qaFeePaid.studentId, batchId: completedBatch.id, courseId: completedCourseId, planName: 'Standard Plan', grossAmount: 60000, discountAmount: 5000, gstAmount: 0, netPayable: 55000, paidAmount: 55000, outstandingAmount: 0, status: 'PAID', dueDate: daysFromNow(-20) },
+    })
+  }
+  console.log('✅  QA fee accounts seeded')
+
+  console.log('\n🧪  QA TEST LOGIN CREDENTIALS (password for all: Test@1234)')
+  for (const s of qaStudentSeeds) console.log(`   ${s.email.padEnd(32)} ${s.note}`)
+  console.log(`   ${'qa.blocked@test.com'.padEnd(32)} isActive=false — login must be rejected`)
+
   // ─── Final count ──────────────────────────────────────────────────────────
   console.log('\n📊  Final row counts:')
   const models = [
@@ -648,6 +1032,10 @@ async function main() {
     ['LessonProgress', await prisma.lessonProgress.count()],
     ['Assignments',    await prisma.assignment.count()],
     ['Submissions',    await prisma.assignmentSubmission.count()],
+    ['NotificationTemplates',  await prisma.notificationTemplate.count()],
+    ['Notifications',          await prisma.notification.count()],
+    ['NotificationRecipients', await prisma.notificationRecipient.count()],
+    ['InAppNotifications',     await prisma.inAppNotification.count()],
   ] as [string, number][]
 
   models.forEach(([name, count]) => console.log(`   ${name.padEnd(18)} ${count}`))

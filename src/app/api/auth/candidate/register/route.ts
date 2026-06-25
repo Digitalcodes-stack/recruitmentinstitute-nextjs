@@ -16,7 +16,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, email, password, birthdate, gender, address, streetAddress, city, state, zip, phone, courseSelect, comments } = validated.data
+    const { name, password, birthdate, gender, address, streetAddress, city, state, zip, phone, courseSelect, comments } = validated.data
+    const email = validated.data.email.trim().toLowerCase()
 
     const existing = await prisma.candidate.findUnique({ where: { email } })
     if (existing) {

@@ -68,7 +68,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
     const sessionDateLabel = session.sessionDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
     const startTimeLabel = session.startTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
-    for (const e of session.batch.enrollments.filter((en) => en.status === 'ENROLLED' && en.student.isActive)) {
+    for (const e of session.batch.enrollments.filter((en) => ['APPROVED', 'ACTIVE', 'ENROLLED'].includes(en.status) && en.student.isActive)) {
       await sendSessionCancelledEmail({
         studentEmail: e.student.email,
         studentName: e.student.name,

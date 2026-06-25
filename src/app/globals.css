@@ -948,6 +948,8 @@ h1, h2, h3, h4, h5, h6 {
 .header-root--scrolled { box-shadow: 0 4px 24px rgba(15,23,42,0.10); }
 
 .header-topbar {
+  position: relative;
+  z-index: 60;
   background: #0F172A;
   height: 40px;
   border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -969,6 +971,52 @@ h1, h2, h3, h4, h5, h6 {
 .header-topbar-icon { color: #3B82F6; }
 
 .header-topbar-sep { color: #374151; }
+
+.header-topbar-login-btn {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.header-login-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  width: 200px;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(15,23,42,0.18);
+  border: 1px solid #F1F5F9;
+  overflow: hidden;
+  z-index: 70;
+  padding: 6px;
+}
+
+.header-login-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.header-login-dropdown-item:hover { background: #F8FAFC; color: #1D4ED8; }
+
+.header-login-dropdown-item--btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
 
 .header-nav {
   background: #ffffff;
@@ -1023,6 +1071,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .header-nav-cta-wrap { margin-left: 8px; }
 
+.header-nav-cta-wrap--group { display: flex; align-items: center; gap: 10px; }
+
 .header-cta-btn {
   display: inline-flex;
   align-items: center;
@@ -1039,6 +1089,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,64,175,0.40); }
+
+.header-cta-btn--outline {
+  background: transparent;
+  color: #1E40AF;
+  border: 1.5px solid #BFDBFE;
+  box-shadow: none;
+}
+
+.header-cta-btn--outline:hover {
+  background: #EFF6FF;
+  box-shadow: none;
+}
 
 .header-mobile-toggle {
   padding: 10px;
@@ -1316,6 +1378,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-mobile-demo-btn:hover { transform: translateY(-2px); }
+
+.header-mobile-enroll-btn {
+  display: block;
+  text-align: center;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 11px 0;
+  font-size: 13px;
+  background: transparent;
+  color: #1E40AF;
+  border: 1.5px solid #BFDBFE;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.header-mobile-enroll-btn:hover { background: #EFF6FF; }
 
 /* ============================================================
    HERO SECTION

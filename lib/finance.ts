@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import type { Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 function toMoney(value: Prisma.Decimal | number | string | null | undefined) {
   return Number(value ?? 0)

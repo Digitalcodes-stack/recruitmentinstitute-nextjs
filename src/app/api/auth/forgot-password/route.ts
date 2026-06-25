@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Invalid email' }, { status: 400 })
     }
 
-    const { email } = validated.data
+    const email = validated.data.email.trim().toLowerCase()
 
     const [candidate, student, membership] = await Promise.all([
       prisma.candidate.findUnique({ where: { email } }),

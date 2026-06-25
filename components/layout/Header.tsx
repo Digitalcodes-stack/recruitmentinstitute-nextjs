@@ -6,8 +6,17 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu, X, ChevronDown, Phone, Mail,
-  BookOpen, Award, Briefcase, GraduationCap, User, ArrowRight
+  BookOpen, Award, Briefcase, GraduationCap, User, ArrowRight, Users, Building2, LogOut
 } from 'lucide-react'
+
+type SessionUser = { name: string; email: string; type: string }
+
+const loginOptions = [
+  { label: 'Student Login', href: '/student-login', icon: <GraduationCap className="w-4 h-4" /> },
+  { label: 'Candidate Login', href: '/candidate-login', icon: <User className="w-4 h-4" /> },
+  { label: 'Membership Login', href: '/membership-login', icon: <Users className="w-4 h-4" /> },
+  { label: 'Trainer Login', href: '/trainer-login', icon: <Building2 className="w-4 h-4" /> },
+]
 
 const courses = [
   {
@@ -55,8 +64,11 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [coursesOpen, setCoursesOpen] = useState(false)
   const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false)
+  const [loginOpen, setLoginOpen] = useState(false)
+  const [user, setUser] = useState<SessionUser | null>(null)
   const pathname = usePathname()
   const dropdownRef = useRef<HTMLLIElement>(null)
+  const loginDropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)
@@ -64,11 +76,26 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => { setMobileOpen(false); setCoursesOpen(false) }, [pathname])
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => setUser(data.authenticated ? data.user : null))
+      .catch(() => setUser(null))
+  }, [pathname])
+
+  const handleSignOut = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    setUser(null)
+    setLoginOpen(false)
+    window.location.href = '/'
+  }
+
+  useEffect(() => { setMobileOpen(false); setCoursesOpen(false); setLoginOpen(false) }, [pathname])
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) setCoursesOpen(false)
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(e.target as Node)) setLoginOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -98,9 +125,43 @@ export default function Header() {
               Student Membership
             </Link>
             <span className="header-topbar-sep hidden sm:block">|</span>
-            <Link href="/candidate-login" className="header-topbar-link">
-              <User className="w-3 h-3" /> Login
-            </Link>
+            <div ref={loginDropdownRef} className="relative">
+              <button
+                onClick={() => setLoginOpen((v) => !v)}
+                className="header-topbar-link header-topbar-login-btn"
+                aria-expanded={loginOpen}
+              >
+                <User className="w-3 h-3" /> {user ? user.name.split(' ')[0] : 'Login'}
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${loginOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {loginOpen && (
+                <div className="header-login-dropdown">
+                  {user ? (
+                    <>
+                      <Link href="/profile" className="header-login-dropdown-item" onClick={() => setLoginOpen(false)}>
+                        <User className="w-4 h-4" /> My Profile
+                      </Link>
+                      <button onClick={handleSignOut} className="header-login-dropdown-item header-login-dropdown-item--btn">
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    loginOptions.map((opt) => (
+                      <Link
+                        key={opt.href}
+                        href={opt.href}
+                        className="header-login-dropdown-item"
+                        onClick={() => setLoginOpen(false)}
+                      >
+                        {opt.icon}
+                        {opt.label}
+                      </Link>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -182,9 +243,12 @@ export default function Header() {
                 </li>
               )
             )}
-            <li className="header-nav-cta-wrap">
+            <li className="header-nav-cta-wrap header-nav-cta-wrap--group">
+              <Link href="/student-membership" className="header-cta-btn header-cta-btn--outline">
+                Enroll Now
+              </Link>
               <Link href="/contact" className="header-cta-btn">
-                Book Free Demo
+                Demo Video
               </Link>
             </li>
           </ul>
@@ -273,20 +337,46 @@ export default function Header() {
             <a href="tel:+917385204165" className="header-mobile-phone">
               <Phone className="w-4 h-4 header-mobile-phone-icon" /> +91 7385204165
             </a>
+            {user ? (
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <Link href="/profile" className="header-mobile-login-btn" onClick={() => setMobileOpen(false)}>
+                  My Profile
+                </Link>
+                <button
+                  onClick={() => { handleSignOut(); setMobileOpen(false) }}
+                  className="header-mobile-login-btn"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                {loginOptions.map((opt) => (
+                  <Link
+                    key={opt.href}
+                    href={opt.href}
+                    className="header-mobile-login-btn"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {opt.label}
+                  </Link>
+                ))}
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-2">
               <Link
-                href="/candidate-login"
-                className="header-mobile-login-btn"
+                href="/student-membership"
+                className="header-mobile-enroll-btn"
                 onClick={() => setMobileOpen(false)}
               >
-                Login
+                Enroll Now
               </Link>
               <Link
                 href="/contact"
                 className="header-mobile-demo-btn"
                 onClick={() => setMobileOpen(false)}
               >
-                Book Free Demo
+                Demo Video
               </Link>
             </div>
           </div>

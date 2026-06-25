@@ -21,7 +21,10 @@ const quickLinks = [
   { label: 'Community Forum', href: '/community' },
   { label: 'Student Membership', href: '/student-membership' },
   { label: 'Contact Us', href: '/contact' },
+  { label: 'Student Login', href: '/student-login' },
   { label: 'Candidate Login', href: '/candidate-login' },
+  { label: 'Membership Login', href: '/membership-login' },
+  { label: 'Trainer Login', href: '/trainer-login' },
 ]
 
 export default function Footer() {

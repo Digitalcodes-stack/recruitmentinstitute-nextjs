@@ -1,0 +1,85 @@
+================================================================================
+RECRUITMENT INSTITUTE — HOW TO RUN THE PROJECT
+================================================================================
+
+PREREQUISITES (one-time)
+--------------------------------------------------------------------------------
+- Node.js + npm installed
+- PostgreSQL running locally on port 5432 (database: recruitmentinstitute)
+- Python 3.10+ and `uv` installed (for the FastAPI service)
+- Redis running locally on port 6379 (only needed for FastAPI Celery jobs)
+
+================================================================================
+1. NEXT.JS APP (main website + admin + trainer + student portals)
+================================================================================
+Location: project root (d:\xampp\htdocs\recruitmentinstitute-nextjs)
+
+  cd d:\xampp\htdocs\recruitmentinstitute-nextjs
+
+  npm install                  # install dependencies (first time only)
+  npm run db:generate          # generate Prisma client
+  npm run db:push              # push schema to database (or db:migrate)
+  npm run db:seed              # seed sample/demo data (safe to re-run)
+
+  npm run dev                  # start dev server -> http://localhost:3000
+  npm run build                # production build
+  npm run start                # run production build
+  npm run lint                 # run eslint
+
+Other DB commands:
+  npm run db:studio            # open Prisma Studio (DB browser GUI)
+  npm run db:migrate-data      # run legacy data migration script
+
+================================================================================
+2. FASTAPI BACKEND (LMS / placement / resume / meetings / notifications)
+================================================================================
+Location: services/fastapi-backend
+
+  cd d:\xampp\htdocs\recruitmentinstitute-nextjs\services\fastapi-backend
+
+  uv venv                                  # create venv (first time only)
+  uv pip install -r requirements.txt       # install dependencies
+  copy .env.example .env                   # then edit values as needed
+
+  uv run alembic upgrade head              # run DB migrations
+
+  uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+                                            # start server -> http://127.0.0.1:8000
+
+  Health check:  http://127.0.0.1:8000/health
+  Swagger docs:  http://127.0.0.1:8000/docs
+
+Run tests:
+  uv run pytest
+
+Run background worker (Celery, optional — needs Redis):
+  uv run celery -A app.workers.celery_app worker --loglevel=info
+
+================================================================================
+3. RUNNING BOTH TOGETHER
+================================================================================
+Open two terminals:
+
+  Terminal 1 (Next.js):
+    cd d:\xampp\htdocs\recruitmentinstitute-nextjs
+    npm run dev
+
+  Terminal 2 (FastAPI):
+    cd d:\xampp\htdocs\recruitmentinstitute-nextjs\services\fastapi-backend
+    uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+
+Next.js runs on:   http://localhost:3000
+FastAPI runs on:   http://127.0.0.1:8000
+
+================================================================================
+4. PORTAL URLS (once Next.js dev server is running)
+================================================================================
+  Public site:        http://localhost:3000
+  Admin login:         http://localhost:3000/admin/login (or /portal-login)
+  Trainer login:       http://localhost:3000/trainer-login
+  Student login:       http://localhost:3000/student-login
+  Candidate login:     http://localhost:3000/candidate-login
+  Membership login:    http://localhost:3000/membership-login
+
+See LOGIN_CREDENTIALS.txt for demo account emails/passwords.
+================================================================================

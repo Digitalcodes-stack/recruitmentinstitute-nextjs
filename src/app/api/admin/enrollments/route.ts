@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     include: {
       student: { select: { id: true, name: true, email: true } },
       batch: { select: { id: true, name: true, capacity: true } },
+      reviewedByAdmin: { select: { id: true, name: true, email: true } },
     },
     orderBy: { enrolledAt: 'desc' },
   })
@@ -41,22 +42,22 @@ export async function POST(req: NextRequest) {
 
   const { studentId, batchId } = validated.data
 
-  const [batch, existing, currentCount] = await Promise.all([
+  const [batch, existing] = await Promise.all([
     prisma.batch.findUnique({ where: { id: batchId } }),
     prisma.enrollment.findUnique({ where: { studentId_batchId: { studentId, batchId } } }),
-    prisma.enrollment.count({ where: { batchId, status: 'ENROLLED' } }),
   ])
 
   if (!batch)
     return NextResponse.json({ success: false, message: 'Batch not found' }, { status: 404 })
   if (existing)
     return NextResponse.json({ success: false, message: 'Student is already enrolled in this batch' }, { status: 400 })
-  if (currentCount >= batch.capacity)
-    return NextResponse.json({ success: false, message: 'Batch is at full capacity' }, { status: 400 })
 
   const enrollment = await prisma.enrollment.create({
-    data: { studentId, batchId },
-    include: { student: { select: { id: true, name: true, email: true } } },
+    data: { studentId, batchId, status: 'APPROVED', reviewedAt: new Date() },
+    include: {
+      student: { select: { id: true, name: true, email: true } },
+      batch: { select: { id: true, name: true, capacity: true } },
+    },
   })
 
   const feeAccount = await createFeeAccountForEnrollment(enrollment.id)

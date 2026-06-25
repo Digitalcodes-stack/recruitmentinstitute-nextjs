@@ -19,7 +19,7 @@ export async function sendReminder(payload: ReminderPayload) {
   const startTime = session.startTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
 
   for (const enrollment of session.batch.enrollments) {
-    if (enrollment.status !== 'ENROLLED' || !enrollment.student.isActive) continue
+    if (!['APPROVED', 'ACTIVE', 'ENROLLED'].includes(enrollment.status) || !enrollment.student.isActive) continue
     await sendSessionReminderEmail({
       studentEmail: enrollment.student.email,
       studentName: enrollment.student.name,

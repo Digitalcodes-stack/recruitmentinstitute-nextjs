@@ -47,6 +47,12 @@ export default async function AdminSettingsPage() {
       }),
     ])
 
+  const recentJobs = await prisma.jobQueue.findMany({
+    orderBy: { updatedAt: 'desc' },
+    take: 20,
+    select: { id: true, type: true, status: true, attempts: true, error: true, runAfter: true, updatedAt: true, payload: true },
+  })
+
   const googleStatus = {
     config: {
       serviceAccountConfigured: Boolean(process.env.GOOGLE_SERVICE_ACCOUNT_KEY_BASE64),
@@ -60,7 +66,7 @@ export default async function AdminSettingsPage() {
       pendingSessions,
       failedSessions,
     },
-    recentFailedJobs,
+    recentFailedJobs: recentFailedJobs.map((j) => ({ ...j, runAfter: j.runAfter.toISOString(), updatedAt: j.updatedAt.toISOString() })),
   }
 
   const jobStatus = {
@@ -70,11 +76,7 @@ export default async function AdminSettingsPage() {
       failed: failedJobs,
       completed: completedJobs,
     },
-    recent: await prisma.jobQueue.findMany({
-      orderBy: { updatedAt: 'desc' },
-      take: 20,
-      select: { id: true, type: true, status: true, attempts: true, error: true, runAfter: true, updatedAt: true, payload: true },
-    }),
+    recent: recentJobs.map((j) => ({ ...j, runAfter: j.runAfter.toISOString(), updatedAt: j.updatedAt.toISOString() })),
   }
 
   const today = new Date().toLocaleDateString('en-IN', {

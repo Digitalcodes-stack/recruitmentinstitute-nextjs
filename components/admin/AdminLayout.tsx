@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
@@ -31,6 +31,7 @@ const navGroups = [
     label: 'Training',
     items: [
       { label: 'Batches', href: '/admin/batches', icon: Layers3 },
+      { label: 'Enrollments', href: '/admin/enrollments', icon: ClipboardList },
       { label: 'Assignments', href: '/admin/assignments', icon: ClipboardList },
     ],
   },
@@ -57,6 +58,7 @@ const navGroups = [
     label: 'Inbox',
     items: [
       { label: 'Contact Submissions', href: '/admin/contacts', icon: MessageSquare },
+      { label: 'Notifications', href: '/admin/notifications', icon: Bell },
     ],
   },
   {
@@ -79,8 +81,16 @@ const navGroups = [
 
 export default function AdminLayout({ children, title }: { children: React.ReactNode; title?: string }) {
   const [open, setOpen] = useState(true)
+  const [alertCount, setAlertCount] = useState(0)
   const pathname = usePathname()
   const router   = useRouter()
+
+  useEffect(() => {
+    fetch('/api/admin/notifications/alerts-count')
+      .then((res) => res.json())
+      .then((data) => setAlertCount(data?.data?.count ?? 0))
+      .catch(() => {})
+  }, [pathname])
 
   const today = new Date().toLocaleDateString('en-IN', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
@@ -278,13 +288,27 @@ export default function AdminLayout({ children, title }: { children: React.React
           <div style={{ flex: 1 }} />
 
           {/* Bell */}
-          <button style={{
-            width: 38, height: 38, borderRadius: '50%', border: '1px solid #e4e8ee',
-            background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', flexShrink: 0,
-          }}>
+          <Link
+            href="/admin/notifications"
+            aria-label="Notifications"
+            style={{
+              width: 38, height: 38, borderRadius: '50%', border: '1px solid #e4e8ee',
+              background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', flexShrink: 0, position: 'relative',
+            }}
+          >
             <Bell style={{ width: 15, height: 15, color: '#64748b' }} />
-          </button>
+            {alertCount > 0 && (
+              <span style={{
+                position: 'absolute', top: -2, right: -2, minWidth: 16, height: 16, borderRadius: 8,
+                background: '#dc2626', color: '#fff', fontSize: 9.5, fontWeight: 700,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px',
+                border: '2px solid #fff',
+              }}>
+                {alertCount > 9 ? '9+' : alertCount}
+              </span>
+            )}
+          </Link>
 
           {/* Admin chip */}
           <div style={{

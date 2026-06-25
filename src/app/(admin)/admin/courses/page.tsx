@@ -12,6 +12,10 @@ import CourseActions from '@/components/admin/CourseActions'
 import CategoryActions from '@/components/admin/CategoryActions'
 import FaqActions from '@/components/admin/FaqActions'
 
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
 /* ── category colour / icon map ─────────────────────────── */
 const META: Record<string, {
   accent: string
@@ -297,7 +301,7 @@ export default async function AdminCoursesPage({
                           <p style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{course.title}</p>
                           {course.description && (
                             <p style={{ fontSize: 12, color: '#64748b', marginTop: 2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical' as const }}>
-                              {course.description}
+                              {stripHtml(course.description)}
                             </p>
                           )}
                         </div>

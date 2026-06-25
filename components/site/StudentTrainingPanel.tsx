@@ -121,6 +121,21 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
             {upcoming.length === 0 && completed.length === 0 && (
               <p style={{ fontSize: 13, color: '#94a3b8' }}>No sessions scheduled yet for this batch.</p>
             )}
+
+            {upcoming.length === 0 && completed.length > 0 && (
+              <div style={{ marginTop: 24, paddingTop: 20, borderTop: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <h5 style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Course Completed!</h5>
+                  <p style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>Test your knowledge and get personalized AI notes.</p>
+                </div>
+                <Link
+                  href={`/profile/assessments/take/${enrollment.batch.course.id}`}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 18px', borderRadius: 12, background: 'linear-gradient(135deg, #1E40AF, #2563EB)', color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(37,99,235,0.2)' }}
+                >
+                  Take Final Assessment
+                </Link>
+              </div>
+            )}
           </div>
         )
       })}

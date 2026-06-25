@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 
@@ -42,6 +42,26 @@ export default async function ProfilePage() {
         },
         orderBy: { dueAt: 'asc' },
       })
+    : []
+
+  const upcomingSessions = session.type === 'student'
+    ? enrollments
+        .flatMap((enrollment) =>
+          enrollment.batch.sessions
+            .filter((s) => s.status !== 'CANCELLED' && new Date(s.startTime) >= new Date())
+            .map((s) => ({
+              id: s.id,
+              title: s.title,
+              sessionDate: s.sessionDate,
+              startTime: s.startTime,
+              meetLink: s.meetLink,
+              status: s.status,
+              batchName: enrollment.batch.name,
+              courseTitle: enrollment.batch.course.title,
+              trainerName: enrollment.batch.trainer.name,
+            }))
+        )
+        .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     : []
 
   const initials = session.name
@@ -182,6 +202,43 @@ export default async function ProfilePage() {
               </div>
             </div>
 
+            {upcomingSessions.length > 0 && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <CalendarDays style={{ width: 16, height: 16, color: '#1E40AF' }} />
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>Upcoming Sessions</h3>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {upcomingSessions.slice(0, 6).map((s) => (
+                    <div key={s.id} style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 18, padding: 18, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                      <div>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: '#eff6ff', border: '1px solid #bfdbfe', marginBottom: 10 }}>
+                          <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#2563eb' }} />
+                          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2563eb' }}>{s.status}</span>
+                        </div>
+                        <h4 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>{s.title}</h4>
+                        <p style={{ fontSize: 12, color: '#64748B' }}>
+                          {s.courseTitle} · {s.batchName} · {s.trainerName}
+                        </p>
+                        <p style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>
+                          {new Date(s.sessionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} · {new Date(s.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                      {s.meetLink ? (
+                        <a href={s.meetLink} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 14px', borderRadius: 10, background: 'linear-gradient(135deg,#1E40AF,#2563EB)', color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
+                          Join Meeting
+                        </a>
+                      ) : (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 14px', borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', fontSize: 12, fontWeight: 700 }}>
+                          Meeting link pending
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* My Training — enrolled batches, sessions, attendance */}
             {enrollments.length > 0 && (
               <div>
@@ -234,23 +291,36 @@ export default async function ProfilePage() {
                 </div>
               </Link>
 
-              <Link href="/courses" className="profile-resource-card purple">
+              <Link href="/profile/courses" className="profile-resource-card purple">
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: '#F5F3FF', border: '1px solid #DDD6FE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <Award style={{ width: 22, height: 22, color: '#7C3AED' }} />
                 </div>
-                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Our Courses</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Browse our HR training courses and upskill with industry-recognized programs.</p>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>My Courses</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View enrollment status, trainer assignment, and your live batch access.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#7C3AED' }}>
-                  View Courses <ChevronRight style={{ width: 13, height: 13 }} />
+                  Open Dashboard <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>
               </Link>
+
+              {session.type === 'student' && (
+                <Link href="/profile/assessments" className="profile-resource-card">
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: '#EFF6FF', border: '1px solid #BFDBFE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                    <Sparkles style={{ width: 22, height: 22, color: '#1E40AF' }} />
+                  </div>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>AI Assessments</h4>
+                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View AI-analyzed results, personalized notes, and your study plan.</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#1E40AF' }}>
+                    View Results <ChevronRight style={{ width: 13, height: 13 }} />
+                  </div>
+                </Link>
+              )}
 
               <Link href="/contact" className="profile-resource-card amber">
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: '#FFFBEB', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <Briefcase style={{ width: 22, height: 22, color: '#D97706' }} />
                 </div>
                 <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Get Support</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Have a question? Reach out to our team and we'll help you get started.</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Have a question? Reach out to our team and we&apos;ll help you get started.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#D97706' }}>
                   Contact Us <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>

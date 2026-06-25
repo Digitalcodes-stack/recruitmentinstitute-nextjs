@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { email, password } = validated.data
-    const trainer = await prisma.trainer.findUnique({ where: { email } })
+    const trainer = await prisma.trainer.findUnique({ where: { email: email.trim().toLowerCase() } })
 
     if (!trainer || !trainer.isActive) {
       return NextResponse.json({ success: false, message: 'Invalid email or password' }, { status: 401 })

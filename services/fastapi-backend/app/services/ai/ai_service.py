@@ -1,0 +1,89 @@
+from functools import lru_cache
+
+import httpx
+
+from app.core.config import settings
+from app.services.ai.base import AIProvider
+from app.services.ai.reliable_provider import ReliableAIProvider
+
+
+def _build_claude() -> AIProvider:
+    from app.services.ai.providers.claude_provider import ClaudeProvider
+    return ClaudeProvider()
+
+
+def _build_openai() -> AIProvider:
+    from app.services.ai.providers.openai_provider import OpenAIProvider
+    return OpenAIProvider()
+
+
+def _build_gemini() -> AIProvider:
+    from app.services.ai.providers.gemini_provider import GeminiProvider
+    return GeminiProvider()
+
+
+def _build_local() -> AIProvider:
+    from app.services.ai.providers.local_llm_provider import LocalLLMProvider
+    return LocalLLMProvider()
+
+
+def _build_local_ai() -> AIProvider:
+    from app.services.ai.providers.local_ai_provider import LocalAIProvider
+    return LocalAIProvider()
+
+
+def _build_mock() -> AIProvider:
+    from app.services.ai.providers.mock_provider import MockProvider
+    return MockProvider()
+
+
+
+_PROVIDER_FACTORIES = {
+    "claude": _build_claude,
+    "openai": _build_openai,
+    "gemini": _build_gemini,
+    "local": _build_local,
+    "local_ai": _build_local_ai,
+    "mock": _build_mock,
+}
+
+
+def _build_provider(name: str) -> AIProvider:
+    factory = _PROVIDER_FACTORIES.get(name.lower())
+    if not factory:
+        raise ValueError(f"Unknown AI_PROVIDER: {name}")
+    return factory()
+
+
+@lru_cache
+def get_ai_provider() -> AIProvider:
+    return _build_provider(settings.ai_provider or "local_ai")
+
+
+@lru_cache
+def get_reliable_ai_provider() -> AIProvider:
+    primary = get_ai_provider()
+    fallback_names = [n.strip() for n in (settings.ai_provider_fallback_order or "").split(",") if n.strip()]
+    fallbacks = [_build_provider(name) for name in fallback_names if name in _PROVIDER_FACTORIES]
+    return ReliableAIProvider(primary=primary, fallbacks=fallbacks)
+
+
+async def check_provider_health() -> dict[str, dict]:
+    result: dict[str, dict] = {}
+
+    result["local_ai"] = {"configured": True, "reachable": True}
+    result["claude"] = {"configured": bool(settings.claude_api_key), "reachable": None}
+    result["openai"] = {"configured": bool(settings.openai_api_key), "reachable": None}
+    result["gemini"] = {"configured": bool(settings.gemini_api_key), "reachable": None}
+
+    base_url = settings.ollama_base_url or "http://localhost:11434"
+    reachable = False
+    try:
+        async with httpx.AsyncClient(base_url=base_url, timeout=3) as client:
+            response = await client.get("/api/tags")
+            reachable = response.status_code == 200
+    except httpx.HTTPError:
+        reachable = False
+    result["local"] = {"configured": bool(settings.ollama_base_url), "reachable": reachable}
+
+    return result

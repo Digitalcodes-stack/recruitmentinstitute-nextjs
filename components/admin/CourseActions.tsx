@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Pencil, Trash2, Loader2, GraduationCap } from 'lucide-react'
+import { Pencil, Trash2, Loader2, GraduationCap, ClipboardCheck } from 'lucide-react'
 
 export default function CourseActions({ id }: { id: number }) {
   const router = useRouter()
@@ -25,6 +25,10 @@ export default function CourseActions({ id }: { id: number }) {
       <Link href={`/admin/courses/${id}/curriculum`}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: '#eff6ff', border: '1px solid #bfdbfe', color: '#2563eb', textDecoration: 'none' }}>
         <GraduationCap style={{ width: 11, height: 11 }} /> Curriculum
+      </Link>
+      <Link href={`/admin/courses/${id}/assessment`}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: '#f5f3ff', border: '1px solid #ddd6fe', color: '#7c3aed', textDecoration: 'none' }}>
+        <ClipboardCheck style={{ width: 11, height: 11 }} /> Assessment
       </Link>
       <Link href={`/admin/courses/${id}/edit`}
         style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: '#f8fafc', border: '1px solid #e2e8f0', color: '#475569', textDecoration: 'none' }}>

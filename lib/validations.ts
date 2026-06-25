@@ -178,6 +178,11 @@ export const enrollmentSchema = z.object({
   batchId: z.number().int().positive(),
 })
 
+export const enrollmentReviewSchema = z.object({
+  status: z.enum(['APPROVED', 'REJECTED', 'ON_HOLD']),
+  reviewNote: z.string().max(1000).optional(),
+})
+
 export const moduleSchema = z.object({
   courseId: z.number().int().positive(),
   title: z.string().min(2, 'Title is required'),

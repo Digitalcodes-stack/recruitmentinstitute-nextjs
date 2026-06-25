@@ -1,0 +1,63 @@
+from functools import lru_cache
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    app_name: str = "Recruitment Institute FastAPI"
+    app_env: str = "development"
+    app_debug: bool = True
+    app_host: str = "0.0.0.0"
+    app_port: int = 8000
+    database_url: str
+    redis_url: str | None = None
+    jwt_secret: str
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60 * 24 * 7
+    refresh_token_expire_days: int = 30
+    nextjs_service_url: str | None = None
+    service_api_key: str | None = None
+    redis_broker_url: str | None = None
+    redis_backend_url: str | None = None
+    redis_blacklist_db: int = 2
+    email_enabled: bool = False
+    smtp_host: str | None = None
+    smtp_port: int = 587
+    smtp_username: str | None = None
+    smtp_password: str | None = None
+    smtp_from_email: str | None = None
+    smtp_from_name: str = "Recruitment Institute"
+    smtp_use_tls: bool = True
+    google_client_id: str | None = None
+    google_client_secret: str | None = None
+    google_refresh_token: str | None = None
+    google_calendar_id: str = "primary"
+    ai_provider: str = "local_ai"
+    ai_provider_fallback_order: str | None = None
+    ai_retry_attempts: int = 3
+    ai_retry_min_wait_seconds: float = 1.0
+    ai_retry_max_wait_seconds: float = 8.0
+    claude_api_key: str | None = None
+    claude_model: str = "claude-sonnet-4-6"
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-4o"
+    openai_embedding_model: str = "text-embedding-3-small"
+    gemini_api_key: str | None = None
+    gemini_model: str = "gemini-2.0-flash"
+    ollama_base_url: str | None = None
+    ollama_model: str = "llama3"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=False,
+    )
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
+
+
+settings = get_settings()
