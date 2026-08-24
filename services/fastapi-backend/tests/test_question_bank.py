@@ -76,7 +76,7 @@ async def test_grade_and_submit_tallies_topics_and_runs_ai_pipeline(db_session, 
         async def generate_notes(self, topic_name, context_chunks=None):
             return f"# Notes for {topic_name}"
 
-        async def generate_study_plan(self, weak_topics, strong_topics):
+        async def generate_study_plan(self, weak_topics, strong_topics, difficulty_breakdown=None):
             return {"day_1": "x", "day_2": "x", "day_3": "x", "day_4": "x", "day_5": "x"}
 
         async def generate_recommendations(self, percentage):
@@ -130,7 +130,7 @@ async def test_grade_and_submit_ignores_answers_for_nonexistent_questions(db_ses
         async def generate_notes(self, topic_name, context_chunks=None):
             return "notes"
 
-        async def generate_study_plan(self, weak_topics, strong_topics):
+        async def generate_study_plan(self, weak_topics, strong_topics, difficulty_breakdown=None):
             return {}
 
         async def generate_recommendations(self, percentage):

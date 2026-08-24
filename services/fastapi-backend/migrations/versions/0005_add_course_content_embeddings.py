@@ -8,8 +8,8 @@ Create Date: 2026-06-25
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0005_add_course_content_embeddings"
-down_revision = "0004_add_assessment_and_ai_tables"
+revision = "0005"
+down_revision = "0004"
 branch_labels = None
 depends_on = None
 

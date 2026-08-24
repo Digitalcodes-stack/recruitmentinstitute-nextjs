@@ -1,11 +1,130 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { getAdminSession } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getFinanceSnapshot } from '@/lib/finance'
-import { IndianRupee, ReceiptText, ShieldCheck, RefreshCw, WalletCards, ArrowRight } from 'lucide-react'
+import {
+  IndianRupee, ReceiptText, RefreshCw, WalletCards, ArrowUpRight,
+  AlertTriangle, Users2, FileSpreadsheet, CreditCard, Wallet,
+} from 'lucide-react'
+
+/* ── Design tokens (mirrors AdminDashboard) ─────────────────── */
+
+const C = {
+  white:      '#ffffff',
+  border:     '#e6eaf0',
+  borderSoft: '#f0f3f7',
+  text:       '#0f172a',
+  textMid:    '#475569',
+  textSoft:   '#94a3b8',
+  shadow:     '0 1px 4px rgba(15,23,42,0.07)',
+  radius:     16,
+  radiusSm:   10,
+}
+
+function fmt(n: number) {
+  return n.toLocaleString('en-IN')
+}
+
+function rupee(n: number) {
+  return `₹${fmt(n)}`
+}
+
+function PanelHeader({ title, sub, action }: { title: string; sub?: string; action?: React.ReactNode }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+      padding: '22px 28px 20px',
+      borderBottom: `1px solid ${C.borderSoft}`,
+    }}>
+      <div>
+        <p style={{ fontSize: 15, fontWeight: 700, color: C.text, lineHeight: 1.3 }}>{title}</p>
+        {sub && <p style={{ fontSize: 12, color: C.textSoft, marginTop: 3 }}>{sub}</p>}
+      </div>
+      {action}
+    </div>
+  )
+}
+
+function ViewAllBtn({ href }: { href: string }) {
+  return (
+    <Link href={href} style={{
+      display: 'flex', alignItems: 'center', gap: 5,
+      fontSize: 12, fontWeight: 600, color: '#2563eb',
+      textDecoration: 'none', padding: '6px 12px',
+      borderRadius: 8, whiteSpace: 'nowrap',
+    }}>
+      View all <ArrowUpRight size={12} />
+    </Link>
+  )
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      background: C.white, borderRadius: C.radius,
+      border: `1px solid ${C.border}`, boxShadow: C.shadow,
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function Empty({ msg }: { msg: string }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', padding: '48px 24px', textAlign: 'center',
+    }}>
+      <div style={{
+        width: 48, height: 48, borderRadius: 14, background: '#f8fafc',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22, marginBottom: 12,
+      }}>📭</div>
+      <p style={{ fontSize: 13, color: C.textSoft, fontWeight: 500 }}>{msg}</p>
+    </div>
+  )
+}
+
+const TH_STYLE: React.CSSProperties = {
+  padding: '14px 24px',
+  fontSize: 10, fontWeight: 700,
+  letterSpacing: '0.16em', textTransform: 'uppercase',
+  color: C.textSoft,
+  background: '#f8fafc',
+  borderBottom: `1px solid ${C.borderSoft}`,
+  textAlign: 'left',
+}
+const TD_STYLE: React.CSSProperties = {
+  padding: '18px 24px',
+  fontSize: 13, color: C.textMid,
+  borderBottom: `1px solid ${C.borderSoft}`,
+  verticalAlign: 'middle',
+}
+
+function StatusPill({ status }: { status: string }) {
+  const map: Record<string, { bg: string; color: string }> = {
+    PAID:      { bg: '#f0fdf4', color: '#15803d' },
+    CAPTURED:  { bg: '#f0fdf4', color: '#15803d' },
+    PROCESSED: { bg: '#f0fdf4', color: '#15803d' },
+    ISSUED:    { bg: '#eff6ff', color: '#2563eb' },
+    PENDING:   { bg: '#fffbeb', color: '#b45309' },
+    OVERDUE:   { bg: '#fef2f2', color: '#dc2626' },
+    FAILED:    { bg: '#fef2f2', color: '#dc2626' },
+  }
+  const tone = map[status] ?? { bg: '#f8fafc', color: C.textSoft }
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center',
+      background: tone.bg, color: tone.color,
+      borderRadius: 20, padding: '5px 12px',
+      fontSize: 11, fontWeight: 700,
+    }}>
+      {status}
+    </span>
+  )
+}
 
 export default async function AdminFinancePage() {
   const session = await getAdminSession()
@@ -30,140 +149,254 @@ export default async function AdminFinancePage() {
     }),
   ])
 
-  const cards = [
-    { label: 'Collected', value: `₹${snapshot.collected.toLocaleString('en-IN')}`, icon: WalletCards, tone: 'sky' },
-    { label: 'Outstanding', value: `₹${snapshot.outstanding.toLocaleString('en-IN')}`, icon: IndianRupee, tone: 'amber' },
-    { label: 'Invoices', value: String(snapshot.invoices), icon: ReceiptText, tone: 'emerald' },
-    { label: 'Refunds', value: `₹${snapshot.refunded.toLocaleString('en-IN')}`, icon: RefreshCw, tone: 'rose' },
-  ] as const
+  const today = new Date().toLocaleDateString('en-IN', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+  })
+
+  const statCards = [
+    { label: 'Collected',         value: rupee(snapshot.collected),   sub: `${snapshot.payments} payments`,        icon: WalletCards,     bg: '#f0fdf4', color: '#16a34a' },
+    { label: 'Outstanding',       value: rupee(snapshot.outstanding), sub: `${snapshot.accounts} active accounts`, icon: IndianRupee,      bg: '#fffbeb', color: '#b45309' },
+    { label: 'Invoices',          value: fmt(snapshot.invoices),      sub: 'Generated to date',                    icon: ReceiptText,      bg: '#eff6ff', color: '#2563eb' },
+    { label: 'Refunds',           value: rupee(snapshot.refunded),    sub: `${snapshot.refunds} processed`,        icon: RefreshCw,        bg: '#fef2f2', color: '#dc2626' },
+    { label: 'Active Accounts',   value: fmt(snapshot.accounts),      sub: 'Student fee ledgers',                  icon: Users2,           bg: '#faf5ff', color: '#7c3aed' },
+    { label: 'Overdue Accounts',  value: fmt(snapshot.overdueAccounts), sub: 'Needs follow-up',                    icon: AlertTriangle,    bg: '#fff7ed', color: '#ea580c' },
+  ]
+
+  const quickLinks = [
+    { label: 'Fees Catalog', desc: 'Manage base course pricing', href: '/admin/fees', icon: FileSpreadsheet, bg: '#eff6ff', color: '#2563eb', external: false },
+    { label: 'Fee Accounts', desc: 'Create and monitor student ledgers', href: '/api/admin/finance/accounts', icon: Wallet, bg: '#f0fdf4', color: '#16a34a', external: true },
+    { label: 'Invoices', desc: 'Generate GST-ready invoices', href: '/api/admin/finance/invoices', icon: ReceiptText, bg: '#faf5ff', color: '#7c3aed', external: true },
+    { label: 'Payments', desc: 'Reconcile gateway collections', href: '/api/admin/finance/payments', icon: CreditCard, bg: '#fffbeb', color: '#b45309', external: true },
+  ]
 
   return (
     <AdminLayout title="Finance Dashboard">
-      <div className="mb-8 overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
-        <div className="grid gap-6 px-6 py-7 xl:grid-cols-[1.25fr_0.75fr] xl:items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-700">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Finance Control Center
-            </div>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.05em] text-slate-950 md:text-4xl">Fees Management</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-500">
-              Track course fees, invoices, installment plans, payments, and refunds from one structured dashboard.
-            </p>
-          </div>
+      <div style={{ maxWidth: 1440, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-            <HeroMetric label="Active accounts" value={String(snapshot.accounts)} />
-            <HeroMetric label="Overdue accounts" value={String(snapshot.overdueAccounts)} tone="warn" />
+        {/* ── Hero ─────────────────────────────────────── */}
+        <div style={{
+          borderRadius: 20,
+          background: 'linear-gradient(130deg,#0c1a2e 0%,#13305c 50%,#1a4fac 100%)',
+          boxShadow: '0 20px 56px rgba(15,23,42,0.22)',
+          overflow: 'hidden',
+          position: 'relative',
+        }}>
+          <div style={{
+            position: 'absolute', right: -60, top: -60,
+            width: 280, height: 280, borderRadius: '50%',
+            background: 'radial-gradient(circle,rgba(96,165,250,0.18),transparent 70%)',
+            pointerEvents: 'none',
+          }} />
+          <div style={{
+            position: 'relative',
+            display: 'flex', flexWrap: 'wrap', alignItems: 'center',
+            justifyContent: 'space-between', gap: 32,
+            padding: '44px 52px',
+          }}>
+            <div>
+              <span style={{
+                display: 'inline-block',
+                background: 'rgba(96,165,250,0.14)',
+                border: '1px solid rgba(96,165,250,0.22)',
+                borderRadius: 24, padding: '4px 14px',
+                fontSize: 10, fontWeight: 800,
+                letterSpacing: '0.22em', textTransform: 'uppercase',
+                color: '#93c5fd',
+              }}>
+                Finance Control Center
+              </span>
+              <h1 style={{
+                marginTop: 16,
+                fontSize: 38, fontWeight: 900,
+                lineHeight: 1.1, letterSpacing: '-0.02em',
+                color: '#ffffff',
+              }}>
+                Fees Management
+              </h1>
+              <p style={{
+                marginTop: 12, maxWidth: 520,
+                fontSize: 14, lineHeight: 1.8, color: '#94b8d8',
+              }}>
+                Track course fees, invoices, installment plans, payments, and refunds from one structured dashboard.
+              </p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                background: snapshot.overdueAccounts > 0 ? 'rgba(248,113,113,0.13)' : 'rgba(34,197,94,0.13)',
+                border: `1px solid ${snapshot.overdueAccounts > 0 ? 'rgba(248,113,113,0.25)' : 'rgba(34,197,94,0.25)'}`,
+                borderRadius: 24, padding: '8px 18px',
+              }}>
+                <AlertTriangle size={13} color={snapshot.overdueAccounts > 0 ? '#fca5a5' : '#4ade80'} />
+                <span style={{ fontSize: 12, fontWeight: 600, color: snapshot.overdueAccounts > 0 ? '#fecaca' : '#86efac' }}>
+                  {snapshot.overdueAccounts > 0 ? `${snapshot.overdueAccounts} overdue account${snapshot.overdueAccounts > 1 ? 's' : ''}` : 'All accounts current'}
+                </span>
+              </div>
+              <p style={{ fontSize: 12, color: '#5a7a99' }}>{today}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {cards.map(({ label, value, icon: Icon, tone }) => (
-          <div key={label} className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
-            <div className="flex items-center gap-3">
-              <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${
-                tone === 'amber' ? 'bg-amber-50 text-amber-700' :
-                tone === 'emerald' ? 'bg-emerald-50 text-emerald-700' :
-                tone === 'rose' ? 'bg-rose-50 text-rose-700' :
-                'bg-sky-50 text-sky-700'
-              }`}>
-                <Icon className="h-5 w-5" />
+        {/* ── Stats grid ───────────────────────────────── */}
+        <div>
+          <p style={{
+            fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: C.textSoft, marginBottom: 20,
+          }}>
+            At a glance
+          </p>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: 18,
+          }}>
+            {statCards.map((s) => (
+              <div key={s.label} style={{
+                height: '100%', borderRadius: C.radius,
+                background: C.white, border: `1px solid ${C.border}`,
+                boxShadow: C.shadow, padding: '26px 24px',
+                display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+                  <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.textSoft }}>
+                    {s.label}
+                  </p>
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+                    background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <s.icon size={18} color={s.color} />
+                  </div>
+                </div>
+                <div style={{ marginTop: 16 }}>
+                  <p style={{ fontSize: 34, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.02em', color: C.text }}>
+                    {s.value}
+                  </p>
+                  <p style={{ fontSize: 12, color: C.textSoft, marginTop: 8 }}>{s.sub}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">{label}</p>
-                <p className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">{value}</p>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="mt-8 grid gap-6 xl:grid-cols-3">
-        <Panel title="Recent Invoices" actionHref="/admin/fees">
-          <List items={recentInvoices.map((invoice) => ({
-            title: invoice.invoiceNo,
-            subtitle: `${invoice.feeAccount.student.name} · ${invoice.feeAccount.batch?.name ?? invoice.feeAccount.planName}`,
-            meta: `${invoice.status} · ₹${Number(invoice.balanceAmount).toLocaleString('en-IN')} due`,
-          }))} />
-        </Panel>
-        <Panel title="Recent Payments" actionHref="/admin/finance">
-          <List items={recentPayments.map((payment) => ({
-            title: `${payment.gateway} · ₹${Number(payment.amount).toLocaleString('en-IN')}`,
-            subtitle: payment.feeAccount.student.name,
-            meta: payment.status,
-          }))} />
-        </Panel>
-        <Panel title="Recent Refunds" actionHref="/admin/finance">
-          <List items={recentRefunds.map((refund) => ({
-            title: `₹${Number(refund.amount).toLocaleString('en-IN')}`,
-            subtitle: refund.feeAccount.student.name,
-            meta: refund.status,
-          }))} />
-        </Panel>
-      </div>
+        {/* ── Recent Invoices + Payments ───────────────── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+          <Card>
+            <PanelHeader title="Recent Invoices" sub="Latest billing activity" action={<ViewAllBtn href="/admin/fees" />} />
+            {!recentInvoices.length ? <Empty msg="No invoices yet." /> : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>{['Invoice', 'Student', 'Status', 'Balance'].map(h => <th key={h} style={TH_STYLE}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {recentInvoices.map((invoice) => (
+                    <tr key={invoice.id}>
+                      <td style={TD_STYLE}>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{invoice.invoiceNo}</p>
+                        <p style={{ fontSize: 11, color: C.textSoft, marginTop: 3 }}>
+                          {invoice.feeAccount.batch?.name ?? invoice.feeAccount.planName}
+                        </p>
+                      </td>
+                      <td style={TD_STYLE}>{invoice.feeAccount.student.name}</td>
+                      <td style={TD_STYLE}><StatusPill status={invoice.status} /></td>
+                      <td style={{ ...TD_STYLE, fontWeight: 700, color: C.text }}>
+                        {rupee(Number(invoice.balanceAmount))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Card>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <LinkCard title="Fees Catalog" desc="Manage base course pricing" href="/admin/fees" />
-        <LinkCard title="Fee Accounts" desc="Create and monitor student ledgers" href="/api/admin/finance/accounts" external />
-        <LinkCard title="Invoices" desc="Generate GST-ready invoices" href="/api/admin/finance/invoices" external />
-        <LinkCard title="Payments" desc="Reconcile gateway collections" href="/api/admin/finance/payments" external />
+          <Card>
+            <PanelHeader title="Recent Payments" sub="Latest gateway collections" action={<ViewAllBtn href="/admin/finance" />} />
+            {!recentPayments.length ? <Empty msg="No payments yet." /> : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>{['Gateway', 'Student', 'Status', 'Amount'].map(h => <th key={h} style={TH_STYLE}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {recentPayments.map((payment) => (
+                    <tr key={payment.id}>
+                      <td style={{ ...TD_STYLE, fontWeight: 600, color: C.text }}>{payment.gateway}</td>
+                      <td style={TD_STYLE}>{payment.feeAccount.student.name}</td>
+                      <td style={TD_STYLE}><StatusPill status={payment.status} /></td>
+                      <td style={{ ...TD_STYLE, fontWeight: 700, color: C.text }}>
+                        {rupee(Number(payment.amount))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </Card>
+        </div>
+
+        {/* ── Recent Refunds ───────────────────────────── */}
+        <Card>
+          <PanelHeader title="Recent Refunds" sub="Latest refund activity" action={<ViewAllBtn href="/admin/finance" />} />
+          {!recentRefunds.length ? <Empty msg="No refunds yet." /> : (
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>{['Student', 'Status', 'Amount'].map(h => <th key={h} style={TH_STYLE}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {recentRefunds.map((refund) => (
+                  <tr key={refund.id}>
+                    <td style={{ ...TD_STYLE, fontWeight: 600, color: C.text }}>{refund.feeAccount.student.name}</td>
+                    <td style={TD_STYLE}><StatusPill status={refund.status} /></td>
+                    <td style={{ ...TD_STYLE, fontWeight: 700, color: C.text }}>
+                      {rupee(Number(refund.amount))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </Card>
+
+        {/* ── Quick navigation ──────────────────────────── */}
+        <Card>
+          <PanelHeader title="Quick Navigation" sub="Jump directly to any finance tool" />
+          <div style={{
+            padding: '20px 24px 24px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+            gap: 12,
+          }}>
+            {quickLinks.map((item) => {
+              const inner = (
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '14px 18px', borderRadius: C.radiusSm,
+                  border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
+                  height: '100%',
+                }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                    background: item.bg,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <item.icon size={16} color={item.color} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{item.label}</p>
+                    <p style={{ fontSize: 11, color: C.textSoft, marginTop: 2 }}>{item.desc}</p>
+                  </div>
+                  <ArrowUpRight size={13} color="#cbd5e1" />
+                </div>
+              )
+              return item.external ? (
+                <a key={item.href} href={item.href} target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}>{inner}</a>
+              ) : (
+                <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>{inner}</Link>
+              )
+            })}
+          </div>
+        </Card>
+
       </div>
     </AdminLayout>
-  )
-}
-
-function HeroMetric({ label, value, tone = 'ok' }: { label: string; value: string; tone?: 'ok' | 'warn' }) {
-  return (
-    <div className={`rounded-3xl border px-4 py-4 shadow-sm ${tone === 'warn' ? 'border-amber-200 bg-amber-50' : 'border-slate-200 bg-slate-50'}`}>
-      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">{label}</p>
-      <p className={`mt-2 text-2xl font-black tracking-[-0.04em] ${tone === 'warn' ? 'text-amber-700' : 'text-slate-950'}`}>{value}</p>
-    </div>
-  )
-}
-
-function Panel({ title, actionHref, children }: { title: string; actionHref: string; children: ReactNode }) {
-  return (
-    <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_60px_rgba(15,23,42,0.06)] xl:col-span-1">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-black tracking-[-0.03em] text-slate-950">{title}</h2>
-        <Link href={actionHref} className="inline-flex items-center gap-1 text-sm font-semibold text-sky-700 hover:text-sky-800">
-          View <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-      {children}
-    </section>
-  )
-}
-
-function List({ items }: { items: Array<{ title: string; subtitle: string; meta: string }> }) {
-  return (
-    <div className="space-y-3">
-      {items.length ? items.map((item) => (
-        <div key={`${item.title}-${item.subtitle}`} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-          <p className="text-sm font-bold text-slate-950">{item.title}</p>
-          <p className="mt-1 text-xs text-slate-500">{item.subtitle}</p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{item.meta}</p>
-        </div>
-      )) : (
-        <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-5 text-sm text-slate-500">Nothing here yet.</div>
-      )}
-    </div>
-  )
-}
-
-function LinkCard({ title, desc, href, external }: { title: string; desc: string; href: string; external?: boolean }) {
-  const content = (
-    <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_60px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_80px_rgba(15,23,42,0.1)]">
-      <p className="text-sm font-black tracking-[-0.03em] text-slate-950">{title}</p>
-      <p className="mt-1 text-sm leading-6 text-slate-500">{desc}</p>
-    </div>
-  )
-
-  return external ? (
-    <a href={href} target="_blank" rel="noreferrer">{content}</a>
-  ) : (
-    <Link href={href}>{content}</Link>
   )
 }

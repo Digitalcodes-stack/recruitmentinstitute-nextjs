@@ -26,6 +26,7 @@ from app.schemas.question_bank import (
     QuestionBankItemCreate,
     QuestionBankItemRead,
 )
+from app.schemas.assessment import TestReviewItemRead
 from app.schemas.report import ReportStatusRead, ReportTriggerResponse, TrainerRemarksUpdate
 from app.services.assessment_service import AssessmentService
 from app.services.ai.retrieval_service import RetrievalService
@@ -38,7 +39,8 @@ router = APIRouter()
 
 def _question_bank_service(db: AsyncSession) -> QuestionBankService:
     repo = AssessmentRepository(db)
-    return QuestionBankService(repo, AssessmentService(repo, RetrievalService(EmbeddingRepository(db))))
+    embedding_repo = EmbeddingRepository(db)
+    return QuestionBankService(repo, AssessmentService(repo, RetrievalService(embedding_repo)), embedding_repo)
 
 
 @router.post("/generate", response_model=ResponseEnvelope[AssessmentSummaryRead], status_code=status.HTTP_201_CREATED)
@@ -108,7 +110,7 @@ async def get_assessment_by_course(
     db: AsyncSession = Depends(get_db_session),
     _principal=Depends(get_current_principal),
 ):
-    assessment = await _question_bank_service(db).get_assessment_for_course(course_id)
+    assessment = await _question_bank_service(db).get_or_auto_generate_for_course(course_id)
     return success_response(jsonable_encoder(assessment))
 
 
@@ -130,6 +132,34 @@ async def get_assessment_notes(
 ):
     notes = await AssessmentService(AssessmentRepository(db)).get_notes(id, principal)
     return success_response(jsonable_encoder(notes))
+
+
+@router.get("/result/{id}/test", response_model=ResponseEnvelope[list[TestReviewItemRead]])
+async def get_assessment_test(
+    id: int,
+    db: AsyncSession = Depends(get_db_session),
+    principal=Depends(get_current_principal),
+):
+    repo = AssessmentRepository(db)
+    student_assessment = await repo.get_student_assessment(id)
+    if not student_assessment:
+        from app.core.exceptions import ServiceError
+        raise ServiceError("Assessment result not found", 404)
+    AssessmentService._assert_can_view(student_assessment.student_id, principal)
+    
+    questions = await repo.list_questions_for_assessment(student_assessment.assessment_id)
+    
+    analysis = await repo.get_analysis_by_student_assessment(id)
+    student_answers = analysis.analysis_json.get("student_answers", []) if analysis and analysis.analysis_json else []
+    answers_map = {ans["question_id"]: ans["selected_option"] for ans in student_answers}
+    
+    safe_questions = []
+    for q in questions:
+        q_dict = jsonable_encoder(q)
+        q_dict["student_answer"] = answers_map.get(q.id)
+        safe_questions.append(q_dict)
+        
+    return success_response(safe_questions)
 
 
 @router.get("/study-plan/{id}", response_model=ResponseEnvelope[StudentStudyPlanRead])

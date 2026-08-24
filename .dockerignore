@@ -1,0 +1,36 @@
+# Node
+node_modules
+npm-debug.log*
+
+# Next.js
+.next
+out
+
+# Env files — never bake secrets into images
+.env
+.env.*
+!.env.example
+
+# Dev / test artifacts
+*.log
+*.txt
+*.md
+tests/
+docker/
+
+# Python build artifacts only (services/ needed for FastAPI build)
+__pycache__/
+*.pyc
+*.pyo
+services/fastapi-backend/.venv/
+services/fastapi-backend/test.db
+services/fastapi-backend/scratch*
+services/fastapi-backend/storage/
+
+# Git
+.git
+.gitignore
+
+# Local OS
+.DS_Store
+Thumbs.db

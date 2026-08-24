@@ -32,7 +32,9 @@ class AIProvider(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def generate_study_plan(self, weak_topics: list[str], strong_topics: list[str]) -> dict:
+    async def generate_study_plan(
+        self, weak_topics: list[str], strong_topics: list[str], difficulty_breakdown: dict[str, float] | None = None
+    ) -> dict:
         raise NotImplementedError
 
     @abstractmethod

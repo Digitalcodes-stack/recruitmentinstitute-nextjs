@@ -38,7 +38,9 @@ class MockProvider(AIProvider):
         logger.info(f"MockProvider generating notes for {topic_name}")
         return f"### Mock Notes for {topic_name}\n\nThis is placeholder text because no AI API key is configured. In a real environment, this would contain a detailed, personalized breakdown of `{topic_name}`.\n\n- Key Point 1\n- Key Point 2"
 
-    async def generate_study_plan(self, weak_topics: list[str], strong_topics: list[str]) -> dict:
+    async def generate_study_plan(
+        self, weak_topics: list[str], strong_topics: list[str], difficulty_breakdown: dict[str, float] | None = None
+    ) -> dict:
         logger.info("MockProvider generating study plan")
         return {
             "daily_schedule": [

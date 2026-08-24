@@ -20,6 +20,7 @@ class AssessmentGenerateRequest(BaseModel):
 class AssessmentSubmitRequest(BaseModel):
     assessment_id: int = Field(gt=0)
     topic_scores: list[TopicScoreInput] = Field(min_length=1)
+    student_answers: list[dict] | None = None
 
 
 class AIAssessmentAnalysisRead(BaseModel):
@@ -78,3 +79,9 @@ class AssessmentSubmitResult(BaseModel):
 class AssessmentResultRead(BaseModel):
     student_assessment: StudentAssessmentRead
     analysis: AIAssessmentAnalysisRead
+
+
+from app.schemas.question_bank import QuestionBankItemRead
+
+class TestReviewItemRead(QuestionBankItemRead):
+    student_answer: str | None = None

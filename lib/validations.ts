@@ -157,7 +157,7 @@ export const sessionSchema = z.object({
   sessionDate: z.string().min(1, 'Session date is required'),
   startTime: z.string().min(1, 'Start time is required'),
   endTime: z.string().min(1, 'End time is required'),
-  meetLink: z.string().optional(),
+  meetLink: z.string().nullable().optional(),
   status: z.enum(['UPCOMING', 'LIVE', 'COMPLETED', 'CANCELLED']).default('UPCOMING'),
 })
 

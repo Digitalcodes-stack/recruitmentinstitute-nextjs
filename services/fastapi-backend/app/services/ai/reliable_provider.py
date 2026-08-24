@@ -42,8 +42,12 @@ class ReliableAIProvider(AIProvider):
     async def generate_notes(self, topic_name: str, context_chunks: list[str] | None = None) -> str:
         return await self._call_with_retry("generate_notes", topic_name, context_chunks=context_chunks)
 
-    async def generate_study_plan(self, weak_topics: list[str], strong_topics: list[str]) -> dict:
-        return await self._call_with_retry("generate_study_plan", weak_topics, strong_topics)
+    async def generate_study_plan(
+        self, weak_topics: list[str], strong_topics: list[str], difficulty_breakdown: dict[str, float] | None = None
+    ) -> dict:
+        return await self._call_with_retry(
+            "generate_study_plan", weak_topics, strong_topics, difficulty_breakdown=difficulty_breakdown
+        )
 
     async def generate_recommendations(self, percentage: float) -> list[str]:
         return await self._call_with_retry("generate_recommendations", percentage)

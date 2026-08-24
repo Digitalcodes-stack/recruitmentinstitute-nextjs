@@ -8,8 +8,8 @@ Create Date: 2026-06-24
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0004_add_assessment_and_ai_tables"
-down_revision = "0003_add_placement_tracking_notified_at"
+revision = "0004"
+down_revision = "0003"
 branch_labels = None
 depends_on = None
 

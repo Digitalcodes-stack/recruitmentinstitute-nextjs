@@ -11,6 +11,12 @@ class QuestionBankItemCreate(BaseModel):
     option_c: str = Field(min_length=1, max_length=500)
     option_d: str = Field(min_length=1, max_length=500)
     correct_option: str = Field(pattern=r"^[A-D]$")
+    explanation: str | None = None
+    difficulty: str = Field(default="medium", pattern=r"^(easy|medium|hard)$")
+    bloom_level: str | None = None
+    estimated_time_seconds: int | None = None
+    source_chunk_id: int | None = None
+    generated_by: str = "local_ai"
     sort_order: int = 0
 
 
@@ -24,6 +30,12 @@ class QuestionBankItemRead(BaseModel):
     option_c: str
     option_d: str
     correct_option: str
+    explanation: str | None
+    difficulty: str
+    bloom_level: str | None = None
+    estimated_time_seconds: int | None = None
+    source_chunk_id: int | None = None
+    generated_by: str = "local_ai"
     sort_order: int
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)
@@ -38,6 +50,9 @@ class AssessmentQuestionRead(BaseModel):
     option_b: str
     option_c: str
     option_d: str
+    difficulty: str = "medium"
+    bloom_level: str | None = None
+    estimated_time_seconds: int | None = None
     sort_order: int
     model_config = ConfigDict(from_attributes=True)
 

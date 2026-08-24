@@ -93,7 +93,7 @@ async def test_assessment_submit_runs_ai_pipeline(db_session, monkeypatch):
         async def generate_notes(self, topic_name, context_chunks=None):
             return f"# Notes for {topic_name}"
 
-        async def generate_study_plan(self, weak_topics, strong_topics):
+        async def generate_study_plan(self, weak_topics, strong_topics, difficulty_breakdown=None):
             return {"day_1": "OOP", "day_2": "Inheritance", "day_3": "Polymorphism", "day_4": "Quiz", "day_5": "Revision"}
 
         async def generate_recommendations(self, percentage):

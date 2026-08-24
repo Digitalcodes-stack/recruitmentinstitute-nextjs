@@ -5,6 +5,7 @@ from app.core.cache import create_redis_client
 from app.core.exceptions import ServiceError
 from app.models.ai_assessment import AIAssessmentAnalysis, AIGeneratedNote, StudentStudyPlan
 from app.models.assessment import StudentAssessment, Assessment, AssessmentQuestion
+from app.models.question_bank import QuestionBankItem
 from app.repositories.assessment_repository import AssessmentRepository
 from app.schemas.assessment import AssessmentSubmitRequest
 from app.services.ai.ai_service import get_reliable_ai_provider
@@ -22,42 +23,107 @@ class AssessmentService:
     rag: RAGService | None = None
     logger = logging.getLogger(__name__)
 
-    async def generate_assessment(self, course_id: int, name: str, topics: list[str], types: list[str], count: int) -> Assessment:
-        if not self.rag:
-            from app.repositories.embedding_repository import EmbeddingRepository
-            self.rag = RAGService(EmbeddingRepository(self.repo.db))
-
+    async def generate_assessment(
+        self,
+        course_id: int,
+        name: str,
+        topics: list[str],
+        types: list[str],
+        count: int,
+        context_text: str | None = None,
+    ) -> Assessment:
         provider = get_reliable_ai_provider()
 
-        # Retrieve context from RAG
-        context_text = ""
-        for topic in topics:
-            context_text += await self.rag.retrieve_context(course_id, topic, k=3) + "\n\n"
-        
-        if not context_text.strip():
-            context_text = "General recruitment principles and basic HR knowledge."
-            
+        if context_text is None:
+            if not self.rag:
+                from app.repositories.embedding_repository import EmbeddingRepository
+                self.rag = RAGService(EmbeddingRepository(self.repo.db))
+
+            seen_chunks: set[str] = set()
+            context_parts: list[str] = []
+            for topic in topics:
+                chunk = await self.rag.retrieve_context(course_id, topic, k=3)
+                if chunk and chunk not in seen_chunks:
+                    seen_chunks.add(chunk)
+                    context_parts.append(chunk)
+
+            context_text = "\n\n".join(context_parts)
+            if not context_text.strip():
+                context_text = "General recruitment principles and basic HR knowledge."
+
         questions_data = await provider.generate_questions(context_text, types, count)
-        
+
+        # Drop duplicates and anything that can't be stored as a 4-option
+        # question before counting, so total_marks/duration reflect what's
+        # actually persisted rather than the raw generator output.
+        deduped: list[dict] = []
+        seen_question_texts: set[str] = set()
+        for q_data in questions_data:
+            question_text = q_data["question_text"]
+            if question_text in seen_question_texts:
+                continue
+            options = q_data.get("options") or []
+            if len(options) != 4:
+                # QuestionBankItem (the table the student quiz actually reads
+                # from) requires exactly 4 non-null options, so true_false/
+                # descriptive/option-less questions can't be stored there yet.
+                continue
+            seen_question_texts.add(question_text)
+            deduped.append(q_data)
+
         assessment = await self.repo.add_assessment(
             Assessment(
                 course_id=course_id,
                 assessment_name=name,
-                total_marks=len(questions_data),
-                duration_minutes=len(questions_data) * 2
+                total_marks=len(deduped),
+                duration_minutes=max(len(deduped) * 2, 1)
             )
         )
-        
-        for q_data in questions_data:
+
+        for sort_order, q_data in enumerate(deduped):
+            question_text = q_data["question_text"]
+            options = q_data["options"]
+
             await self.repo.add_assessment_question(
                 AssessmentQuestion(
                     assessment_id=assessment.id,
                     question_type=q_data["question_type"],
                     topic=q_data["topic"],
-                    question_text=q_data["question_text"],
-                    options=q_data.get("options"),
+                    question_text=question_text,
+                    options=options,
                     correct_answer=q_data["correct_answer"],
+                    explanation=q_data.get("explanation"),
+                    difficulty=q_data.get("difficulty", "medium"),
+                    bloom_level=q_data.get("bloom_level"),
+                    estimated_time_seconds=q_data.get("estimated_time_seconds"),
+                    generated_by="local_ai",
                     points=1
+                )
+            )
+
+            correct_answer = q_data["correct_answer"]
+            letters = ["A", "B", "C", "D"]
+            try:
+                correct_option = letters[options.index(correct_answer)]
+            except (ValueError, IndexError):
+                correct_option = "A"
+
+            await self.repo.add_question(
+                QuestionBankItem(
+                    assessment_id=assessment.id,
+                    topic_name=q_data["topic"],
+                    question_text=question_text,
+                    option_a=options[0],
+                    option_b=options[1],
+                    option_c=options[2],
+                    option_d=options[3],
+                    correct_option=correct_option,
+                    explanation=q_data.get("explanation"),
+                    difficulty=q_data.get("difficulty", "medium"),
+                    bloom_level=q_data.get("bloom_level"),
+                    estimated_time_seconds=q_data.get("estimated_time_seconds"),
+                    generated_by="local_ai",
+                    sort_order=sort_order,
                 )
             )
         await self.repo.commit()
@@ -108,29 +174,40 @@ class AssessmentService:
                 analysis_json={
                     "difficulty_breakdown": analysis_result.difficulty_breakdown,
                     "summary": analysis_result.summary,
+                    "student_answers": payload.student_answers or []
                 },
             )
         )
 
-        note_rows: list[AIGeneratedNote] = []
-        for topic_name in analysis_result.weak_topics:
-            notes_content = await self._generate_notes_cached(provider, topic_name, assessment.course_id)
-            note_rows.append(
-                AIGeneratedNote(
-                    student_id=student_id,
-                    assessment_id=student_assessment.id,
-                    topic_name=topic_name,
-                    notes_content=notes_content,
-                )
+        import asyncio
+        notes_tasks = [
+            self._generate_notes_cached(provider, topic_name, assessment.course_id)
+            for topic_name in analysis_result.weak_topics
+        ]
+
+        # Run time-consuming AI generation tasks concurrently
+        notes_contents, plan_json, recommendations = await asyncio.gather(
+            asyncio.gather(*notes_tasks),
+            provider.generate_study_plan(
+                analysis_result.weak_topics, analysis_result.strong_topics, analysis_result.difficulty_breakdown
+            ),
+            provider.generate_recommendations(percentage)
+        )
+
+        note_rows = [
+            AIGeneratedNote(
+                student_id=student_id,
+                assessment_id=student_assessment.id,
+                topic_name=topic_name,
+                notes_content=content,
             )
+            for topic_name, content in zip(analysis_result.weak_topics, notes_contents)
+        ]
         notes = await self.repo.add_notes(note_rows) if note_rows else []
 
-        plan_json = await provider.generate_study_plan(analysis_result.weak_topics, analysis_result.strong_topics)
         study_plan = await self.repo.add_study_plan(
             StudentStudyPlan(student_id=student_id, assessment_id=student_assessment.id, plan_json=plan_json)
         )
-
-        recommendations = await provider.generate_recommendations(percentage)
 
         await self.repo.commit()
         for row in (student_assessment, analysis, *notes, study_plan):

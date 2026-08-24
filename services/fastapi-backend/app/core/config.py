@@ -20,32 +20,35 @@ class Settings(BaseSettings):
     redis_broker_url: str | None = None
     redis_backend_url: str | None = None
     redis_blacklist_db: int = 2
-    email_enabled: bool = False
-    smtp_host: str | None = None
+    email_enabled: bool = True
+    smtp_host: str | None = "mail.recruitmentinstitute.in"
     smtp_port: int = 587
-    smtp_username: str | None = None
-    smtp_password: str | None = None
-    smtp_from_email: str | None = None
+    smtp_username: str | None = "support@recruitmentinstitute.in"
+    smtp_password: str | None = "support@recruitmentinstitute"
+    smtp_from_email: str | None = "support@recruitmentinstitute.in"
     smtp_from_name: str = "Recruitment Institute"
     smtp_use_tls: bool = True
+    smtp_cc_email: str | None = "sesasiba.es@gmail.com"
     google_client_id: str | None = None
     google_client_secret: str | None = None
     google_refresh_token: str | None = None
     google_calendar_id: str = "primary"
-    ai_provider: str = "local_ai"
-    ai_provider_fallback_order: str | None = None
+    ai_provider: str = "gemini"
+    ai_provider_fallback_order: str = "gemini,local_ai,claude,openai"
     ai_retry_attempts: int = 3
-    ai_retry_min_wait_seconds: float = 1.0
-    ai_retry_max_wait_seconds: float = 8.0
-    claude_api_key: str | None = None
-    claude_model: str = "claude-sonnet-4-6"
-    openai_api_key: str | None = None
-    openai_model: str = "gpt-4o"
-    openai_embedding_model: str = "text-embedding-3-small"
+    ai_retry_min_wait_seconds: float = 1.5
+    ai_retry_max_wait_seconds: float = 6.0
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model_primary: str = "gemini-2.5-flash"
+    gemini_model_overflow: str = "gemini-2.5-flash-lite"
+    gemini_temperature: float = 0.2
     ollama_base_url: str | None = None
-    ollama_model: str = "llama3"
+    ollama_model_name: str = "qwen3:8b"
+    ollama_temperature: float = 0.15
+
+    @property
+    def ollama_model(self) -> str:
+        return self.ollama_model_name
 
     model_config = SettingsConfigDict(
         env_file=".env",

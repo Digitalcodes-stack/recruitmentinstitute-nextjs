@@ -40,6 +40,14 @@ class AssessmentQuestion(Base):
     question_text: Mapped[str] = mapped_column(Text, nullable=False)
     options: Mapped[list | None] = mapped_column(JSON, nullable=True) # for mcq
     correct_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    explanation: Mapped[str | None] = mapped_column(Text, nullable=True)
+    difficulty: Mapped[str] = mapped_column(String(16), nullable=False, default="medium")
+    bloom_level: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    estimated_time_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    source_chunk_id: Mapped[int | None] = mapped_column(
+        ForeignKey("course_content_embeddings.id", ondelete="SET NULL"), nullable=True
+    )
+    generated_by: Mapped[str] = mapped_column(String(32), nullable=False, default="local_ai")
     points: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
 
 

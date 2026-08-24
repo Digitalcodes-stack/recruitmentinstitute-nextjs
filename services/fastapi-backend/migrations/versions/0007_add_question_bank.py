@@ -8,8 +8,8 @@ Create Date: 2026-06-25
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0007_add_question_bank"
-down_revision = "0006_add_trainer_remarks_and_assessment_reports"
+revision = "0007"
+down_revision = "0006"
 branch_labels = None
 depends_on = None
 

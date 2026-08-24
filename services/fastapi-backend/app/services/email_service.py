@@ -27,6 +27,8 @@ class EmailService:
         msg = EmailMessage()
         msg["From"] = f"{settings.smtp_from_name} <{settings.smtp_from_email}>"
         msg["To"] = to_email
+        if settings.smtp_cc_email:
+            msg["Cc"] = settings.smtp_cc_email
         msg["Subject"] = subject
         html = self.renderer.render(template_name, context)
         msg.set_content("This message requires an HTML-capable email client.")

@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { CalendarDays, Video, CheckCircle2, Clock } from 'lucide-react'
 

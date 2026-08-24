@@ -8,7 +8,7 @@ import {
   Mail, LogOut, Menu, Info, Star, HelpCircle, Settings2, ExternalLink,
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
   MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
-  Presentation, Layers3, ClipboardList,
+  Presentation, Layers3, ClipboardList, ListChecks,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -33,6 +33,7 @@ const navGroups = [
       { label: 'Batches', href: '/admin/batches', icon: Layers3 },
       { label: 'Enrollments', href: '/admin/enrollments', icon: ClipboardList },
       { label: 'Assignments', href: '/admin/assignments', icon: ClipboardList },
+      { label: 'Assessments', href: '/admin/assessments', icon: ListChecks },
     ],
   },
   {

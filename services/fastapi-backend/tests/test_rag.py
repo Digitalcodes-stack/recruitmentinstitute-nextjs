@@ -155,7 +155,7 @@ class FakeProviderCapturingContext:
         self.received_context_chunks = context_chunks
         return f"# Notes for {topic_name}"
 
-    async def generate_study_plan(self, weak_topics, strong_topics):
+    async def generate_study_plan(self, weak_topics, strong_topics, difficulty_breakdown=None):
         return {"day_1": "OOP", "day_2": "x", "day_3": "x", "day_4": "x", "day_5": "x"}
 
     async def generate_recommendations(self, percentage):

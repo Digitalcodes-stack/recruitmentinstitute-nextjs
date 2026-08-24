@@ -140,6 +140,26 @@ export function getAssessmentNotes(studentAssessmentId: number) {
   return fastApiFetch<AIGeneratedNote[]>(`/api/v1/assessment/notes/${studentAssessmentId}`)
 }
 
+export type QuestionBankItem = {
+  id: number
+  assessment_id: number
+  topic_name: string
+  question_text: string
+  option_a: string
+  option_b: string
+  option_c: string
+  option_d: string
+  correct_option: string
+  explanation: string | null
+  difficulty: string
+  sort_order: number
+  student_answer?: string | null
+}
+
+export function getAssessmentTest(studentAssessmentId: number) {
+  return fastApiFetch<QuestionBankItem[]>(`/api/v1/assessment/result/${studentAssessmentId}/test`)
+}
+
 export function getAssessmentStudyPlan(studentAssessmentId: number) {
   return fastApiFetch<StudentStudyPlan>(`/api/v1/assessment/study-plan/${studentAssessmentId}`)
 }

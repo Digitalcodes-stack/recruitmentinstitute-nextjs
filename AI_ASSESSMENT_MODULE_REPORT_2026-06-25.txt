@@ -1,0 +1,431 @@
+================================================================================
+RECRUITMENT INSTITUTE — AI-POWERED ASSESSMENT MODULE
+DEEP DETAIL REPORT — 2026-06-25
+================================================================================
+
+SCOPE OF TODAY'S SESSION
+--------------------------------------------------------------------------------
+Today's work was almost entirely live debugging and quality-fixing of the
+existing AI assessment system, triggered by a real student-facing bug
+report ("not showing assessment" / "No Assessment Available") and two
+follow-up quality complaints about AI-generated notes and the study plan.
+No new endpoints or tables were added today; all changes were targeted
+fixes to logic already in the codebase, verified live against the running
+application and the real Postgres database.
+
+Four issues were investigated and fixed, in this order:
+  1. Course 19 showed "No Assessment Available" on the student page.
+  2. Even after fixing #1, the assessment-taking page still failed
+     ("No Assessment Available" / "no questions yet") for a different,
+     deeper reason.
+  3. AI-Generated Notes for a real student attempt were thin and
+     mechanical, not useful study material.
+  4. The 5-day Personalized Study Plan repeated the exact same sentence
+     on every day when a student had only one weak topic — true for any
+     course/student with a single weak topic, not specific to one course.
+
+This report also corrects several assumptions written into yesterday's
+report (2026-06-24) that turned out to be stale — the codebase has grown
+substantially beyond what was tracked then. Corrections are called out
+explicitly in Part 6.
+
+================================================================================
+PART 1 — BUG #1: "No Assessment Available" for course 19
+================================================================================
+
+1.1 Symptom
+--------------------------------------------------------------------------------
+Browser screenshot showed localhost:3000/profile/courses/19/assessment
+rendering "No Assessment Available — An assessment hasn't been set up for
+this course yet."
+
+1.2 Investigation
+--------------------------------------------------------------------------------
+Traced the call chain: the Next.js page -> AssessmentTaker.tsx component
+-> GET /api/student/assessment/by-course/19 (Next.js route) ->
+lib/fastapiClient.ts's getAssessmentByCourse() -> FastAPI's
+GET /api/v1/assessment/by-course/{course_id}.
+
+Queried the live `assessments` table directly: only 2 rows existed in the
+entire system, for course_id 1 ("Python Fundamentals") and course_id 22
+("HR Basics Test"). Course 19 ("Certification Courses") genuinely had zero
+assessments. This was confirmed to be CORRECT, EXPECTED behavior, not a
+bug — the by-course endpoint correctly returns 404/empty when nothing
+exists for that course.
+
+1.3 Resolution
+--------------------------------------------------------------------------------
+User chose to AI-generate an assessment for course 19 rather than create
+one manually. Logged in as a real trainer (Suresh Bansal, via the actual
+Next.js trainer-login flow) to get a genuine JWT, then called
+POST /api/v1/assessment/generate directly against the running FastAPI
+server with:
+  { "course_id": 19, "name": "Certification Courses Assessment",
+    "topics": ["Recruitment Basics", "HR Fundamentals"],
+    "question_types": ["mcq"], "question_count": 10 }
+
+Result: 201 Created, assessment id=3, 10 questions, total_marks=10,
+duration_minutes=20. Verified live in the database afterward.
+
+Quality caveat flagged to the user at the time: the generated questions
+were mechanical fill-in-the-blank text lifted almost verbatim from the
+course's raw description (no CLAUDE_API_KEY configured, so generation
+silently fell back to a local, non-LLM provider — see Part 6 for the
+corrected understanding of why). User chose to keep the assessment as-is
+rather than delete it, planning to upgrade quality later.
+
+================================================================================
+PART 2 — BUG #2: Assessment created but still not loading for students
+================================================================================
+
+2.1 Symptom
+--------------------------------------------------------------------------------
+After assessment id=3 was created, the same course-19 assessment page
+STILL showed "No Assessment Available" on a second screenshot, even
+though by-course/19 now returned a real assessment record.
+
+2.2 Root cause (genuine architecture bug, not a stale-cache issue)
+--------------------------------------------------------------------------------
+Discovered the codebase has TWO parallel, disconnected question tables:
+
+  - question_bank_items (QuestionBankItem model) — proper MCQ shape:
+    option_a/b/c/d (separate string columns) + correct_option (a single
+    A/B/C/D letter) + sort_order. This is the ONLY table the student-facing
+    flow reads from (GET /{id}/start, POST /{id}/grade-and-submit).
+
+  - assessment_questions (AssessmentQuestion model) — looser shape:
+    options (JSON list) + correct_answer (the answer text, not a letter)
+    + question_type + topic. This is the table POST /generate's AI/RAG
+    pipeline writes to.
+
+POST /generate inserted all 10 questions into assessment_questions only.
+GET /{id}/start reads exclusively from question_bank_items via
+AssessmentRepository.list_questions_for_assessment(). Since no
+question_bank_items rows existed for assessment id=3, /start correctly
+returned 404 "This assessment has no questions yet" — which the frontend
+(components/site/AssessmentTaker.tsx) silently converted into the generic
+"No Assessment Available" state via its catch-all error handling.
+
+Confirmed directly with curl against the live server:
+  GET /api/v1/assessment/3/start -> 404 {"message":"This assessment has
+  no questions yet"}
+despite assessment_questions correctly holding 10 rows for assessment_id=3.
+
+2.3 Fix implemented
+--------------------------------------------------------------------------------
+Modified AssessmentService.generate_assessment() in
+app/services/assessment_service.py so that for every AI-generated
+question it also inserts a matching QuestionBankItem row:
+  - options[0..3] (padded to exactly 4 entries) -> option_a/b/c/d
+  - the index of correct_answer within options -> mapped to a letter
+    (A/B/C/D), defaulting to "A" if not found
+  - sort_order assigned by generation order (enumerate)
+
+Backfilled the 10 already-existing assessment_questions rows for
+assessment id=3 into question_bank_items via a one-off script (not a
+migration — this was existing data needing a one-time correction, not a
+schema change). All 10 backfilled successfully.
+
+2.4 Verification
+--------------------------------------------------------------------------------
+- uv run pytest: 51/51 passed (test suite size confirms the module has
+  grown well beyond the original 7-test baseline from 2026-06-24).
+- Restarted the FastAPI process bound to port 8000 (see Part 6.3 — the
+  previous process was confirmed stale/pre-fix).
+- Live curl test, real student JWT (Rahul Verma, id=11):
+    GET /api/v1/assessment/by-course/19 -> 200, assessment id=3
+    GET /api/v1/assessment/3/start -> 200, 10 full MCQ question objects
+    with option_a..d and sort_order populated correctly.
+- Confirmed fix is durable: question_bank_items count went from 39 to 49
+  rows system-wide after the backfill (39 pre-existing from other
+  assessments/manual entries, +10 from this backfill).
+
+================================================================================
+PART 3 — QUALITY ISSUE #1: Thin, mechanical AI-Generated Notes
+================================================================================
+
+3.1 Symptom
+--------------------------------------------------------------------------------
+Screenshot of localhost:3000/profile/assessments/18/notes showed a single
+short paragraph under "Notes for Course Content" — a summary sentence
+plus a verbatim excerpt of the raw course description as "source
+material referenced." User said this needs "more notes for preparation."
+
+3.2 Root cause
+--------------------------------------------------------------------------------
+LocalAIProvider.generate_notes() (the offline/local fallback provider —
+confirmed to be the one actually serving requests, since no real LLM key
+is configured) only ran a local `transformers` summarization model
+(sshleifer/distilbart-cnn-12-6) over the raw context chunks and returned
+just that single summary paragraph plus a source excerpt. No structure,
+no key points, no glossary — and the underlying source content itself was
+thin (course 19's RAG corpus had only 1 embedded chunk of 347 characters,
+since only the course description had been synced, not any real lesson
+content).
+
+3.3 Fix implemented
+--------------------------------------------------------------------------------
+Rewrote LocalAIProvider.generate_notes() in
+app/services/ai/providers/local_ai_provider.py to produce three sections
+instead of one:
+  - Summary (unchanged mechanism — local summarization model)
+  - Key Points to Remember — new: uses KeyBERT (already an installed but
+    previously unused dependency, app/services/ai/local_models.py's
+    get_keybert_model()) to extract keyphrases, then anchors each
+    keyphrase to the actual sentence containing it in the source text, so
+    points read as real sentences rather than bare keyword fragments.
+  - Key Terms — new: uses spaCy (also already installed,
+    get_spacy_model()) to extract recurring noun chunks (1-4 words,
+    frequency-ranked) as a quick-reference glossary.
+
+Added three new helper functions: _extract_key_points(),
+_extract_glossary(), _build_study_notes() (orchestrates summary + key
+points + glossary in one call). Existing _summarize_text() unchanged.
+
+3.4 Verification
+--------------------------------------------------------------------------------
+- Ran the updated generate_notes() directly against course 19's real
+  (thin) stored content — confirmed it now returns all three sections
+  with real content in each, not empty/placeholder sections.
+- uv run pytest: 51/51 passed (no existing test asserted the old
+  single-paragraph shape, so no test updates were needed for this part).
+- Regenerated and overwrote the live ai_generated_notes row (id=12, for
+  student_assessment id=18, Priya Sharma's real attempt on course 19's
+  assessment) using the real stored RAG context for that attempt, via
+  RetrievalService.retrieve(course_id=19). Confirmed the update committed
+  to the database.
+
+3.5 Honest limitation flagged to the user
+--------------------------------------------------------------------------------
+Because the underlying source text for course 19 is still just a
+347-character course outline (no real lesson prose ever synced), even the
+improved extractor surfaces somewhat mechanical phrase fragments rather
+than naturally-written study points. The structural improvement (organized
+sections, anchored key points, glossary) is real and durable; output
+quality will improve further once either (a) richer course content is
+synced into the RAG corpus, or (b) a real LLM provider is configured
+instead of the local fallback.
+
+================================================================================
+PART 4 — QUALITY ISSUE #2: Repetitive 5-day Study Plan
+================================================================================
+
+4.1 Symptom
+--------------------------------------------------------------------------------
+Screenshot of localhost:3000/profile/assessments/18/study-plan showed all
+of Day 1 through Day 4 containing the IDENTICAL sentence: "Focus on
+'Course Content': review notes, work through practice questions, and
+revisit weak areas." User asked for this to be "proper" and to differ
+"for all different courses."
+
+4.2 Root cause
+--------------------------------------------------------------------------------
+LocalAIProvider.generate_study_plan() round-robinned through the list of
+weak_topics, printing one fixed template sentence per day
+(f"Focus on '{topic}': review notes, work through practice questions, and
+revisit weak areas."). With only one weak topic — the common case for a
+short assessment — every day before the final "comprehensive review" day
+produced byte-for-byte identical text. The function also never received
+per-topic score/difficulty data at all; AssessmentService.submit() only
+ever passed topic NAMES (weak_topics, strong_topics), never the
+percentage each topic was scored at, even though that data
+(PerformanceAnalysis.difficulty_breakdown) was already computed and
+available at the call site.
+
+4.3 Fix implemented
+--------------------------------------------------------------------------------
+Two-part fix, in app/services/ai/base.py and
+app/services/ai/providers/local_ai_provider.py, plus a threading change in
+app/services/assessment_service.py:
+
+(a) Widened the AIProvider interface: generate_study_plan() now accepts
+    an optional third parameter, difficulty_breakdown: dict[str, float] |
+    None = None. Added this parameter (as a no-op passthrough) to every
+    other provider implementation for interface consistency: claude_provider.py,
+    openai_provider.py, gemini_provider.py, local_llm_provider.py,
+    mock_provider.py, and the retry wrapper reliable_provider.py.
+
+(b) assessment_service.py's submit() now passes
+    analysis_result.difficulty_breakdown as the third argument when
+    calling provider.generate_study_plan(), so the data was already being
+    computed — it just wasn't being used downstream until today.
+
+(c) Rewrote LocalAIProvider.generate_study_plan() with two new helper
+    functions:
+      _build_mastery_plan() — used when there are no weak topics at all;
+      5 distinct activities (advanced review, scenario-based practice,
+      teach-back, real-world application, timed mock test) instead of one
+      repeated sentence.
+      _build_remediation_plan() — used when weak topics exist; allocates
+      MORE days to topics that scored LOWER (weight = 100 - percentage,
+      defaulting to 50 if no score data given), cycles through 4 distinct
+      remediation activities (rewrite notes in your own words, targeted
+      practice + review mistakes, teach the topic aloud, timed quiz) so
+      consecutive days on the same topic still differ in what to actually
+      DO, and shows the real score inline, e.g. "(you scored 20% on this
+      topic)". The final day is always a comprehensive cross-topic review
+      ending in a full practice test.
+
+4.4 Verification
+--------------------------------------------------------------------------------
+- uv run pytest: initial run surfaced 7 failures — all from test fakes
+  with a fixed 2-argument generate_study_plan() signature, broken by the
+  interface widening (calling code now always passes 3 positional args).
+  Fixed by adding difficulty_breakdown=None to the fake's signature in:
+  tests/test_rag.py, tests/test_question_bank.py (two separate fakes in
+  that file), tests/test_workflows.py. One additional real test failure
+  (test_generate_study_plan_returns_five_day_shape_with_no_weak_topics)
+  caught a genuine regression — the new _build_mastery_plan() activities
+  list didn't mention the strong topic on every single day as the test
+  (correctly) expected; fixed by ensuring every mastery-plan activity
+  string references the strong topics.
+- Re-ran full suite after fixes: 51/51 passed.
+- Restarted the live FastAPI server (again confirmed the previous PID
+  bound to port 8000 was stale — see Part 6.3).
+- Regenerated the live study plan for student_assessment id=18 using the
+  REAL stored analysis data for that attempt (weak_topics=["Course
+  Content"], strong_topics=[], difficulty_breakdown={"Course Content":
+  20.0}) and overwrote student_study_plans row id=6 in the database.
+  Confirmed each of the 5 days now contains distinct text:
+    Day 1: rewrite key points in your own words (mentions 20% score)
+    Day 2: practice questions + flag mistakes (mentions 20% score)
+    Day 3: teach the topic aloud (mentions 20% score)
+    Day 4: timed quiz + review mistakes (mentions 20% score)
+    Day 5: comprehensive review + full practice test
+
+================================================================================
+PART 5 — FILES CHANGED TODAY
+================================================================================
+Modified (verified via git diff --stat, services/fastapi-backend/):
+  app/services/ai/base.py                              (+2/-1)
+  app/services/ai/providers/claude_provider.py          (+2/-1)
+  app/services/ai/providers/gemini_provider.py          (+2/-1)
+  app/services/ai/providers/local_ai_provider.py        (+139/-26)  <- main change
+  app/services/ai/providers/local_llm_provider.py       (+2/-1)
+  app/services/ai/providers/mock_provider.py            (+2/-1)
+  app/services/ai/providers/openai_provider.py          (+2/-1)
+  app/services/ai/reliable_provider.py                  (+5/-3)
+  app/services/assessment_service.py                    (+22/-8)
+  tests/test_question_bank.py                           (+2/-2)
+  tests/test_rag.py                                      (+1/-1)
+  tests/test_workflows.py                                (+1/-1)
+
+New (untracked):
+  docs/AI_ASSESSMENT_MODULE_NOTES.md   (deep reference notes on the whole
+                                         module — written in the prior
+                                         session today, not a code file)
+
+Database-only changes (no migration; data corrections, not schema):
+  - assessments: +1 row (id=3, course 19, via /generate)
+  - assessment_questions: +10 rows (id=3's AI-generated questions)
+  - question_bank_items: +10 rows (backfilled from the above)
+  - ai_generated_notes: 1 row overwritten (id=12, richer notes content)
+  - student_study_plans: 1 row overwritten (id=6, varied 5-day plan)
+
+No Alembic migration was created or needed today — every fix was either
+application logic or one-off data correction, not a schema change.
+
+================================================================================
+PART 6 — CORRECTIONS TO PRIOR DAY'S REPORT (2026-06-24)
+================================================================================
+Investigating these bugs required reading much more of the current
+codebase than was in memory from yesterday, and surfaced several stale
+assumptions worth correcting for the record:
+
+6.1 Default AI provider is "local_ai", not "claude"
+--------------------------------------------------------------------------------
+get_ai_provider() in app/services/ai/ai_service.py defaults to
+settings.ai_provider or "local_ai" — NOT "claude" as previously assumed.
+The system is deliberately designed to function with zero external API
+keys via LocalAIProvider (fully offline: rule-based analysis, local
+transformers summarization, local NLP-based question generation via
+KeyBERT/spaCy/sentence-transformers/FAISS). This explains why generation
+calls "succeeded" yesterday and today despite CLAUDE_API_KEY being blank
+— there was never an error to surface; the system was working exactly as
+designed, just producing template/rule-based output rather than
+generative-AI output.
+
+6.2 The module is far larger than tracked
+--------------------------------------------------------------------------------
+Alembic head is now 0008_add_assessment_questions_and_answers (5 migrations
+beyond the 0004 baseline from yesterday's report). Confirmed-real,
+previously untracked components found today:
+  - A full offline RAG pipeline: content sync from Prisma's
+    courses/lessons/FAQs/knowledge-base (ContentSyncService), chunking +
+    embedding (sentence-transformers, all-MiniLM-L6-v2), FAISS vector
+    search per course (RAGService), and a second, separately-implemented
+    retrieval class (RetrievalService) used specifically by the
+    notes-regeneration path.
+  - PDF report generation via reportlab (ReportService) plus an async
+    Celery task (generate_assessment_report) with status tracking
+    (assessment_reports table: generating/ready/failed).
+  - Trainer analytics endpoints and AI-generated trainer recommendations
+    (generate_trainer_recommendations on every provider).
+  - A reliability wrapper (ReliableAIProvider) that retries each provider
+    with exponential backoff (tenacity) before falling through an ordered
+    fallback chain (AI_PROVIDER_FALLBACK_ORDER).
+  - A MockProvider used specifically for deterministic test fixtures.
+This is now fully documented in
+services/fastapi-backend/docs/AI_ASSESSMENT_MODULE_NOTES.md.
+
+6.3 Stale background server processes — recurring debugging hazard
+--------------------------------------------------------------------------------
+For the third time across these sessions, a uvicorn process remained
+bound to port 8000 serving pre-fix code, while being completely invisible
+to ps / wmic / Get-Process from the current shell (started in an earlier,
+now-detached context). Each time, this produced a confusing "the fix
+isn't working" false signal until a fresh process was started and
+verified. This is now an explicit checklist item in
+AI_ASSESSMENT_MODULE_NOTES.md section 9.4: after any backend code change,
+explicitly verify which PID owns port 8000 and that it actually corresponds
+to a live, currently-running process before trusting a live test result.
+
+================================================================================
+PART 7 — CURRENT LIVE STATE (verified at time of this report)
+================================================================================
+- uv run pytest: 51 passed, 0 failed.
+- Alembic head: 0008_add_assessment_questions_and_answers.
+- Table row counts: assessments=3, student_assessments=6,
+  assessment_questions=10, assessment_answers=0, question_bank_items=49,
+  ai_assessment_analysis=6, ai_generated_notes=12, student_study_plans=6,
+  assessment_reports=5, course_content_embeddings=164.
+- A fresh, verified-current FastAPI process is running on port 8000.
+- AI_PROVIDER is effectively "local_ai" (default) for all live traffic —
+  CLAUDE_API_KEY and all other external provider keys remain blank in
+  .env. All AI output (questions, analysis, notes, study plans,
+  recommendations) is currently produced by rule-based/local-model logic,
+  not a generative LLM.
+- Course 19's assessment (id=3) is now fully functional end-to-end:
+  discoverable via by-course, startable via /start with real MCQ-shaped
+  questions, and submittable via /grade-and-submit.
+- Student_assessment id=18 (Priya Sharma, course 19) now has both richer
+  notes and a properly varied 5-day study plan reflecting today's fixes.
+
+================================================================================
+PART 8 — OUTSTANDING / NOT YET DONE
+================================================================================
+1. No real LLM provider is configured. All "AI-generated" content remains
+   rule-based/local-model output until a real CLAUDE_API_KEY (or another
+   provider's key) is set AND AI_PROVIDER is explicitly set to that
+   provider — local_ai wins by default otherwise.
+2. Course 19's RAG corpus is still thin (1 chunk, 347 characters). Real
+   lesson content for this course has not been synced. Notes/question
+   quality for this course specifically will remain limited until either
+   richer content is synced or a real LLM is configured.
+3. The two-table question split (question_bank_items vs
+   assessment_questions) was patched at the generation call site today,
+   but the underlying duplication still exists architecturally. Any
+   FUTURE code path that creates questions by a different route must
+   remember to also populate question_bank_items, or risk reintroducing
+   today's bug #2. Flagged explicitly in
+   AI_ASSESSMENT_MODULE_NOTES.md section 9.3.
+4. assessment_answers table exists with 0 rows — not investigated today;
+   unclear if it's actively used by any current code path or a
+   leftover/future-use table from migration 0008.
+5. Trainer analytics endpoints (trainer_analytics.py) were noted to exist
+   but not exercised or verified today — out of scope for this session's
+   bug fixes.
+
+================================================================================
+END OF REPORT
+================================================================================

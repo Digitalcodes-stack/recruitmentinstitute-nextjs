@@ -8,8 +8,8 @@ Create Date: 2026-06-24
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0003_add_placement_tracking_notified_at"
-down_revision = "0002_sprint0_repoint_and_drop_debt"
+revision = "0003"
+down_revision = "0002"
 branch_labels = None
 depends_on = None
 

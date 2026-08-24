@@ -8,8 +8,8 @@ Create Date: 2026-06-24
 from alembic import op
 import sqlalchemy as sa
 
-revision = "0002_sprint0_repoint_and_drop_debt"
-down_revision = "0001_initial"
+revision = "0002"
+down_revision = "0001"
 branch_labels = None
 depends_on = None
 

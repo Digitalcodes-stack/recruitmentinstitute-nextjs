@@ -17,6 +17,12 @@ export type QuestionBankItem = {
   option_c: string
   option_d: string
   correct_option: 'A' | 'B' | 'C' | 'D'
+  explanation: string | null
+  difficulty: 'easy' | 'medium' | 'hard'
+  bloom_level: string | null
+  estimated_time_seconds: number | null
+  source_chunk_id: number | null
+  generated_by: string
   sort_order: number
   created_at: string
 }
@@ -29,6 +35,12 @@ export type QuestionBankItemInput = {
   option_c: string
   option_d: string
   correct_option: 'A' | 'B' | 'C' | 'D'
+  explanation?: string
+  difficulty?: 'easy' | 'medium' | 'hard'
+  bloom_level?: string
+  estimated_time_seconds?: number
+  source_chunk_id?: number
+  generated_by?: string
   sort_order?: number
 }
 
@@ -41,6 +53,21 @@ export function createAssessment(courseId: number, assessmentName: string, total
       total_marks: totalMarks,
       duration_minutes: durationMinutes,
     }),
+  })
+}
+
+export type GenerateAssessmentInput = {
+  course_id: number
+  name?: string
+  topics?: string[]
+  question_types?: string[]
+  question_count?: number
+}
+
+export function generateAssessment(input: GenerateAssessmentInput) {
+  return adminFetch<AssessmentSummary>('/api/v1/assessment/generate', {
+    method: 'POST',
+    body: JSON.stringify(input),
   })
 }
 

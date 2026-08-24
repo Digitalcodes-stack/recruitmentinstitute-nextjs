@@ -51,6 +51,8 @@ _NLTK_RESOURCES = (
     ("tokenizers/punkt_tab", "punkt_tab"),
     ("taggers/averaged_perceptron_tagger", "averaged_perceptron_tagger"),
     ("taggers/averaged_perceptron_tagger_eng", "averaged_perceptron_tagger_eng"),
+    ("corpora/wordnet", "wordnet"),
+    ("corpora/omw-1.4", "omw-1.4"),
 )
 
 

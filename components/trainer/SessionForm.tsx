@@ -21,6 +21,7 @@ export default function SessionForm({ batches }: { batches: BatchOption[] }) {
   const [sessionDate, setSessionDate] = useState('')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
+  const [meetLink, setMeetLink] = useState('')
 
   const selectedBatch = useMemo(() => batches.find((b) => b.id === batchId) ?? null, [batches, batchId])
 
@@ -45,6 +46,7 @@ export default function SessionForm({ batches }: { batches: BatchOption[] }) {
           sessionDate,
           startTime: startIso,
           endTime: endIso,
+          meetLink: meetLink || null,
           status: 'UPCOMING',
         }),
       })
@@ -54,6 +56,7 @@ export default function SessionForm({ batches }: { batches: BatchOption[] }) {
       router.refresh()
       setDescription('')
       setTitle('Training Session')
+      setMeetLink('')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Could not create session')
     } finally {
@@ -112,6 +115,20 @@ export default function SessionForm({ batches }: { batches: BatchOption[] }) {
             End Time
           </span>
           <input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #dbe4ee', fontSize: 13 }} />
+        </label>
+
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 6, gridColumn: '1 / -1' }}>
+          <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#94a3b8' }}>
+            <Video style={{ width: 12, height: 12, display: 'inline-block', marginRight: 6 }} />
+            Meeting Link (Optional)
+          </span>
+          <input
+            type="url"
+            value={meetLink}
+            onChange={(e) => setMeetLink(e.target.value)}
+            placeholder="e.g. https://meet.google.com/abc-defg-hij or a Zoom link"
+            style={{ padding: '11px 12px', borderRadius: 12, border: '1px solid #dbe4ee', fontSize: 13 }}
+          />
         </label>
       </div>
 

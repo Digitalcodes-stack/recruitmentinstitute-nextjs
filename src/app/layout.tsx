@@ -3,6 +3,9 @@ import { Poppins } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
 
+// All pages fetch live data — skip static generation at build time
+export const dynamic = 'force-dynamic'
+
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700', '800'],

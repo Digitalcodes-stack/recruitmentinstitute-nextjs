@@ -10,7 +10,7 @@ export async function POST(
     const payload = await request.json()
     const result = await fastApiFetchWithCookie<any>(
       'ri_user_token',
-      `/api/v1/assessments/${id}/grade-and-submit`,
+      `/api/v1/assessment/${id}/grade-and-submit`,
       {
         method: 'POST',
         headers: {
@@ -19,10 +19,10 @@ export async function POST(
         body: JSON.stringify(payload)
       }
     )
-    return NextResponse.json(result)
+    return NextResponse.json({ success: true, data: result })
   } catch (error: any) {
     return NextResponse.json(
-      { message: error.message || 'Failed to submit assessment' },
+      { success: false, message: error.message || 'Failed to submit assessment' },
       { status: error.status || 500 }
     )
   }

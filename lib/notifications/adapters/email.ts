@@ -11,12 +11,14 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'noreply@recruitmentinstitute.in'}>`
+const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'support@recruitmentinstitute.in'}>`
+const EMAIL_CC = process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
 
 export async function sendEmailAdapter(recipient: NotificationRecipient): Promise<{ providerMessageId: string }> {
   const info = await transporter.sendMail({
     from: FROM,
     to: recipient.address,
+    cc: EMAIL_CC,
     subject: recipient.renderedSubject || 'Notification',
     html: recipient.renderedBody,
   })

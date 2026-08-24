@@ -3,6 +3,7 @@ import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import TrainerLayout from '@/components/trainer/TrainerLayout'
 import SessionForm from '@/components/trainer/SessionForm'
+import TrainerSessionList from '@/components/trainer/TrainerSessionList'
 import { CalendarDays, Video, Users, Clock3 } from 'lucide-react'
 
 export default async function TrainerSessionsPage() {
@@ -21,7 +22,7 @@ export default async function TrainerSessionsPage() {
     prisma.session.findMany({
       where: { trainerId: session.userId },
       include: {
-        batch: { select: { name: true, course: { select: { title: true } } } },
+        batch: { select: { id: true, name: true, course: { select: { title: true } } } },
       },
       orderBy: [{ sessionDate: 'desc' }, { startTime: 'desc' }],
       take: 20,
@@ -60,27 +61,11 @@ export default async function TrainerSessionsPage() {
           {sessions.length === 0 ? (
             <p style={{ fontSize: 13, color: '#94a3b8' }}>No sessions created yet.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {sessions.map((s) => (
-                <div key={s.id} style={{ padding: '10px 14px', background: '#f8fafc', borderRadius: 12, border: '1px solid #f1f5f9' }}>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{s.title}</p>
-                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 3 }}>
-                    {s.batch.course.title} · {s.batch.name} · {new Date(s.sessionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </p>
-                  <p style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
-                    {new Date(s.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} - {new Date(s.endTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })} · {s.status}
-                  </p>
-                  {s.meetLink ? (
-                    <a href={s.meetLink} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#2563eb', marginTop: 6, textDecoration: 'none', fontWeight: 600 }}>
-                      Open Meet
-                    </a>
-                  ) : null}
-                </div>
-              ))}
-            </div>
+            <TrainerSessionList sessions={sessions} batches={batches} />
           )}
         </div>
       </div>
     </TrainerLayout>
   )
 }
+

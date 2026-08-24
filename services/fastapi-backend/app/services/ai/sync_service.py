@@ -4,7 +4,17 @@ from dataclasses import dataclass
 from app.models.content_embedding import CourseContentEmbedding
 from app.repositories.content_repository import ContentRepository
 from app.repositories.embedding_repository import EmbeddingRepository
-from app.services.ai.embeddings import chunk_text, embed_texts, strip_html
+from app.services.ai.embeddings import chunk_text, embed_texts, extract_semantic_blocks, strip_html
+
+
+def _to_indexable_text(html: str | None) -> str:
+    """Outline-style content (heading + bullet list) is merged per-heading
+    via extract_semantic_blocks so short bullets keep their module context;
+    prose content without that structure falls back to flat strip_html."""
+    blocks = extract_semantic_blocks(html)
+    if blocks:
+        return "\n\n".join(blocks)
+    return strip_html(html)
 
 
 @dataclass
@@ -17,14 +27,14 @@ class ContentSyncService:
 
         courses = await self.content_repo.list_courses()
         for course in courses:
-            description = strip_html(course["description"])
+            description = _to_indexable_text(course["description"])
             if description:
                 await self._sync_source("course", course["id"], description, course["id"], stats)
                 stats["courses"] += 1
 
         for course in courses:
             for lesson in await self.content_repo.list_lessons_for_course(course["id"]):
-                body = strip_html(lesson["body_html"])
+                body = _to_indexable_text(lesson["body_html"])
                 if body:
                     await self._sync_source("lesson", lesson["id"], body, course["id"], stats)
                     stats["lessons"] += 1

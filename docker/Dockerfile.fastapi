@@ -1,0 +1,75 @@
+# ── Stage 1: Builder — install deps + bake ML models ─────────────────────────
+FROM python:3.11-slim AS builder
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential gcc g++ git curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /install_tmp
+
+COPY services/fastapi-backend/requirements.txt .
+
+# Install into /install prefix
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# Use PYTHONPATH so prefix packages are importable for model downloads
+ENV PYTHONPATH=/install/lib/python3.11/site-packages
+
+# Download spaCy model
+RUN PYTHONPATH=/install/lib/python3.11/site-packages /install/bin/python3 -m spacy download en_core_web_sm || \
+    python3 -m spacy download en_core_web_sm
+
+# Pre-download sentence-transformers model
+RUN PYTHONPATH=/install/lib/python3.11/site-packages python3 -c \
+    "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
+
+# Download NLTK data
+RUN PYTHONPATH=/install/lib/python3.11/site-packages python3 -c \
+    "import nltk; nltk.download('punkt'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('averaged_perceptron_tagger'); nltk.download('punkt_tab')"
+
+# ── Stage 2: Production runtime ──────────────────────────────────────────────
+FROM python:3.11-slim AS runner
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user early so we can set up home dir
+RUN addgroup --system --gid 1001 appgroup && \
+    adduser --system --uid 1001 --ingroup appgroup --home /home/appuser appuser && \
+    mkdir -p /home/appuser/.cache /home/appuser/nltk_data
+
+WORKDIR /app
+
+# Copy installed packages from builder into system python paths
+COPY --from=builder /install /usr/local
+
+# Copy app source — WORKDIR /app IS the FastAPI project root
+COPY services/fastapi-backend/ .
+
+# Copy cached ML models to appuser home (writable by appuser)
+COPY --from=builder /root/.cache /home/appuser/.cache
+COPY --from=builder /root/nltk_data /home/appuser/nltk_data
+
+RUN chown -R appuser:appgroup /app /home/appuser
+
+USER appuser
+
+# WORKDIR /app means `app` package (app/main.py) and `alembic/` are both on the path
+ENV HOME=/home/appuser
+ENV TRANSFORMERS_CACHE=/home/appuser/.cache/huggingface
+ENV SENTENCE_TRANSFORMERS_HOME=/home/appuser/.cache/sentence_transformers
+ENV NLTK_DATA=/home/appuser/nltk_data
+
+EXPOSE 8000
+
+# Use python3 -m alembic to avoid the local /app/alembic/ directory shadowing the installed alembic package.
+# PYTHONPATH=. lets `from app.xxx import yyy` resolve from /app without conflicting with system alembic.
+# site-packages must come BEFORE /app in PYTHONPATH so the installed `alembic` package takes priority
+# over the local /app/alembic/ migrations directory. /app is still needed for `from app.xxx import yyy`.
+# Run alembic from a temp dir so /app/alembic/ doesn't shadow the installed alembic package via CWD.
+# PYTHONPATH=/app lets env.py do `from app.core.config import settings`.
+# Then cd back to /app for uvicorn.
+# The alembic/ dir was renamed to migrations/ to prevent it shadowing the installed alembic package.
+# PYTHONPATH=/app lets `from app.xxx import yyy` resolve in alembic env.py and at runtime.
+CMD ["sh", "-c", "PYTHONPATH=/app alembic upgrade head && PYTHONPATH=/app uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1"]
