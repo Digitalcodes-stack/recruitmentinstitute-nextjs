@@ -431,17 +431,36 @@ export async function sendSessionCancelledEmail(data: {
   sessionDate: string
   startTime: string
 }) {
+export async function sendPaymentConfirmationEmail(data: {
+  studentEmail: string
+  studentName: string
+  courseTitle: string
+  amount: number
+  transactionId: string
+  invoiceNumber: string
+}) {
   await sendMail({
     from: FROM,
     to: data.studentEmail,
-    subject: `Session Cancelled: ${data.sessionTitle}`,
+    subject: `Enrollment Confirmed: ${data.courseTitle} - Recruitment Institute`,
     html: `
-      <h2>Training Session Cancelled</h2>
-      <p>Hi ${data.studentName},</p>
-      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}), originally scheduled for ${data.sessionDate} at ${data.startTime}, has been cancelled.</p>
-      <p>It has also been removed from your Google Calendar.</p>
-      <br/>
-      <p>Best regards,<br/>Recruitment Institute Team</p>
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
+        <h2 style="color: #E63946;">Welcome to Recruitment Institute!</h2>
+        <p>Hi <strong>${data.studentName}</strong>,</p>
+        <p>Your payment of <strong>₹${Number(data.amount).toLocaleString('en-IN')}</strong> has been successfully processed via Razorpay.</p>
+        <p><strong>Course Enrolled:</strong> ${data.courseTitle}</p>
+        <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
+        <p><strong>Invoice Number:</strong> ${data.invoiceNumber}</p>
+        <br/>
+        <p>You can now log in to your Student Portal to access your learning schedule, study materials, and live batches:</p>
+        <a href="https://recruitmentinstitute.in/student-login" style="background-color: #E63946; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Access Student Dashboard</a>
+        <br/><br/>
+        <p>If you have any questions, reply to this email or message our support team on WhatsApp at +91 7385204165.</p>
+        <p>Best regards,<br/><strong>Recruitment Institute Admissions Team</strong></p>
+      </div>
     `,
   })
 }
+
+export { sendMail }
+

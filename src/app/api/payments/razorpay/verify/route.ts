@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyRazorpayPaymentSignature } from '@/lib/razorpay'
-import { sendEmail } from '@/lib/email'
+import { sendPaymentConfirmationEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -128,25 +128,13 @@ export async function POST(req: NextRequest) {
     // 7. Send confirmation email
     try {
       if (student.email) {
-        await sendEmail({
-          to: student.email,
-          subject: `Enrollment Confirmed: ${course.title} - Recruitment Institute`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
-              <h2 style="color: #E63946;">Welcome to Recruitment Institute!</h2>
-              <p>Hi <strong>${student.name}</strong>,</p>
-              <p>Your payment of <strong>₹${Number(feeAccount.finalFee).toLocaleString('en-IN')}</strong> has been successfully processed via Razorpay.</p>
-              <p><strong>Course Enrolled:</strong> ${course.title}</p>
-              <p><strong>Transaction ID:</strong> ${razorpay_payment_id}</p>
-              <p><strong>Invoice Number:</strong> ${invoiceNumber}</p>
-              <br/>
-              <p>You can now log in to your Student Portal to access your learning schedule, study materials, and live batches:</p>
-              <a href="https://recruitmentinstitute.in/student-login" style="background-color: #E63946; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Access Student Dashboard</a>
-              <br/><br/>
-              <p>If you have any questions, reply to this email or message our support team on WhatsApp at +91 7385204165.</p>
-              <p>Best regards,<br/><strong>Recruitment Institute Admissions Team</strong></p>
-            </div>
-          `,
+        await sendPaymentConfirmationEmail({
+          studentEmail: student.email,
+          studentName: student.name,
+          courseTitle: course.title,
+          amount: Number(feeAccount.finalFee),
+          transactionId: razorpay_payment_id,
+          invoiceNumber,
         })
       }
     } catch (emailErr) {
