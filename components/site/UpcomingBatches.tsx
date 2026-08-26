@@ -19,6 +19,7 @@ import {
 import { BatchItem, UpcomingBatchesProps } from '@/types/training'
 import { DEFAULT_BATCHES } from '@/lib/data/trainingData'
 import EnquiryModal from '@/components/home/EnquiryModal'
+import RazorpayCheckoutModal from '@/components/payments/RazorpayCheckoutModal'
 
 export default function UpcomingBatches({
   batches = DEFAULT_BATCHES,
@@ -28,7 +29,7 @@ export default function UpcomingBatches({
   defaultFilter = 'ALL',
 }: UpcomingBatchesProps) {
   const [selectedMode, setSelectedMode] = useState<'ALL' | 'ONLINE' | 'OFFLINE' | 'HYBRID'>(defaultFilter)
-  const [enquiryOpen, setEnquiryOpen] = useState(false)
+  const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [selectedBatch, setSelectedBatch] = useState<BatchItem | null>(null)
   const [showAll, setShowAll] = useState(false)
 
@@ -46,7 +47,7 @@ export default function UpcomingBatches({
 
   const handleEnrollClick = (batch: BatchItem) => {
     setSelectedBatch(batch)
-    setEnquiryOpen(true)
+    setCheckoutOpen(true)
   }
 
   const getModeBadge = (mode: 'ONLINE' | 'OFFLINE' | 'HYBRID') => {
@@ -350,14 +351,23 @@ export default function UpcomingBatches({
         </div>
       </div>
 
-      {/* Quick Batch Enrollment Enquiry Modal */}
-      <EnquiryModal
-        isOpen={enquiryOpen}
-        onClose={() => {
-          setEnquiryOpen(false)
-          setSelectedBatch(null)
-        }}
-      />
+      {/* Razorpay Instant Checkout Modal */}
+      {selectedBatch && (
+        <RazorpayCheckoutModal
+          isOpen={checkoutOpen}
+          onClose={() => {
+            setCheckoutOpen(false)
+            setSelectedBatch(null)
+          }}
+          courseId={selectedBatch.courseId}
+          courseTitle={selectedBatch.courseTitle}
+          batchId={selectedBatch.id}
+          batchName={selectedBatch.name}
+          batchSchedule={selectedBatch.schedule}
+          originalPrice={selectedBatch.originalPrice}
+          discountedPrice={selectedBatch.discountedPrice}
+        />
+      )}
     </section>
   )
 }
