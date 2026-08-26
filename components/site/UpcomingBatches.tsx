@@ -15,16 +15,18 @@ import {
   ChevronRight,
   ShieldCheck,
   Zap,
+  Sparkles,
+  Award,
+  BookOpen,
 } from 'lucide-react'
 import { BatchItem, UpcomingBatchesProps } from '@/types/training'
 import { DEFAULT_BATCHES } from '@/lib/data/trainingData'
-import EnquiryModal from '@/components/home/EnquiryModal'
 import RazorpayCheckoutModal from '@/components/payments/RazorpayCheckoutModal'
 
 export default function UpcomingBatches({
   batches = DEFAULT_BATCHES,
-  title = 'Upcoming Batches',
-  subtitle = 'Limited seats • Live Online + Offline options • New batches every month',
+  title = 'Upcoming Live Batches',
+  subtitle = 'Industry-accredited cohorts with weekend & evening schedules • Limited to 25 learners per batch',
   showAllButton = true,
   defaultFilter = 'ALL',
 }: UpcomingBatchesProps) {
@@ -50,266 +52,261 @@ export default function UpcomingBatches({
     setCheckoutOpen(true)
   }
 
-  const getModeBadge = (mode: 'ONLINE' | 'OFFLINE' | 'HYBRID') => {
+  const formatPrice = (p: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(p)
+  }
+
+  const getModeInfo = (mode: 'ONLINE' | 'OFFLINE' | 'HYBRID') => {
     switch (mode) {
       case 'ONLINE':
         return {
-          label: 'Live Online',
+          label: 'Live Online Cohort',
           icon: <Laptop className="w-3.5 h-3.5" />,
-          bg: 'bg-sky-50 text-sky-700 border-sky-200/80',
-          dot: 'bg-sky-500',
+          badgeClass: 'bg-sky-50 text-sky-700 border-sky-200/80',
+          accentBorder: 'from-sky-500 to-blue-600',
+          dotClass: 'bg-sky-500',
         }
       case 'OFFLINE':
         return {
           label: 'Pune Classroom',
           icon: <Building2 className="w-3.5 h-3.5" />,
-          bg: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-          dot: 'bg-emerald-500',
+          badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+          accentBorder: 'from-emerald-500 to-teal-600',
+          dotClass: 'bg-emerald-500',
         }
       case 'HYBRID':
         return {
-          label: 'Hybrid Cohort',
+          label: 'Executive Hybrid',
           icon: <Layers className="w-3.5 h-3.5" />,
-          bg: 'bg-purple-50 text-purple-700 border-purple-200/80',
-          dot: 'bg-purple-500',
+          badgeClass: 'bg-purple-50 text-purple-700 border-purple-200/80',
+          accentBorder: 'from-purple-500 to-indigo-600',
+          dotClass: 'bg-purple-500',
         }
     }
   }
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
-      maximumFractionDigits: 0,
-    }).format(price)
-  }
-
   return (
-    <section className="py-16 sm:py-24 bg-[#F8FAFC] border-y border-slate-200/80">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-700 mb-4">
-            <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse" />
-            <span className="text-xs font-bold uppercase tracking-wider">Live Cohort Admissions</span>
+    <section className="py-20 bg-gradient-to-b from-white via-slate-50/60 to-white relative overflow-hidden" id="upcoming-batches">
+      {/* Background Decorative Lighting */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-slate-100/50 to-transparent pointer-events-none -z-10" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ── HEADER ─────────────────────────────────────────────────── */}
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 border border-red-100 text-[#E63946] text-xs font-extrabold uppercase tracking-wider mb-3.5 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-[#E63946] animate-ping inline-block" />
+            <span>2025–2026 Admissions Open</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight mb-4">
-            {title} <span className="text-red-600">2025–2026</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight leading-tight mb-4">
+            Upcoming <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-600">Batches</span> & Cohorts
           </h2>
 
-          <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
             {subtitle}
           </p>
 
-          {/* Clean Filter Tabs */}
-          <div className="flex flex-wrap items-center justify-center gap-2 mt-8 p-1.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs max-w-fit mx-auto">
-            {[
-              { id: 'ALL', label: 'All Batches' },
-              { id: 'ONLINE', label: 'Live Online' },
-              { id: 'OFFLINE', label: 'Pune Classroom' },
-              { id: 'HYBRID', label: 'Hybrid Cohorts' },
-            ].map((tab) => {
-              const active = selectedMode === tab.id
-              return (
+          {/* ── SEGMENTED FILTER CONTROLS ───────────────────────────── */}
+          <div className="mt-8 inline-flex p-1.5 rounded-2xl bg-slate-200/60 backdrop-blur-xs border border-slate-200/80 shadow-inner max-w-full overflow-x-auto">
+            <div className="flex items-center gap-1">
+              {[
+                { id: 'ALL', label: 'All Cohorts', count: rawBatches.length },
+                { id: 'ONLINE', label: 'Live Online', count: rawBatches.filter((b) => b.mode === 'ONLINE').length },
+                { id: 'OFFLINE', label: 'Pune Classroom', count: rawBatches.filter((b) => b.mode === 'OFFLINE').length },
+                { id: 'HYBRID', label: 'Hybrid Tracks', count: rawBatches.filter((b) => b.mode === 'HYBRID').length },
+              ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setSelectedMode(tab.id as typeof selectedMode)}
-                  className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer ${
-                    active
-                      ? 'bg-[#0A1628] text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+                  onClick={() => setSelectedMode(tab.id as any)}
+                  className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
+                    selectedMode === tab.id
+                      ? 'bg-white text-[#0A1628] shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5'
+                      : 'text-slate-600 hover:text-[#0A1628] hover:bg-white/40'
                   }`}
                 >
-                  {tab.label}
-                  {tab.id === 'ALL' && (
-                    <span className="ml-1.5 text-xs opacity-75 font-normal">({rawBatches.length})</span>
-                  )}
+                  <span>{tab.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
+                      selectedMode === tab.id ? 'bg-slate-100 text-[#0A1628]' : 'bg-slate-300/60 text-slate-600'
+                    }`}
+                  >
+                    {tab.count}
+                  </span>
                 </button>
-              )
-            })}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Empty State */}
-        {filteredBatches.length === 0 ? (
-          <div className="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-sm max-w-md mx-auto my-8">
-            <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4 text-slate-400">
-              <Calendar className="w-7 h-7" />
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">No batches currently found</h3>
-            <p className="text-sm text-slate-600 mb-6">
-              New cohorts start every two weeks. Please check other delivery modes.
+        {/* ── BATCH CARDS GRID ────────────────────────────────────────── */}
+        {visibleBatches.length === 0 ? (
+          <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-slate-200 p-8 max-w-lg mx-auto">
+            <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-slate-800 mb-1">No batches scheduled currently</h3>
+            <p className="text-xs text-slate-500 mb-5">
+              New cohorts for this format will be announced shortly. Contact admissions for upcoming slot requests.
             </p>
             <button
               onClick={() => setSelectedMode('ALL')}
-              className="px-5 py-2.5 bg-[#0A1628] text-white rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer"
+              className="px-4 py-2 bg-[#0A1628] text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors"
             >
-              View All Batches
+              View All Active Batches
             </button>
           </div>
         ) : (
-          /* Batches Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {visibleBatches.map((batch) => {
-              const modeMeta = getModeBadge(batch.mode)
-              const isUrgent = batch.seatsLeft <= 8
-              const savings = batch.originalPrice - batch.discountedPrice
-              const discountPercent = Math.round((savings / batch.originalPrice) * 100)
+              const modeInfo = getModeInfo(batch.mode)
+              const seatsLeft = batch.totalSeats - batch.enrolledCount
+              const isLowSeats = seatsLeft <= 5
 
               return (
                 <div
                   key={batch.id}
-                  className="group bg-white rounded-3xl border border-slate-200/90 hover:border-red-300 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-15px_rgba(10,22,40,0.12)] flex flex-col justify-between overflow-hidden shadow-xs"
+                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                 >
                   {/* Top Color Accent Line */}
-                  <div
-                    className={`h-2 w-full ${
-                      batch.mode === 'ONLINE'
-                        ? 'bg-sky-500'
-                        : batch.mode === 'OFFLINE'
-                        ? 'bg-emerald-500'
-                        : 'bg-purple-500'
-                    }`}
-                  />
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${modeInfo.accentBorder}`} />
 
-                  <div className="p-6 sm:p-7 flex flex-col flex-1">
-                    {/* Header: Mode & Batch Code */}
-                    <div className="flex items-center justify-between gap-2 mb-4">
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${modeMeta.bg}`}
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${modeMeta.dot}`} />
-                        {modeMeta.icon}
-                        {modeMeta.label}
-                      </span>
+                  <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                    <div>
+                      {/* Top Badges Row */}
+                      <div className="flex items-center justify-between gap-2 mb-3.5">
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
+                          {modeInfo.icon}
+                          <span>{modeInfo.label}</span>
+                        </span>
 
-                      <span className="text-[11px] font-mono font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60">
-                        {batch.batchCode}
-                      </span>
-                    </div>
+                        <span className="text-[10.5px] font-mono text-slate-400 font-bold bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                          {batch.batchCode}
+                        </span>
+                      </div>
 
-                    {/* Course Title */}
-                    <div className="mb-4">
-                      <Link
-                        href={`/${batch.courseSlug}`}
-                        className="text-lg sm:text-xl font-extrabold text-[#0A1628] hover:text-red-600 transition-colors leading-snug block"
-                      >
-                        {batch.courseTitle}
+                      {/* Course Title & Track */}
+                      <Link href={batch.courseHref} className="block group/title">
+                        <h3 className="text-lg font-bold text-[#0A1628] group-hover/title:text-[#E63946] transition-colors leading-snug mb-1">
+                          {batch.courseTitle}
+                        </h3>
                       </Link>
-                      <p className="text-xs font-bold text-slate-500 mt-1">{batch.name}</p>
-                    </div>
 
-                    {/* Start Date & Schedule Card */}
-                    <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-100 mb-5 flex flex-col gap-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-red-600 shadow-xs shrink-0">
-                          <Calendar className="w-5 h-5" />
+                      <p className="text-xs text-slate-500 font-semibold mb-4 line-clamp-1">
+                        {batch.name}
+                      </p>
+
+                      {/* Date & Schedule Box */}
+                      <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-100 mb-4 space-y-2.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-2xs">
+                            <span className="text-[9px] font-black uppercase text-red-500 tracking-wider">START</span>
+                            <span className="text-xs font-black text-slate-900 leading-none">
+                              {batch.startDate.split(' ')[0]}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block">
+                              Cohort Commences
+                            </span>
+                            <span className="text-xs font-bold text-[#0A1628]">
+                              {batch.startDate}
+                            </span>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                            Commences On
-                          </p>
-                          <p className="text-sm sm:text-base font-extrabold text-[#0A1628]">
-                            {batch.displayStartDate || batch.startDate}
-                          </p>
+
+                        <div className="pt-2 border-t border-slate-200/60 grid grid-cols-1 gap-1 text-[11px] text-slate-600 font-medium">
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate">{batch.schedule}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span>Duration: {batch.duration}</span>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 pt-2 border-t border-slate-200/60 text-xs text-slate-700 font-semibold">
-                        <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>{batch.duration}</span>
-                      </div>
-                    </div>
-
-                    {/* Schedule Time */}
-                    <p className="text-xs font-medium text-slate-600 mb-5">
-                      <strong className="text-slate-900 font-semibold">Schedule:</strong> {batch.schedule}
-                    </p>
-
-                    {/* Faculty Lead */}
-                    {batch.trainerName && (
-                      <div className="flex items-center gap-3 py-3 border-t border-slate-100 mb-5">
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-slate-900 border border-slate-200 shrink-0">
-                          {batch.trainerImage ? (
+                      {/* Faculty Lead Pill */}
+                      {batch.trainer && (
+                        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-100 mb-4 shadow-2xs">
+                          <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
                             <Image
-                              src={batch.trainerImage}
-                              alt={batch.trainerName}
+                              src={batch.trainer.image}
+                              alt={batch.trainer.name}
                               fill
-                              sizes="40px"
                               className="object-cover object-top"
                             />
-                          ) : (
-                            <div className="w-full h-full bg-[#0A1628] text-white text-xs font-bold flex items-center justify-center">
-                              {batch.trainerName.charAt(0)}
-                            </div>
-                          )}
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block leading-none mb-0.5">
+                              Faculty Lead
+                            </span>
+                            <span className="text-xs font-bold text-[#0A1628] block truncate">
+                              {batch.trainer.name}
+                            </span>
+                          </div>
                         </div>
-                        <div className="truncate">
-                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                            Faculty Lead
-                          </p>
-                          <p className="text-xs font-extrabold text-[#0A1628] truncate">{batch.trainerName}</p>
-                          <p className="text-[11px] font-medium text-slate-500 truncate">{batch.trainerTitle}</p>
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
 
-                    {/* Bottom: Urgency, Price, Actions */}
-                    <div className="mt-auto pt-2">
-                      {/* Urgency & Capacity */}
-                      <div className="flex items-center justify-between mb-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 text-xs font-extrabold px-2.5 py-1 rounded-full ${
-                            isUrgent
-                              ? 'bg-red-50 text-red-600 border border-red-200'
-                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    {/* Bottom Pricing, Urgency & Actions */}
+                    <div className="pt-4 border-t border-slate-100">
+                      {/* Seat Urgency Indicator */}
+                      <div className="flex items-center justify-between text-[11px] font-bold mb-2">
+                        <span className={`flex items-center gap-1 ${isLowSeats ? 'text-red-600 animate-pulse' : 'text-slate-600'}`}>
+                          <Users className="w-3 h-3" />
+                          <span>{isLowSeats ? `Only ${seatsLeft} seats remaining` : `${seatsLeft} seats available`}</span>
+                        </span>
+                        <span className="text-slate-400 font-semibold">
+                          {batch.enrolledCount}/{batch.totalSeats} Filled
+                        </span>
+                      </div>
+
+                      {/* Seat Progress Bar */}
+                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-4">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            isLowSeats ? 'bg-red-500' : 'bg-emerald-500'
                           }`}
-                        >
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              isUrgent ? 'bg-red-600 animate-pulse' : 'bg-emerald-500'
-                            }`}
-                          />
-                          {isUrgent ? `Only ${batch.seatsLeft} seats left` : `${batch.seatsLeft} seats available`}
-                        </span>
-
-                        <span className="text-xs font-semibold text-slate-400">
-                          {batch.enrolledCount}/{batch.capacity} Enrolled
-                        </span>
+                          style={{ width: `${(batch.enrolledCount / batch.totalSeats) * 100}%` }}
+                        />
                       </div>
 
-                      {/* Price Block */}
-                      <div className="mb-5">
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-2xl font-black text-[#0A1628]">
+                      {/* Pricing Row */}
+                      <div className="flex items-baseline justify-between mb-4">
+                        <div>
+                          <span className="text-xs text-slate-400 line-through mr-2 font-semibold">
+                            {formatPrice(batch.originalPrice)}
+                          </span>
+                          <span className="text-xl font-black text-[#0A1628]">
                             {formatPrice(batch.discountedPrice)}
                           </span>
-                          {batch.originalPrice > batch.discountedPrice && (
-                            <span className="text-sm font-semibold text-slate-400 line-through">
-                              {formatPrice(batch.originalPrice)}
-                            </span>
-                          )}
                         </div>
-                        <p className="text-[11px] font-semibold text-emerald-600 mt-0.5">
-                          Save {formatPrice(savings)} ({discountPercent}% Off) • Flexible EMI Available
-                        </p>
+                        <span className="text-[10.5px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
+                        </span>
                       </div>
 
-                      {/* CTAs */}
+                      {/* Dual Action Buttons */}
                       <div className="grid grid-cols-2 gap-2.5">
                         <button
                           onClick={() => handleEnrollClick(batch)}
-                          className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs sm:text-sm hover:from-red-700 hover:to-rose-700 transition-all duration-200 shadow-md shadow-red-600/20 cursor-pointer"
+                          className="py-3 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs hover:from-red-700 hover:to-rose-700 transition-all shadow-md shadow-red-600/15 flex items-center justify-center gap-1.5 cursor-pointer"
                         >
                           <span>Enroll Now</span>
                           <ArrowRight className="w-3.5 h-3.5" />
                         </button>
 
                         <Link
-                          href={`/${batch.courseSlug}`}
-                          className="w-full flex items-center justify-center px-3 py-3 rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-xs sm:text-sm hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-center"
+                          href={batch.courseHref}
+                          className="py-3 px-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 hover:text-slate-900 transition-colors flex items-center justify-center gap-1 text-center"
                         >
+                          <BookOpen className="w-3.5 h-3.5" />
                           <span>Curriculum</span>
                         </Link>
                       </div>
@@ -321,32 +318,32 @@ export default function UpcomingBatches({
           </div>
         )}
 
-        {/* View All Batches Action */}
-        {showAllButton && filteredBatches.length > 6 && !showAll && (
-          <div className="text-center mt-12">
+        {/* ── SHOW MORE TOGGLE ────────────────────────────────────────── */}
+        {showAllButton && filteredBatches.length > 6 && (
+          <div className="text-center mt-10">
             <button
-              onClick={() => setShowAll(true)}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white border-2 border-slate-300 text-[#0A1628] font-extrabold text-sm hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 cursor-pointer"
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors cursor-pointer shadow-xs"
             >
-              <span>View Full Schedule ({filteredBatches.length} Batches)</span>
-              <ChevronRight className="w-4 h-4" />
+              <span>{showAll ? 'Show Less Batches' : `View All ${filteredBatches.length} Batches`}</span>
+              <ChevronRight className={`w-4 h-4 transition-transform ${showAll ? '-rotate-90' : 'rotate-90'}`} />
             </button>
           </div>
         )}
 
-        {/* Trust Badges Under Cards */}
-        <div className="mt-14 pt-8 border-t border-slate-200 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-xs font-bold text-slate-600">
+        {/* ── TRUST SIGNALS FOOTER ────────────────────────────────────── */}
+        <div className="mt-14 pt-8 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-xs font-bold text-slate-600">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span>100% Verified Corporate Faculty</span>
+            <span>100% Corporate Faculty Guarantee</span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-amber-500" />
-            <span>Live Project & Real ATS Lab Access</span>
+            <span>Live Recruiter ATS & AI Labs</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-blue-600" />
-            <span>Dedicated Placement & Referral Support</span>
+            <Award className="w-4 h-4 text-blue-600" />
+            <span>Govt / ISO Recognized Certification</span>
           </div>
         </div>
       </div>
