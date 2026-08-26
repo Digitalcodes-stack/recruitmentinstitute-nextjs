@@ -8,14 +8,12 @@ import {
   Clock,
   Users,
   ArrowRight,
-  CheckCircle2,
   Laptop,
   Building2,
   Layers,
   ChevronRight,
   ShieldCheck,
   Zap,
-  Sparkles,
   Award,
   BookOpen,
 } from 'lucide-react'
@@ -152,7 +150,7 @@ export default function UpcomingBatches({
             </p>
             <button
               onClick={() => setSelectedMode('ALL')}
-              className="px-4 py-2 bg-[#0A1628] text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors"
+              className="px-4 py-2 bg-[#0A1628] text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
             >
               View All Active Batches
             </button>
@@ -161,8 +159,9 @@ export default function UpcomingBatches({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {visibleBatches.map((batch) => {
               const modeInfo = getModeInfo(batch.mode)
-              const seatsLeft = batch.totalSeats - batch.enrolledCount
-              const isLowSeats = seatsLeft <= 5
+              const seatsRemaining = batch.seatsLeft ?? Math.max(0, batch.capacity - batch.enrolledCount)
+              const isLowSeats = seatsRemaining <= 5
+              const courseLink = batch.courseSlug.startsWith('/') ? batch.courseSlug : `/${batch.courseSlug}`
 
               return (
                 <div
@@ -190,7 +189,7 @@ export default function UpcomingBatches({
                       </div>
 
                       {/* Course Title & Track */}
-                      <Link href={batch.courseHref} className="block group/title">
+                      <Link href={courseLink} className="block group/title">
                         <h3 className="text-lg font-bold text-[#0A1628] group-hover/title:text-[#E63946] transition-colors leading-snug mb-1">
                           {batch.courseTitle}
                         </h3>
@@ -206,7 +205,7 @@ export default function UpcomingBatches({
                           <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-2xs">
                             <span className="text-[9px] font-black uppercase text-red-500 tracking-wider">START</span>
                             <span className="text-xs font-black text-slate-900 leading-none">
-                              {batch.startDate.split(' ')[0]}
+                              {batch.displayStartDate ? batch.displayStartDate.split(' ')[0] : batch.startDate.split('-')[2] || '15'}
                             </span>
                           </div>
                           <div>
@@ -214,7 +213,7 @@ export default function UpcomingBatches({
                               Cohort Commences
                             </span>
                             <span className="text-xs font-bold text-[#0A1628]">
-                              {batch.startDate}
+                              {batch.displayStartDate || batch.startDate}
                             </span>
                           </div>
                         </div>
@@ -232,22 +231,28 @@ export default function UpcomingBatches({
                       </div>
 
                       {/* Faculty Lead Pill */}
-                      {batch.trainer && (
+                      {batch.trainerName && (
                         <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-100 mb-4 shadow-2xs">
-                          <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
-                            <Image
-                              src={batch.trainer.image}
-                              alt={batch.trainer.name}
-                              fill
-                              className="object-cover object-top"
-                            />
-                          </div>
+                          {batch.trainerImage ? (
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                              <Image
+                                src={batch.trainerImage}
+                                alt={batch.trainerName}
+                                fill
+                                className="object-cover object-top"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-[#0A1628]">
+                              {batch.trainerName[0]}
+                            </div>
+                          )}
                           <div className="min-w-0">
                             <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block leading-none mb-0.5">
                               Faculty Lead
                             </span>
                             <span className="text-xs font-bold text-[#0A1628] block truncate">
-                              {batch.trainer.name}
+                              {batch.trainerName}
                             </span>
                           </div>
                         </div>
@@ -260,10 +265,10 @@ export default function UpcomingBatches({
                       <div className="flex items-center justify-between text-[11px] font-bold mb-2">
                         <span className={`flex items-center gap-1 ${isLowSeats ? 'text-red-600 animate-pulse' : 'text-slate-600'}`}>
                           <Users className="w-3 h-3" />
-                          <span>{isLowSeats ? `Only ${seatsLeft} seats remaining` : `${seatsLeft} seats available`}</span>
+                          <span>{isLowSeats ? `Only ${seatsRemaining} seats remaining` : `${seatsRemaining} seats available`}</span>
                         </span>
                         <span className="text-slate-400 font-semibold">
-                          {batch.enrolledCount}/{batch.totalSeats} Filled
+                          {batch.enrolledCount}/{batch.capacity} Filled
                         </span>
                       </div>
 
@@ -273,7 +278,7 @@ export default function UpcomingBatches({
                           className={`h-full rounded-full transition-all ${
                             isLowSeats ? 'bg-red-500' : 'bg-emerald-500'
                           }`}
-                          style={{ width: `${(batch.enrolledCount / batch.totalSeats) * 100}%` }}
+                          style={{ width: `${(batch.enrolledCount / batch.capacity) * 100}%` }}
                         />
                       </div>
 
@@ -303,7 +308,7 @@ export default function UpcomingBatches({
                         </button>
 
                         <Link
-                          href={batch.courseHref}
+                          href={courseLink}
                           className="py-3 px-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 hover:text-slate-900 transition-colors flex items-center justify-center gap-1 text-center"
                         >
                           <BookOpen className="w-3.5 h-3.5" />
