@@ -6,19 +6,10 @@ import {
   Search,
   RotateCcw,
   X,
-  Star,
   ShieldCheck,
-  Building2,
-  Briefcase,
   Users,
-  CheckCircle,
-  GraduationCap,
-  Calendar,
-  MessageCircle,
-  ArrowRight,
-  Phone,
-  Mail,
   Award,
+  MessageCircle,
 } from 'lucide-react'
 import { TrainerItem } from '@/types/training'
 import TrainerCard from './TrainerCard'
@@ -36,11 +27,11 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
   const [activeTrainer, setActiveTrainer] = useState<TrainerItem | null>(null)
   const [enquiryOpen, setEnquiryOpen] = useState(false)
 
-  // Extract unique filter choices
+  // Extract unique specialization tags
   const specializations = useMemo(() => {
     const set = new Set<string>()
     initialTrainers.forEach((t) => {
-      if (t.specialization) set.add(t.specialization)
+      t.specializationTags.forEach((tag) => set.add(tag))
     })
     return Array.from(set)
   }, [initialTrainers])
@@ -52,23 +43,23 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
       if (search.trim()) {
         const q = search.toLowerCase()
         const matchName = t.name.toLowerCase().includes(q)
-        const matchRole = t.role.toLowerCase().includes(q)
-        const matchComp = t.exCompany.toLowerCase().includes(q)
+        const matchRole = t.designation.toLowerCase().includes(q)
+        const matchComp = (t.companyEx || '').toLowerCase().includes(q)
         const matchBio = t.bio.toLowerCase().includes(q)
-        const matchSkills = t.skills.some((s) => s.toLowerCase().includes(q))
+        const matchSkills = t.specializationTags.some((s) => s.toLowerCase().includes(q))
         if (!matchName && !matchRole && !matchComp && !matchBio && !matchSkills) return false
       }
 
       // Specialization
       if (selectedSpecialization !== 'ALL') {
-        if (t.specialization !== selectedSpecialization && !t.skills.includes(selectedSpecialization)) {
+        if (!t.specializationTags.includes(selectedSpecialization)) {
           return false
         }
       }
 
       // Experience
       if (selectedExperience !== 'ALL') {
-        const yrs = parseInt(t.experience.replace(/\D/g, '')) || 0
+        const yrs = t.experienceYears
         if (selectedExperience === '15+' && yrs < 15) return false
         if (selectedExperience === '10-15' && (yrs < 10 || yrs > 15)) return false
         if (selectedExperience === '5-10' && (yrs < 5 || yrs > 10)) return false
@@ -76,7 +67,10 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
 
       // Mode
       if (selectedMode !== 'ALL') {
-        if (!t.deliveryModes.includes(selectedMode as any)) return false
+        const modeMatch = t.modes.some(
+          (m) => m.toLowerCase() === selectedMode.toLowerCase()
+        )
+        if (!modeMatch) return false
       }
 
       return true
@@ -106,7 +100,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search faculty by name, ex-company, skills..."
+              placeholder="Search faculty by name, company, skills..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-11 pr-4 py-2.5 bg-slate-50 focus:bg-white text-xs sm:text-sm text-slate-900 rounded-2xl border border-slate-200 focus:border-[#E63946] focus:ring-2 focus:ring-[#E63946]/15 outline-none transition-all placeholder:text-slate-400"
@@ -114,7 +108,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -270,12 +264,14 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
                   </h3>
 
                   <p className="text-xs font-bold text-red-400 mb-2">
-                    {activeTrainer.role}
+                    {activeTrainer.designation}
                   </p>
 
-                  <p className="text-xs text-slate-300 font-mono font-semibold">
-                    {activeTrainer.exCompany}
-                  </p>
+                  {activeTrainer.companyEx && (
+                    <p className="text-xs text-slate-300 font-mono font-semibold">
+                      {activeTrainer.companyEx}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -286,15 +282,15 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Experience</span>
-                  <span className="text-base font-black text-[#0A1628]">{activeTrainer.experience}</span>
+                  <span className="text-base font-black text-[#0A1628]">{activeTrainer.experienceYears}+ Yrs</span>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Students</span>
-                  <span className="text-base font-black text-emerald-600">{activeTrainer.studentsTrained}+</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Mentored</span>
+                  <span className="text-base font-black text-emerald-600">{activeTrainer.studentsMentored}+</span>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-center">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Rating</span>
-                  <span className="text-base font-black text-amber-500">★ {activeTrainer.rating}</span>
+                  <span className="text-base font-black text-amber-500">★ {activeTrainer.rating.toFixed(1)}</span>
                 </div>
               </div>
 
@@ -304,7 +300,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
                   Executive Background
                 </h4>
                 <p className="text-slate-600 leading-relaxed font-medium">
-                  {activeTrainer.bio}
+                  {activeTrainer.longBio || activeTrainer.bio}
                 </p>
               </div>
 
@@ -314,7 +310,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
                   Core Competencies & Modules
                 </h4>
                 <div className="flex flex-wrap gap-2">
-                  {activeTrainer.skills.map((skill, idx) => (
+                  {activeTrainer.specializationTags.map((skill, idx) => (
                     <span
                       key={idx}
                       className="px-3 py-1 rounded-xl bg-slate-100 text-slate-800 text-xs font-semibold"

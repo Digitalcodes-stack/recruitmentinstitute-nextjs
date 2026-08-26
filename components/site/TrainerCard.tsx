@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { Star, ShieldCheck, ArrowRight, Briefcase, Award, CheckCircle } from 'lucide-react'
+import { Star, ArrowRight, Briefcase, CheckCircle } from 'lucide-react'
 import { TrainerItem } from '@/types/training'
 
 interface TrainerCardProps {
@@ -31,23 +31,25 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
         {/* Floating Experience Badge (Top-Left) */}
         <div className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full bg-[#0A1628]/85 backdrop-blur-md border border-white/20 text-white text-[11px] font-extrabold tracking-wide flex items-center gap-1.5 shadow-sm">
           <Briefcase className="w-3 h-3 text-red-400" />
-          <span>{trainer.experience}</span>
+          <span>{trainer.experienceYears}+ Yrs</span>
         </div>
 
         {/* Floating Rating Badge (Top-Right) */}
         <div className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-amber-300 text-[11px] font-black flex items-center gap-1 shadow-sm">
           <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-          <span>{trainer.rating}</span>
+          <span>{trainer.rating.toFixed(1)}</span>
         </div>
 
         {/* Ex-Company Pill at Bottom of Photo */}
-        <div className="absolute bottom-3 left-3 right-3">
-          <div className="px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-white/40 shadow-md">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-800 block truncate">
-              {trainer.exCompany}
-            </span>
+        {trainer.companyEx && (
+          <div className="absolute bottom-3 left-3 right-3">
+            <div className="px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-white/40 shadow-md">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-800 block truncate">
+                {trainer.companyEx}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* ── CARD BODY ─────────────────────────────────────────────────── */}
@@ -63,17 +65,17 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
 
           {/* Role Title */}
           <p className="text-xs font-bold text-[#E63946] mb-2.5 truncate">
-            {trainer.role}
+            {trainer.designation}
           </p>
 
           {/* 2-Line Bio */}
-          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2 h-9 mb-4">
+          <p className="text-xs text-slate-600 leading-relaxed line-clamp-2 h-9 mb-4 font-medium">
             {trainer.bio}
           </p>
 
-          {/* Skills / Specialization Tags */}
+          {/* Specialization Tags */}
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {trainer.skills.slice(0, 2).map((skill, idx) => (
+            {trainer.specializationTags.slice(0, 2).map((skill, idx) => (
               <span
                 key={idx}
                 className="px-2.5 py-0.5 rounded-lg bg-slate-50 border border-slate-200/80 text-slate-600 text-[10.5px] font-semibold"
@@ -81,9 +83,9 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
                 {skill}
               </span>
             ))}
-            {trainer.skills.length > 2 && (
+            {trainer.specializationTags.length > 2 && (
               <span className="px-1.5 py-0.5 rounded-lg bg-slate-100 text-slate-500 text-[10.5px] font-bold">
-                +{trainer.skills.length - 2}
+                +{trainer.specializationTags.length - 2}
               </span>
             )}
           </div>
@@ -92,7 +94,7 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
         {/* Footer Row: Impact & Action */}
         <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
           <div className="text-[11px] font-bold text-slate-500">
-            <span>{trainer.studentsTrained}+ Trained</span>
+            <span>{trainer.studentsMentored}+ Trained</span>
           </div>
 
           <div className="inline-flex items-center gap-1 text-xs font-extrabold text-[#0A1628] group-hover:text-[#E63946] group-hover:translate-x-1 transition-all">
