@@ -431,6 +431,21 @@ export async function sendSessionCancelledEmail(data: {
   sessionDate: string
   startTime: string
 }) {
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Session Cancelled: ${data.sessionTitle}`,
+    html: `
+      <h2>Training Session Cancelled</h2>
+      <p>Hi ${data.studentName},</p>
+      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}), originally scheduled for ${data.sessionDate} at ${data.startTime}, has been cancelled.</p>
+      <p>It has also been removed from your Google Calendar.</p>
+      <br/>
+      <p>Best regards,<br/>Recruitment Institute Team</p>
+    `,
+  })
+}
+
 export async function sendPaymentConfirmationEmail(data: {
   studentEmail: string
   studentName: string

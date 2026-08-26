@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
         data: {
           name: studentName.trim(),
           email: studentEmail.trim().toLowerCase(),
-          phone: studentPhone.trim(),
+          contact: studentPhone.trim(),
           password: defaultHash,
           isActive: true,
         },
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       courseTitle: course.title,
       studentName: student.name,
       studentEmail: student.email,
-      studentPhone: student.phone,
+      studentPhone: student.contact || studentPhone,
       paymentRecordId: paymentRecord.id,
     })
   } catch (error: any) {
