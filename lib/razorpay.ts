@@ -1,10 +1,24 @@
 import Razorpay from 'razorpay'
 import crypto from 'crypto'
 
-export const razorpayClient = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_TUJvHxa7DhM26d',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || '26Tl9lJnW0NpkyQLyABzpbit',
-})
+export function getRazorpayClient(): Razorpay {
+  const key_id = process.env.RAZORPAY_KEY_ID || 'rzp_test_TUKkvyTnXzSVTP'
+  const key_secret = process.env.RAZORPAY_KEY_SECRET || 'hvO4iBLPhZGoDQ8LxzmPNdOc'
+
+  return new Razorpay({
+    key_id,
+    key_secret,
+  })
+}
+
+export const razorpayClient = {
+  get orders() {
+    return getRazorpayClient().orders
+  },
+  get payments() {
+    return getRazorpayClient().payments
+  },
+}
 
 /**
  * Verify HMAC SHA256 payment signature returned by Razorpay Checkout
@@ -18,7 +32,7 @@ export function verifyRazorpayPaymentSignature({
   paymentId: string
   signature: string
 }): boolean {
-  const secret = process.env.RAZORPAY_KEY_SECRET || '26Tl9lJnW0NpkyQLyABzpbit'
+  const secret = process.env.RAZORPAY_KEY_SECRET || 'hvO4iBLPhZGoDQ8LxzmPNdOc'
   const generatedSignature = crypto
     .createHmac('sha256', secret)
     .update(`${orderId}|${paymentId}`)

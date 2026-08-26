@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
       orderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
-      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TUJvHxa7DhM26d',
+      keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TUKkvyTnXzSVTP',
       courseTitle: course.title,
       studentName: student.name,
       studentEmail: student.email,
