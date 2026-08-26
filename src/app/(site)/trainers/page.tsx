@@ -38,10 +38,10 @@ export default function TrainersPage() {
     employee: DEFAULT_TRAINERS.map((t) => ({
       '@type': 'Person',
       name: t.name,
-      jobTitle: t.role,
+      jobTitle: t.designation,
       worksFor: {
         '@type': 'Organization',
-        name: t.exCompany,
+        name: t.companyEx || 'Recruitment Institute',
       },
     })),
   }
