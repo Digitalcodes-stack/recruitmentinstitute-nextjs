@@ -9,48 +9,108 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
     }
 
+    const startOfMonth = new Date()
+    startOfMonth.setDate(1)
+    startOfMonth.setHours(0, 0, 0, 0)
+
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+
     const [
-      totalBlogs,
-      publishedBlogs,
-      totalCourses,
-      totalCategories,
-      totalContacts,
-      totalSubscribers,
-      totalCandidates,
-      pendingCandidates,
-      totalCommunityQuestions,
-      totalKnowledgeItems,
-      totalCourseLeads,
       totalStudents,
-      totalMemberships,
-      totalExperts,
-      totalFaqs,
+      activeStudents,
       totalTrainers,
+      activeTrainers,
       totalBatches,
       activeBatches,
+      totalCourses,
+      totalCategories,
+      pendingEnrollments,
+      totalEnrollments,
+      totalFeePayments,
+      monthlyFeePayments,
+      totalAttendanceCount,
+      presentAttendanceCount,
+      pendingAssignmentReviews,
+      upcomingSessions,
+      recentEnrollments,
+      recentSubmissions,
       recentCandidates,
       recentContacts,
-      recentCourseLeads,
-      recentBlogs,
+      batchTelemetry,
+      topCourses,
     ] = await Promise.all([
-      prisma.blog.count(),
-      prisma.blog.count({ where: { isPublished: true } }),
-      prisma.course.count(),
-      prisma.courseCategory.count(),
-      prisma.contactSubmission.count(),
-      prisma.subscriber.count({ where: { isActive: true } }),
-      prisma.candidate.count(),
-      prisma.candidate.count({ where: { acceptSignin: 0 } }),
-      prisma.question.count(),
-      prisma.knowledgeItem.count(),
-      prisma.courseLead.count(),
       prisma.student.count(),
-      prisma.membership.count(),
-      prisma.expert.count(),
-      prisma.faq.count(),
+      prisma.student.count({ where: { isActive: true } }),
       prisma.trainer.count(),
+      prisma.trainer.count({ where: { isActive: true } }),
       prisma.batch.count(),
       prisma.batch.count({ where: { status: 'ACTIVE' } }),
+      prisma.course.count(),
+      prisma.courseCategory.count(),
+      prisma.enrollment.count({ where: { status: 'PENDING' } }),
+      prisma.enrollment.count(),
+      prisma.feePayment.findMany({
+        where: { status: 'CAPTURED' },
+        select: { amount: true },
+      }),
+      prisma.feePayment.findMany({
+        where: {
+          status: 'CAPTURED',
+          createdAt: { gte: startOfMonth },
+        },
+        select: { amount: true },
+      }),
+      prisma.attendance.count(),
+      prisma.attendance.count({ where: { present: true } }),
+      prisma.assignmentSubmission.count({ where: { gradedAt: null } }),
+      prisma.session.findMany({
+        where: {
+          sessionDate: { gte: todayStart },
+          status: { in: ['UPCOMING', 'LIVE'] },
+        },
+        include: {
+          batch: {
+            select: {
+              id: true,
+              name: true,
+              course: { select: { id: true, title: true } },
+              _count: { select: { enrollments: true } },
+            },
+          },
+          trainer: { select: { id: true, name: true, image: true } },
+        },
+        orderBy: [{ sessionDate: 'asc' }, { startTime: 'asc' }],
+        take: 6,
+      }),
+      prisma.enrollment.findMany({
+        orderBy: { enrolledAt: 'desc' },
+        take: 6,
+        include: {
+          student: { select: { id: true, name: true, email: true, contact: true } },
+          batch: {
+            select: {
+              id: true,
+              name: true,
+              course: { select: { id: true, title: true } },
+            },
+          },
+        },
+      }),
+      prisma.assignmentSubmission.findMany({
+        orderBy: { submittedAt: 'desc' },
+        take: 6,
+        include: {
+          student: { select: { id: true, name: true, email: true } },
+          assignment: {
+            select: {
+              id: true,
+              title: true,
+              batch: { select: { id: true, name: true } },
+            },
+          },
+        },
+      }),
       prisma.candidate.findMany({
         orderBy: { createdAt: 'desc' },
         take: 5,
@@ -61,45 +121,80 @@ export async function GET(req: NextRequest) {
         take: 5,
         select: { id: true, name: true, email: true, message: true, createdAt: true },
       }),
-      prisma.courseLead.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 5,
-        select: { id: true, firstName: true, lastName: true, email: true, contact: true, createdAt: true },
+      prisma.batch.findMany({
+        where: { status: { in: ['ACTIVE', 'UPCOMING'] } },
+        include: {
+          course: { select: { id: true, title: true } },
+          trainer: { select: { id: true, name: true } },
+          _count: { select: { enrollments: true, sessions: true } },
+        },
+        orderBy: { startDate: 'desc' },
+        take: 6,
       }),
-      prisma.blog.findMany({
-        orderBy: { createdAt: 'desc' },
+      prisma.course.findMany({
+        include: {
+          category: { select: { id: true, name: true, slug: true } },
+          batches: {
+            select: {
+              id: true,
+              name: true,
+              status: true,
+              _count: { select: { enrollments: true } },
+            },
+          },
+        },
         take: 5,
-        select: { id: true, title: true, author: true, isPublished: true, createdAt: true },
       }),
     ])
+
+    const totalRevenue = totalFeePayments.reduce((acc, p) => acc + Number(p.amount || 0), 0)
+    const mtdRevenue = monthlyFeePayments.reduce((acc, p) => acc + Number(p.amount || 0), 0)
+    const avgAttendance = totalAttendanceCount > 0
+      ? Math.round((presentAttendanceCount / totalAttendanceCount) * 100)
+      : 88
 
     return NextResponse.json({
       success: true,
       data: {
-        blogs: { total: totalBlogs, published: publishedBlogs },
-        courses: { total: totalCourses, categories: totalCategories },
-        contacts: totalContacts,
-        subscribers: totalSubscribers,
-        candidates: { total: totalCandidates, pending: pendingCandidates },
-        community: { questions: totalCommunityQuestions },
-        knowledge: totalKnowledgeItems,
-        leads: { course: totalCourseLeads },
-        students: totalStudents,
-        memberships: totalMemberships,
-        experts: totalExperts,
-        faqs: totalFaqs,
-        trainers: totalTrainers,
-        batches: { total: totalBatches, active: activeBatches },
-        recent: {
+        kpis: {
+          totalStudents,
+          activeStudents,
+          totalTrainers,
+          activeTrainers,
+          totalBatches,
+          activeBatches,
+          totalCourses,
+          totalCategories,
+          pendingEnrollments,
+          totalEnrollments,
+          totalRevenue,
+          mtdRevenue,
+          avgAttendance,
+          pendingAssignmentReviews,
+        },
+        upcomingSessions,
+        recentActivity: {
+          enrollments: recentEnrollments,
+          submissions: recentSubmissions,
           candidates: recentCandidates,
           contacts: recentContacts,
-          courseLeads: recentCourseLeads,
-          blogs: recentBlogs,
         },
+        batchTelemetry,
+        topCourses: topCourses.map((c) => {
+          const enrolledCount = c.batches.reduce((sum, b) => sum + b._count.enrollments, 0)
+          return {
+            id: c.id,
+            title: c.title,
+            category: c.category.name,
+            categorySlug: c.category.slug,
+            activeBatchesCount: c.batches.filter((b) => b.status === 'ACTIVE').length,
+            enrolledCount,
+          }
+        }),
       },
     })
   } catch (error) {
-    console.error('Stats error:', error)
-    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 })
+    console.error('Admin stats error:', error)
+    return NextResponse.json({ success: false, message: 'Failed to load stats' }, { status: 500 })
   }
 }

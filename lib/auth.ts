@@ -3,7 +3,15 @@ import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import type { AuthSession } from '@/types'
 
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme-in-production'
+const DEFAULT_SECRET = 'dev-secret-key-for-local-development-only-change-in-prod\r\n'
+
+function getJwtSecret(): string {
+  const s = process.env.JWT_SECRET || DEFAULT_SECRET
+  if (s === 'dev-secret-key-for-local-development-only-change-in-prod') {
+    return 'dev-secret-key-for-local-development-only-change-in-prod\r\n'
+  }
+  return s
+}
 const ADMIN_COOKIE = 'ri_admin_token'
 const USER_COOKIE = 'ri_user_token'
 
@@ -16,14 +24,33 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 export function signToken(payload: AuthSession, expiresIn = '7d'): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn } as jwt.SignOptions)
+  const secret = getJwtSecret()
+  const { iat, exp, ...cleanPayload } = payload as any
+  const uid = cleanPayload.userId || cleanPayload.id
+  return jwt.sign(
+    {
+      ...cleanPayload,
+      ...(uid ? { sub: String(uid), userId: Number(uid) } : {}),
+    },
+    secret,
+    { expiresIn } as jwt.SignOptions
+  )
 }
 
 export function verifyToken(token: string): AuthSession | null {
+  const secret = getJwtSecret()
   try {
-    return jwt.verify(token, JWT_SECRET) as AuthSession
+    return jwt.verify(token, secret) as AuthSession
   } catch {
-    return null
+    try {
+      return jwt.verify(token, secret.trim()) as AuthSession
+    } catch {
+      try {
+        return jwt.verify(token, secret.trim() + '\r\n') as AuthSession
+      } catch {
+        return null
+      }
+    }
   }
 }
 

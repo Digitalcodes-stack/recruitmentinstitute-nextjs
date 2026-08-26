@@ -15,9 +15,32 @@ export default async function EditBatchPage({ params }: Props) {
   const { id } = await params
   const [batch, courses, trainers] = await Promise.all([
     prisma.batch.findUnique({ where: { id: parseInt(id) } }),
-    prisma.course.findMany({ orderBy: { title: 'asc' }, select: { id: true, title: true } }),
+    prisma.course.findMany({
+      orderBy: { title: 'asc' },
+      select: {
+        id: true,
+        title: true,
+        modules: {
+          orderBy: { sortOrder: 'asc' },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            chapters: {
+              orderBy: { sortOrder: 'asc' },
+              select: {
+                id: true,
+                title: true,
+                topics: { orderBy: { sortOrder: 'asc' }, select: { id: true, title: true } },
+              },
+            },
+          },
+        },
+      },
+    }),
     prisma.trainer.findMany({ where: { isActive: true }, orderBy: { name: 'asc' }, select: { id: true, name: true } }),
   ])
+
   if (!batch) notFound()
 
   return (

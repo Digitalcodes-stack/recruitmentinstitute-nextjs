@@ -3,103 +3,295 @@ import Link from 'next/link'
 import { getAdminSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import AdminLayout from '@/components/admin/AdminLayout'
-import { GraduationCap, Plus, Briefcase, CheckCircle2 } from 'lucide-react'
+import {
+  Presentation, Plus, Briefcase, CheckCircle2,
+  Mail, Phone, ExternalLink, Layers3, CalendarDays,
+} from 'lucide-react'
 import TrainerActions from '@/components/admin/TrainerActions'
 
 export default async function AdminTrainersPage() {
   const session = await getAdminSession()
   if (!session || session.type !== 'admin') redirect('/admin/login')
 
-  const trainers = await prisma.trainer.findMany({ orderBy: { id: 'asc' } })
+  const trainers = await prisma.trainer.findMany({
+    include: {
+      batches: {
+        select: {
+          id: true,
+          name: true,
+          status: true,
+          _count: { select: { enrollments: true, sessions: true } },
+        },
+      },
+      sessions: {
+        where: { status: { in: ['UPCOMING', 'LIVE'] } },
+        select: { id: true, title: true, sessionDate: true },
+        take: 3,
+      },
+    },
+    orderBy: { id: 'asc' },
+  })
+
   const activeCount = trainers.filter((t) => t.isActive).length
+  const totalBatchesAssigned = trainers.reduce((sum, t) => sum + t.batches.length, 0)
 
   return (
-    <AdminLayout title="Trainers">
+    <AdminLayout title="Faculty & Trainers">
+      {/* Page Header */}
       <div className="flex items-start justify-between gap-6 mb-7" style={{ flexWrap: 'wrap' }}>
         <div>
           <div
             className="inline-flex items-center gap-2 rounded-full mb-3"
-            style={{ background: '#f5f3ff', border: '1px solid #ddd6fe', padding: '5px 13px', fontSize: 10, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#7c3aed' }}
+            style={{
+              background: '#f5f3ff',
+              border: '1px solid #ddd6fe',
+              padding: '4px 12px',
+              fontSize: 10.5,
+              fontWeight: 700,
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: '#7c3aed',
+            }}
           >
-            <GraduationCap style={{ width: 11, height: 11 }} />
-            Batch Trainers
+            <Presentation style={{ width: 12, height: 12 }} />
+            Faculty & Instruction Hub
           </div>
-          <h2 className="font-black tracking-tight" style={{ fontSize: 26, color: '#0f172a', lineHeight: 1.2 }}>
-            Trainers
-          </h2>
-          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>
-            Trainers who can be assigned to batches and conduct live sessions.
+          <h1 className="font-black tracking-tight" style={{ fontSize: 26, color: '#0f172a', lineHeight: 1.2, margin: 0 }}>
+            Faculty Trainers
+          </h1>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
+            Instructors assigned to cohorts, live class conduction, and student coursework evaluations.
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        {/* Telemetry Chips */}
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           {[
-            { label: 'Total Trainers', value: trainers.length, icon: GraduationCap },
-            { label: 'Active', value: activeCount, icon: CheckCircle2 },
+            { label: 'Total Faculty',   value: trainers.length, icon: Presentation },
+            { label: 'Active Status',   value: activeCount,     icon: CheckCircle2 },
+            { label: 'Assigned Batches',value: totalBatchesAssigned, icon: Layers3 },
           ].map(({ label, value, icon: Icon }) => (
-            <div key={label} style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '14px 18px', minWidth: 110 }}>
-              <div className="flex items-center gap-1.5 mb-2" style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#94a3b8' }}>
+            <div
+              key={label}
+              style={{
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
+                borderRadius: 14,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                padding: '10px 16px',
+                minWidth: 110,
+              }}
+            >
+              <div
+                className="flex items-center gap-1 mb-1"
+                style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#94a3b8' }}
+              >
                 <Icon style={{ width: 11, height: 11 }} />
                 {label}
               </div>
-              <span style={{ fontSize: 22, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>{value}</span>
+              <span style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {value}
+              </span>
             </div>
           ))}
+
           <Link
             href="/admin/trainers/new"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 12, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 16px',
+              borderRadius: 10,
+              background: '#2563eb',
+              color: '#ffffff',
+              fontSize: 12.5,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 4px 12px rgba(37,99,235,0.3)',
+            }}
           >
             <Plus style={{ width: 14, height: 14 }} />
-            Add Trainer
+            <span>Onboard Trainer</span>
           </Link>
         </div>
       </div>
 
+      {/* Trainers Grid */}
       {trainers.length === 0 ? (
-        <div style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 20, padding: '64px 32px', textAlign: 'center' }}>
-          <GraduationCap style={{ width: 36, height: 36, color: '#e2e8f0', margin: '0 auto 12px' }} />
-          <p style={{ fontSize: 15, fontWeight: 600, color: '#64748b' }}>No trainers yet</p>
-          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>Add your first trainer to start assigning batches.</p>
+        <div
+          style={{
+            background: '#ffffff',
+            border: '1px dashed #e2e8f0',
+            borderRadius: 20,
+            padding: '64px 32px',
+            textAlign: 'center',
+          }}
+        >
+          <Presentation style={{ width: 36, height: 36, color: '#cbd5e1', margin: '0 auto 12px' }} />
+          <p style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0 }}>No faculty trainers onboarded yet</p>
+          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>
+            Add your first faculty trainer to begin assigning batches and scheduling classes.
+          </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
-          {trainers.map((trainer) => {
-            const initials = trainer.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
-            const colors = ['#2563eb', '#7c3aed', '#059669', '#d97706', '#db2777']
-            const color = colors[trainer.id % colors.length]
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 18 }}>
+          {trainers.map((t) => {
+            const initials = t.name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+            const activeBatches = t.batches.filter((b) => b.status === 'ACTIVE').length
+            const totalStudents = t.batches.reduce((sum, b) => sum + b._count.enrollments, 0)
+
             return (
               <div
-                key={trainer.id}
-                style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', overflow: 'hidden' }}
+                key={t.id}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 18,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                }}
               >
-                <div style={{ height: 72, background: `linear-gradient(135deg,${color}22,${color}11)`, borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {trainer.image ? (
-                    <img src={trainer.image} alt={trainer.name} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${color}33` }} />
-                  ) : (
-                    <div style={{ width: 52, height: 52, borderRadius: '50%', background: color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 800, color: '#fff' }}>
-                      {initials}
+                <div>
+                  {/* Top Banner with Avatar & Status */}
+                  <div
+                    style={{
+                      padding: '16px 20px',
+                      background: 'linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%)',
+                      borderBottom: '1px solid #f1f5f9',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 12,
+                          background: 'linear-gradient(135deg, #7c3aed 0%, #2563eb 100%)',
+                          color: '#ffffff',
+                          fontSize: 14,
+                          fontWeight: 800,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          boxShadow: '0 2px 8px rgba(124, 58, 237, 0.25)',
+                        }}
+                      >
+                        {initials}
+                      </div>
+                      <div>
+                        <h2 style={{ fontSize: 14.5, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                          {t.name}
+                        </h2>
+                        {t.specialization && (
+                          <span style={{ fontSize: 11, color: '#64748b' }}>
+                            {t.specialization}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  )}
+
+                    <span
+                      style={{
+                        fontSize: 10,
+                        fontWeight: 700,
+                        padding: '2px 8px',
+                        borderRadius: 100,
+                        background: t.isActive ? '#f0fdf4' : '#f8fafc',
+                        color: t.isActive ? '#15803d' : '#64748b',
+                        border: t.isActive ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                      }}
+                    >
+                      {t.isActive ? 'Active Faculty' : 'Inactive'}
+                    </span>
+                  </div>
+
+                  {/* Body Content */}
+                  <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {/* Contact details */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#475569' }}>
+                        <Mail style={{ width: 12, height: 12, color: '#94a3b8' }} />
+                        <a href={`mailto:${t.email}`} style={{ color: '#475569', textDecoration: 'none' }}>
+                          {t.email}
+                        </a>
+                      </div>
+                      {t.phone && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#475569' }}>
+                          <Phone style={{ width: 12, height: 12, color: '#94a3b8' }} />
+                          <span>{t.phone}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Assigned Cohorts Metric Tile */}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: 8,
+                        background: '#f8fafc',
+                        border: '1px solid #f1f5f9',
+                        borderRadius: 10,
+                        padding: '10px 12px',
+                      }}
+                    >
+                      <div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+                          Active Batches
+                        </span>
+                        <p style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '2px 0 0' }}>
+                          {activeBatches} Cohorts
+                        </p>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>
+                          Students Taught
+                        </span>
+                        <p style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: '2px 0 0' }}>
+                          {totalStudents} Enrolled
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ padding: '16px 20px' }}>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{trainer.name}</p>
-                  {trainer.specialization && (
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <Briefcase style={{ width: 11, height: 11, color: '#94a3b8' }} />
-                      <span style={{ fontSize: 12, color: '#64748b' }}>{trainer.specialization}</span>
-                    </div>
-                  )}
-                  <span style={{
-                    fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20,
-                    background: trainer.isActive ? '#ecfdf5' : '#f8fafc',
-                    color: trainer.isActive ? '#059669' : '#94a3b8',
-                    border: `1px solid ${trainer.isActive ? '#a7f3d0' : '#e2e8f0'}`,
-                  }}>
-                    {trainer.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                {/* Card Footer: Cross-role link to Trainer Portal & Actions */}
+                <div
+                  style={{
+                    padding: '12px 20px',
+                    borderTop: '1px solid #f1f5f9',
+                    background: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Link
+                    href="/trainer-login"
+                    target="_blank"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      fontSize: 11.5,
+                      fontWeight: 700,
+                      color: '#2563eb',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <ExternalLink style={{ width: 12, height: 12 }} />
+                    <span>View as Trainer</span>
+                  </Link>
 
-                  <TrainerActions id={trainer.id} />
+                  <TrainerActions id={t.id} />
                 </div>
               </div>
             )

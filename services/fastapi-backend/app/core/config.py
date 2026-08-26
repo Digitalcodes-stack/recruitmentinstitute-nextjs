@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     redis_backend_url: str | None = None
     redis_blacklist_db: int = 2
     email_enabled: bool = True
-    smtp_host: str | None = "mail.recruitmentinstitute.in"
+    smtp_host: str | None = "serenity.herosite.pro"
     smtp_port: int = 587
     smtp_username: str | None = "support@recruitmentinstitute.in"
     smtp_password: str | None = "support@recruitmentinstitute"
@@ -39,9 +39,14 @@ class Settings(BaseSettings):
     ai_retry_min_wait_seconds: float = 1.5
     ai_retry_max_wait_seconds: float = 6.0
     gemini_api_key: str | None = None
-    gemini_model_primary: str = "gemini-2.5-flash"
-    gemini_model_overflow: str = "gemini-2.5-flash-lite"
+    gemini_model_primary: str = "gemini-3.6-flash"
+    gemini_model_overflow: str = "gemini-3.5-flash"
     gemini_temperature: float = 0.2
+
+    claude_api_key: str | None = None
+    claude_model: str = "claude-3-5-sonnet-20241022"
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
     ollama_base_url: str | None = None
     ollama_model_name: str = "qwen3:8b"
     ollama_temperature: float = 0.15

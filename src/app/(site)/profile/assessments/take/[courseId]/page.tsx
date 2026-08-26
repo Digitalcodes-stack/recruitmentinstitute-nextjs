@@ -12,7 +12,7 @@ export default async function TakeAssessmentPage(
   { params }: { params: Promise<{ courseId: string }> }
 ) {
   const session = await getUserSession()
-  if (!session || session.type !== 'student') redirect('/candidate-login')
+  if (!session || session.type !== 'student') redirect('/student-login')
 
   const { courseId } = await params
   const courseIdNum = parseInt(courseId, 10)

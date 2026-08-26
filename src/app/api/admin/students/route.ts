@@ -8,7 +8,41 @@ export async function GET() {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
   }
 
-  const data = await prisma.student.findMany({ orderBy: { createdAt: 'desc' } })
+  const data = await prisma.student.findMany({
+    include: {
+      enrollments: {
+        include: {
+          batch: {
+            select: {
+              id: true,
+              name: true,
+              startDate: true,
+              mode: true,
+              course: { select: { id: true, title: true } },
+              sessions: { select: { id: true, status: true } },
+            },
+          },
+          attendance: {
+            select: {
+              sessionId: true,
+              present: true,
+              joinedAt: true,
+            },
+          },
+        },
+      },
+      assignmentSubmissions: {
+        select: {
+          id: true,
+          score: true,
+          submittedAt: true,
+          gradedAt: true,
+          assignment: { select: { id: true, title: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
   return NextResponse.json({ success: true, data })
 }
 

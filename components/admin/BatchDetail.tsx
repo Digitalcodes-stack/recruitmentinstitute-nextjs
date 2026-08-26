@@ -62,10 +62,17 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
   const [sessionError, setSessionError] = useState('')
   const [syncingSessionId, setSyncingSessionId] = useState<number | null>(null)
 
-  const [seriesMode, setSeriesMode] = useState(false)
+  const [sessionTab, setSessionTab] = useState<'single' | 'series' | 'syllabus'>('single')
   const [seriesForm, setSeriesForm] = useState({ title: '', startDate: '', startTime: '', endTime: '', occurrenceCount: '8', daysOfWeek: [] as number[] })
   const [creatingSeries, setCreatingSeries] = useState(false)
   const [seriesError, setSeriesError] = useState('')
+
+  const [syllabusClassDays, setSyllabusClassDays] = useState<number[]>([1, 3, 5])
+  const [syllabusStartTime, setSyllabusStartTime] = useState('19:00')
+  const [syllabusEndTime, setSyllabusEndTime] = useState('21:00')
+  const [generatingSyllabus, setGeneratingSyllabus] = useState(false)
+  const [syllabusError, setSyllabusError] = useState('')
+  const [syllabusSuccess, setSyllabusSuccess] = useState('')
 
   const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -74,6 +81,48 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
       ...f,
       daysOfWeek: f.daysOfWeek.includes(day) ? f.daysOfWeek.filter((d) => d !== day) : [...f.daysOfWeek, day],
     }))
+  }
+
+  function toggleSyllabusDay(day: number) {
+    setSyllabusClassDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()
+    )
+  }
+
+  async function generateSyllabusSessions() {
+    if (syllabusClassDays.length === 0) {
+      setSyllabusError('Please select at least one class day.')
+      return
+    }
+    setGeneratingSyllabus(true)
+    setSyllabusError('')
+    setSyllabusSuccess('')
+    try {
+      const [sh, sm] = syllabusStartTime.split(':').map(Number)
+      const [eh, em] = syllabusEndTime.split(':').map(Number)
+      const res = await fetch(`/api/admin/batches/${batch.id}/generate-sessions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          classDays: syllabusClassDays,
+          startHour: sh,
+          startMinute: sm,
+          endHour: eh,
+          endMinute: em,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setSyllabusError(data.message || 'Failed to generate sessions')
+        return
+      }
+      setSyllabusSuccess(`Successfully created ${data.data?.sessionsCreated ?? 0} sessions from the course syllabus!`)
+      router.refresh()
+    } catch {
+      setSyllabusError('Network error while generating sessions.')
+    } finally {
+      setGeneratingSyllabus(false)
+    }
   }
 
   async function createSeries(e: React.FormEvent) {
@@ -110,6 +159,7 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
       setCreatingSeries(false)
     }
   }
+
 
   async function enrollStudent() {
     if (!studentId) return
@@ -259,21 +309,84 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
           <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
             <button
               type="button"
-              onClick={() => setSeriesMode(false)}
-              style={{ flex: 1, padding: '6px 0', borderRadius: 8, fontSize: 12, fontWeight: 600, border: '1px solid #e2e8f0', cursor: 'pointer', background: !seriesMode ? '#7c3aed' : '#fff', color: !seriesMode ? '#fff' : '#64748b' }}
+              onClick={() => setSessionTab('syllabus')}
+              style={{ flex: 1.2, padding: '7px 0', borderRadius: 8, fontSize: 11.5, fontWeight: 700, border: '1px solid #e2e8f0', cursor: 'pointer', background: sessionTab === 'syllabus' ? 'linear-gradient(135deg,#3b82f6,#2563eb)' : '#fff', color: sessionTab === 'syllabus' ? '#fff' : '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
             >
-              Single session
+              <Sparkles style={{ width: 12, height: 12 }} />
+              Auto Syllabus
             </button>
             <button
               type="button"
-              onClick={() => setSeriesMode(true)}
-              style={{ flex: 1, padding: '6px 0', borderRadius: 8, fontSize: 12, fontWeight: 600, border: '1px solid #e2e8f0', cursor: 'pointer', background: seriesMode ? '#7c3aed' : '#fff', color: seriesMode ? '#fff' : '#64748b' }}
+              onClick={() => setSessionTab('single')}
+              style={{ flex: 1, padding: '7px 0', borderRadius: 8, fontSize: 11.5, fontWeight: 600, border: '1px solid #e2e8f0', cursor: 'pointer', background: sessionTab === 'single' ? '#7c3aed' : '#fff', color: sessionTab === 'single' ? '#fff' : '#64748b' }}
             >
-              Recurring series
+              Single
+            </button>
+            <button
+              type="button"
+              onClick={() => setSessionTab('series')}
+              style={{ flex: 1, padding: '7px 0', borderRadius: 8, fontSize: 11.5, fontWeight: 600, border: '1px solid #e2e8f0', cursor: 'pointer', background: sessionTab === 'series' ? '#7c3aed' : '#fff', color: sessionTab === 'series' ? '#fff' : '#64748b' }}
+            >
+              Series
             </button>
           </div>
 
-          {!seriesMode ? (
+          {sessionTab === 'syllabus' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16, padding: 14, background: '#eff6ff', borderRadius: 12, border: '1px solid #bfdbfe' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#1e40af', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Sparkles style={{ width: 13, height: 13 }} /> Auto-Generate from Course Syllabus
+              </div>
+              <p style={{ fontSize: 11.5, color: '#475569', margin: 0 }}>
+                Generates one live session per module for <strong>{batch.course.title}</strong>, assigns Google Meet codes, and schedules dates across your chosen class days.
+              </p>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: '#334155', textTransform: 'uppercase', marginBottom: 4 }}>Class Days</label>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {DAY_LABELS.map((label, day) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => toggleSyllabusDay(day)}
+                      style={{
+                        flex: 1, padding: '5px 0', borderRadius: 6, fontSize: 10.5, fontWeight: 600, border: '1px solid #cbd5e1', cursor: 'pointer',
+                        background: syllabusClassDays.includes(day) ? '#2563eb' : '#fff',
+                        color: syllabusClassDays.includes(day) ? '#fff' : '#64748b',
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: '#334155', marginBottom: 3 }}>Start Time</label>
+                  <input type="time" value={syllabusStartTime} onChange={(e) => setSyllabusStartTime(e.target.value)} style={inputStyle} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', fontSize: 10.5, fontWeight: 700, color: '#334155', marginBottom: 3 }}>End Time</label>
+                  <input type="time" value={syllabusEndTime} onChange={(e) => setSyllabusEndTime(e.target.value)} style={inputStyle} />
+                </div>
+              </div>
+
+              {syllabusError && <p style={{ fontSize: 11.5, color: '#ef4444', margin: 0 }}>{syllabusError}</p>}
+              {syllabusSuccess && <p style={{ fontSize: 11.5, color: '#16a34a', margin: 0 }}>{syllabusSuccess}</p>}
+
+              <button
+                type="button"
+                onClick={generateSyllabusSessions}
+                disabled={generatingSyllabus}
+                style={{ padding: '9px 16px', borderRadius: 9, fontSize: 13, fontWeight: 700, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', border: 'none', cursor: generatingSyllabus ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+              >
+                {generatingSyllabus ? <Loader2 style={{ width: 13, height: 13 }} /> : <Sparkles style={{ width: 13, height: 13 }} />}
+                {generatingSyllabus ? 'Generating Sessions…' : 'Generate Syllabus Sessions'}
+              </button>
+            </div>
+          )}
+
+          {sessionTab === 'single' && (
             <form onSubmit={createSession} style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16, padding: 12, background: '#f8fafc', borderRadius: 12 }}>
               <input placeholder="Session title" value={sessionForm.title} onChange={(e) => setSessionForm((f) => ({ ...f, title: e.target.value }))} style={inputStyle} />
               <div style={{ display: 'flex', gap: 8 }}>
@@ -292,7 +405,9 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
                 Add Session
               </button>
             </form>
-          ) : (
+          )}
+
+          {sessionTab === 'series' && (
             <form onSubmit={createSeries} style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16, padding: 12, background: '#f8fafc', borderRadius: 12 }}>
               <input placeholder="Series title" value={seriesForm.title} onChange={(e) => setSeriesForm((f) => ({ ...f, title: e.target.value }))} style={inputStyle} />
               <div style={{ display: 'flex', gap: 6 }}>
@@ -331,6 +446,7 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
               </button>
             </form>
           )}
+
 
           {sessions.length === 0 ? (
             <p style={{ fontSize: 13, color: '#94a3b8' }}>No sessions scheduled yet.</p>

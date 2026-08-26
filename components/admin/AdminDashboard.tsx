@@ -1,65 +1,104 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminLayout from './AdminLayout'
 import {
-  BookOpen, FileText, GraduationCap, Lightbulb, Mail, MessageCircle,
-  Users2, CreditCard, UserCheck, HelpCircle, ArrowUpRight,
-  CheckCircle2, Clock, Users, TrendingUp, Wifi, Presentation, Layers3,
+  GraduationCap, Presentation, Layers3, BookOpen, Clock, IndianRupee,
+  UserCheck, ClipboardCheck, Video, ExternalLink, ArrowUpRight, Plus,
+  TrendingUp, Users, CalendarDays, CheckCircle2, AlertCircle, Sparkles,
+  ChevronRight, RefreshCw, FileText, MessageSquare, ShieldAlert,
 } from 'lucide-react'
 
-/* ── Types ──────────────────────────────────────────────────── */
-
-interface ChartData {
-  labels: string[]
-  series: {
-    candidates: number[]
-    leads: number[]
-    contacts: number[]
-    students: number[]
-    subscribers: number[]
+interface StatsData {
+  kpis: {
+    totalStudents: number
+    activeStudents: number
+    totalTrainers: number
+    activeTrainers: number
+    totalBatches: number
+    activeBatches: number
+    totalCourses: number
+    totalCategories: number
+    pendingEnrollments: number
+    totalEnrollments: number
+    totalRevenue: number
+    mtdRevenue: number
+    avgAttendance: number
+    pendingAssignmentReviews: number
   }
-}
-
-interface RecentCandidate {
-  id: number; name: string; email: string
-  courseSelect: string | null; createdAt: string; acceptSignin: number
-}
-interface RecentContact {
-  id: number; name: string; email: string; message: string; createdAt: string
-}
-interface RecentCourseLead {
-  id: number; firstName: string; lastName: string | null
-  email: string; contact: string | null; createdAt: string
-}
-interface RecentBlog {
-  id: number; title: string; author: string | null
-  isPublished: boolean; createdAt: string
-}
-interface Stats {
-  blogs: { total: number; published: number }
-  courses: { total: number; categories: number }
-  contacts: number; subscribers: number
-  candidates: { total: number; pending: number }
-  community: { questions: number }
-  knowledge: number; leads: { course: number }
-  students: number; memberships: number; experts: number; faqs: number; trainers: number
-  batches: { total: number; active: number }
-  recent: {
-    candidates: RecentCandidate[]
-    contacts: RecentContact[]
-    courseLeads: RecentCourseLead[]
-    blogs: RecentBlog[]
+  upcomingSessions: Array<{
+    id: number
+    title: string
+    sessionDate: string
+    startTime: string
+    endTime: string
+    meetLink: string | null
+    status: string
+    batch: {
+      id: number
+      name: string
+      course: { id: number; title: string }
+      _count: { enrollments: number }
+    }
+    trainer: { id: number; name: string; image: string | null }
+  }>
+  recentActivity: {
+    enrollments: Array<{
+      id: number
+      enrolledAt: string
+      status: string
+      student: { id: number; name: string; email: string; contact: string | null }
+      batch: { id: number; name: string; course: { id: number; title: string } }
+    }>
+    submissions: Array<{
+      id: number
+      submittedAt: string
+      student: { id: number; name: string; email: string }
+      assignment: { id: number; title: string; batch: { id: number; name: string } }
+    }>
+    candidates: Array<{
+      id: number
+      name: string
+      email: string
+      courseSelect: string | null
+      createdAt: string
+      acceptSignin: number
+    }>
+    contacts: Array<{
+      id: number
+      name: string
+      email: string
+      message: string
+      createdAt: string
+    }>
   }
+  batchTelemetry: Array<{
+    id: number
+    name: string
+    startDate: string
+    capacity: number
+    status: string
+    course: { id: number; title: string }
+    trainer: { id: number; name: string } | null
+    _count: { enrollments: number; sessions: number }
+  }>
+  topCourses: Array<{
+    id: number
+    title: string
+    category: string
+    categorySlug: string
+    activeBatchesCount: number
+    enrolledCount: number
+  }>
 }
 
-/* ── Helpers ────────────────────────────────────────────────── */
+function fmt(n: number) {
+  return n ? n.toLocaleString('en-IN') : '0'
+}
 
-function fmt(n: number) { return n.toLocaleString('en-IN') }
-
-function timeAgo(d: string) {
-  const m = Math.floor((Date.now() - new Date(d).getTime()) / 60000)
+function timeAgo(dateString: string) {
+  const m = Math.floor((Date.now() - new Date(dateString).getTime()) / 60000)
   if (m < 1) return 'just now'
   if (m < 60) return `${m}m ago`
   const h = Math.floor(m / 60)
@@ -68,665 +107,937 @@ function timeAgo(d: string) {
   return days === 1 ? 'yesterday' : `${days}d ago`
 }
 
-/* ── Design tokens ──────────────────────────────────────────── */
-
-const C = {
-  bg:         '#f2f4f7',
-  white:      '#ffffff',
-  border:     '#e6eaf0',
-  borderSoft: '#f0f3f7',
-  text:       '#0f172a',
-  textMid:    '#475569',
-  textSoft:   '#94a3b8',
-  shadow:     '0 1px 4px rgba(15,23,42,0.07)',
-  shadowMd:   '0 4px 16px rgba(15,23,42,0.09)',
-  shadowLg:   '0 8px 32px rgba(15,23,42,0.12)',
-  radius:     16,
-  radiusSm:   10,
-}
-
-/* ── Primitive components ───────────────────────────────────── */
-
-function Card({ children, style = {} }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return (
-    <div style={{
-      background: C.white, borderRadius: C.radius,
-      border: `1px solid ${C.border}`, boxShadow: C.shadow,
-      ...style,
-    }}>
-      {children}
-    </div>
-  )
-}
-
-function PanelHeader({
-  title, sub, action,
-}: { title: string; sub?: string; action?: React.ReactNode }) {
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-      padding: '22px 28px 20px',
-      borderBottom: `1px solid ${C.borderSoft}`,
-    }}>
-      <div>
-        <p style={{ fontSize: 15, fontWeight: 700, color: C.text, lineHeight: 1.3 }}>{title}</p>
-        {sub && <p style={{ fontSize: 12, color: C.textSoft, marginTop: 3 }}>{sub}</p>}
-      </div>
-      {action}
-    </div>
-  )
-}
-
-function ViewAllBtn({ href }: { href: string }) {
-  return (
-    <Link
-      href={href}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 5,
-        fontSize: 12, fontWeight: 600, color: '#2563eb',
-        textDecoration: 'none', padding: '6px 12px',
-        borderRadius: 8, background: 'transparent',
-        transition: 'background 120ms',
-        whiteSpace: 'nowrap',
-      }}
-
-
-    >
-      View all <ArrowUpRight size={12} />
-    </Link>
-  )
-}
-
-function Skeleton({ h = 56, count = 4 }: { h?: number; count?: number }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '24px 28px' }}>
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} style={{
-          height: h, borderRadius: C.radiusSm,
-          background: 'linear-gradient(90deg,#f1f5f9 25%,#e8ecf2 50%,#f1f5f9 75%)',
-          animation: 'pulse 1.6s ease-in-out infinite',
-        }} />
-      ))}
-    </div>
-  )
-}
-
-function Empty({ msg }: { msg: string }) {
-  return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      justifyContent: 'center', padding: '48px 24px', textAlign: 'center',
-    }}>
-      <div style={{
-        width: 48, height: 48, borderRadius: 14, background: '#f8fafc',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 22, marginBottom: 12,
-      }}>📭</div>
-      <p style={{ fontSize: 13, color: C.textSoft, fontWeight: 500 }}>{msg}</p>
-    </div>
-  )
-}
-
-/* ── Bar Chart ──────────────────────────────────────────────── */
-
-interface BarSeries { label: string; color: string; data: number[] }
-
-function BarChart({
-  title, labels, bars, loading,
-}: { title: string; labels: string[]; bars: BarSeries[]; loading: boolean }) {
-  const allValues = bars.flatMap(b => b.data)
-  const maxVal = Math.max(...allValues, 1)
-  const chartH = 160
-
-  return (
-    <Card>
-      <PanelHeader title={title} sub="Last 6 months" />
-      <div style={{ padding: '24px 28px 20px' }}>
-        {loading ? (
-          <div style={{ height: chartH, borderRadius: C.radiusSm, background: 'linear-gradient(90deg,#f1f5f9 25%,#e8ecf2 50%,#f1f5f9 75%)', animation: 'pulse 1.6s ease-in-out infinite' }} />
-        ) : (
-          <>
-            {/* chart area */}
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: chartH, borderBottom: `2px solid ${C.borderSoft}` }}>
-              {labels.map((label, mi) => (
-                <div key={label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, height: '100%', justifyContent: 'flex-end' }}>
-                  <div style={{ width: '100%', display: 'flex', gap: 3, alignItems: 'flex-end', justifyContent: 'center', height: '100%' }}>
-                    {bars.map(bar => {
-                      const pct = (bar.data[mi] ?? 0) / maxVal
-                      const h = Math.max(pct * (chartH - 24), bar.data[mi] ? 4 : 0)
-                      return (
-                        <div
-                          key={bar.label}
-                          title={`${bar.label}: ${bar.data[mi] ?? 0}`}
-                          style={{
-                            flex: 1,
-                            height: h,
-                            background: bar.color,
-                            borderRadius: '4px 4px 0 0',
-                            opacity: 0.85,
-                            cursor: 'default',
-                            transition: 'height 400ms ease',
-                            position: 'relative',
-                          }}
-                        >
-                          {bar.data[mi] > 0 && (
-                            <span style={{
-                              position: 'absolute', top: -18, left: '50%', transform: 'translateX(-50%)',
-                              fontSize: 10, fontWeight: 700, color: bar.color, whiteSpace: 'nowrap',
-                            }}>
-                              {bar.data[mi]}
-                            </span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* x-axis labels */}
-            <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
-              {labels.map(label => (
-                <div key={label} style={{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: 600, color: C.textSoft }}>
-                  {label}
-                </div>
-              ))}
-            </div>
-
-            {/* legend */}
-            <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
-              {bars.map(bar => (
-                <div key={bar.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: 3, background: bar.color, flexShrink: 0 }} />
-                  <span style={{ fontSize: 11, fontWeight: 600, color: C.textMid }}>{bar.label}</span>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </Card>
-  )
-}
-
-/* ── Main ───────────────────────────────────────────────────── */
-
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats | null>(null)
+  const [data, setData] = useState<StatsData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [chartData, setChartData] = useState<ChartData | null>(null)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const fetchStats = async () => {
+    try {
+      setRefreshing(true)
+      const res = await fetch('/api/admin/stats', { cache: 'no-store' })
+      const json = await res.json()
+      if (json.success) {
+        setData(json.data)
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
+    }
+  }
 
   useEffect(() => {
-    fetch('/api/admin/stats')
-      .then(r => r.json())
-      .then(d => { if (d.success) setStats(d.data) })
-      .finally(() => setLoading(false))
-    fetch('/api/admin/chart-data')
-      .then(r => r.json())
-      .then(d => { if (d.success) setChartData(d.data) })
+    fetchStats()
   }, [])
 
-  const today = useMemo(() =>
-    new Date().toLocaleDateString('en-IN', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-    }), [])
-
-  const statCards = [
-    { label: 'Candidates',       value: stats?.candidates.total   ?? 0, sub: `${stats?.candidates.pending ?? 0} pending`,    icon: UserCheck,    bg: '#eff6ff', color: '#2563eb', href: '/admin/candidates'  },
-    { label: 'Students',         value: stats?.students           ?? 0, sub: 'Registered',                                   icon: GraduationCap,bg: '#f0fdf4', color: '#16a34a', href: '/admin/students'    },
-    { label: 'Memberships',      value: stats?.memberships        ?? 0, sub: 'Active members',                               icon: CreditCard,   bg: '#faf5ff', color: '#7c3aed', href: '/admin/memberships' },
-    { label: 'Subscribers',      value: stats?.subscribers        ?? 0, sub: 'Newsletter',                                   icon: Mail,         bg: '#fefce8', color: '#ca8a04', href: '/admin/subscribers' },
-    { label: 'Courses',          value: stats?.courses.total      ?? 0, sub: `${stats?.courses.categories ?? 0} categories`, icon: BookOpen,     bg: '#fff1f2', color: '#e11d48', href: '/admin/courses'     },
-    { label: 'Blog Posts',       value: stats?.blogs.total        ?? 0, sub: `${stats?.blogs.published ?? 0} published`,     icon: FileText,     bg: '#f0f9ff', color: '#0284c7', href: '/admin/blog'        },
-    { label: 'Course Leads',     value: stats?.leads.course       ?? 0, sub: 'Enquiries',                                    icon: TrendingUp,   bg: '#fdf4ff', color: '#a21caf', href: '/admin/contacts'    },
-    { label: 'Contact Messages', value: stats?.contacts           ?? 0, sub: 'Received',                                     icon: MessageCircle,bg: '#f8fafc', color: '#475569', href: '/admin/contacts'    },
-    { label: 'Q&A Questions',    value: stats?.community.questions?? 0, sub: 'Community',                                    icon: HelpCircle,   bg: '#f7fee7', color: '#65a30d', href: '/admin/questions'   },
-    { label: 'Knowledge Items',  value: stats?.knowledge          ?? 0, sub: 'Articles',                                     icon: Lightbulb,    bg: '#fff7ed', color: '#ea580c', href: '/admin/knowledge'   },
-    { label: 'Experts',          value: stats?.experts            ?? 0, sub: 'Faculty',                                      icon: Users2,       bg: '#ecfeff', color: '#0891b2', href: '/admin/experts'     },
-    { label: 'Trainers',         value: stats?.trainers           ?? 0, sub: 'Batch Trainers',                               icon: Presentation, bg: '#f5f3ff', color: '#7c3aed', href: '/admin/trainers'    },
-    { label: 'Batches',          value: stats?.batches.total      ?? 0, sub: `${stats?.batches.active ?? 0} active`,         icon: Layers3,      bg: '#eff6ff', color: '#2563eb', href: '/admin/batches'     },
-    { label: 'FAQs',             value: stats?.faqs               ?? 0, sub: 'Questions',                                    icon: Users,        bg: '#f0fdf4', color: '#15803d', href: '/admin/faqs'        },
-  ]
-
-  const quickLinks = [
-    { label: 'Candidates',    href: '/admin/candidates',  icon: UserCheck,     bg: '#eff6ff', color: '#2563eb' },
-    { label: 'Students',      href: '/admin/students',    icon: GraduationCap, bg: '#f0fdf4', color: '#16a34a' },
-    { label: 'Courses',       href: '/admin/courses',     icon: BookOpen,      bg: '#fff1f2', color: '#e11d48' },
-    { label: 'Blog Posts',    href: '/admin/blog',        icon: FileText,      bg: '#f0f9ff', color: '#0284c7' },
-    { label: 'Knowledge Base',href: '/admin/knowledge',   icon: Lightbulb,     bg: '#fff7ed', color: '#ea580c' },
-    { label: 'FAQs',          href: '/admin/faqs',        icon: HelpCircle,    bg: '#f0fdf4', color: '#15803d' },
-    { label: 'Memberships',   href: '/admin/memberships', icon: CreditCard,    bg: '#faf5ff', color: '#7c3aed' },
-    { label: 'Subscribers',   href: '/admin/subscribers', icon: Mail,          bg: '#fefce8', color: '#ca8a04' },
-  ]
-
-  const TH_STYLE: React.CSSProperties = {
-    padding: '14px 24px',
-    fontSize: 10, fontWeight: 700,
-    letterSpacing: '0.16em', textTransform: 'uppercase' as const,
-    color: C.textSoft,
-    background: '#f8fafc',
-    borderBottom: `1px solid ${C.borderSoft}`,
-    textAlign: 'left' as const,
+  if (loading) {
+    return (
+      <AdminLayout title="Superadmin Dashboard">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div
+              key={i}
+              style={{
+                height: 120,
+                background: '#ffffff',
+                borderRadius: 16,
+                border: '1px solid #e2e8f0',
+                animation: 'pulse 1.5s infinite',
+              }}
+            />
+          ))}
+        </div>
+      </AdminLayout>
+    )
   }
-  const TD_STYLE: React.CSSProperties = {
-    padding: '18px 24px',
-    fontSize: 13, color: C.textMid,
-    borderBottom: `1px solid ${C.borderSoft}`,
-    verticalAlign: 'middle',
+
+  const kpis = data?.kpis || {
+    totalStudents: 0, activeStudents: 0, totalTrainers: 0, activeTrainers: 0,
+    totalBatches: 0, activeBatches: 0, totalCourses: 0, totalCategories: 0,
+    pendingEnrollments: 0, totalEnrollments: 0, totalRevenue: 0, mtdRevenue: 0,
+    avgAttendance: 85, pendingAssignmentReviews: 0,
   }
 
   return (
-    <AdminLayout title="Dashboard">
-
-      {/* ── Global keyframe for skeleton ── */}
-      <style>{`
-        @keyframes pulse {
-          0%,100% { opacity:1 }
-          50% { opacity:.45 }
-        }
-      `}</style>
-
-      <div style={{ maxWidth: 1440, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 32 }}>
-
-        {/* ── 1. Hero ──────────────────────────────────────── */}
-        <div style={{
+    <AdminLayout title="Superadmin Dashboard">
+      {/* ── Welcome Banner & Quick Action Header ─────────────────────────── */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #090d16 0%, #1e293b 100%)',
           borderRadius: 20,
-          background: 'linear-gradient(130deg,#0c1a2e 0%,#13305c 50%,#1a4fac 100%)',
-          boxShadow: '0 20px 56px rgba(15,23,42,0.22)',
-          overflow: 'hidden',
+          padding: '28px 32px',
+          color: '#ffffff',
+          marginBottom: 28,
+          boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.15)',
           position: 'relative',
-        }}>
-          {/* decorative glow */}
-          <div style={{
-            position: 'absolute', right: -60, top: -60,
-            width: 280, height: 280, borderRadius: '50%',
-            background: 'radial-gradient(circle,rgba(96,165,250,0.18),transparent 70%)',
-            pointerEvents: 'none',
-          }} />
-          <div style={{
-            position: 'relative',
-            display: 'flex', flexWrap: 'wrap', alignItems: 'center',
-            justifyContent: 'space-between', gap: 32,
-            padding: '44px 52px',
-          }}>
-            {/* left */}
-            <div>
-              <span style={{
-                display: 'inline-block',
-                background: 'rgba(96,165,250,0.14)',
-                border: '1px solid rgba(96,165,250,0.22)',
-                borderRadius: 24, padding: '4px 14px',
-                fontSize: 10, fontWeight: 800,
-                letterSpacing: '0.22em', textTransform: 'uppercase',
-                color: '#93c5fd',
-              }}>
-                Admin Overview
-              </span>
-              <h1 style={{
-                marginTop: 16,
-                fontSize: 38, fontWeight: 900,
-                lineHeight: 1.1, letterSpacing: '-0.02em',
-                color: '#ffffff',
-              }}>
-                Recruitment Institute
-              </h1>
-              <p style={{
-                marginTop: 12, maxWidth: 520,
-                fontSize: 14, lineHeight: 1.8, color: '#94b8d8',
-              }}>
-                Your admin command center — manage candidates, courses, content and community from one place.
-              </p>
+          overflow: 'hidden',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 20,
+        }}
+      >
+        <div style={{ position: 'relative', zIndex: 2, maxWidth: 620 }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '4px 10px',
+              borderRadius: 100,
+              background: 'rgba(59, 130, 246, 0.2)',
+              border: '1px solid rgba(96, 165, 250, 0.3)',
+              color: '#93c5fd',
+              fontSize: 11,
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: 10,
+            }}
+          >
+            <Sparkles style={{ width: 12, height: 12 }} />
+            <span>Institute Command Center</span>
+          </div>
+          <h1 style={{ fontSize: 24, fontWeight: 900, letterSpacing: '-0.02em', lineHeight: 1.2, margin: 0 }}>
+            Welcome back, Super Administrator
+          </h1>
+          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 6, lineHeight: 1.5 }}>
+            Real-time telemetry across {kpis.totalStudents} students, {kpis.activeBatches} active batches, and {kpis.totalTrainers} faculty members.
+          </p>
+        </div>
+
+        {/* Header Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, position: 'relative', zIndex: 2, flexWrap: 'wrap' }}>
+          <button
+            onClick={fetchStats}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 15px',
+              borderRadius: 10,
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: '#ffffff',
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            <RefreshCw style={{ width: 13, height: 13, animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+            <span>Refresh Telemetry</span>
+          </button>
+          <Link
+            href="/admin/batches/new"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 16px',
+              borderRadius: 10,
+              background: '#2563eb',
+              color: '#ffffff',
+              fontSize: 12.5,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+            }}
+          >
+            <Plus style={{ width: 14, height: 14 }} />
+            <span>Create Batch</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* ── Top 8 KPI Metric Cards ───────────────────────────────────────── */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gap: 16,
+          marginBottom: 28,
+        }}
+      >
+        {/* 1. Total Students */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Total Students
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <GraduationCap style={{ width: 18, height: 18, color: '#2563eb' }} />
             </div>
-            {/* right */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
-              <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                background: 'rgba(34,197,94,0.13)',
-                border: '1px solid rgba(34,197,94,0.25)',
-                borderRadius: 24, padding: '8px 18px',
-              }}>
-                <Wifi size={13} color="#4ade80" />
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#86efac' }}>All services operational</span>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.totalStudents)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: '#16a34a' }}>
+                {kpis.activeStudents} Active
+              </span>
+            </div>
+            <Link href="/admin/students" style={{ fontSize: 11.5, fontWeight: 600, color: '#2563eb', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Explore Roster <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 2. Active Trainers */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Active Faculty
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#f5f3ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Presentation style={{ width: 18, height: 18, color: '#7c3aed' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.totalTrainers)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 700, color: '#7c3aed' }}>
+                {kpis.activeTrainers} Assigned
+              </span>
+            </div>
+            <Link href="/admin/trainers" style={{ fontSize: 11.5, fontWeight: 600, color: '#7c3aed', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              View Faculty <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 3. Live Batches */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Live Batches
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Layers3 style={{ width: 18, height: 18, color: '#059669' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.activeBatches)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 600, color: '#64748b' }}>
+                of {kpis.totalBatches} Total
+              </span>
+            </div>
+            <Link href="/admin/batches" style={{ fontSize: 11.5, fontWeight: 600, color: '#059669', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Manage Batches <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 4. Total Courses */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Course Offerings
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ecfeff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BookOpen style={{ width: 18, height: 18, color: '#0891b2' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.totalCourses)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 600, color: '#64748b' }}>
+                in {kpis.totalCategories} Categories
+              </span>
+            </div>
+            <Link href="/admin/courses" style={{ fontSize: 11.5, fontWeight: 600, color: '#0891b2', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Course Catalog <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 5. Pending Enrollments */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Pending Approvals
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#fffbeb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Clock style={{ width: 18, height: 18, color: '#d97706' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: kpis.pendingEnrollments > 0 ? '#d97706' : '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.pendingEnrollments)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 600, color: '#64748b' }}>
+                Awaiting Allocation
+              </span>
+            </div>
+            <Link href="/admin/enrollments" style={{ fontSize: 11.5, fontWeight: 600, color: '#d97706', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Review Queue <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 6. Revenue Telemetry */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Fee Collection
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <IndianRupee style={{ width: 18, height: 18, color: '#16a34a' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{ fontSize: 24, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                ₹{fmt(kpis.totalRevenue)}
+              </span>
+            </div>
+            <p style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+              MTD: <strong style={{ color: '#16a34a' }}>₹{fmt(kpis.mtdRevenue)}</strong>
+            </p>
+            <Link href="/admin/finance" style={{ fontSize: 11.5, fontWeight: 600, color: '#16a34a', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 6 }}>
+              Finance Hub <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 7. Average Attendance */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Avg Attendance
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UserCheck style={{ width: 18, height: 18, color: '#3b82f6' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {kpis.avgAttendance}%
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#16a34a' }}>
+                Good Health
+              </span>
+            </div>
+            <Link href="/admin/sessions" style={{ fontSize: 11.5, fontWeight: 600, color: '#3b82f6', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Session Logs <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+
+        {/* 8. Pending Assignment Reviews */}
+        <div
+          style={{
+            background: '#ffffff',
+            borderRadius: 16,
+            padding: '20px 22px',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Pending Homework
+            </span>
+            <div style={{ width: 34, height: 34, borderRadius: 8, background: '#fdf4ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ClipboardCheck style={{ width: 18, height: 18, color: '#c026d3' }} />
+            </div>
+          </div>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>
+                {fmt(kpis.pendingAssignmentReviews)}
+              </span>
+              <span style={{ fontSize: 11.5, fontWeight: 600, color: '#64748b' }}>
+                To Evaluate
+              </span>
+            </div>
+            <Link href="/admin/assignments" style={{ fontSize: 11.5, fontWeight: 600, color: '#c026d3', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 3, marginTop: 8 }}>
+              Grading Queue <ArrowUpRight style={{ width: 11, height: 11 }} />
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Main Two-Column Layout ────────────────────────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(0, 1.2fr)', gap: 24, alignItems: 'start' }}>
+
+        {/* LEFT COLUMN: Live Sessions & Batch Performance */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+          {/* Section: Live & Upcoming Class Sessions */}
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                padding: '20px 24px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Video style={{ width: 16, height: 16, color: '#2563eb' }} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Live & Upcoming Class Schedule
+                  </h2>
+                  <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
+                    Institute-wide scheduled sessions with real-time room launch
+                  </p>
+                </div>
               </div>
-              <p style={{ fontSize: 12, color: '#5a7a99' }}>{today}</p>
+              <Link
+                href="/admin/sessions"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#2563eb',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                Full Calendar <ChevronRight style={{ width: 13, height: 13 }} />
+              </Link>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {data?.upcomingSessions && data.upcomingSessions.length > 0 ? (
+                data.upcomingSessions.map((session) => {
+                  const isLive = session.status === 'LIVE'
+                  const startTimeStr = new Date(session.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  const endTimeStr = new Date(session.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+                  return (
+                    <div
+                      key={session.id}
+                      style={{
+                        padding: '16px 18px',
+                        borderRadius: 14,
+                        border: isLive ? '1.5px solid #bfdbfe' : '1px solid #f1f5f9',
+                        background: isLive ? '#f8faff' : '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: 12,
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 260 }}>
+                        <div
+                          style={{
+                            width: 44,
+                            height: 44,
+                            borderRadius: 10,
+                            background: isLive ? '#dc2626' : '#eff6ff',
+                            color: isLive ? '#ffffff' : '#2563eb',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 800,
+                            fontSize: 11,
+                            lineHeight: 1.1,
+                          }}
+                        >
+                          <span>{startTimeStr}</span>
+                          <span style={{ fontSize: 9, opacity: 0.8 }}>Start</span>
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <p style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                              {session.title}
+                            </p>
+                            {isLive && (
+                              <span style={{ fontSize: 9.5, fontWeight: 800, padding: '2px 7px', borderRadius: 100, background: '#fee2e2', color: '#dc2626' }}>
+                                LIVE NOW
+                              </span>
+                            )}
+                          </div>
+                          <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 3, margin: 0 }}>
+                            Batch: <strong>{session.batch.name}</strong> · Faculty: <strong>{session.trainer.name}</strong> · {session.batch._count.enrollments} Students
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Action Triggers */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        {session.meetLink && (
+                          <a
+                            href={session.meetLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 5,
+                              padding: '7px 14px',
+                              borderRadius: 8,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              color: '#ffffff',
+                              background: isLive ? '#dc2626' : '#2563eb',
+                              textDecoration: 'none',
+                              boxShadow: '0 2px 6px rgba(37,99,235,0.2)',
+                            }}
+                          >
+                            <Video style={{ width: 13, height: 13 }} />
+                            <span>{isLive ? 'Join Live Room' : 'Open Meet'}</span>
+                            <ExternalLink style={{ width: 11, height: 11 }} />
+                          </a>
+                        )}
+                        <Link
+                          href={`/admin/batches/${session.batch.id}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            padding: '7px 12px',
+                            borderRadius: 8,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            color: '#475569',
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            textDecoration: 'none',
+                          }}
+                        >
+                          <span>Roster</span>
+                        </Link>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div style={{ padding: '36px 20px', textAlign: 'center', color: '#94a3b8' }}>
+                  <CalendarDays style={{ width: 32, height: 32, color: '#cbd5e1', margin: '0 auto 8px' }} />
+                  <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>No sessions scheduled for today</p>
+                  <p style={{ fontSize: 11.5, marginTop: 4, margin: 0 }}>Use the sessions manager to schedule upcoming classes.</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section: Batch Capacity Telemetry & Health */}
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                padding: '20px 24px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#f0fdf4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Layers3 style={{ width: 16, height: 16, color: '#16a34a' }} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Active Batch Capacity & Telemetry
+                  </h2>
+                  <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
+                    Roster fullness, assigned faculty, and total sessions completed
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/admin/batches"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#16a34a',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+              >
+                All Batches <ChevronRight style={{ width: 13, height: 13 }} />
+              </Link>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {data?.batchTelemetry && data.batchTelemetry.length > 0 ? (
+                data.batchTelemetry.map((b) => {
+                  const max = b.capacity || 30
+                  const enrolled = b._count.enrollments
+                  const pct = Math.min(100, Math.round((enrolled / max) * 100))
+
+                  return (
+                    <div
+                      key={b.id}
+                      style={{
+                        padding: '14px 18px',
+                        borderRadius: 12,
+                        border: '1px solid #f1f5f9',
+                        background: '#ffffff',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Link
+                              href={`/admin/batches/${b.id}`}
+                              style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a', textDecoration: 'none' }}
+                            >
+                              {b.name}
+                            </Link>
+                            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 100, background: '#eff6ff', color: '#2563eb' }}>
+                              {b.course.title}
+                            </span>
+                          </div>
+                          <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
+                            Trainer: <strong>{b.trainer?.name || 'Unassigned'}</strong> · {b._count.sessions} Sessions Conducted
+                          </p>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: '#0f172a' }}>
+                            {enrolled} / {max} seats
+                          </span>
+                          <span style={{ fontSize: 11, color: '#64748b', marginLeft: 6 }}>
+                            ({pct}%)
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Capacity Meter Progress Bar */}
+                      <div style={{ width: '100%', height: 6, borderRadius: 10, background: '#f1f5f9', overflow: 'hidden' }}>
+                        <div
+                          style={{
+                            width: `${pct}%`,
+                            height: '100%',
+                            background: pct >= 90 ? '#ef4444' : pct >= 60 ? '#3b82f6' : '#22c55e',
+                            borderRadius: 10,
+                            transition: 'width 0.3s ease',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div style={{ padding: '28px 20px', textAlign: 'center', color: '#94a3b8' }}>
+                  No active batches recorded.
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* ── 2. Stats grid ────────────────────────────────── */}
-        <div>
-          <p style={{
-            fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
-            textTransform: 'uppercase', color: C.textSoft, marginBottom: 20,
-          }}>
-            At a glance
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-            gap: 18,
-          }}>
-            {loading
-              ? statCards.map((_, i) => (
-                  <div key={i} style={{
-                    height: 148, borderRadius: C.radius,
-                    background: '#fff', border: `1px solid ${C.border}`,
-                    animation: 'pulse 1.6s ease-in-out infinite',
-                  }} />
-                ))
-              : statCards.map(s => (
-                  <Link key={s.label} href={s.href} style={{ textDecoration: 'none' }}>
+        {/* RIGHT COLUMN: Recent Student Activity & Top Courses */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+          {/* Section: Live Student Activity Feed */}
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                padding: '20px 24px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ecfeff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <TrendingUp style={{ width: 16, height: 16, color: '#0891b2' }} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Recent Student Activity
+                  </h2>
+                  <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
+                    Live stream of student enrollments & submissions
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {data?.recentActivity?.enrollments && data.recentActivity.enrollments.length > 0 ? (
+                data.recentActivity.enrollments.map((enr) => (
+                  <div
+                    key={enr.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 12,
+                      padding: '10px 12px',
+                      borderRadius: 10,
+                      background: '#f8fafc',
+                    }}
+                  >
                     <div
                       style={{
-                        height: '100%', borderRadius: C.radius,
-                        background: C.white, border: `1px solid ${C.border}`,
-                        boxShadow: C.shadow, padding: '26px 24px',
-                        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-                        cursor: 'pointer',
-                        transition: 'box-shadow 180ms, transform 180ms',
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        background: '#eff6ff',
+                        color: '#2563eb',
+                        fontSize: 11,
+                        fontWeight: 800,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginTop: 2,
                       }}
-
-
                     >
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.16em', textTransform: 'uppercase', color: C.textSoft }}>
-                          {s.label}
-                        </p>
-                        <div style={{
-                          width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-                          background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                          <s.icon size={18} color={s.color} />
-                        </div>
-                      </div>
-                      <div style={{ marginTop: 16 }}>
-                        <p style={{ fontSize: 40, fontWeight: 900, lineHeight: 1, letterSpacing: '-0.02em', color: C.text }}>
-                          {fmt(s.value)}
-                        </p>
-                        <p style={{ fontSize: 12, color: C.textSoft, marginTop: 8 }}>{s.sub}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-            }
-          </div>
-        </div>
-
-        {/* ── 3. Activity Charts ───────────────────────────── */}
-        <div>
-          <p style={{
-            fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
-            textTransform: 'uppercase', color: C.textSoft, marginBottom: 20,
-          }}>
-            6-Month Activity
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-            <BarChart
-              title="Course Leads & Candidates"
-              labels={chartData?.labels ?? []}
-              bars={[
-                { label: 'Course Leads', color: '#7c3aed', data: chartData?.series.leads ?? [] },
-                { label: 'Candidates',   color: '#2563eb', data: chartData?.series.candidates ?? [] },
-              ]}
-              loading={!chartData}
-            />
-            <BarChart
-              title="Contacts & Subscribers"
-              labels={chartData?.labels ?? []}
-              bars={[
-                { label: 'Contacts',    color: '#0891b2', data: chartData?.series.contacts ?? [] },
-                { label: 'Subscribers', color: '#ca8a04', data: chartData?.series.subscribers ?? [] },
-              ]}
-              loading={!chartData}
-            />
-          </div>
-        </div>
-
-        {/* ── 4. Recent Candidates + Course Enquiries ──────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-
-          {/* Recent Candidates */}
-          <Card>
-            <PanelHeader
-              title="Recent Candidates"
-              sub="Latest registrations"
-              action={<ViewAllBtn href="/admin/candidates" />}
-            />
-            {loading ? <Skeleton /> : !stats?.recent.candidates.length ? <Empty msg="No candidates yet." /> : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    {['Candidate', 'Course', 'Status', 'When'].map(h => (
-                      <th key={h} style={TH_STYLE}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.recent.candidates.map(c => (
-                    <tr key={c.id}
-                      style={{ transition: 'background 120ms' }}
-
-
-                    >
-                      <td style={TD_STYLE}>
-                        <p style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{c.name}</p>
-                        <p style={{ fontSize: 11, color: C.textSoft, marginTop: 3 }}>{c.email}</p>
-                      </td>
-                      <td style={TD_STYLE}>{c.courseSelect ?? <span style={{ color: '#d1d5db' }}>—</span>}</td>
-                      <td style={TD_STYLE}>
-                        {c.acceptSignin === 1 ? (
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 5,
-                            background: '#f0fdf4', color: '#15803d',
-                            borderRadius: 20, padding: '5px 12px',
-                            fontSize: 11, fontWeight: 700,
-                          }}>
-                            <CheckCircle2 size={11} /> Approved
-                          </span>
-                        ) : (
-                          <span style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 5,
-                            background: '#fffbeb', color: '#b45309',
-                            borderRadius: 20, padding: '5px 12px',
-                            fontSize: 11, fontWeight: 700,
-                          }}>
-                            <Clock size={11} /> Pending
-                          </span>
-                        )}
-                      </td>
-                      <td style={{ ...TD_STYLE, color: C.textSoft, fontSize: 12 }}>{timeAgo(c.createdAt)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </Card>
-
-          {/* Recent Course Enquiries */}
-          <Card>
-            <PanelHeader
-              title="Recent Course Enquiries"
-              sub="Latest lead submissions"
-              action={<ViewAllBtn href="/admin/contacts" />}
-            />
-            {loading ? <Skeleton /> : !stats?.recent.courseLeads.length ? <Empty msg="No enquiries yet." /> : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    {['Name', 'Email', 'Phone', 'When'].map(h => (
-                      <th key={h} style={TH_STYLE}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.recent.courseLeads.map(l => (
-                    <tr key={l.id}
-                      style={{ transition: 'background 120ms' }}
-
-
-                    >
-                      <td style={{ ...TD_STYLE, fontWeight: 600, color: C.text }}>
-                        {l.firstName}{l.lastName ? ` ${l.lastName}` : ''}
-                      </td>
-                      <td style={TD_STYLE}>{l.email}</td>
-                      <td style={TD_STYLE}>{l.contact ?? <span style={{ color: '#d1d5db' }}>—</span>}</td>
-                      <td style={{ ...TD_STYLE, color: C.textSoft, fontSize: 12 }}>{timeAgo(l.createdAt)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </Card>
-        </div>
-
-        {/* ── 4. Contact Messages + Blog Posts ─────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-
-          {/* Contact Messages */}
-          <Card>
-            <PanelHeader
-              title="Recent Contact Messages"
-              sub="Latest inbox messages"
-              action={<ViewAllBtn href="/admin/contacts" />}
-            />
-            {loading ? <Skeleton count={4} h={72} /> :
-             !stats?.recent.contacts.length ? <Empty msg="No messages yet." /> : (
-              <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {stats.recent.contacts.map(c => (
-                  <div key={c.id} style={{
-                    display: 'flex', gap: 14, alignItems: 'flex-start',
-                    padding: '16px 18px', borderRadius: C.radiusSm,
-                    border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
-                    transition: 'border-color 120ms, box-shadow 120ms',
-                  }}
-
-
-                  >
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-                      background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <MessageCircle size={17} color="#2563eb" />
+                      {enr.student.name[0]?.toUpperCase() || 'S'}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                        <div>
-                          <p style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{c.name}</p>
-                          <p style={{ fontSize: 11, color: C.textSoft, marginTop: 2 }}>{c.email}</p>
-                        </div>
-                        <span style={{ fontSize: 11, color: C.textSoft, flexShrink: 0 }}>{timeAgo(c.createdAt)}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <p style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                          {enr.student.name}
+                        </p>
+                        <span style={{ fontSize: 10, color: '#94a3b8' }}>
+                          {timeAgo(enr.enrolledAt)}
+                        </span>
                       </div>
-                      <p style={{
-                        fontSize: 12, color: C.textMid, marginTop: 8,
-                        lineHeight: 1.6,
-                        display: '-webkit-box', WebkitLineClamp: 1,
-                        WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                      }}>
-                        {c.message}
+                      <p style={{ fontSize: 11, color: '#64748b', margin: '2px 0 0' }}>
+                        Enrolled in <strong>{enr.batch.name}</strong> ({enr.batch.course.title})
                       </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
-
-          {/* Blog Posts */}
-          <Card>
-            <PanelHeader
-              title="Recent Blog Posts"
-              sub="Latest content activity"
-              action={<ViewAllBtn href="/admin/blog" />}
-            />
-            {loading ? <Skeleton count={4} h={72} /> :
-             !stats?.recent.blogs.length ? <Empty msg="No blog posts yet." /> : (
-              <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {stats.recent.blogs.map(b => (
-                  <div key={b.id} style={{
-                    display: 'flex', gap: 14, alignItems: 'flex-start',
-                    padding: '16px 18px', borderRadius: C.radiusSm,
-                    border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
-                    transition: 'border-color 120ms, box-shadow 120ms',
-                  }}
-
-
-                  >
-                    <div style={{
-                      width: 40, height: 40, borderRadius: 12, flexShrink: 0,
-                      background: '#eef2ff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <FileText size={17} color="#4f46e5" />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                        <p style={{
-                          fontSize: 13, fontWeight: 600, color: C.text, flex: 1,
-                          display: '-webkit-box', WebkitLineClamp: 1,
-                          WebkitBoxOrient: 'vertical', overflow: 'hidden',
-                        }}>
-                          {b.title}
-                        </p>
-                        <span style={{ fontSize: 11, color: C.textSoft, flexShrink: 0 }}>{timeAgo(b.createdAt)}</span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-                        {b.author && <span style={{ fontSize: 11, color: C.textSoft }}>{b.author}</span>}
-                        {b.isPublished
-                          ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#15803d' }}>
-                              <CheckCircle2 size={11} /> Published
-                            </span>
-                          : <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#b45309' }}>
-                              <Clock size={11} /> Draft
-                            </span>
-                        }
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                        <span style={{ fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: '#e0f2fe', color: '#0369a1' }}>
+                          {enr.status}
+                        </span>
+                        <Link
+                          href={`/admin/students`}
+                          style={{ fontSize: 10.5, fontWeight: 600, color: '#2563eb', textDecoration: 'none' }}
+                        >
+                          View Student Profile →
+                        </Link>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* ── 5. Quick navigation ───────────────────────────── */}
-        <Card>
-          <PanelHeader title="Quick Navigation" sub="Jump directly to any section" />
-          <div style={{
-            padding: '20px 24px 24px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: 12,
-          }}>
-            {quickLinks.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 14,
-                  padding: '14px 18px', borderRadius: C.radiusSm,
-                  border: `1px solid ${C.borderSoft}`, background: '#fafbfd',
-                  textDecoration: 'none',
-                  transition: 'border-color 150ms, box-shadow 150ms, background 150ms',
-                }}
-
-
-              >
-                <div style={{
-                  width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-                  background: item.bg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <item.icon size={16} color={item.color} />
+                ))
+              ) : (
+                <div style={{ padding: '24px 16px', textAlign: 'center', color: '#94a3b8' }}>
+                  No recent enrollment activity.
                 </div>
-                <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: C.textMid }}>
-                  {item.label}
-                </span>
-                <ArrowUpRight size={13} color="#cbd5e1" />
-              </Link>
-            ))}
+              )}
+            </div>
           </div>
-        </Card>
 
+          {/* Section: Top Performing Courses */}
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 20,
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                padding: '20px 24px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 8, background: '#fdf4ff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <BookOpen style={{ width: 16, height: 16, color: '#c026d3' }} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Popular Course Programs
+                  </h2>
+                  <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
+                    Enrollment demand and active cohorts per course
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/admin/courses"
+                style={{ fontSize: 12, fontWeight: 700, color: '#c026d3', textDecoration: 'none' }}
+              >
+                All Courses →
+              </Link>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {data?.topCourses && data.topCourses.length > 0 ? (
+                data.topCourses.map((c, idx) => (
+                  <div
+                    key={c.id}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '12px 14px',
+                      borderRadius: 10,
+                      background: '#f8fafc',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 800,
+                          color: '#64748b',
+                          width: 20,
+                        }}
+                      >
+                        #{idx + 1}
+                      </span>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+                          {c.title}
+                        </p>
+                        <span style={{ fontSize: 10.5, color: '#64748b' }}>
+                          Category: {c.category} · {c.activeBatchesCount} Active Cohorts
+                        </span>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: 11.5,
+                        fontWeight: 700,
+                        padding: '3px 8px',
+                        borderRadius: 6,
+                        background: '#ffffff',
+                        border: '1px solid #e2e8f0',
+                        color: '#0f172a',
+                      }}
+                    >
+                      {c.enrolledCount} Enrolled
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '20px 16px', textAlign: 'center', color: '#94a3b8' }}>
+                  No courses recorded yet.
+                </div>
+              )}
+            </div>
+          </div>
+
+        </div>
       </div>
     </AdminLayout>
   )

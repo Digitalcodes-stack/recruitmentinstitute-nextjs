@@ -139,8 +139,12 @@ export default function TestTakingClient({ courseId, courseTitle }: { courseId: 
           })),
         }),
       })
-      if (!res.ok) throw new Error('Failed to submit assessment')
+      if (!res.ok) {
+        const errorJson = await res.json().catch(() => null)
+        throw new Error(errorJson?.message || 'Failed to submit assessment')
+      }
       const json = await res.json()
+
       const studentAssessmentId = json?.data?.student_assessment_id ?? json?.student_assessment_id
       if (!studentAssessmentId) throw new Error('Could not determine submission ID')
       router.push(`/profile/assessments/${studentAssessmentId}`)

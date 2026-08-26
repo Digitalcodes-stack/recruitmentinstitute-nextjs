@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 
@@ -224,7 +224,7 @@ export default async function ProfilePage() {
                           {new Date(s.sessionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} · {new Date(s.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
-                      {s.meetLink ? (
+                      {s.meetLink && !s.meetLink.includes('sample-link') ? (
                         <a href={s.meetLink} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 14px', borderRadius: 10, background: 'linear-gradient(135deg,#1E40AF,#2563EB)', color: '#fff', fontSize: 12, fontWeight: 700, textDecoration: 'none' }}>
                           Join Meeting
                         </a>
@@ -311,6 +311,19 @@ export default async function ProfilePage() {
                   <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View AI-analyzed results, personalized notes, and your study plan.</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#1E40AF' }}>
                     View Results <ChevronRight style={{ width: 13, height: 13 }} />
+                  </div>
+                </Link>
+              )}
+
+              {session.type === 'student' && (
+                <Link href="/profile/session-assessments" className="profile-resource-card">
+                  <div style={{ width: 48, height: 48, borderRadius: 14, background: '#F5F3FF', border: '1px solid #DDD6FE', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                    <Brain style={{ width: 22, height: 22, color: '#7C3AED' }} />
+                  </div>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Session Assessments</h4>
+                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Topic-specific assessments released based on your attendance in each live session.</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#7C3AED' }}>
+                    View Assessments <ChevronRight style={{ width: 13, height: 13 }} />
                   </div>
                 </Link>
               )}

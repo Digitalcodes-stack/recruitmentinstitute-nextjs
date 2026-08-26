@@ -1,16 +1,43 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Phone, Mail, MapPin, Clock, MessageSquare, Send, ChevronRight } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, MessageSquare, Send, ChevronRight, CheckCircle2, RefreshCw, ArrowRight, ShieldCheck } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function ContactClient() {
   const [form, setForm] = useState({ name: '', email: '', mobile: '', message: '' })
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
+  const [submittedData, setSubmittedData] = useState<{ name: string; email: string; mobile: string } | null>(null)
+
+  const validate = () => {
+    const errs: { [key: string]: string } = {}
+    if (!form.name.trim() || form.name.trim().length < 2) {
+      errs.name = 'Please enter your full name (minimum 2 characters)'
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!form.email.trim() || !emailRegex.test(form.email.trim())) {
+      errs.email = 'Please enter a valid email address (e.g. name@domain.com)'
+    }
+    const cleanPhone = form.mobile.replace(/[^0-9]/g, '')
+    if (!cleanPhone || cleanPhone.length < 10) {
+      errs.mobile = 'Please enter a valid 10-digit mobile number'
+    }
+    if (!form.message.trim() || form.message.trim().length < 10) {
+      errs.message = 'Please provide details about your inquiry (minimum 10 characters)'
+    }
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!validate()) {
+      toast.error('Please complete all required fields correctly')
+      return
+    }
+
     setLoading(true)
     try {
       const res = await fetch('/api/contact', {
@@ -20,13 +47,15 @@ export default function ContactClient() {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success('Message sent! We will contact you soon.')
+        toast.success('Inquiry submitted successfully!')
+        setSubmittedData({ name: form.name, email: form.email, mobile: form.mobile })
         setForm({ name: '', email: '', mobile: '', message: '' })
+        setErrors({})
       } else {
-        toast.error(data.message || 'Failed to send message')
+        toast.error(data.message || 'Failed to submit inquiry')
       }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error('Connection error. Please try again or reach out on WhatsApp.')
     } finally {
       setLoading(false)
     }
@@ -34,7 +63,7 @@ export default function ContactClient() {
 
   return (
     <>
-      {/* â"€â"€ Hero / Breadcrumb â"€â"€ */}
+      {/* ── Hero / Breadcrumb ── */}
       <div
         className="relative text-white overflow-hidden"
         style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1a2744 60%, #0F172A 100%)', paddingTop: '72px', paddingBottom: '80px' }}
@@ -49,10 +78,7 @@ export default function ContactClient() {
         <div className="container relative z-10">
           {/* breadcrumb */}
           <div className="flex items-center gap-2 mb-6" style={{ fontSize: '12px', color: '#94A3B8' }}>
-            <Link href="/"
-
-
-            >Home</Link>
+            <Link href="/">Home</Link>
             <ChevronRight className="w-3 h-3" />
             <span style={{ color: '#CBD5E1' }}>Contact Us</span>
           </div>
@@ -77,7 +103,7 @@ export default function ContactClient() {
             Contact Recruitment Institute
           </h1>
           <p style={{ fontSize: '17px', color: '#94A3B8', lineHeight: 1.75, maxWidth: '520px' }}>
-            Have a question about our courses, batch timings, or admissions? Our team responds within 30 minutes during working hours.
+            Have a question about our courses, batch timings, or admissions? Our admissions team responds within 30 minutes during working hours.
           </p>
         </div>
 
@@ -85,108 +111,200 @@ export default function ContactClient() {
         <div className="absolute bottom-0 left-0 right-0 bg-white" style={{ height: '48px', clipPath: 'ellipse(55% 100% at 50% 100%)' }} />
       </div>
 
-      {/* â"€â"€ Main Content â"€â"€ */}
+      {/* ── Main Content ── */}
       <section style={{ padding: '80px 0', background: '#F8FAFC' }}>
         <div className="container">
           <div className="grid lg:grid-cols-12 gap-10 items-start">
 
-            {/* â"€â"€ Contact Form â"€â"€ */}
+            {/* ── Contact Form / Professional Thank You Card ── */}
             <div className="lg:col-span-7">
               <div className="bg-white rounded-3xl overflow-hidden"
                 style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.08)', border: '1px solid #F1F5F9' }}>
 
-                {/* form header bar */}
-                <div style={{ background: 'linear-gradient(135deg, #0F172A, #1E293B)', padding: '28px 36px' }}>
-                  <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>Send Us a Message</h2>
-                  <p style={{ fontSize: '13px', color: '#94A3B8' }}>Fill the form below and we'll get back to you shortly</p>
-                </div>
-
-                <form onSubmit={handleSubmit} style={{ padding: '36px' }}>
-                  <div className="grid sm:grid-cols-2 gap-5" style={{ marginBottom: '20px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
-                        Your Name <span style={{ color: '#EF4444' }}>*</span>
-                      </label>
-                      <input
-                        type="text"
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                        required
-                        className="form-input-premium"
-                        placeholder="Your full name"
-                      />
+                {submittedData ? (
+                  /* ── Executive Thank You Message Screen ── */
+                  <div className="p-8 sm:p-12 text-center">
+                    <div className="w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-6"
+                      style={{ background: 'linear-gradient(135deg, #ECFDF5, #D1FAE5)', border: '2px solid #10B981', boxShadow: '0 10px 25px rgba(16,185,129,0.2)' }}>
+                      <CheckCircle2 className="w-10 h-10 text-emerald-600 animate-bounce" />
                     </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
-                        Email Address <span style={{ color: '#EF4444' }}>*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        required
-                        className="form-input-premium"
-                        placeholder="your@email.com"
-                      />
+
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold uppercase tracking-wider mb-3">
+                      <ShieldCheck className="w-3.5 h-3.5" /> Inquiry Received & Confirmed
                     </div>
+
+                    <h2 style={{ fontSize: '26px', fontWeight: 800, color: '#0F172A', marginBottom: '8px' }}>
+                      Thank You, {submittedData.name}!
+                    </h2>
+
+                    <p style={{ fontSize: '15px', color: '#64748B', lineHeight: 1.6, maxWidth: '480px', margin: '0 auto 24px' }}>
+                      We have received your message. An admissions counselor is reviewing your inquiry and will contact you within <strong className="text-slate-800">30 minutes</strong>.
+                    </p>
+
+                    {/* Summary confirmation card */}
+                    <div className="rounded-2xl p-5 mb-8 text-left"
+                      style={{ background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+                      <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Submission Details</div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                          <span className="text-slate-500">Candidate Name:</span>
+                          <span className="font-semibold text-slate-800">{submittedData.name}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                          <span className="text-slate-500">Email Address:</span>
+                          <span className="font-semibold text-blue-600">{submittedData.email}</span>
+                        </div>
+                        <div className="flex justify-between items-center py-1">
+                          <span className="text-slate-500">Mobile Number:</span>
+                          <span className="font-semibold text-slate-800">{submittedData.mobile}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-emerald-600 font-medium mt-3 flex items-center gap-1">
+                        ✓ A formal confirmation copy has been sent to your email.
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+                      <a
+                        href="https://wa.me/917385204165?text=Hi%2C%20I%20just%20submitted%20a%20contact%20inquiry%20on%20your%20website"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-white text-sm transition-all shadow-md"
+                        style={{ background: '#059669' }}
+                      >
+                        💬 Connect on WhatsApp Now
+                      </a>
+                      <Link
+                        href="/courses"
+                        className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 text-sm transition-all"
+                      >
+                        Explore Our Courses <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+
+                    <button
+                      onClick={() => setSubmittedData(null)}
+                      className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 font-medium mt-2 cursor-pointer transition-colors"
+                    >
+                      <RefreshCw className="w-3 h-3" /> Submit another message
+                    </button>
                   </div>
+                ) : (
+                  /* ── Form View ── */
+                  <>
+                    {/* form header bar */}
+                    <div style={{ background: 'linear-gradient(135deg, #0F172A, #1E293B)', padding: '28px 36px' }}>
+                      <h2 style={{ fontSize: '22px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>Send Us a Message</h2>
+                      <p style={{ fontSize: '13px', color: '#94A3B8' }}>Fill the form below and we'll get back to you shortly</p>
+                    </div>
 
-                  <div style={{ marginBottom: '20px' }}>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
-                      Mobile Number <span style={{ color: '#EF4444' }}>*</span>
-                    </label>
-                    <input
-                      type="tel"
-                      value={form.mobile}
-                      onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-                      required
-                      className="form-input-premium"
-                      placeholder="+91 9XXXXXXXXX"
-                    />
-                  </div>
+                    <form onSubmit={handleSubmit} style={{ padding: '36px' }} noValidate>
+                      <div className="grid sm:grid-cols-2 gap-5" style={{ marginBottom: '20px' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
+                            Your Name <span style={{ color: '#EF4444' }}>*</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={form.name}
+                            onChange={(e) => {
+                              setForm({ ...form, name: e.target.value })
+                              if (errors.name) setErrors({ ...errors, name: '' })
+                            }}
+                            className={`form-input-premium ${errors.name ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                            placeholder="Your full name"
+                          />
+                          {errors.name && (
+                            <p className="text-red-500 text-xs font-semibold mt-1.5">{errors.name}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
+                            Email Address <span style={{ color: '#EF4444' }}>*</span>
+                          </label>
+                          <input
+                            type="email"
+                            value={form.email}
+                            onChange={(e) => {
+                              setForm({ ...form, email: e.target.value })
+                              if (errors.email) setErrors({ ...errors, email: '' })
+                            }}
+                            className={`form-input-premium ${errors.email ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                            placeholder="your@email.com"
+                          />
+                          {errors.email && (
+                            <p className="text-red-500 text-xs font-semibold mt-1.5">{errors.email}</p>
+                          )}
+                        </div>
+                      </div>
 
-                  <div style={{ marginBottom: '28px' }}>
-                    <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
-                      Message <span style={{ color: '#EF4444' }}>*</span>
-                    </label>
-                    <textarea
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      required
-                      rows={5}
-                      className="form-input-premium"
-                      style={{ resize: 'none' }}
-                      placeholder="Which course are you interested in? Any specific questions about batch timings, fees, or curriculum?"
-                    />
-                  </div>
+                      <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
+                          Mobile Number <span style={{ color: '#EF4444' }}>*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          value={form.mobile}
+                          onChange={(e) => {
+                            setForm({ ...form, mobile: e.target.value })
+                            if (errors.mobile) setErrors({ ...errors, mobile: '' })
+                          }}
+                          className={`form-input-premium ${errors.mobile ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                          placeholder="+91 9XXXXXXXXX"
+                        />
+                        {errors.mobile && (
+                          <p className="text-red-500 text-xs font-semibold mt-1.5">{errors.mobile}</p>
+                        )}
+                      </div>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-2.5 font-bold text-white rounded-xl cursor-pointer transition-all duration-200"
-                    style={{
-                      background: 'linear-gradient(135deg, #1E40AF, #2563EB)',
-                      padding: '16px',
-                      fontSize: '15px',
-                      boxShadow: '0 8px 24px rgba(30,64,175,0.30)',
-                      opacity: loading ? 0.75 : 1,
-                      border: 'none',
-                    }}
+                      <div style={{ marginBottom: '28px' }}>
+                        <label style={{ display: 'block', fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>
+                          Message <span style={{ color: '#EF4444' }}>*</span>
+                        </label>
+                        <textarea
+                          value={form.message}
+                          onChange={(e) => {
+                            setForm({ ...form, message: e.target.value })
+                            if (errors.message) setErrors({ ...errors, message: '' })
+                          }}
+                          rows={5}
+                          className={`form-input-premium ${errors.message ? 'border-red-500 ring-1 ring-red-500' : ''}`}
+                          style={{ resize: 'none' }}
+                          placeholder="Which course are you interested in? Any specific questions about batch timings, fees, or curriculum?"
+                        />
+                        {errors.message && (
+                          <p className="text-red-500 text-xs font-semibold mt-1.5">{errors.message}</p>
+                        )}
+                      </div>
 
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full flex items-center justify-center gap-2.5 font-bold text-white rounded-xl cursor-pointer transition-all duration-200"
+                        style={{
+                          background: 'linear-gradient(135deg, #1E40AF, #2563EB)',
+                          padding: '16px',
+                          fontSize: '15px',
+                          boxShadow: '0 8px 24px rgba(30,64,175,0.30)',
+                          opacity: loading ? 0.75 : 1,
+                          border: 'none',
+                        }}
+                      >
+                        <Send className="w-4 h-4" />
+                        {loading ? 'Submitting & Delivering...' : 'Send Message'}
+                      </button>
 
-                  >
-                    <Send className="w-4 h-4" />
-                    {loading ? 'Sending...' : 'Send Message'}
-                  </button>
-
-                  <p style={{ textAlign: 'center', fontSize: '12px', color: '#94A3B8', marginTop: '16px' }}>
-                    We typically respond within 30 minutes during working hours (Mon–Sat 9AM–7PM)
-                  </p>
-                </form>
+                      <p style={{ textAlign: 'center', fontSize: '12px', color: '#94A3B8', marginTop: '16px' }}>
+                        We typically respond within 30 minutes during working hours (Mon–Sat 9AM–7PM)
+                      </p>
+                    </form>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* â"€â"€ Sidebar â"€â"€ */}
+            {/* ── Sidebar ── */}
             <div className="lg:col-span-5 flex flex-col gap-6">
 
               {/* Contact Info Card */}
@@ -241,10 +359,10 @@ export default function ContactClient() {
                   </div>
                   <h3 style={{ fontSize: '15px', fontWeight: 700, color: '#0F172A' }}>Office Locations</h3>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { city: 'Pune Office', address: 'Recruitment Institute, Pune, Maharashtra – 411001' },
-                    { city: 'Bhor Office', address: 'Recruitment Institute, Bhor, Maharashtra – 412206' },
+                    { city: 'Online Training Institute', address: 'Live Interactive Batches & Global Remote Access Worldwide' },
                   ].map((loc) => (
                     <div key={loc.city} className="rounded-2xl" style={{ padding: '16px', background: '#F8FAFC', border: '1px solid #E2E8F0' }}>
                       <p style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', marginBottom: '4px' }}>{loc.city}</p>

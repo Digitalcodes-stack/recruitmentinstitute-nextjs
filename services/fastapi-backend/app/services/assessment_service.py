@@ -2,7 +2,9 @@ import logging
 from dataclasses import dataclass
 
 from app.core.cache import create_redis_client
+from app.core.config import settings
 from app.core.exceptions import ServiceError
+
 from app.models.ai_assessment import AIAssessmentAnalysis, AIGeneratedNote, StudentStudyPlan
 from app.models.assessment import StudentAssessment, Assessment, AssessmentQuestion
 from app.models.question_bank import QuestionBankItem
@@ -180,14 +182,28 @@ class AssessmentService:
         )
 
         import asyncio
+
+        async def _safe_generate_note(topic: str) -> str:
+            try:
+                return await self._generate_notes_cached(provider, topic, assessment.course_id)
+            except Exception as exc:
+                self.logger.warning("Note generation failed for topic %s: %s. Using local fallback.", topic, exc)
+                try:
+                    from app.services.ai.providers.local_ai_provider import LocalAIProvider
+                    return await LocalAIProvider().generate_notes(topic)
+                except Exception as inner_exc:
+                    self.logger.exception("Fallback note generation failed for topic %s: %s", topic, inner_exc)
+                    return f"### Overview\n\nStudy notes for {topic}.\n\n### Key Concepts\n\n- Key principles and concepts in {topic}.\n\n### Practice Questions\n\n- Review course materials for {topic}."
+
+        target_weak_topics = analysis_result.weak_topics[:5]
         notes_tasks = [
-            self._generate_notes_cached(provider, topic_name, assessment.course_id)
-            for topic_name in analysis_result.weak_topics
+            _safe_generate_note(topic_name)
+            for topic_name in target_weak_topics
         ]
 
         # Run time-consuming AI generation tasks concurrently
         notes_contents, plan_json, recommendations = await asyncio.gather(
-            asyncio.gather(*notes_tasks),
+            asyncio.gather(*notes_tasks) if notes_tasks else asyncio.sleep(0, result=[]),
             provider.generate_study_plan(
                 analysis_result.weak_topics, analysis_result.strong_topics, analysis_result.difficulty_breakdown
             ),
@@ -201,7 +217,7 @@ class AssessmentService:
                 topic_name=topic_name,
                 notes_content=content,
             )
-            for topic_name, content in zip(analysis_result.weak_topics, notes_contents)
+            for topic_name, content in zip(target_weak_topics, notes_contents)
         ]
         notes = await self.repo.add_notes(note_rows) if note_rows else []
 
@@ -217,13 +233,14 @@ class AssessmentService:
 
     async def _generate_notes_cached(self, provider, topic_name: str, course_id: int | None) -> str:
         cache_key = f"ai:notes:{course_id}:{topic_name.lower().strip()}"
-        redis_client = create_redis_client()
-        try:
-            cached = await redis_client.get(cache_key)
-            if cached:
-                return cached
-        except Exception:
-            self.logger.exception("Redis unavailable for notes cache lookup; generating fresh")
+        if settings.redis_url or settings.redis_broker_url:
+            try:
+                redis_client = create_redis_client()
+                cached = await asyncio.wait_for(redis_client.get(cache_key), timeout=0.3)
+                if cached:
+                    return cached
+            except Exception:
+                pass
 
         context_chunks: list[str] = []
         if self.retrieval:
@@ -234,11 +251,14 @@ class AssessmentService:
                 self.logger.exception("Retrieval failed for topic=%s; falling back to ungrounded notes", topic_name)
 
         notes_content = await provider.generate_notes(topic_name, context_chunks=context_chunks or None)
-        try:
-            await redis_client.set(cache_key, notes_content, ex=NOTES_CACHE_TTL_SECONDS)
-        except Exception:
-            self.logger.exception("Failed to write notes cache for topic=%s", topic_name)
+        if settings.redis_url or settings.redis_broker_url:
+            try:
+                redis_client = create_redis_client()
+                await asyncio.wait_for(redis_client.set(cache_key, notes_content, ex=NOTES_CACHE_TTL_SECONDS), timeout=0.3)
+            except Exception:
+                pass
         return notes_content
+
 
     async def list_my_assessments(self, student_id: int) -> list[StudentAssessment]:
         return await self.repo.list_student_assessments(student_id)

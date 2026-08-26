@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'docker/Dockerfile.nextjs'
+      - '-t'
+      - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest'
+      - '.'
+images:
+  - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest'

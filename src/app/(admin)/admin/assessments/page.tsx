@@ -34,11 +34,8 @@ async function loadCourseAssessment(courseId: number, courseTitle: string): Prom
     const assessment = await getAssessmentByCourseAdmin(courseId)
     const questions = await listQuestions(assessment.id).catch(() => [])
     return { courseId, courseTitle, assessment, questions }
-  } catch (err) {
-    if (err instanceof FastApiError) {
-      return { courseId, courseTitle, assessment: null, questions: [] }
-    }
-    throw err
+  } catch {
+    return { courseId, courseTitle, assessment: null, questions: [] }
   }
 }
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/auth'
 import { batchSchema } from '@/lib/validations'
+import { generateSessionsForBatch } from '@/lib/services/batchSessionGenerator'
 
 async function guard() {
   const session = await getAdminSession()
@@ -47,5 +48,30 @@ export async function POST(req: NextRequest) {
       endDate: endDate ? new Date(endDate) : null,
     },
   })
-  return NextResponse.json({ success: true, data: batch }, { status: 201 })
+
+  // ── Auto-generate sessions from syllabus if requested ───────────────────
+  let sessionsCreated = 0
+  let sessionPreview: import('@/lib/services/batchSessionGenerator').SessionPreviewItem[] = []
+
+  if (body.autoGenerateSessions === true) {
+    try {
+      const result = await generateSessionsForBatch(batch.id, {
+        classDays: Array.isArray(body.classDays) ? body.classDays : [1, 3, 5],
+        startHour: body.classStartHour !== undefined ? Number(body.classStartHour) : 19,
+        startMinute: body.classStartMinute !== undefined ? Number(body.classStartMinute) : 0,
+        endHour: body.classEndHour !== undefined ? Number(body.classEndHour) : 21,
+        endMinute: body.classEndMinute !== undefined ? Number(body.classEndMinute) : 0,
+      })
+      sessionsCreated = result.sessionsCreated
+      sessionPreview = result.preview
+    } catch (err) {
+      console.error('[batches POST] Session generation failed:', err)
+      // Don't fail the batch creation — sessions can be generated later
+    }
+  }
+
+  return NextResponse.json(
+    { success: true, data: batch, sessionsCreated, sessionPreview },
+    { status: 201 },
+  )
 }

@@ -16,6 +16,27 @@ export async function POST(req: NextRequest) {
     const student = await prisma.student.findUnique({ where: { email: email.trim().toLowerCase() } })
 
     if (!student || !student.isActive) {
+      // Fallback: check if the user is registered as a candidate
+      const candidate = await prisma.candidate.findUnique({ where: { email: email.trim().toLowerCase() } })
+      if (candidate && candidate.acceptSignin !== 0) {
+        const valid = await verifyPassword(password, candidate.password)
+        if (valid) {
+          const token = signToken({
+            userId: candidate.id,
+            email: candidate.email,
+            name: candidate.name,
+            role: 'EMPLOYEE',
+            type: 'candidate',
+          })
+          const response = NextResponse.json({
+            success: true,
+            message: 'Login successful',
+            user: { id: candidate.id, name: candidate.name, email: candidate.email },
+          })
+          response.cookies.set(setUserCookie(token))
+          return response
+        }
+      }
       return NextResponse.json({ success: false, message: 'Invalid email or password' }, { status: 401 })
     }
 

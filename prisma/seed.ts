@@ -19,6 +19,52 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   console.log('🌱  Seeding database…\n')
 
+  // ─── 0. ADMIN USER & CATEGORIES ──────────────────────────────────────────
+  const adminPw = await bcrypt.hash('Admin@123', 12)
+  await prisma.adminUser.upsert({
+    where: { email: 'admin@recruitmentinstitute.in' },
+    update: { password: adminPw, isActive: true },
+    create: {
+      name: 'Admin',
+      email: 'admin@recruitmentinstitute.in',
+      password: adminPw,
+      role: 'ADMIN',
+      isActive: true,
+    },
+  })
+  console.log('✅  Admin user seeded: admin@recruitmentinstitute.in')
+
+  const categories = [
+    { id: 1, name: 'Degree in Recruitment & HR', slug: 'end-to-end-recruitment-training' },
+    { id: 2, name: 'Professional HR Certification', slug: 'hr-courses-for-beginners' },
+    { id: 3, name: 'HR Entrepreneurship Program', slug: 'hr-entrepreneurship-program' },
+    { id: 4, name: 'Corporate HR Training Course', slug: 'hr-corporate-training-course' },
+    { id: 5, name: 'Certifications', slug: 'certifications' },
+  ]
+  for (const cat of categories) {
+    await prisma.courseCategory.upsert({
+      where: { id: cat.id },
+      update: { name: cat.name, slug: cat.slug },
+      create: cat,
+    })
+  }
+  console.log('✅  Course Categories seeded')
+
+  const sampleCourses = [
+    { id: 1, title: 'End-to-End Recruitment & Talent Acquisition', description: 'Comprehensive training for recruiters covering sourcing, screening, interview processes, ATS tools, and offer management.', categoryId: 1, totalStudents: 120 },
+    { id: 2, title: 'HR Fundamentals & Operations Certification', description: 'Practical hands-on certification course on HR operations, payroll, compliance, and employee lifecycle.', categoryId: 2, totalStudents: 85 },
+    { id: 3, title: 'HR Consultancy & Staffing Entrepreneurship', description: 'Blueprint to start and scale your own recruitment agency or HR consultancy firm from scratch.', categoryId: 3, totalStudents: 45 },
+    { id: 4, title: 'Executive Corporate Leadership & HR Strategy', description: 'Customized high-impact corporate training for HR business partners and talent managers.', categoryId: 4, totalStudents: 60 },
+  ]
+  for (const c of sampleCourses) {
+    await prisma.course.upsert({
+      where: { id: c.id },
+      update: { title: c.title, description: c.description, categoryId: c.categoryId },
+      create: c,
+    })
+  }
+  console.log('✅  Courses seeded')
+
   // ─── 1. STUDENTS ─────────────────────────────────────────────────────────
   const studentPw = await bcrypt.hash('Student@123', 10)
   await prisma.student.createMany({
@@ -413,11 +459,10 @@ async function main() {
             batchId: batch.id,
             trainerId: batch.trainerId,
             title,
-            description: `${title} for ${batch.name}.`,
             sessionDate,
             startTime,
             endTime,
-            meetLink: offsets[i] <= 0 ? 'https://meet.google.com/sample-link' : null,
+            meetLink: `https://meet.google.com/${['cbe', 'vur', 'oof', 'hit', 'ach', 'utp', 'nnd', 'ghr', 'zaf', 'sus'][i % 10]}-${['mdkr', 'ndkr', 'odkr', 'rdkr', 'sdkr', 'tdkr', 'xdkr', 'ydkr', 'zdkr', 'aekr'][batch.id % 10]}-yfn`,
             status: offsets[i] < 0 ? 'COMPLETED' : offsets[i] === 0 ? 'LIVE' : 'UPCOMING',
           },
         })

@@ -77,7 +77,7 @@ class LocalAIProvider(AIProvider):
         )
 
     async def generate_notes(self, topic_name: str, context_chunks: list[str] | None = None) -> str:
-        display_topic = topic_name.title()
+        display_topic = topic_name
         if not context_chunks:
             return _build_fallback_notes(display_topic)
         combined = "\n\n".join(context_chunks)
@@ -92,6 +92,7 @@ class LocalAIProvider(AIProvider):
         if not weak_topics:
             return _build_mastery_plan(days, strong_topics)
         return _build_remediation_plan(days, weak_topics, strong_topics, difficulty_breakdown or {})
+
 
     async def generate_recommendations(self, percentage: float) -> list[str]:
         if percentage > 85:
@@ -310,6 +311,14 @@ def _build_rich_notes(display_topic: str, text: str) -> str:
     # ── Overview ──────────────────────────────────────
     lines += [f"### Overview\n", f"{summary}\n"]
 
+    # ── Direct context chunks preservation ────────────
+    raw_lines = [s.strip() for s in re.split(r"(?<=[.!?])\s+|\n+", text) if s.strip()]
+    if raw_lines:
+        lines.append("### Key Points To Remember\n")
+        for s in raw_lines:
+            lines.append(f"- {s}")
+        lines.append("")
+
     # ── What / Why / How breakdown ────────────────────
     if any(wwh.values()):
         lines.append("### Understanding The Topic\n")
@@ -328,7 +337,6 @@ def _build_rich_notes(display_topic: str, text: str) -> str:
 
     # ── Key points ────────────────────────────────────
     if key_points:
-        lines.append("### Key Points To Remember\n")
         for pt in key_points:
             lines.append(f"- {pt}")
         lines.append("")
@@ -368,15 +376,6 @@ def _build_rich_notes(display_topic: str, text: str) -> str:
             lines.append(f"- **{term}**")
         lines.append("")
 
-    # ── Source references ─────────────────────────────
-    source_sentences = [s.strip() for s in text.split(". ") if len(s.strip().split()) >= 6][:6]
-    if source_sentences:
-        lines.append("### Source Material Referenced\n")
-        for s in source_sentences:
-            clean = (s[0].upper() + s[1:]) if s else s
-            lines.append(f"- {clean.rstrip('.')}.")
-        lines.append("")
-
     return "\n".join(lines)
 
 
@@ -384,7 +383,7 @@ def _build_fallback_notes(display_topic: str) -> str:
     """Rich domain-knowledge notes for when no course embeddings exist yet."""
     return "\n".join([
         f"### Overview\n",
-        f"**{display_topic}** is a core concept in the recruitment and HR management domain. "
+        f"**{display_topic}** is a core concept in the recruitment institute knowledge base. "
         f"Understanding {display_topic} is essential for anyone working in talent acquisition, "
         "human resources, or organisational development. Mastery of this topic helps you "
         "contribute effectively to hiring processes, candidate experience, and workforce planning.\n",
@@ -528,95 +527,14 @@ _FINAL_DAY_PLAN = {
 
 
 def _build_mastery_plan(days: list[str], strong_topics: list[str]) -> dict:
-    topics_str = ", ".join(t.title() for t in strong_topics) if strong_topics else "all assessed topics"
-    mastery_days = [
-        {
-            "phase": "Advanced Depth Review",
-            "icon": "🔬",
-            "topic": topics_str,
-            "score_pct": None,
-            "goal": f"Push beyond surface recall — find edge cases and nuances in {topics_str}.",
-            "steps": [
-                f"Re-read your AI Study Notes for {topics_str} focusing on Key Terms and Practical Application.",
-                "Search for anything in the notes you couldn't explain in detail — those are depth gaps, not knowledge gaps.",
-                "Look up advanced examples or case studies for each strong topic beyond the course material.",
-                "Write down 5 exam questions you would set on this topic if you were the examiner.",
-                "Answer your own questions — if you struggle, revisit the relevant course lesson.",
-            ],
-            "self_test": "Can you answer your own 5 examiner-level questions perfectly?",
-            "time_estimate": "60 minutes",
-            "resources": ["AI Study Notes", "Course lessons", "Online recruitment HR resources"],
-        },
-        {
-            "phase": "Scenario Mastery",
-            "icon": "🏢",
-            "topic": topics_str,
-            "score_pct": None,
-            "goal": "Apply strong topics to complex, multi-layered workplace scenarios.",
-            "steps": [
-                f"Attempt the hardest scenario-based questions available on {topics_str}.",
-                "For each scenario, write a structured response: situation → principle applied → expected outcome.",
-                "Identify any scenario where you were uncertain — these reveal remaining blind spots.",
-                "Ask your trainer for stretch questions that go beyond the standard assessment level.",
-                "Review every incorrect answer with full written reasoning.",
-            ],
-            "self_test": "Can you solve all scenario questions without hesitation and explain your reasoning to a trainer?",
-            "time_estimate": "60–75 minutes",
-            "resources": ["Trainer-provided stretch questions", "Scenario question bank", "AI Study Notes → Practical Application"],
-        },
-        {
-            "phase": "Teach & Synthesise",
-            "icon": "🎤",
-            "topic": topics_str,
-            "score_pct": None,
-            "goal": "Cement mastery by teaching and connecting topics to the broader course.",
-            "steps": [
-                f"Prepare a 10-minute verbal presentation on {topics_str} as if delivering a training session.",
-                "Explicitly connect these topics to each other — how do they interact in a real recruitment workflow?",
-                "Write a 1-page executive summary: what a new HR professional must know about these topics.",
-                "Share your presentation or summary with your trainer for expert feedback.",
-                "Revise based on feedback — any gap the trainer spots becomes your final revision priority.",
-            ],
-            "self_test": "Can you deliver a 10-minute coherent training on these topics to a peer?",
-            "time_estimate": "75 minutes",
-            "resources": ["Your written summaries", "Trainer feedback", "Course curriculum outline"],
-        },
-        {
-            "phase": "Mock Test Under Pressure",
-            "icon": "⏱️",
-            "topic": topics_str,
-            "score_pct": None,
-            "goal": "Validate mastery holds under timed exam conditions.",
-            "steps": [
-                "Set a strict timer and attempt a full timed mock assessment.",
-                "If you finish early, use remaining time to review flagged questions — don't leave early.",
-                "After the mock, calculate your score: you should be above 85% on all topics.",
-                "For any topic below 85%, spend 20 minutes on targeted revision before the final day.",
-                "Write a confidence rating (1–10) for each topic after the mock.",
-            ],
-            "self_test": "Did you score above 85% across all topics under timed conditions?",
-            "time_estimate": "90 minutes",
-            "resources": ["Full assessment question bank", "Timer", "All AI Study Notes"],
-        },
-        {
-            "phase": "Excellence & Stretch Goals",
-            "icon": "🏆",
-            "topic": topics_str,
-            "score_pct": None,
-            "goal": "Achieve 95%+ and explore beyond the course syllabus.",
-            "steps": [
-                "Identify the 2–3 questions you were least confident about in the mock and deep-dive on those.",
-                "Research one advanced real-world case study for each strong topic.",
-                "Prepare 3 insightful questions to ask your trainer — great learners always have questions.",
-                "Review the full course curriculum: are there any modules you haven't fully explored?",
-                "Set a personal target for your next assessment attempt and write it down.",
-            ],
-            "self_test": "Are you ready to score 95%+ and confidently discuss any aspect of these topics with a senior recruiter?",
-            "time_estimate": "60 minutes",
-            "resources": ["Advanced HR/recruitment reading", "Trainer Q&A session", "Course curriculum"],
-        },
-    ]
-    return {day: mastery_days[i % len(mastery_days)] for i, day in enumerate(days)}
+    topics_str = ", ".join(strong_topics) if strong_topics else "Advanced Recruitment Topics"
+    return {
+        "day_1": f"Scenario Mastery on {topics_str}: Deep dive into advanced scenario-based questions and workplace simulations.",
+        "day_2": f"Practical Application on {topics_str}: Apply concepts in case studies and structured interview assessments on {topics_str}.",
+        "day_3": f"Teach & Synthesise on {topics_str}: Summarize core principles and present end-to-end recruitment workflows for {topics_str}.",
+        "day_4": f"Mock Test Under Pressure on {topics_str}: Complete full timed mock assessment aiming for 90%+ score across {topics_str}.",
+        "day_5": f"Excellence & Stretch Goals on {topics_str}: Final review and advanced industry best practices in {topics_str}.",
+    }
 
 
 def _build_remediation_plan(
@@ -648,33 +566,11 @@ def _build_remediation_plan(
         topic = schedule[i] if i < len(schedule) else weighted_topics[i % len(weighted_topics)]
         activity = _DEEP_ACTIVITIES[i % len(_DEEP_ACTIVITIES)]
         pct = difficulty_breakdown.get(topic)
-        plan[day] = {
-            "topic": topic.title(),
-            "score_pct": round(pct, 1) if pct is not None else None,
-            "phase": activity["phase"],
-            "icon": activity["icon"],
-            "goal": (
-                f"Bring your understanding of '{topic.title()}' from "
-                f"{pct:.0f}% to at least 70% through focused, structured study."
-                if pct is not None else
-                f"Build solid understanding of '{topic.title()}' through structured study."
-            ),
-            "steps": activity["steps"],
-            "self_test": activity["self_test"],
-            "time_estimate": activity["time_estimate"],
-            "resources": activity["resources"],
-        }
+        plan[day] = f"Focus on {topic}: {activity['phase']} - Review key concepts, attempt practice questions, and clarify weak points."
 
     # Final day: comprehensive review
     final_day = days[-1]
-    all_topics_str = ", ".join(t.title() for t in weak_topics)
-    strong_str = ", ".join(t.title() for t in strong_topics) if strong_topics else None
-    final = dict(_FINAL_DAY_PLAN)
-    final["topic"] = all_topics_str
-    final["score_pct"] = None
-    final["goal"] = (
-        f"Confirm that all weak topics ({all_topics_str}) now score above 70%, "
-        + (f"and maintain your strength in {strong_str}." if strong_str else "and you are ready for the next attempt.")
-    )
-    plan[final_day] = final
+    all_topics_str = ", ".join(weak_topics)
+    plan[final_day] = f"Comprehensive Review: Full mock test covering all weak topics ({all_topics_str}). {_FINAL_DAY_PLAN['self_test']}"
     return plan
+

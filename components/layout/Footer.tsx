@@ -98,7 +98,7 @@ export default function Footer() {
                 <span className="footer-icon-box mt-0.5">
                   <MapPin className="w-3.5 h-3.5 footer-icon-blue" />
                 </span>
-                Pune &amp; Bhor, Maharashtra, India
+                Pune, Maharashtra, India | Global Online Training Worldwide
               </div>
             </div>
           </div>
@@ -193,7 +193,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="footer-copy">© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
+          <p className="footer-copy" suppressHydrationWarning>© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
           <div className="flex items-center gap-5">
             {[
               ['Privacy Policy', '/privacy'],

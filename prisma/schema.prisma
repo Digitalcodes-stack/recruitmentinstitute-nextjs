@@ -27,18 +27,19 @@ model AdminUser {
 }
 
 model Student {
-  id                    Int                    @id @default(autoincrement())
-  name                  String
-  contact               String?
-  email                 String                 @unique
-  password              String
-  isActive              Boolean                @default(false) @map("status")
-  createdAt             DateTime               @default(now()) @map("created_at")
-  updatedAt             DateTime               @updatedAt @map("updated_at")
-  enrollments           Enrollment[]
-  lessonProgress        LessonProgress[]
-  assignmentSubmissions AssignmentSubmission[]
-  feeAccounts           StudentFeeAccount[]
+  id                       Int                       @id @default(autoincrement())
+  name                     String
+  contact                  String?
+  email                    String                    @unique
+  password                 String
+  isActive                 Boolean                   @default(false) @map("status")
+  createdAt                DateTime                  @default(now()) @map("created_at")
+  updatedAt                DateTime                  @updatedAt @map("updated_at")
+  enrollments              Enrollment[]
+  lessonProgress           LessonProgress[]
+  assignmentSubmissions    AssignmentSubmission[]
+  feeAccounts              StudentFeeAccount[]
+  sessionAssessmentStudents SessionAssessmentStudent[]
 
   @@map("login_student")
 }
@@ -510,26 +511,31 @@ model Enrollment {
 }
 
 model Session {
-  id                 Int                @id @default(autoincrement())
-  batchId            Int                @map("batch_id")
-  trainerId          Int                @map("trainer_id")
-  title              String
-  description        String?
-  sessionDate        DateTime           @map("session_date") @db.Date
-  startTime          DateTime           @map("start_time")
-  endTime            DateTime           @map("end_time")
-  meetLink           String?            @map("meet_link")
-  googleEventId      String?            @map("google_event_id")
-  calendarSyncStatus CalendarSyncStatus @default(NOT_SYNCED) @map("calendar_sync_status")
-  calendarSyncError  String?            @map("calendar_sync_error") @db.VarChar(500)
-  recurrenceGroupId  String?            @map("recurrence_group_id")
-  status             SessionStatus      @default(UPCOMING)
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
-  batch              Batch              @relation(fields: [batchId], references: [id])
-  trainer            Trainer            @relation(fields: [trainerId], references: [id])
-  attendance         Attendance[]
-  resources          Resource[]
+  id                   Int                @id @default(autoincrement())
+  batchId              Int                @map("batch_id")
+  trainerId            Int                @map("trainer_id")
+  title                String
+  description          String?
+  sessionDate          DateTime           @map("session_date") @db.Date
+  startTime            DateTime           @map("start_time")
+  endTime              DateTime           @map("end_time")
+  meetLink             String?            @map("meet_link")
+  googleEventId        String?            @map("google_event_id")
+  calendarSyncStatus   CalendarSyncStatus @default(NOT_SYNCED) @map("calendar_sync_status")
+  calendarSyncError    String?            @map("calendar_sync_error") @db.VarChar(500)
+  recurrenceGroupId    String?            @map("recurrence_group_id")
+  status               SessionStatus      @default(UPCOMING)
+  syllabusModuleId     Int?               @map("syllabus_module_id")
+  moduleNameSnapshot   String?            @map("module_name_snapshot")  // snapshot in case module is renamed
+  topicsJson           Json?              @map("topics_json")            // string[] of topic titles
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  batch                Batch              @relation(fields: [batchId], references: [id])
+  trainer              Trainer            @relation(fields: [trainerId], references: [id])
+  syllabusModule       Module?            @relation(fields: [syllabusModuleId], references: [id])
+  attendance           Attendance[]
+  resources            Resource[]
+  sessionAssessments   SessionAssessment[]
 
   @@index([recurrenceGroupId])
   @@map("sessions")
@@ -595,6 +601,7 @@ model Module {
   createdAt   DateTime  @default(now()) @map("created_at")
   course      Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapters    Chapter[]
+  sessions    Session[]
 
   @@map("lms_modules")
 }
@@ -1084,4 +1091,33 @@ enum DeliveryStatus {
   FAILED
   BOUNCED
   READ
+}
+
+// ─── Attendance-Gated Session Assessments ───────────────────────────────────
+
+model SessionAssessment {
+  id                  Int                        @id @default(autoincrement())
+  sessionId           Int                        @unique @map("session_id")     // one per session
+  fastapiAssessmentId Int                        @map("fastapi_assessment_id")  // FK into FastAPI DB
+  courseId            Int                        @map("course_id")
+  moduleName          String                     @map("module_name")            // human-readable label
+  topicsJson          Json                       @map("topics_json")            // string[] topics used
+  createdAt           DateTime                   @default(now()) @map("created_at")
+  session             Session                    @relation(fields: [sessionId], references: [id])
+  eligibleStudents    SessionAssessmentStudent[]
+
+  @@map("session_assessments")
+}
+
+model SessionAssessmentStudent {
+  id                  Int               @id @default(autoincrement())
+  sessionAssessmentId Int               @map("session_assessment_id")
+  studentId           Int               @map("student_id")
+  releasedAt          DateTime          @default(now()) @map("released_at")
+  sessionAssessment   SessionAssessment @relation(fields: [sessionAssessmentId], references: [id], onDelete: Cascade)
+  student             Student           @relation(fields: [studentId], references: [id])
+
+  @@unique([sessionAssessmentId, studentId])
+  @@index([studentId])
+  @@map("session_assessment_students")
 }

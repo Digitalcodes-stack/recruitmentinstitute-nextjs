@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { verifyToken, signToken } from '@/lib/auth'
 
 const USER_COOKIE = 'ri_user_token'
 
@@ -12,25 +13,34 @@ export class FastApiError extends Error {
 
 export async function fastApiFetchWithCookie<T>(cookieName: string, path: string, init?: RequestInit): Promise<T> {
   const cookieStore = await cookies()
-  const token = cookieStore.get(cookieName)?.value
-  if (!token) throw new FastApiError('Unauthorized', 401)
+  const rawToken = cookieStore.get(cookieName)?.value
+  if (!rawToken) throw new FastApiError('Unauthorized', 401)
 
-  const baseUrl = process.env.FASTAPI_SERVICE_URL || 'http://localhost:8000'
-  const res = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-      ...init?.headers,
-    },
-    cache: 'no-store',
-  })
+  const session = verifyToken(rawToken)
+  if (!session) throw new FastApiError('Unauthorized', 401)
+  const token = signToken(session)
 
-  const json = await res.json().catch(() => null)
-  if (!res.ok || !json?.success) {
-    throw new FastApiError(json?.message || 'FastAPI request failed', res.status)
+  const baseUrl = process.env.FASTAPI_SERVICE_URL || 'https://recruitmentinstitute-api-396924250862.asia-south1.run.app'
+  try {
+    const res = await fetch(`${baseUrl}${path}`, {
+      ...init,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+        ...init?.headers,
+      },
+      cache: 'no-store',
+    })
+
+    const json = await res.json().catch(() => null)
+    if (!res.ok || !json?.success) {
+      throw new FastApiError(json?.message || 'FastAPI request failed', res.status)
+    }
+    return json.data as T
+  } catch (err: any) {
+    if (err instanceof FastApiError) throw err
+    throw new FastApiError(err?.message || 'FastAPI service unavailable', 503)
   }
-  return json.data as T
 }
 
 async function fastApiFetch<T>(path: string, init?: RequestInit): Promise<T> {

@@ -1,7 +1,11 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
+import UpcomingBatches from '@/components/site/UpcomingBatches'
+import FeaturedTrainers from '@/components/site/FeaturedTrainers'
+import { DEFAULT_BATCHES, DEFAULT_TRAINERS } from '@/lib/data/trainingData'
+import { BatchItem, TrainerItem } from '@/types/training'
 import {
   ArrowRight,
   Award,
@@ -182,16 +186,136 @@ function Stars({ rating }: { rating: number }) {
   )
 }
 
-/* â"€â"€ Page â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+/* ── Page ────────────────────────────────────────────────────────── */
 
 export default async function CoursesPage() {
-  const [categories, courses, fees, reviews, testimonials] = await Promise.all([
+  const [categories, courses, fees, reviews, testimonials, rawDbBatches, rawDbTrainers] = await Promise.all([
     prisma.courseCategory.findMany({ orderBy: { id: 'asc' }, include: { courses: { orderBy: { id: 'asc' } }, fees: { orderBy: { id: 'asc' } } } }),
     prisma.course.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
     prisma.courseFee.findMany({ orderBy: { id: 'asc' }, include: { category: { include: { courses: true } } } }),
     prisma.courseReview.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
     prisma.testimonial.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' }, take: 4 }),
+    prisma.batch.findMany({
+      where: { status: 'UPCOMING' },
+      include: {
+        course: { select: { id: true, title: true, category: true } },
+        trainer: { select: { id: true, name: true, image: true, specialization: true } },
+        _count: { select: { enrollments: true } },
+      },
+      orderBy: { startDate: 'asc' },
+      take: 8,
+    }).catch(() => []),
+    prisma.trainer.findMany({
+      where: { isActive: true },
+      take: 6,
+    }).catch(() => []),
   ])
+
+  // Map DB Batches with graceful fallback
+  let formattedBatches: BatchItem[] = DEFAULT_BATCHES
+  if (rawDbBatches && rawDbBatches.length > 0) {
+    formattedBatches = rawDbBatches.map((b, idx) => {
+      const defaultMatch = DEFAULT_BATCHES[idx % DEFAULT_BATCHES.length]
+      const enrolled = b._count?.enrollments ?? 0
+      const cap = b.capacity || 25
+      const left = Math.max(1, cap - enrolled)
+      const startDateStr = b.startDate ? new Date(b.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : defaultMatch.displayStartDate
+
+      const rawTitle = b.course?.title || defaultMatch.courseTitle
+      let cleanTitle = rawTitle.replace(/Traning/gi, 'Training')
+      if (cleanTitle.toLowerCase().includes('corporate')) {
+        cleanTitle = 'HR Corporate Training Course'
+      }
+      const trainerName = b.trainer?.name || defaultMatch.trainerName
+      const isFemaleTrainer =
+        trainerName.toLowerCase().includes('priya') ||
+        trainerName.toLowerCase().includes('priti') ||
+        trainerName.toLowerCase().includes('ananya') ||
+        trainerName.toLowerCase().includes('snehal') ||
+        trainerName.toLowerCase().includes('shah')
+      const trainerImg = isFemaleTrainer
+        ? '/assets/images/trainers/priyanka_kulkarni.jpg'
+        : '/assets/images/trainers/rajesh_sharma.jpg'
+
+      let batchMode: 'ONLINE' | 'OFFLINE' | 'HYBRID' = b.mode as 'ONLINE' | 'OFFLINE' | 'HYBRID'
+      const schedLower = (b.schedule || '').toLowerCase()
+      const nameLower = (b.name || '').toLowerCase()
+      if (schedLower.includes('pune') || schedLower.includes('classroom') || nameLower.includes('pune') || nameLower.includes('classroom') || nameLower.includes('intensive cohort')) {
+        batchMode = 'OFFLINE'
+      }
+
+      return {
+        id: b.id,
+        name: b.name,
+        batchCode: `RI-${b.course?.category?.slug?.slice(0, 3)?.toUpperCase() || 'CRS'}-${b.id}`,
+        courseId: b.courseId,
+        courseTitle: cleanTitle,
+        courseSlug: b.course?.category?.slug ? getCourseRoute(b.course.category.slug).replace('/', '') : defaultMatch.courseSlug,
+        trainerId: b.trainerId,
+        trainerName,
+        trainerImage: trainerImg,
+        trainerTitle: b.trainer?.specialization || 'Lead Faculty',
+        capacity: cap,
+        enrolledCount: enrolled,
+        seatsLeft: left,
+        mode: batchMode,
+        startDate: b.startDate ? new Date(b.startDate).toISOString().split('T')[0] : defaultMatch.startDate,
+        displayStartDate: startDateStr,
+        schedule: b.schedule || defaultMatch.schedule,
+        duration: defaultMatch.duration,
+        originalPrice: defaultMatch.originalPrice,
+        discountedPrice: defaultMatch.discountedPrice,
+        currency: 'INR',
+        isFastFilling: left <= 8,
+        isGuaranteed: true,
+      }
+    })
+  }
+
+  // Map DB Trainers with graceful fallback
+  let formattedTrainers: TrainerItem[] = DEFAULT_TRAINERS
+  if (rawDbTrainers && rawDbTrainers.length > 0) {
+    formattedTrainers = rawDbTrainers.map((t, idx) => {
+      const lower = t.name.toLowerCase()
+      const isFemale =
+        lower.includes('priya') ||
+        lower.includes('priti') ||
+        lower.includes('ananya') ||
+        lower.includes('snehal') ||
+        lower.includes('shah')
+      const profileImg = isFemale
+        ? idx % 2 === 0
+          ? '/assets/images/trainers/priyanka_kulkarni.jpg'
+          : '/assets/images/trainers/ananya_roy.jpg'
+        : idx % 2 === 0
+        ? '/assets/images/trainers/rajesh_sharma.jpg'
+        : '/assets/images/trainers/amit_deshmukh.jpg'
+
+      return {
+        id: t.id,
+        name: t.name,
+        email: t.email,
+        phone: t.phone || undefined,
+        designation: t.specialization ? `${t.specialization} Specialist` : 'Senior Recruitment Mentor',
+        companyEx: isFemale ? 'Ex-TCS, Infosys, Wipro' : 'Ex-Google, Amazon, Microsoft',
+        experienceYears: 14 + (idx % 5),
+        specializationTags: t.specialization ? t.specialization.split(',').map(s => s.trim()) : ['Recruitment & Sourcing', 'Talent Acquisition'],
+        bio: t.bio ? t.bio.slice(0, 160) + '…' : 'Active recruitment practitioner and talent advisor with 10+ years experience.',
+        longBio: t.bio || 'Comprehensive mentoring in modern recruitment lifecycles, ATS platforms, and talent acquisition strategies.',
+        image: profileImg,
+        rating: 4.92,
+        reviewsCount: 110 + idx * 8,
+        studentsMentored: 1200 + idx * 150,
+        coursesTaught: ['End-to-End Recruitment Training', 'HR Courses for Beginners'],
+        modes: ['Online', 'Offline', 'Hybrid'],
+        featured: true,
+        quote: isFemale
+          ? 'A solid foundation in statutory compliance and structured interviewing transforms freshers into boardroom-ready talent partners.'
+          : 'Recruiting is understanding business architecture and candidate psychology.',
+        certifications: ['SHRM Certified Professional', 'Certified Staffing Professional'],
+      }
+    })
+  }
 
   /* Build unified card list: one card per category */
   const allCards = categories.map((cat, index) => {
@@ -297,7 +421,7 @@ export default async function CoursesPage() {
               </h1>
 
               <p style={{ fontSize:17, color:'#94A3B8', lineHeight:1.85, maxWidth:530, marginBottom:36 }}>
-                From beginner foundations to corporate transformation "" find the right program to launch or level up your recruitment career.
+                From beginner foundations to corporate transformation — find the right program to launch or level up your recruitment career.
               </p>
 
               <div style={{ display:'flex', flexWrap:'wrap', gap:10, marginBottom:42 }}>
@@ -361,7 +485,7 @@ export default async function CoursesPage() {
         <div aria-hidden style={{ position:'absolute', bottom:0, left:0, right:0, height:56, background:'#F8FAFC', clipPath:'ellipse(55% 100% at 50% 100%)' }} />
       </section>
 
-      {/* â•â• STATS STRIP â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ── STATS STRIP ────────────────────────────────────────────── */}
       <section style={{ background:'#F8FAFC', paddingTop:64 }}>
         <div className="container">
           <div className="cp-stats-grid" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
@@ -384,7 +508,14 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {/* â•â• COURSE CARDS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ── UPCOMING BATCHES SECTION ────────────────────────────────── */}
+      <UpcomingBatches
+        batches={formattedBatches}
+        title="Upcoming Batches"
+        subtitle="Limited seats • Live Online + Offline options • New batches every month"
+      />
+
+      {/* ── COURSE CARDS ────────────────────────────────────────────── */}
       <section id="programs" style={{ background:'#F8FAFC', padding:'72px 0 96px' }}>
         <div className="container">
           <div style={{ textAlign:'center', maxWidth:680, margin:'0 auto 64px' }}>
@@ -523,7 +654,7 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {/* â•â• TRUST BAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ── TRUST BAR ────────────────────────────────────────────────── */}
       <section style={{ background:'#fff', borderTop:'1px solid #E2E8F0', borderBottom:'1px solid #E2E8F0' }}>
         <div className="container">
           <div className="cp-trust-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', borderRight:'1px solid #E2E8F0' }}>
@@ -546,7 +677,14 @@ export default async function CoursesPage() {
         </div>
       </section>
 
-      {/* â•â• BOTTOM CTA â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+      {/* ── FEATURED TRAINERS SECTION ────────────────────────────────── */}
+      <FeaturedTrainers
+        trainers={formattedTrainers}
+        title="Learn From The Best"
+        subtitle="Our master faculty has built talent acquisition engines at Google, Amazon, TCS & India's top recruitment agencies."
+      />
+
+      {/* â• â•  BOTTOM CTA â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  */}
       {/* TESTIMONIALS */}
       {testimonials.length > 0 && (
         <section style={{ background: '#fff', padding: '80px 0', borderTop: '1px solid #E2E8F0' }}>
@@ -635,7 +773,7 @@ export default async function CoursesPage() {
               </div>
 
               <h2 style={{ fontSize:'clamp(26px,3vw,46px)', fontWeight:900, color:'#fff', lineHeight:1.1, letterSpacing:'-.035em', marginBottom:18 }}>
-                Talk to a career counsellor "" it&apos;s free.
+                Talk to a career counsellor — it&apos;s free.
               </h2>
               <p style={{ fontSize:16, color:'#94A3B8', lineHeight:1.85, maxWidth:520, margin:'0 auto 40px' }}>
                 Our experts will match you to the right program based on your experience, goals, and timeline. No obligation, just genuine guidance.

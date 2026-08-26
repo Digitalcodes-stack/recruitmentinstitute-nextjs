@@ -27,7 +27,7 @@ export default async function AssessmentsIndexPage() {
   const session = await getUserSession()
   if (!session || session.type !== 'student') redirect('/student-login')
 
-  let attempts = []
+  let attempts: any[] = []
   try {
     attempts = await listMyAssessments()
   } catch {

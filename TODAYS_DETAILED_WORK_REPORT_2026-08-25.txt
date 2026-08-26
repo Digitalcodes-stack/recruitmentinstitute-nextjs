@@ -1,0 +1,223 @@
+====================================================================================================
+               RECRUITMENT INSTITUTE — DAILY ENGINEERING DETAILED REPORT
+====================================================================================================
+Date: 25 August 2026
+Author: Antigravity AI Engineering Assistant
+Project: Recruitment Institute (Next.js + Prisma + FastAPI + PostgreSQL Cloud SQL + Cloud Run)
+GCP Project ID: recruitmentinstitute-501106 (Project Number: 396924250862)
+Region: asia-south1 (Mumbai)
+Production URL: https://recruitmentinstitute-web-396924250862.asia-south1.run.app
+
+====================================================================================================
+1. EXECUTIVE SUMMARY
+====================================================================================================
+Today, a major overhaul and feature release was executed across the Recruitment Institute platform.
+The primary objectives accomplished today include:
+
+1. Intelligent Batch & Auto-Session Generation: Built an automated scheduling engine that maps course 
+   syllabus modules to calendar dates based on selected class days (e.g., Mon/Wed/Fri) and start times.
+2. 1:1 Frontend Course Curriculum Synchronization: Replaced generic database placeholder modules with 
+   the exact, comprehensive syllabus curriculums from public frontend course pages across all 4 courses.
+3. Attendance-Gated AI Assessment Engine: Implemented attendance-locked AI assessments where only 
+   students marked 'Present' during a live lecture receive access to module-specific assessments.
+4. Google Meet Automation & Lifecycle Guards: Automated Google Meet link creation on online sessions, 
+   automated student email broadcasts, and safeguarded completed sessions by hiding meeting room buttons.
+5. Student Directory & Trainer Telemetry: Upgraded admin and trainer dashboards with student join dates, 
+   attendance tracking percentages, assignment grade averages, and interactive detail drawers.
+6. Student Portal Session Assessments UI: Built a dedicated `/profile/session-assessments` portal view 
+   for students to review and take assessments unlocked exclusively by their class attendance.
+7. Cloud Production Deployment: Passed all TypeScript verifications with 0 errors and deployed container 
+   updates to Google Cloud Run in production.
+
+====================================================================================================
+2. KEY FEATURES & ARCHITECTURAL UPGRADES DELIVERED
+====================================================================================================
+
+----------------------------------------------------------------------------------------------------
+[A] INTELLIGENT BATCH & AUTOMATED SESSION SCHEDULER
+----------------------------------------------------------------------------------------------------
+* Purpose: Eliminate manual, error-prone session creation when starting a new batch.
+* Implementation:
+  1. Service Layer (`lib/services/batchSessionGenerator.ts`):
+     - `previewSessionSchedule(batchId, options)`: Builds real-time date previews without DB writes.
+     - `generateSessionsForBatch(batchId, options)`: Creates 1 Session per syllabus module, calculates
+       dates across chosen `classDays` starting from batch `startDate`, assigns standard Google Meet
+       room codes (`https://meet.google.com/xxx-yyyy-zzz`), and broadcasts notification emails.
+  2. Admin New Batch Form (`components/admin/BatchForm.tsx` & `/admin/batches/new`):
+     - Added "⚡ Auto-generate sessions from syllabus" toggle.
+     - Interactive Day selector buttons (Sun, Mon, Tue, Wed, Thu, Fri, Sat; default Mon/Wed/Fri).
+     - Class Start Time and End Time pickers.
+     - Live Syllabus Preview panel with expandable modules, chapters, and topics.
+     - Live Session Schedule Preview showing session numbers, calculated dates, and timings.
+     - Post-creation success screen confirming session counts and schedule breakdown.
+  3. Batch Detail Page 1-Click Auto Scheduler (`components/admin/BatchDetail.tsx`):
+     - Added a dedicated "⚡ Auto Syllabus" tab allowing Admins to generate or regenerate syllabus
+       sessions directly from any existing batch detail view with 1 click.
+
+----------------------------------------------------------------------------------------------------
+[B] 1:1 FRONTEND COURSE CURRICULUM SYNCHRONIZATION
+----------------------------------------------------------------------------------------------------
+* Problem: The database previously contained generic dummy modules ("Foundations" / "Practical Application")
+  instead of the rich, detailed syllabus modules displayed on the frontend website.
+* Resolution:
+  Created `scripts/seed-curriculum.ts` and seeded all LMS `Module`, `Chapter`, and `Topic` tables:
+
+  1. Course 22: HR Corporate Training Course (`/hr-corporate-training-course`):
+     - Module 1: Recruitment Process Audit & Benchmarking (6 topics)
+     - Module 2: Advanced Sourcing & Talent Pipeline (6 topics)
+     - Module 3: Structured Interviewing & Selection (6 topics)
+     - Module 4: ATS Optimisation & Recruitment Technology (6 topics)
+     - Module 5: Employer Branding & Candidate Experience (6 topics)
+     - Module 6: Recruitment Metrics, Analytics & Reporting (6 topics)
+
+  2. Course 2: Degree Courses / Master End-to-End Recruitment (`/end-to-end-recruitment-training`):
+     - Week 1–2: Recruitment Fundamentals & Job Analysis (6 topics)
+     - Week 3–4: Sourcing Strategies & Boolean Search (6 topics)
+     - Week 5–6: Screening, Interviews & Candidate Assessment (6 topics)
+     - Week 7–8: Domain Specialisation (IT / Non-IT / BFSI / Healthcare) (6 topics)
+     - Week 9–10: Offer Management, Onboarding & Employer Branding (6 topics)
+     - Week 11–12: Metrics, ATS Tools, Practical Project & Placement Prep (6 topics)
+
+  3. Course 19: Certification Courses / HR Beginner Course (`/hr-courses-for-beginners`):
+     - Module 1: Introduction to Recruitment (6 topics)
+     - Module 2: Sourcing Candidates (6 topics)
+     - Module 3: Screening and Interviewing (6 topics)
+     - Module 4: Job Offers and Onboarding (6 topics)
+
+  4. Course 21: Entrepreneur Courses / HR Entrepreneurship Program (`/hr-entrepreneurship-program`):
+     - Module 1–2: Entrepreneurship Foundations & Market Research (6 topics)
+     - Module 3–4: Business Planning, Legal Setup & Pricing (6 topics)
+     - Module 5–6: Client Acquisition, B2B Sales & Marketing (6 topics)
+     - Module 7–8: Agency Operations, Team Management & Scaling (6 topics)
+
+----------------------------------------------------------------------------------------------------
+[C] ATTENDANCE-GATED AI ASSESSMENT ENGINE
+----------------------------------------------------------------------------------------------------
+* Business Rule: When a trainer finalizes attendance, only students marked "Present" receive the AI
+  assessment for the topics covered in that session. Absent students must not receive it.
+* Implementation:
+  1. Database Schema (`prisma/schema.prisma`):
+     - `Session`: Added `syllabusModuleId`, `moduleNameSnapshot`, `topicsJson`.
+     - `SessionAssessment`: Stores link between session, course, module name, and FastAPI assessment ID.
+     - `SessionAssessmentStudent`: Pivot table mapping `sessionAssessmentId` to eligible `studentId`.
+  2. Release Service (`lib/services/assessmentReleaseService.ts`):
+     - `releaseAssessmentForPresentStudents(sessionId)`:
+       a) Identifies students marked Present in `attendance`.
+       b) Reads session's `topicsJson` and `moduleNameSnapshot`.
+       c) Triggers FastAPI backend `/admin/assessments` to generate topic-specific questions.
+       d) Inserts `SessionAssessmentStudent` eligibility records for Present students only.
+       e) Duplicate protection: Guarantees a session cannot release duplicate assessments.
+  3. Trainer Attendance Hook (`src/app/api/trainer/attendance/route.ts` & `TrainerAttendanceClient.tsx`):
+     - When trainer clicks "Save Attendance Register", session status is updated to `COMPLETED`.
+     - `releaseAssessmentForPresentStudents` runs automatically.
+     - Trainer UI displays a confirmation banner:
+       "✅ Assessment Released — [Module Name] | X Present, Y Absent | X Got Assessment".
+       Displays notice: "🔒 Y absent student(s) will NOT receive this assessment."
+
+----------------------------------------------------------------------------------------------------
+[D] STUDENT PORTAL SESSION ASSESSMENTS VIEW
+----------------------------------------------------------------------------------------------------
+* Student Endpoint: `GET /api/student/session-assessments`
+  - Validates student authentication.
+  - Queries `SessionAssessmentStudent` where `studentId = session.userId`.
+  - Returns only assessments unlocked by the student's attendance.
+* Student Page: `src/app/(site)/profile/session-assessments/page.tsx`
+  - Accessible via Student Profile dashboard card.
+  - Lists module title, badge ("Based on your attendance"), course name, batch, date, and topic pills.
+  - Direct "Start Assessment" CTA linking to the assessment runner.
+  - Empty state with guidance when no session assessments are available yet.
+
+----------------------------------------------------------------------------------------------------
+[E] GOOGLE MEET AUTOMATION & COMPLETED SESSION SAFEGUARDS
+----------------------------------------------------------------------------------------------------
+1. Auto Meet Link:
+   - When creating a session (single, series, or auto-batch), if meet link is empty, a standard Google
+     Meet code is generated and saved automatically.
+2. Automated Email Broadcast:
+   - Enrolled active students receive HTML emails with subject: `New Live Class Scheduled: [Title] ([Batch])`
+   - Email includes class date, IST start/end times, course title, trainer name, and direct Join button.
+3. Completed Session Guard:
+   - If session status is `COMPLETED` or `endTime < now`, the "Open Meet Room" / "Launch Meet" button
+     is hidden and replaced with a `✓ Session Completed` badge.
+   - The "Mark Attendance" / "Review Attendance" button remains fully accessible.
+   - Join route (`/api/sessions/[id]/join`) rejects joins to concluded sessions.
+
+----------------------------------------------------------------------------------------------------
+[F] STUDENT INFORMATION DIRECTORY & TELEMETRY
+----------------------------------------------------------------------------------------------------
+1. Admin Directory (`/admin/students`):
+   - Displays student name, email, avatar, and join date (`Joined 25 Aug 2026`).
+   - Shows enrolled courses, active cohorts, and study modes (`ONLINE` / `HYBRID` / `OFFLINE`).
+   - Attendance rate metric with color badges (green >= 80%, yellow >= 50%, red < 50%).
+   - Assignment submissions count and average score.
+   - Interactive sliding Student Details Drawer with 1-click WhatsApp contact.
+2. Trainer Batches Roster (`/trainer/batches`):
+   - Displays student roster with join dates, attendance percentages, and direct contact options.
+
+====================================================================================================
+3. FILES CREATED & MODIFIED TODAY
+====================================================================================================
+
+[NEW FILES CREATED]
+1. `lib/services/batchSessionGenerator.ts` — Core batch session generation & schedule preview engine.
+2. `lib/services/assessmentReleaseService.ts` — Attendance gating & FastAPI AI assessment release service.
+3. `src/app/api/admin/batches/[id]/generate-sessions/route.ts` — GET preview and POST generate route.
+4. `src/app/api/student/session-assessments/route.ts` — Student-scoped session assessments API.
+5. `src/app/(site)/profile/session-assessments/page.tsx` — Student portal session assessments page.
+6. `scripts/seed-curriculum.ts` — Database curriculum synchronization script for all courses.
+
+[FILES UPDATED & HARDENED]
+7. `prisma/schema.prisma` — Added `SessionAssessment`, `SessionAssessmentStudent`, and `Session` metadata fields.
+8. `components/admin/BatchForm.tsx` — Redesigned with syllabus preview, schedule preview, class days, and auto-gen.
+9. `src/app/(admin)/admin/batches/new/page.tsx` — Included course modules, chapters, and topics in SSR query.
+10. `src/app/(admin)/admin/batches/[id]/edit/page.tsx` — Included course modules in SSR query.
+11. `components/admin/BatchDetail.tsx` — Added "⚡ Auto Syllabus" 1-click session generation tab & form.
+12. `components/admin/SessionsCalendarView.tsx` — Fixed state reactivity so generated sessions display immediately.
+13. `src/app/api/admin/batches/route.ts` — Added `autoGenerateSessions` execution in batch creation POST handler.
+14. `src/app/api/trainer/attendance/route.ts` — Hooked `releaseAssessmentForPresentStudents` after attendance save.
+15. `components/trainer/TrainerAttendanceClient.tsx` — Added assessment release confirmation banner & telemetry.
+16. `src/app/(site)/profile/page.tsx` — Added Session Assessments navigation resource card for students.
+
+====================================================================================================
+4. VERIFICATION & QUALITY ASSURANCE
+====================================================================================================
+1. Database Schema Sync:
+   - Executed `npx prisma db push --accept-data-loss` (applied successfully).
+   - Executed `npx prisma generate` (Prisma Client v7.8.0 generated).
+2. Curriculum Seeding:
+   - Executed `npx tsx scripts/seed-curriculum.ts` (all 4 courses seeded with 20 modules & 120 topics).
+3. TypeScript Verification:
+   - Executed `npx tsc --noEmit` — 0 errors found across all client, server, and API routes.
+4. Session Generation Verification:
+   - Generated sessions for Batch 11 ("HR and Recruitment Batch A") → 6 Sessions created.
+   - Generated sessions for Batch 12 ("New Batch HR Corporate Training Course") → 6 Sessions created.
+   - Verified sessions visible on Admin Hub (`/admin/sessions`) and Trainer Portals (Suresh Bansal & Rohit Malhotra).
+5. Cloud Production Deployment:
+   - Executed `gcloud builds submit --config cloudbuild.yaml`.
+   - Build Status: SUCCESS.
+   - Service: `recruitmentinstitute-web` serving 100% live production traffic.
+
+====================================================================================================
+5. QUICK ACCESS & CREDENTIALS REFERENCE
+====================================================================================================
+- Production URL: https://recruitmentinstitute-web-396924250862.asia-south1.run.app
+- Local Dev URL:  http://localhost:3000
+
+- Admin Portal:   /admin/login
+  User: admin@recruitmentinstitute.com / admin123
+- Trainer Portal: /trainer-login
+  Trainers:
+  - Suresh Bansal: suresh.bansal@recruitmentinstitute.in / trainer123 (Assigned to Batch 12)
+  - Rohit Malhotra: rohit.malhotra@recruitmentinstitute.in / trainer123 (Assigned to Batch 11)
+  - Priti Shah: priti.shah@recruitmentinstitute.in / trainer123
+  - Priya Sharma: priya.sharma@recruitmentinstitute.in / trainer123
+  - Vivek Srivastava: vivek.srivastava@recruitmentinstitute.in / trainer123
+- Student Portal: /student-login (or /profile)
+  Students:
+  - Priya Sharma: priya.sharma@gmail.com / student123
+  - Amit Joshi: amit.joshi@gmail.com / student123
+  - Rahul Verma: rahul.verma@gmail.com / student123
+
+====================================================================================================
+END OF DETAILED WORK REPORT — 25 AUGUST 2026
+====================================================================================================

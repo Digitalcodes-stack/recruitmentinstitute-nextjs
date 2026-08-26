@@ -13,6 +13,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const liveSession = await prisma.session.findUnique({ where: { id: sessionId } })
   if (!liveSession)
     return NextResponse.json({ success: false, message: 'Session not found' }, { status: 404 })
+
+  const now = new Date()
+  if (liveSession.status === 'COMPLETED' || new Date(liveSession.endTime) < now) {
+    return NextResponse.json({ success: false, message: 'This training session has already concluded.' }, { status: 400 })
+  }
+
   if (!liveSession.meetLink)
     return NextResponse.json({ success: false, message: 'No meeting link has been added for this session yet' }, { status: 400 })
 
