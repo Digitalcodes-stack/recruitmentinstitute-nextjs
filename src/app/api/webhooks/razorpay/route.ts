@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
         await prisma.studentFeeAccount.update({
           where: { id: payment.feeAccountId },
           data: {
-            paidAmount: payment.feeAccount.finalFee,
-            pendingAmount: 0,
+            paidAmount: payment.feeAccount.netPayable,
+            outstandingAmount: 0,
             status: 'PAID',
           },
         })

@@ -75,39 +75,51 @@ export async function POST(req: NextRequest) {
     await prisma.studentFeeAccount.update({
       where: { id: feeAccount.id },
       data: {
-        paidAmount: feeAccount.finalFee,
-        pendingAmount: 0,
+        paidAmount: feeAccount.netPayable,
+        outstandingAmount: 0,
         status: 'PAID',
       },
     })
 
-    // 5. Create or activate Course Enrollment
-    const targetBatchId = batchId ? Number(batchId) : feeAccount.batchId || null
+    // 5. Create or activate Course Batch Enrollment
+    let targetBatchId = batchId ? Number(batchId) : feeAccount.batchId || null
 
-    const existingEnrollment = await prisma.enrollment.findFirst({
-      where: {
-        studentId: student.id,
-        courseId: course.id,
-      },
-    })
-
-    if (existingEnrollment) {
-      await prisma.enrollment.update({
-        where: { id: existingEnrollment.id },
-        data: {
-          batchId: targetBatchId,
-          status: 'ACTIVE',
-        },
+    if (!targetBatchId) {
+      const activeBatch = await prisma.batch.findFirst({
+        where: { courseId: course.id, status: { in: ['UPCOMING', 'ACTIVE'] } },
+        orderBy: { startDate: 'asc' },
       })
-    } else {
-      await prisma.enrollment.create({
-        data: {
+      if (activeBatch) {
+        targetBatchId = activeBatch.id
+      }
+    }
+
+    if (targetBatchId) {
+      const existingEnrollment = await prisma.enrollment.findFirst({
+        where: {
           studentId: student.id,
-          courseId: course.id,
           batchId: targetBatchId,
-          status: 'ACTIVE',
         },
       })
+
+      if (existingEnrollment) {
+        await prisma.enrollment.update({
+          where: { id: existingEnrollment.id },
+          data: {
+            status: 'ACTIVE',
+            enrolledAt: new Date(),
+          },
+        })
+      } else {
+        await prisma.enrollment.create({
+          data: {
+            studentId: student.id,
+            batchId: targetBatchId,
+            status: 'ACTIVE',
+            enrolledAt: new Date(),
+          },
+        })
+      }
     }
 
     // 6. Generate Paid Invoice
@@ -115,13 +127,14 @@ export async function POST(req: NextRequest) {
     await prisma.feeInvoice.create({
       data: {
         feeAccountId: feeAccount.id,
-        invoiceNumber,
-        subtotal: feeAccount.finalFee,
-        totalAmount: feeAccount.finalFee,
-        paidAmount: feeAccount.finalFee,
+        invoiceNo: invoiceNumber,
+        invoiceDate: new Date(),
+        subtotal: feeAccount.netPayable,
+        taxableAmount: feeAccount.netPayable,
+        totalAmount: feeAccount.netPayable,
+        paidAmount: feeAccount.netPayable,
+        balanceAmount: 0,
         status: 'PAID',
-        issueDate: new Date(),
-        dueDate: new Date(),
       },
     })
 
@@ -132,7 +145,7 @@ export async function POST(req: NextRequest) {
           studentEmail: student.email,
           studentName: student.name,
           courseTitle: course.title,
-          amount: Number(feeAccount.finalFee),
+          amount: Number(feeAccount.netPayable),
           transactionId: razorpay_payment_id,
           invoiceNumber,
         })
