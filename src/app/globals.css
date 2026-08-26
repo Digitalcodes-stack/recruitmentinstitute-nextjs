@@ -1,5 +1,8 @@
 @import "tailwindcss";
-@source "../../";
+@source "../";
+@source "../../components";
+@source "../../lib";
+@source "../../src";
 
 @theme {
   --container-*: initial;

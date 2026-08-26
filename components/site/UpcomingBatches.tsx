@@ -23,8 +23,8 @@ import RazorpayCheckoutModal from '@/components/payments/RazorpayCheckoutModal'
 
 export default function UpcomingBatches({
   batches = DEFAULT_BATCHES,
-  title = 'Upcoming Live Batches',
-  subtitle = 'Industry-accredited cohorts with weekend & evening schedules • Limited to 25 learners per batch',
+  title = 'Upcoming Batches & Cohorts',
+  subtitle = 'Limited seats • Live Online + Offline options • New batches every month',
   showAllButton = true,
   defaultFilter = 'ALL',
 }: UpcomingBatchesProps) {
@@ -65,7 +65,7 @@ export default function UpcomingBatches({
           label: 'Live Online Cohort',
           icon: <Laptop className="w-3.5 h-3.5" />,
           badgeClass: 'bg-sky-50 text-sky-700 border-sky-200/80',
-          accentBorder: 'from-sky-500 to-blue-600',
+          accentBorder: '#0284C7',
           dotClass: 'bg-sky-500',
         }
       case 'OFFLINE':
@@ -73,7 +73,7 @@ export default function UpcomingBatches({
           label: 'Pune Classroom',
           icon: <Building2 className="w-3.5 h-3.5" />,
           badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
-          accentBorder: 'from-emerald-500 to-teal-600',
+          accentBorder: '#059669',
           dotClass: 'bg-emerald-500',
         }
       case 'HYBRID':
@@ -81,36 +81,33 @@ export default function UpcomingBatches({
           label: 'Executive Hybrid',
           icon: <Layers className="w-3.5 h-3.5" />,
           badgeClass: 'bg-purple-50 text-purple-700 border-purple-200/80',
-          accentBorder: 'from-purple-500 to-indigo-600',
+          accentBorder: '#7C3AED',
           dotClass: 'bg-purple-500',
         }
     }
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white via-slate-50/60 to-white relative overflow-hidden" id="upcoming-batches">
-      {/* Background Decorative Lighting */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-slate-100/50 to-transparent pointer-events-none -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section style={{ background: '#F8FAFC', padding: '80px 0', position: 'relative' }} id="upcoming-batches">
+      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px' }}>
         {/* ── HEADER ─────────────────────────────────────────────────── */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-red-50 border border-red-100 text-[#E63946] text-xs font-extrabold uppercase tracking-wider mb-3.5 shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-[#E63946] animate-ping inline-block" />
+        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: '11px', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: '16px' }}>
+            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#EF4444', display: 'inline-block' }} />
             <span>2025–2026 Admissions Open</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0A1628] tracking-tight leading-tight mb-4">
-            Upcoming <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-rose-600">Batches</span> & Cohorts
+          <h2 style={{ fontSize: 'clamp(28px, 3.5vw, 44px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 14px' }}>
+            Upcoming <span style={{ color: '#E63946' }}>Batches</span> &amp; Cohorts
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+          <p style={{ fontSize: '15px', color: '#64748B', lineHeight: 1.7, margin: 0, fontWeight: 500 }}>
             {subtitle}
           </p>
 
           {/* ── SEGMENTED FILTER CONTROLS ───────────────────────────── */}
-          <div className="mt-8 inline-flex p-1.5 rounded-2xl bg-slate-200/60 backdrop-blur-xs border border-slate-200/80 shadow-inner max-w-full overflow-x-auto">
-            <div className="flex items-center gap-1">
+          <div style={{ marginTop: '28px', display: 'inline-flex', padding: '6px', borderRadius: '16px', background: '#E2E8F0', maxWidth: '100%', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[
                 { id: 'ALL', label: 'All Cohorts', count: rawBatches.length },
                 { id: 'ONLINE', label: 'Live Online', count: rawBatches.filter((b) => b.mode === 'ONLINE').length },
@@ -120,17 +117,32 @@ export default function UpcomingBatches({
                 <button
                   key={tab.id}
                   onClick={() => setSelectedMode(tab.id as any)}
-                  className={`px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all whitespace-nowrap cursor-pointer flex items-center gap-2 ${
-                    selectedMode === tab.id
-                      ? 'bg-white text-[#0A1628] shadow-md shadow-slate-900/5 ring-1 ring-slate-900/5'
-                      : 'text-slate-600 hover:text-[#0A1628] hover:bg-white/40'
-                  }`}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    border: 'none',
+                    background: selectedMode === tab.id ? '#FFFFFF' : 'transparent',
+                    color: selectedMode === tab.id ? '#0F172A' : '#64748B',
+                    boxShadow: selectedMode === tab.id ? '0 2px 8px rgba(15,23,42,0.08)' : 'none',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
                   <span>{tab.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
-                      selectedMode === tab.id ? 'bg-slate-100 text-[#0A1628]' : 'bg-slate-300/60 text-slate-600'
-                    }`}
+                    style={{
+                      fontSize: '10px',
+                      padding: '2px 7px',
+                      borderRadius: '50px',
+                      fontWeight: 800,
+                      background: selectedMode === tab.id ? '#F1F5F9' : '#CBD5E1',
+                      color: selectedMode === tab.id ? '#0F172A' : '#475569',
+                    }}
                   >
                     {tab.count}
                   </span>
@@ -142,21 +154,21 @@ export default function UpcomingBatches({
 
         {/* ── BATCH CARDS GRID ────────────────────────────────────────── */}
         {visibleBatches.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-dashed border-slate-200 p-8 max-w-lg mx-auto">
-            <Calendar className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <h3 className="text-lg font-bold text-slate-800 mb-1">No batches scheduled currently</h3>
-            <p className="text-xs text-slate-500 mb-5">
+          <div style={{ textAlign: 'center', padding: '60px 20px', background: '#fff', borderRadius: '24px', border: '1px dashed #CBD5E1', maxWidth: '500px', margin: '0 auto' }}>
+            <Calendar style={{ width: '48px', height: '48px', color: '#94A3B8', margin: '0 auto 12px' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#1E293B', marginBottom: '6px' }}>No batches scheduled currently</h3>
+            <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '20px' }}>
               New cohorts for this format will be announced shortly. Contact admissions for upcoming slot requests.
             </p>
             <button
               onClick={() => setSelectedMode('ALL')}
-              className="px-4 py-2 bg-[#0A1628] text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+              style={{ padding: '10px 20px', background: '#0F172A', color: '#fff', fontSize: '13px', fontWeight: 700, borderRadius: '12px', border: 'none', cursor: 'pointer' }}
             >
               View All Active Batches
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '28px' }}>
             {visibleBatches.map((batch) => {
               const modeInfo = getModeInfo(batch.mode)
               const seatsRemaining = batch.seatsLeft ?? Math.max(0, batch.capacity - batch.enrolledCount)
@@ -166,65 +178,73 @@ export default function UpcomingBatches({
               return (
                 <div
                   key={batch.id}
-                  className="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
+                  style={{
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    border: '1px solid #E2E8F0',
+                    boxShadow: '0 4px 20px rgba(15,23,42,0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    overflow: 'hidden',
+                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
+                  }}
                 >
                   {/* Top Color Accent Line */}
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${modeInfo.accentBorder}`} />
+                  <div style={{ height: '4px', width: '100%', background: modeInfo.accentBorder }} />
 
-                  <div className="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                  <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       {/* Top Badges Row */}
-                      <div className="flex items-center justify-between gap-2 mb-3.5">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}
-                        >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
                           {modeInfo.icon}
                           <span>{modeInfo.label}</span>
                         </span>
 
-                        <span className="text-[10.5px] font-mono text-slate-400 font-bold bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">
+                        <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#64748B', fontWeight: 700, background: '#F1F5F9', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
                           {batch.batchCode}
                         </span>
                       </div>
 
                       {/* Course Title & Track */}
-                      <Link href={courseLink} className="block group/title">
-                        <h3 className="text-lg font-bold text-[#0A1628] group-hover/title:text-[#E63946] transition-colors leading-snug mb-1">
+                      <Link href={courseLink} style={{ textDecoration: 'none', display: 'block' }}>
+                        <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#0F172A', lineHeight: 1.35, marginBottom: '4px' }}>
                           {batch.courseTitle}
                         </h3>
                       </Link>
 
-                      <p className="text-xs text-slate-500 font-semibold mb-4 line-clamp-1">
+                      <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 600, marginBottom: '16px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {batch.name}
                       </p>
 
                       {/* Date & Schedule Box */}
-                      <div className="bg-slate-50/90 rounded-2xl p-4 border border-slate-100 mb-4 space-y-2.5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex flex-col items-center justify-center shrink-0 shadow-2xs">
-                            <span className="text-[9px] font-black uppercase text-red-500 tracking-wider">START</span>
-                            <span className="text-xs font-black text-slate-900 leading-none">
+                      <div style={{ background: '#F8FAFC', borderRadius: '16px', padding: '14px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#FFFFFF', border: '1px solid #CBD5E1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <span style={{ fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', color: '#EF4444', letterSpacing: '.08em' }}>START</span>
+                            <span style={{ fontSize: '13px', fontWeight: 900, color: '#0F172A', lineHeight: 1 }}>
                               {batch.displayStartDate ? batch.displayStartDate.split(' ')[0] : batch.startDate.split('-')[2] || '15'}
                             </span>
                           </div>
                           <div>
-                            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block">
+                            <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800, color: '#94A3B8', display: 'block' }}>
                               Cohort Commences
                             </span>
-                            <span className="text-xs font-bold text-[#0A1628]">
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>
                               {batch.displayStartDate || batch.startDate}
                             </span>
                           </div>
                         </div>
 
-                        <div className="pt-2 border-t border-slate-200/60 grid grid-cols-1 gap-1 text-[11px] text-slate-600 font-medium">
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="truncate">{batch.schedule}</span>
+                        <div style={{ paddingTop: '8px', borderTop: '1px solid #E2E8F0', display: 'grid', gap: '4px', fontSize: '11.5px', color: '#475569', fontWeight: 500 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Clock style={{ width: '13px', height: '13px', color: '#94A3B8', flexShrink: 0 }} />
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{batch.schedule}</span>
                           </div>
-                          <div className="flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Calendar style={{ width: '13px', height: '13px', color: '#94A3B8', flexShrink: 0 }} />
                             <span>Duration: {batch.duration}</span>
                           </div>
                         </div>
@@ -232,26 +252,26 @@ export default function UpcomingBatches({
 
                       {/* Faculty Lead Pill */}
                       {batch.trainerName && (
-                        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-100 mb-4 shadow-2xs">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
                           {batch.trainerImage ? (
-                            <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 border border-slate-200">
+                            <div style={{ position: 'relative', width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid #CBD5E1' }}>
                               <Image
                                 src={batch.trainerImage}
                                 alt={batch.trainerName}
                                 fill
-                                className="object-cover object-top"
+                                style={{ objectFit: 'cover', objectPosition: 'top' }}
                               />
                             </div>
                           ) : (
-                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-[#0A1628]">
+                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
                               {batch.trainerName[0]}
                             </div>
                           )}
-                          <div className="min-w-0">
-                            <span className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400 block leading-none mb-0.5">
+                          <div style={{ minWidth: 0 }}>
+                            <span style={{ fontSize: '9.5px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800, color: '#94A3B8', display: 'block', lineHeight: 1, marginBottom: '2px' }}>
                               Faculty Lead
                             </span>
-                            <span className="text-xs font-bold text-[#0A1628] block truncate">
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {batch.trainerName}
                             </span>
                           </div>
@@ -260,58 +280,88 @@ export default function UpcomingBatches({
                     </div>
 
                     {/* Bottom Pricing, Urgency & Actions */}
-                    <div className="pt-4 border-t border-slate-100">
+                    <div style={{ paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>
                       {/* Seat Urgency Indicator */}
-                      <div className="flex items-center justify-between text-[11px] font-bold mb-2">
-                        <span className={`flex items-center gap-1 ${isLowSeats ? 'text-red-600 animate-pulse' : 'text-slate-600'}`}>
-                          <Users className="w-3 h-3" />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, marginBottom: '6px' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: isLowSeats ? '#DC2626' : '#475569' }}>
+                          <Users style={{ width: '12px', height: '12px' }} />
                           <span>{isLowSeats ? `Only ${seatsRemaining} seats remaining` : `${seatsRemaining} seats available`}</span>
                         </span>
-                        <span className="text-slate-400 font-semibold">
+                        <span style={{ color: '#94A3B8', fontWeight: 600 }}>
                           {batch.enrolledCount}/{batch.capacity} Filled
                         </span>
                       </div>
 
                       {/* Seat Progress Bar */}
-                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mb-4">
+                      <div style={{ width: '100%', height: '6px', background: '#F1F5F9', borderRadius: '50px', overflow: 'hidden', marginBottom: '14px' }}>
                         <div
-                          className={`h-full rounded-full transition-all ${
-                            isLowSeats ? 'bg-red-500' : 'bg-emerald-500'
-                          }`}
-                          style={{ width: `${(batch.enrolledCount / batch.capacity) * 100}%` }}
+                          style={{
+                            height: '100%',
+                            borderRadius: '50px',
+                            background: isLowSeats ? '#EF4444' : '#10B981',
+                            width: `${(batch.enrolledCount / batch.capacity) * 100}%`,
+                          }}
                         />
                       </div>
 
                       {/* Pricing Row */}
-                      <div className="flex items-baseline justify-between mb-4">
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px' }}>
                         <div>
-                          <span className="text-xs text-slate-400 line-through mr-2 font-semibold">
+                          <span style={{ fontSize: '12px', color: '#94A3B8', textDecoration: 'line-through', marginRight: '8px', fontWeight: 600 }}>
                             {formatPrice(batch.originalPrice)}
                           </span>
-                          <span className="text-xl font-black text-[#0A1628]">
+                          <span style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A' }}>
                             {formatPrice(batch.discountedPrice)}
                           </span>
                         </div>
-                        <span className="text-[10.5px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', background: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
                           {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
                         </span>
                       </div>
 
                       {/* Dual Action Buttons */}
-                      <div className="grid grid-cols-2 gap-2.5">
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                         <button
                           onClick={() => handleEnrollClick(batch)}
-                          className="py-3 px-3 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 text-white font-bold text-xs hover:from-red-700 hover:to-rose-700 transition-all shadow-md shadow-red-600/15 flex items-center justify-center gap-1.5 cursor-pointer"
+                          style={{
+                            padding: '12px 10px',
+                            borderRadius: '12px',
+                            background: 'linear-gradient(135deg, #DC2626 0%, #E63946 100%)',
+                            color: '#FFFFFF',
+                            fontWeight: 800,
+                            fontSize: '12px',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px',
+                            boxShadow: '0 4px 14px rgba(220,38,38,0.25)',
+                          }}
                         >
                           <span>Enroll Now</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
+                          <ArrowRight style={{ width: '13px', height: '13px' }} />
                         </button>
 
                         <Link
                           href={courseLink}
-                          className="py-3 px-3 rounded-xl bg-slate-100 text-slate-700 font-bold text-xs hover:bg-slate-200 hover:text-slate-900 transition-colors flex items-center justify-center gap-1 text-center"
+                          style={{
+                            padding: '12px 10px',
+                            borderRadius: '12px',
+                            background: '#F1F5F9',
+                            color: '#334155',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '5px',
+                            border: '1px solid #E2E8F0',
+                            textAlign: 'center',
+                          }}
                         >
-                          <BookOpen className="w-3.5 h-3.5" />
+                          <BookOpen style={{ width: '13px', height: '13px' }} />
                           <span>Curriculum</span>
                         </Link>
                       </div>
@@ -325,29 +375,42 @@ export default function UpcomingBatches({
 
         {/* ── SHOW MORE TOGGLE ────────────────────────────────────────── */}
         {showAllButton && filteredBatches.length > 6 && (
-          <div className="text-center mt-10">
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <button
               onClick={() => setShowAll(!showAll)}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors cursor-pointer shadow-xs"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 24px',
+                borderRadius: '12px',
+                border: '1px solid #CBD5E1',
+                background: '#FFFFFF',
+                fontSize: '13px',
+                fontWeight: 700,
+                color: '#334155',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(15,23,42,0.04)',
+              }}
             >
               <span>{showAll ? 'Show Less Batches' : `View All ${filteredBatches.length} Batches`}</span>
-              <ChevronRight className={`w-4 h-4 transition-transform ${showAll ? '-rotate-90' : 'rotate-90'}`} />
+              <ChevronRight style={{ width: '14px', height: '14px', transform: showAll ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
             </button>
           </div>
         )}
 
         {/* ── TRUST SIGNALS FOOTER ────────────────────────────────────── */}
-        <div className="mt-14 pt-8 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-6 sm:gap-12 text-xs font-bold text-slate-600">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+        <div style={{ marginTop: '56px', paddingTop: '32px', borderTop: '1px solid #E2E8F0', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '32px', fontSize: '13px', fontWeight: 700, color: '#475569' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldCheck style={{ width: '16px', height: '16px', color: '#059669' }} />
             <span>100% Corporate Faculty Guarantee</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-amber-500" />
-            <span>Live Recruiter ATS & AI Labs</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Zap style={{ width: '16px', height: '16px', color: '#D97706' }} />
+            <span>Live Recruiter ATS &amp; AI Labs</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-blue-600" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Award style={{ width: '16px', height: '16px', color: '#2563EB' }} />
             <span>Govt / ISO Recognized Certification</span>
           </div>
         </div>
