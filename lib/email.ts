@@ -1,12 +1,19 @@
 import nodemailer from 'nodemailer'
 
 function getTransporter() {
-  const host = process.env.SMTP_HOST || 'serenity.herosite.pro'
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com'
+  const user = process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'
+  const pass = process.env.SMTP_PASS || 'ledemkmjiesdqfpk'
+
+  if (host === 'smtp.gmail.com' || host.includes('gmail')) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    })
+  }
+
   const port = parseInt(process.env.SMTP_PORT || '465')
   const secure = port === 465 || process.env.SMTP_SECURE === 'true'
-  const user = process.env.SMTP_USER || 'support@recruitmentinstitute.in'
-  const pass = process.env.SMTP_PASS || 'support@recruitmentinstitute'
-
   const auth = user && pass ? { user, pass } : undefined
 
   return nodemailer.createTransport({
