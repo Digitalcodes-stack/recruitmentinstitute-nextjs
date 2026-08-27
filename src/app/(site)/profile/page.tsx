@@ -349,6 +349,17 @@ export default async function ProfilePage() {
                 </div>
               </Link>
 
+              <Link href="/profile/certificate" className="profile-resource-card green">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#FEF3C7', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Award style={{ width: 22, height: 22, color: '#B45309' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Course Certificate</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View, download, and print your official verified course completion certificate.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#B45309' }}>
+                  View Certificate <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
               <Link href="/contact" className="profile-resource-card amber">
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: '#FFFBEB', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <Briefcase style={{ width: 22, height: 22, color: '#D97706' }} />

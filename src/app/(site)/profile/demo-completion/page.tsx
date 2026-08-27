@@ -69,7 +69,7 @@ export default function CandidateCompletionDemoPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => setIsModalOpen(true)}
                   style={{
@@ -88,8 +88,28 @@ export default function CandidateCompletionDemoPage() {
                   }}
                 >
                   <Play style={{ width: '14px', height: '14px' }} />
-                  <span>Launch Popup Modal</span>
+                  <span>Launch Session Modal</span>
                 </button>
+
+                <Link
+                  href="/profile/certificate"
+                  style={{
+                    padding: '10px 18px',
+                    borderRadius: '10px',
+                    background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                    color: '#FFFFFF',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 2px 10px rgba(5, 150, 105, 0.2)',
+                  }}
+                >
+                  <Award style={{ width: '15px', height: '15px' }} />
+                  <span>View Course Certificate</span>
+                </Link>
               </div>
             </div>
 
