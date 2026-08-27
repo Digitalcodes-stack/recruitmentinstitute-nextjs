@@ -63,7 +63,7 @@ const NEEDS = [
 
 /* ─── General Bot ─────────────────────────────────────────────── */
 
-const KB_PHONE = '+91 99750 48884'
+const KB_PHONE = '+91 7385204165'
 const KB_EMAIL = 'support@recruitmentinstitute.in'
 const BOT_QR = ['What courses do you offer?', 'Tell me about placement', 'What are the fees?', 'How do I enroll?', 'Contact details']
 
@@ -109,7 +109,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (isGreeting(m)) return `Hi there! Great to connect — I'm Jhon, 20+ years in recruitment across IT and Non-IT sectors.\n\nHow can I help today? Looking to get into recruitment, upskill, or find the right training program?`
     if (isHowRU(m))   return `Doing great, thank you! Always energised talking recruitment. What brings you here today?`
     if (isThanks(m))  return `Absolutely happy to help! Any more questions about courses, career paths, or hiring — just ask.`
-    if (isBye(m))     return `Great chatting! Best of luck on your recruitment journey. Reach us at 📞 **+91 99750 48884** anytime.`
+    if (isBye(m))     return `Great chatting! Best of luck on your recruitment journey. Reach us at 📞 **+91 7385204165** anytime.`
     if (/(fundamental|basic|concept|what is recruit|intro|overview|beginner|start learn|learn recruit)/.test(m))
       return `Great starting point! Here are the **core fundamentals of recruitment**:\n\n**1. Understanding the Job Requirement**\nParse the JD deeply — technical skills, soft skills, culture fit, and deal-breakers.\n\n**2. Sourcing Candidates**\nLinkedIn, Naukri, Monster, GitHub, employee referrals, job fairs.\n\n**3. Screening & Shortlisting**\nResume review → telephonic screening → structured shortlist.\n\n**4. Interview Coordination**\nSchedule, brief, gather feedback, manage candidate experience.\n\n**5. Offer & Onboarding**\nNegotiation, offer rollout, joining follow-up, Day 1 readiness.\n\nWhich of these do you want to go deeper on?`
     if (/(lifecycle|process|steps|how recruit|how hiring|hiring cycle|end.to.end|full cycle)/.test(m))
@@ -129,11 +129,11 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (/(salary|earn|income|pay|lpa|career|growth|scope|future|demand)/.test(m))
       return `Recruitment has excellent earning potential:\n\n• **Freshers:** ₹3–5 LPA\n• **2–3 years experience:** ₹6–10 LPA\n• **Senior Recruiter:** ₹12–20+ LPA\n• **Agency owner (solo):** ₹15–40L+ annual\n• **Agency with team:** Unlimited — commission-based\n\nDemand is only growing — every company hires, always. It's one of the most recession-resistant career paths.\n\nOur placement cell connects you with 500+ companies. Want details?`
     if (/(fee|cost|price|how much|emi|payment|afford|discount|scholarship)/.test(m))
-      return `Fees depend on the program you choose. We offer:\n\n• **Flexible EMI plans** — start as low as ₹999/month\n• **Early-bird discounts** on new batches\n• **Scholarship options** for eligible students\n• No hidden charges — what you see is what you pay\n\n📞 **+91 99750 48884** — our counsellor will give you the exact fee with any active offer.`
+      return `Fees depend on the program you choose. We offer:\n\n• **Flexible EMI plans** — start as low as ₹999/month\n• **Early-bird discounts** on new batches\n• **Scholarship options** for eligible students\n• No hidden charges — what you see is what you pay\n\n📞 **+91 7385204165** — our counsellor will give you the exact fee with any active offer.`
     if (/(placement|job|compan|opportunit|hired|get work|career support)/.test(m))
       return `Placement is our strongest pillar — **95% support rate**.\n\n• Resume building with a recruiter's eye\n• Mock interviews with real feedback\n• 500+ partner companies across IT, BFSI, retail, pharma\n• Dedicated placement assistance for 6 months post-course\n• LinkedIn profile makeover included\n\nWhich companies or sectors are you targeting?`
     if (/(duration|how long|batch|timing|schedule|weekend|weekday|online|offline|class)/.test(m))
-      return `Program durations:\n\n• **HR Beginners** — 6 weeks\n• **End-to-End Recruitment** — 3 months\n• **Entrepreneur Program** — 2 months\n• **Corporate Training** — Flexible\n\nAll programs have **weekday and weekend batches**, fully **online** with live instructor-led sessions (not just recordings). Next batch details: 📞 **+91 99750 48884**`
+      return `Program durations:\n\n• **HR Beginners** — 6 weeks\n• **End-to-End Recruitment** — 3 months\n• **Entrepreneur Program** — 2 months\n• **Corporate Training** — Flexible\n\nAll programs have **weekday and weekend batches**, fully **online** with live instructor-led sessions (not just recordings). Next batch details: 📞 **+91 7385204165**`
     if (/(why hr|career in hr|good career|is hr good|scope of hr|hr job|recruiter job|future of hr)/.test(m))
       return `HR & Recruitment is one of the most future-proof careers:\n\n• **Every company needs recruiters** — from startups to MNCs\n• **Remote-friendly** — most sourcing and screening is online\n• **High earning potential** — especially in IT/niche hiring\n• **Entrepreneurship angle** — start your own agency from home\n• **People-first work** — you directly impact someone's career\n\nWith the right training, you can place your first candidate within 60–90 days. Want a career roadmap?`
     return `Good question! Here's what I can help with as a recruitment expert:\n\n• **Recruitment basics & lifecycle**\n• **Sourcing, ATS & Boolean**\n• **Resume screening & interviews**\n• **Offer management**\n• **Career guidance & course selection**\n\nWhat specifically would you like to explore?`
@@ -144,7 +144,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (isGreeting(m)) return `Hello! So lovely to meet you — I'm Riya, specialising in coaching new recruiters and career switchers.\n\nAre you exploring a career change, looking for the right course, or need interview / resume guidance?`
     if (isHowRU(m))   return `Wonderful, thank you! I love helping people find their path in HR. What brings you here today?`
     if (isThanks(m))  return `You're so welcome! Come back anytime you need guidance. You've got this!`
-    if (isBye(m))     return `Best of luck! Every expert recruiter started exactly where you are. 📞 **+91 99750 48884** whenever you're ready.`
+    if (isBye(m))     return `Best of luck! Every expert recruiter started exactly where you are. 📞 **+91 7385204165** whenever you're ready.`
     if (/(fundamental|basic|concept|what is recruit|intro|overview|learn recruit|start)/.test(m))
       return `Let me break it down simply — recruitment has **5 core skills** every beginner needs:\n\n1. **Reading a JD** — understand must-haves vs nice-to-haves\n2. **Sourcing** — finding candidates on Naukri, LinkedIn, referrals\n3. **Screening** — spotting the right fit quickly from dozens of profiles\n4. **Communication** — calling candidates confidently, handling objections\n5. **Follow-through** — tracking every candidate from applied to joined\n\nOur **HR Beginners Course** (6 weeks) covers all of this from scratch. Want to know what week 1 looks like?`
     if (/(fresher|beginner|new|no experience|just graduated|0 year|entry level|fresh)/.test(m))
@@ -173,7 +173,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (isGreeting(m)) return `Hey! Great to connect — I'm Arjun, 15 years exclusively in IT and tech recruitment.\n\nTech sourcing challenge, niche role help, or looking to get into IT recruitment yourself?`
     if (isHowRU(m))   return `All good! Just wrapped a session on Python developer sourcing. What brings you in today?`
     if (isThanks(m))  return `Happy to help! Tech recruitment rewards specialists — the learning curve is steep but the returns are fantastic.`
-    if (isBye(m))     return `Great chatting! The tech hiring market is booming. 📞 **+91 99750 48884** anytime.`
+    if (isBye(m))     return `Great chatting! The tech hiring market is booming. 📞 **+91 7385204165** anytime.`
     if (/(fundamental|basic|concept|intro|overview|learn|start|what is)/.test(m))
       return `IT Recruitment fundamentals — here's what you need to know:\n\n**1. Understand Tech Roles**\nKnow the difference: Frontend vs Backend vs Full Stack, DevOps vs Cloud, Data Analyst vs Data Scientist.\n\n**2. Read a JD like a developer**\nSpot must-haves (skills the team can't function without) vs nice-to-haves.\n\n**3. Source from the right places**\nLinkedIn, GitHub, Stack Overflow, Naukri, HackerEarth, referrals.\n\n**4. Screen without a tech background**\nAsk: "Walk me through a recent project" — let them talk, listen for depth.\n\n**5. Move fast**\nTop tech talent gets 5–10 InMails/week. Your response time is your competitive advantage.\n\nWant to go deeper on any of these?`
     if (/(stack|role|java|python|react|node|devops|cloud|aws|data|fullstack|frontend|backend|mobile|ios|android|.net|php|angular|vue|kotlin|swift)/.test(m))
@@ -187,7 +187,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (/(salary|earn|pay|lpa|income|money|ctc)/.test(m))
       return `IT recruiters earn significantly more than general HR:\n\n• **Fresher:** ₹3.5–6 LPA\n• **2–4 years:** ₹8–15 LPA\n• **Senior / Lead:** ₹16–28 LPA\n• **Tech Staffing Agency:** ₹50L+ annual is achievable\n\nBangalore, Hyderabad, Pune pay the highest for IT recruiters. Companies like Infosys, TCS, Wipro, product startups hire aggressively.\n\nOur placement cell has strong IT company connections. Want to know more?`
     if (/(course|program|enroll|join|certif|train|learn|study)/.test(m))
-      return `For IT Recruitment, I recommend our **End-to-End Recruitment Training** with the IT specialisation track:\n\n• Reading tech JDs and understanding stacks\n• Boolean and X-ray sourcing for developers\n• Tech candidate screening techniques\n• LinkedIn Recruiter and GitHub sourcing\n• Offer management for tech roles (counter-offers are very common!)\n\n**Duration:** 3 months | **Mode:** Online live sessions\n\n📞 **+91 99750 48884** for batch details and fees.`
+      return `For IT Recruitment, I recommend our **End-to-End Recruitment Training** with the IT specialisation track:\n\n• Reading tech JDs and understanding stacks\n• Boolean and X-ray sourcing for developers\n• Tech candidate screening techniques\n• LinkedIn Recruiter and GitHub sourcing\n• Offer management for tech roles (counter-offers are very common!)\n\n**Duration:** 3 months | **Mode:** Online live sessions\n\n📞 **+91 7385204165** for batch details and fees.`
     return `IT recruitment is a specialised and high-reward field. I can help with:\n\n• **Understanding tech roles** (what each stack means)\n• **Boolean & sourcing** for developers\n• **Screening without a tech background**\n• **LinkedIn & GitHub sourcing**\n• **Career path** in IT recruitment\n\nWhat specific challenge are you facing or topic you want to explore?`
   },
 
@@ -196,7 +196,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (isGreeting(m)) return `Hi! I'm Priya — 14 years in mass hiring and volume recruitment for BPO, BFSI, retail, and manufacturing.\n\nDealing with a high-volume challenge, or building skills in this area?`
     if (isHowRU(m))   return `Doing well! Just finalised a 500-position hiring plan. Volume hiring keeps you sharp! What can I help with?`
     if (isThanks(m))  return `Happy to help! Once you have the right processes, volume hiring becomes very manageable.`
-    if (isBye(m))     return `Best of luck with your hiring goals! 📞 **+91 99750 48884** for further support.`
+    if (isBye(m))     return `Best of luck with your hiring goals! 📞 **+91 7385204165** for further support.`
     if (/(fundamental|basic|concept|intro|overview|learn|start|what is recruit|how recruit)/.test(m))
       return `Let me give you the **fundamentals of volume recruitment** — it's different from normal hiring:\n\n**1. Plan before you post**\nKnow your monthly target, buffer percentage (typically 20% extra), and intake timelines.\n\n**2. Pre-build your pipeline**\nDon't wait for a role to go live — have a ready pool of pre-screened candidates.\n\n**3. Structured screening**\nUse a fixed 5-question phone screen (max 7 mins). Score every call. No exceptions.\n\n**4. Parallel processing**\nDon't wait for one batch to clear before the next round starts.\n\n**5. Offer fast, follow faster**\nSame-day offers when possible. Delay kills candidate intent.\n\nWhat's your current hiring volume or the scenario you're dealing with?`
     if (/(bulk|mass|volume|high.volume|large.scale|batch|100|200|500|1000)/.test(m))
@@ -212,7 +212,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (/(attrition|retain|turnover|resign|quit|leave|dropout|no show)/.test(m))
       return `High attrition is the #1 pain in volume hiring. Here's how to attack it:\n\n**Pre-joining drop-offs:**\n• Call every candidate at Day 1, Day 7, and 1 week before joining\n• Assign a buddy before Day 1\n• Send a welcome email immediately after offer acceptance\n\n**Post-joining early exits (first 90 days):**\n• Structured onboarding — not just paperwork\n• 30-day check-in call from HR\n• Buddy system in first week\n\n**Root cause check:**\n• Are you screening for role fit, or just filling seats?\n• Is the JD realistic? Misaligned expectations = early exits\n\nWhat's your current attrition rate and at which stage?`
     if (/(course|program|enroll|join|certif|train|learn|study)/.test(m))
-      return `For volume and mass hiring skills, our **End-to-End Recruitment Training** is ideal:\n\n• Sourcing at scale (multi-channel)\n• Structured screening and scorecards\n• Volume interview coordination\n• Offer management and joining follow-up\n• Metrics: time-to-hire, cost-per-hire, offer-to-join ratio\n\n**Duration:** 3 months | **Mode:** Online live sessions | **Placement support:** Included\n\n📞 **+91 99750 48884** for next batch details.`
+      return `For volume and mass hiring skills, our **End-to-End Recruitment Training** is ideal:\n\n• Sourcing at scale (multi-channel)\n• Structured screening and scorecards\n• Volume interview coordination\n• Offer management and joining follow-up\n• Metrics: time-to-hire, cost-per-hire, offer-to-join ratio\n\n**Duration:** 3 months | **Mode:** Online live sessions | **Placement support:** Included\n\n📞 **+91 7385204165** for next batch details.`
     return `To give you the most targeted advice on volume hiring:\n\n• What industry / function are you hiring for?\n• How many positions per month?\n• Biggest current pain — sourcing, speed, offer drops, or attrition?\n\nTell me the specifics and I'll share exactly what's worked in similar situations.`
   },
 
@@ -221,7 +221,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (isGreeting(m)) return `Hello! Great to meet you — I'm Sanjay, built and scaled 2 agencies from scratch, now mentoring entrepreneurs.\n\nThinking of starting your own HR firm, or already running one and want to grow?`
     if (isHowRU(m))   return `Fantastic! Just had a mentee close their first ₹2L placement fee — always a great feeling. Where are you in your entrepreneurship journey?`
     if (isThanks(m))  return `It's a pleasure! Building your own recruitment business is one of the most rewarding decisions you can make. Keep going!`
-    if (isBye(m))     return `All the best! Remember — the first client is the hardest. After that, referrals do the work. 📞 **+91 99750 48884** anytime.`
+    if (isBye(m))     return `All the best! Remember — the first client is the hardest. After that, referrals do the work. 📞 **+91 7385204165** anytime.`
     if (/(fundamental|basic|concept|intro|overview|learn|what is recruit|how recruit|how hiring)/.test(m))
       return `From an entrepreneur's lens, here are the **5 fundamentals every agency owner must master**:\n\n**1. Niche Selection**\nSpecialist agencies earn 2–3x more than generalists. Pick: IT, BFSI, retail, healthcare, etc.\n\n**2. Client Acquisition**\nYour ability to sign clients = your revenue ceiling. This is a sales skill.\n\n**3. Candidate Pipeline**\nAlways-on sourcing — never start from zero when a new mandate comes in.\n\n**4. Delivery Excellence**\n3 CVs in 48 hrs, regular updates, honest feedback. This is what gets you repeat business.\n\n**5. Billing & Collections**\nCharge 10–15% of CTC. Get 50% advance on retained mandates. Never work on pure contingency for new clients.\n\nWhich of these do you want to go deeper on?`
     if (/(start|launch|setup|register|first step|how to begin|new agency|open firm|create agency)/.test(m))
@@ -237,7 +237,7 @@ const EXPERT_FN: Record<string, (msg: string) => string> = {
     if (/(scared|nervous|risk|stable job|should i|afraid|quit|fear|uncertain|doubt|worry)/.test(m))
       return `That fear is completely normal — and honestly a great sign you're thinking seriously.\n\n**My honest advice:**\nDon't quit your job to start. Here's the bridge approach:\n\n• **Month 1–2:** Start sourcing and building a candidate pool while employed\n• **Month 2–3:** Do warm client outreach (evenings and weekends)\n• **Month 3:** Close your first client and do your first placement\n• **Month 4+:** Once you have 2 paying clients and ₹1L+ pipeline, then transition\n\n300+ of my mentees made this transition without a career gap. The goal is to replace your salary before you leave.\n\nShall I help you map out a 90-day bridge plan?`
     if (/(course|program|enroll|join|certif|train|learn|study)/.test(m))
-      return `Our **HR Entrepreneurship Program** (2 months) is built specifically for agency starters:\n\n• Niche selection and positioning\n• Business registration and legal basics\n• Client acquisition (scripts, outreach, LinkedIn)\n• Candidate pipeline building\n• Billing, invoicing, and collections\n• Scaling: when and how to hire your first recruiter\n\nIncludes: Templates, SOPs, live mentoring, alumni network of 300+ agency owners.\n\n📞 **+91 99750 48884** for next batch dates and fees.`
+      return `Our **HR Entrepreneurship Program** (2 months) is built specifically for agency starters:\n\n• Niche selection and positioning\n• Business registration and legal basics\n• Client acquisition (scripts, outreach, LinkedIn)\n• Candidate pipeline building\n• Billing, invoicing, and collections\n• Scaling: when and how to hire your first recruiter\n\nIncludes: Templates, SOPs, live mentoring, alumni network of 300+ agency owners.\n\n📞 **+91 7385204165** for next batch dates and fees.`
     return `I can help you with any stage of building your recruitment agency:\n\n• **Getting started** — setup, niche, first steps\n• **Getting clients** — outreach, BD, pitch\n• **Revenue & billing** — fee structures, invoicing\n• **Scaling your team** — when and how\n• **Legal & compliance** — contracts, GST\n• **Handling fear** — making the transition safely\n\nWhere are you right now in your journey?`
   },
 }
@@ -252,7 +252,7 @@ const WARN_MSG  = (name: string, rate: string) =>
   `⏱️ **Heads up** — your free 2 minutes with ${name} are almost up (15 seconds left). After this, the session is chargeable at **${rate}**.\n\nBook a course for unlimited expert access.`
 
 const EXPIRE_MSG = (name: string, rate: string) =>
-  `🔒 **Your free session has ended.**\n\nTo continue with ${name}:\n\n• **Continue paid** — ${rate}\n• **Book a course** — Unlimited expert access\n• **Call free** — +91 99750 48884`
+  `🔒 **Your free session has ended.**\n\nTo continue with ${name}:\n\n• **Continue paid** — ${rate}\n• **Book a course** — Unlimited expert access\n• **Call free** — +91 7385204165`
 
 /* ─── Markdown renderer ───────────────────────────────────────── */
 
