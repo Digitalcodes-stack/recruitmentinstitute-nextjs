@@ -1,7 +1,9 @@
 'use client'
 
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { CalendarDays, Video, CheckCircle2, Clock } from 'lucide-react'
+import { CalendarDays, Video, CheckCircle2, Clock, Sparkles } from 'lucide-react'
+import SessionCompletionModal from '@/components/shared/SessionCompletionModal'
 
 interface SessionRow {
   id: number
@@ -38,6 +40,11 @@ function fmtTime(d: Date) {
 }
 
 export default function StudentTrainingPanel({ enrollments }: Props) {
+  const [selectedCompletedSession, setSelectedCompletedSession] = useState<{
+    sessionTitle: string
+    courseTitle: string
+  } | null>(null)
+
   if (enrollments.length === 0) return null
 
   const now = new Date()
@@ -109,10 +116,36 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
                     const att = enrollment.attendance.find((a) => a.sessionId === s.id)
                     return (
                       <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: '#f8fafc', borderRadius: 10 }}>
-                        <p style={{ fontSize: 12, color: '#475569' }}>{s.title} · {fmtDate(s.sessionDate)}</p>
-                        <span style={{ fontSize: 11, fontWeight: 600, color: att?.present ? '#059669' : '#94a3b8' }}>
-                          {att?.present ? 'Present' : 'Not marked'}
-                        </span>
+                        <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>{s.title} · {fmtDate(s.sessionDate)}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <button
+                            onClick={() => setSelectedCompletedSession({
+                              sessionTitle: s.title,
+                              courseTitle: enrollment.batch.course.title,
+                            })}
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#B45309',
+                              fontSize: 11,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 4,
+                              padding: '2px 6px',
+                              borderRadius: 4,
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                          >
+                            <Sparkles style={{ width: 11, height: 11, color: '#F59E0B' }} />
+                            <span>Milestone</span>
+                          </button>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: att?.present ? '#059669' : '#94a3b8' }}>
+                            {att?.present ? 'Present' : 'Completed'}
+                          </span>
+                        </div>
                       </div>
                     )
                   })}
@@ -141,6 +174,16 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
           </div>
         )
       })}
+
+      {/* Session Completion Modal for Student Training Panel */}
+      <SessionCompletionModal
+        isOpen={!!selectedCompletedSession}
+        onClose={() => setSelectedCompletedSession(null)}
+        sessionTitle={selectedCompletedSession?.sessionTitle}
+        courseTitle={selectedCompletedSession?.courseTitle}
+        nextSessionUrl="/profile"
+        progressUrl="/profile"
+      />
     </div>
   )
 }

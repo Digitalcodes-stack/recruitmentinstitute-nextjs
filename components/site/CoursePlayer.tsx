@@ -7,6 +7,7 @@ import {
   ClipboardList, HelpCircle, Download, Paperclip, Loader2, Award,
   BookOpen, LayoutList, Play,
 } from 'lucide-react'
+import SessionCompletionModal from '@/components/shared/SessionCompletionModal'
 
 interface ResourceRow { id: number; title: string; fileUrl: string }
 interface LessonRow {
@@ -47,6 +48,9 @@ export default function CoursePlayer({ courseId }: { courseId: number }) {
   const [marking, setMarking] = useState(false)
   const [tab, setTab] = useState<'lessons' | 'curriculum'>('lessons')
   const [expandedModule, setExpandedModule] = useState<number | null>(0)
+
+  const [showCompletionModal, setShowCompletionModal] = useState(false)
+  const [completedLessonData, setCompletedLessonData] = useState<{ title: string; nextLessonId: number | null } | null>(null)
 
   useEffect(() => {
     fetch(`/api/student/courses/${courseId}`)
@@ -93,9 +97,27 @@ export default function CoursePlayer({ courseId }: { courseId: number }) {
         next ? s.add(lessonId) : s.delete(lessonId)
         return s
       })
+
+      if (next) {
+        const currentIdx = allLessons.findIndex((l) => l.id === lessonId)
+        const currentL = allLessons[currentIdx]
+        const nextL = currentIdx !== -1 && currentIdx + 1 < allLessons.length ? allLessons[currentIdx + 1] : null
+        setCompletedLessonData({
+          title: currentL ? currentL.title : 'Session',
+          nextLessonId: nextL ? nextL.id : null,
+        })
+        setShowCompletionModal(true)
+      }
     } finally {
       setMarking(false)
     }
+  }
+
+  function handleContinueToNextSession() {
+    if (completedLessonData?.nextLessonId) {
+      setActiveLessonId(completedLessonData.nextLessonId)
+    }
+    setShowCompletionModal(false)
   }
 
   if (!data) {
@@ -318,6 +340,17 @@ export default function CoursePlayer({ courseId }: { courseId: number }) {
           </>
         )}
       </div>
+
+      {/* Completion Modal Popup */}
+      <SessionCompletionModal
+        isOpen={showCompletionModal}
+        onClose={() => setShowCompletionModal(false)}
+        sessionTitle={completedLessonData?.title}
+        courseTitle={data.course.title}
+        onContinueNextSession={completedLessonData?.nextLessonId ? handleContinueToNextSession : undefined}
+        nextSessionUrl={`/profile/courses/${courseId}`}
+        progressUrl="/profile"
+      />
     </div>
   )
 }

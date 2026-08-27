@@ -338,6 +338,17 @@ export default async function ProfilePage() {
                 </Link>
               )}
 
+              <Link href="/profile/demo-completion" className="profile-resource-card green">
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+                  <Sparkles style={{ width: 22, height: 22, color: '#16A34A' }} />
+                </div>
+                <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Session Milestones</h4>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Preview the celebratory completion modal designed for completed sessions.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#16A34A' }}>
+                  Preview Milestone <ChevronRight style={{ width: 13, height: 13 }} />
+                </div>
+              </Link>
+
               <Link href="/contact" className="profile-resource-card amber">
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: '#FFFBEB', border: '1px solid #FDE68A', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <Briefcase style={{ width: 22, height: 22, color: '#D97706' }} />
