@@ -28,13 +28,22 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
     >
       {/* ── PHOTO CONTAINER (3:4 Ratio) ─────────────────────────────── */}
       <div style={{ position: 'relative', width: '100%', height: '320px', overflow: 'hidden', background: '#F1F5F9' }}>
-        <Image
-          src={trainer.image}
-          alt={trainer.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          style={{ objectFit: 'cover', objectPosition: 'top' }}
-        />
+        {trainer.image.startsWith('data:') ? (
+          // Inline SVG placeholder (no photo on file) — skip next/image optimization, it's already tiny.
+          <img
+            src={trainer.image}
+            alt={trainer.name}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
+          />
+        ) : (
+          <Image
+            src={trainer.image}
+            alt={trainer.name}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            style={{ objectFit: 'cover', objectPosition: 'top' }}
+          />
+        )}
 
         {/* Soft Bottom Gradient Overlay for Contrast */}
         <div

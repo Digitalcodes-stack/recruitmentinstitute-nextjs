@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import TrainerLayout from '@/components/trainer/TrainerLayout'
+import BatchCountdown from '@/components/shared/BatchCountdown'
 import {
   Layers3,
   Users,
@@ -76,6 +77,9 @@ export default async function TrainerDashboardPage() {
   // KPIs
   const activeBatches = batches.filter((b) => b.status === 'ACTIVE').length
   const totalStudents = batches.reduce((sum, b) => sum + b._count.enrollments, 0)
+  const nextUpcomingBatch = batches
+    .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > now)
+    .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0]
 
   // Filter upcoming & today sessions vs past sessions
   const upcomingSessions = sessions.filter(
@@ -214,6 +218,12 @@ export default async function TrainerDashboardPage() {
           </div>
         </div>
       </div>
+
+      {nextUpcomingBatch && (
+        <div style={{ marginBottom: 24 }}>
+          <BatchCountdown startDate={nextUpcomingBatch.startDate.toISOString()} batchName={nextUpcomingBatch.name} />
+        </div>
+      )}
 
       {/* KPI Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 16, marginBottom: 32 }}>

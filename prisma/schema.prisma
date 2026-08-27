@@ -27,18 +27,18 @@ model AdminUser {
 }
 
 model Student {
-  id                       Int                       @id @default(autoincrement())
-  name                     String
-  contact                  String?
-  email                    String                    @unique
-  password                 String
-  isActive                 Boolean                   @default(false) @map("status")
-  createdAt                DateTime                  @default(now()) @map("created_at")
-  updatedAt                DateTime                  @updatedAt @map("updated_at")
-  enrollments              Enrollment[]
-  lessonProgress           LessonProgress[]
-  assignmentSubmissions    AssignmentSubmission[]
-  feeAccounts              StudentFeeAccount[]
+  id                        Int                        @id @default(autoincrement())
+  name                      String
+  contact                   String?
+  email                     String                     @unique
+  password                  String
+  isActive                  Boolean                    @default(false) @map("status")
+  createdAt                 DateTime                   @default(now()) @map("created_at")
+  updatedAt                 DateTime                   @updatedAt @map("updated_at")
+  enrollments               Enrollment[]
+  lessonProgress            LessonProgress[]
+  assignmentSubmissions     AssignmentSubmission[]
+  feeAccounts               StudentFeeAccount[]
   sessionAssessmentStudents SessionAssessmentStudent[]
 
   @@map("login_student")
@@ -450,21 +450,43 @@ enum AdminRole {
 }
 
 model Trainer {
-  id             Int       @id @default(autoincrement())
+  id             Int                   @id @default(autoincrement())
   name           String
-  email          String    @unique
+  email          String                @unique
   password       String
   phone          String?
   specialization String?
-  bio            String?   @db.VarChar(2000)
+  bio            String?               @db.VarChar(2000)
   image          String?
-  isActive       Boolean   @default(true) @map("status")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  isActive       Boolean               @default(true) @map("status")
+  timezone       String                @default("Asia/Kolkata")
+  createdAt      DateTime              @default(now()) @map("created_at")
+  updatedAt      DateTime              @updatedAt @map("updated_at")
   batches        Batch[]
   sessions       Session[]
+  availability   TrainerAvailability[]
 
   @@map("trainers")
+}
+
+/**
+ * One row = one recurring weekly slot a trainer is available in.
+ * A trainer with no rows is treated as "no declared availability" (admin should be warned,
+ * not silently blocked — some trainers may not have set availability yet).
+ */
+model TrainerAvailability {
+  id        Int      @id @default(autoincrement())
+  trainerId Int      @map("trainer_id")
+  dayOfWeek Int      @map("day_of_week") // 0=Sun ... 6=Sat, matches JS Date#getDay()
+  startTime String   @map("start_time") // "HH:mm" 24h, IST wall-clock
+  endTime   String   @map("end_time") // "HH:mm" 24h, IST wall-clock
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  trainer   Trainer  @relation(fields: [trainerId], references: [id], onDelete: Cascade)
+
+  @@index([trainerId])
+  @@index([dayOfWeek])
+  @@map("trainer_availability")
 }
 
 model Batch {
@@ -505,37 +527,52 @@ model Enrollment {
   reviewedByAdmin   AdminUser?          @relation(fields: [reviewedByAdminId], references: [id])
   attendance        Attendance[]
   feeAccounts       StudentFeeAccount[]
+  certificate       Certificate?
 
   @@unique([studentId, batchId])
   @@map("enrollments")
 }
 
+model Certificate {
+  id            Int        @id @default(autoincrement())
+  enrollmentId  Int        @unique @map("enrollment_id")
+  certificateNo String     @unique @map("certificate_no")
+  studentName   String     @map("student_name") // snapshot at issue time
+  courseTitle   String     @map("course_title") // snapshot at issue time
+  finalScore    Decimal?   @map("final_score") @db.Decimal(5, 2)
+  issuedAt      DateTime   @default(now()) @map("issued_at")
+  pdfUrl        String?    @map("pdf_url")
+  enrollment    Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+
+  @@map("certificates")
+}
+
 model Session {
-  id                   Int                @id @default(autoincrement())
-  batchId              Int                @map("batch_id")
-  trainerId            Int                @map("trainer_id")
-  title                String
-  description          String?
-  sessionDate          DateTime           @map("session_date") @db.Date
-  startTime            DateTime           @map("start_time")
-  endTime              DateTime           @map("end_time")
-  meetLink             String?            @map("meet_link")
-  googleEventId        String?            @map("google_event_id")
-  calendarSyncStatus   CalendarSyncStatus @default(NOT_SYNCED) @map("calendar_sync_status")
-  calendarSyncError    String?            @map("calendar_sync_error") @db.VarChar(500)
-  recurrenceGroupId    String?            @map("recurrence_group_id")
-  status               SessionStatus      @default(UPCOMING)
-  syllabusModuleId     Int?               @map("syllabus_module_id")
-  moduleNameSnapshot   String?            @map("module_name_snapshot")  // snapshot in case module is renamed
-  topicsJson           Json?              @map("topics_json")            // string[] of topic titles
-  createdAt            DateTime           @default(now()) @map("created_at")
-  updatedAt            DateTime           @updatedAt @map("updated_at")
-  batch                Batch              @relation(fields: [batchId], references: [id])
-  trainer              Trainer            @relation(fields: [trainerId], references: [id])
-  syllabusModule       Module?            @relation(fields: [syllabusModuleId], references: [id])
-  attendance           Attendance[]
-  resources            Resource[]
-  sessionAssessments   SessionAssessment[]
+  id                 Int                 @id @default(autoincrement())
+  batchId            Int                 @map("batch_id")
+  trainerId          Int                 @map("trainer_id")
+  title              String
+  description        String?
+  sessionDate        DateTime            @map("session_date") @db.Date
+  startTime          DateTime            @map("start_time")
+  endTime            DateTime            @map("end_time")
+  meetLink           String?             @map("meet_link")
+  googleEventId      String?             @map("google_event_id")
+  calendarSyncStatus CalendarSyncStatus  @default(NOT_SYNCED) @map("calendar_sync_status")
+  calendarSyncError  String?             @map("calendar_sync_error") @db.VarChar(500)
+  recurrenceGroupId  String?             @map("recurrence_group_id")
+  status             SessionStatus       @default(UPCOMING)
+  syllabusModuleId   Int?                @map("syllabus_module_id")
+  moduleNameSnapshot String?             @map("module_name_snapshot") // snapshot in case module is renamed
+  topicsJson         Json?               @map("topics_json") // string[] of topic titles
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  batch              Batch               @relation(fields: [batchId], references: [id])
+  trainer            Trainer             @relation(fields: [trainerId], references: [id])
+  syllabusModule     Module?             @relation(fields: [syllabusModuleId], references: [id])
+  attendance         Attendance[]
+  resources          Resource[]
+  sessionAssessments SessionAssessment[]
 
   @@index([recurrenceGroupId])
   @@map("sessions")
@@ -1097,11 +1134,11 @@ enum DeliveryStatus {
 
 model SessionAssessment {
   id                  Int                        @id @default(autoincrement())
-  sessionId           Int                        @unique @map("session_id")     // one per session
-  fastapiAssessmentId Int                        @map("fastapi_assessment_id")  // FK into FastAPI DB
+  sessionId           Int                        @unique @map("session_id") // one per session
+  fastapiAssessmentId Int                        @map("fastapi_assessment_id") // FK into FastAPI DB
   courseId            Int                        @map("course_id")
-  moduleName          String                     @map("module_name")            // human-readable label
-  topicsJson          Json                       @map("topics_json")            // string[] topics used
+  moduleName          String                     @map("module_name") // human-readable label
+  topicsJson          Json                       @map("topics_json") // string[] topics used
   createdAt           DateTime                   @default(now()) @map("created_at")
   session             Session                    @relation(fields: [sessionId], references: [id])
   eligibleStudents    SessionAssessmentStudent[]

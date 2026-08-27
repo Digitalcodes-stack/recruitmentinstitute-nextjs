@@ -5,6 +5,7 @@ import { sendReminder } from '@/lib/jobs/sendReminder'
 import { syncCalendarEvent } from '@/lib/jobs/syncCalendarEvent'
 import { dispatchNotificationRecipient } from '@/lib/jobs/dispatchNotification'
 import { promoteScheduledNotifications, maxAttemptsForChannel, backoffRunAfter } from '@/lib/jobs/notifications'
+import { sendBatchStartReminder, scheduleBatchStartReminders } from '@/lib/jobs/sendBatchStartReminder'
 
 const BATCH_SIZE = 25
 const MAX_ATTEMPTS = 3
@@ -13,6 +14,7 @@ const HANDLERS: Record<string, (payload: Prisma.JsonValue) => Promise<void>> = {
   send_reminder: (payload) => sendReminder(payload as unknown as Parameters<typeof sendReminder>[0]),
   sync_calendar_event: (payload) => syncCalendarEvent(payload as unknown as Parameters<typeof syncCalendarEvent>[0]),
   dispatch_notification: (payload) => dispatchNotificationRecipient(payload as unknown as Parameters<typeof dispatchNotificationRecipient>[0]),
+  send_batch_start_reminder: (payload) => sendBatchStartReminder(payload as unknown as Parameters<typeof sendBatchStartReminder>[0]),
 }
 
 async function handleNotificationFailure(job: { id: number; payload: Prisma.JsonValue; attempts: number }, error: unknown) {
@@ -55,6 +57,7 @@ export async function POST(req: NextRequest) {
   }
 
   const promoted = await promoteScheduledNotifications()
+  await scheduleBatchStartReminders()
 
   const claimed = await prisma.$transaction(async (tx) => {
     const due = await tx.jobQueue.findMany({

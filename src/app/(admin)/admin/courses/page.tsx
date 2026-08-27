@@ -684,7 +684,7 @@ export default async function AdminCoursesPage({
               <p style={{ fontSize: 14, fontWeight: 600, color: '#64748b' }}>No courses found</p>
             </div>
           ) : (
-            <>
+            <div style={{ overflowX: 'auto' }}>
               {/* Header row */}
               <div
                 style={{
@@ -692,7 +692,9 @@ export default async function AdminCoursesPage({
                   background: '#f8fafc',
                   borderBottom: '1px solid #f1f5f9',
                   display: 'grid',
-                  gridTemplateColumns: '1.8fr 140px 100px 100px 140px',
+                  gridTemplateColumns: '1.6fr 130px 100px 100px minmax(320px, auto)',
+                  gap: 12,
+                  minWidth: 900,
                   fontSize: 10,
                   fontWeight: 800,
                   textTransform: 'uppercase',
@@ -717,9 +719,11 @@ export default async function AdminCoursesPage({
                     key={c.id}
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: '1.8fr 140px 100px 100px 140px',
+                      gridTemplateColumns: '1.6fr 130px 100px 100px minmax(320px, auto)',
+                      gap: 12,
                       alignItems: 'center',
                       padding: '14px 24px',
+                      minWidth: 900,
                       borderBottom: idx < allCourses.length - 1 ? '1px solid #f8fafc' : 'none',
                     }}
                   >
@@ -756,7 +760,7 @@ export default async function AdminCoursesPage({
                   </div>
                 )
               })}
-            </>
+            </div>
           )}
         </div>
       )}

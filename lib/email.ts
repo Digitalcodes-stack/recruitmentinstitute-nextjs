@@ -477,5 +477,61 @@ export async function sendPaymentConfirmationEmail(data: {
   })
 }
 
+export async function sendCertificateIssuedEmail(data: {
+  studentEmail: string
+  studentName: string
+  courseTitle: string
+  certificateNo: string
+  finalScore: number
+}) {
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `🎓 Certificate Issued: ${data.courseTitle}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
+        <h2 style="color: #059669;">Congratulations, ${data.studentName}!</h2>
+        <p>You've successfully completed <strong>${data.courseTitle}</strong> with a final score of <strong>${data.finalScore}%</strong>.</p>
+        <p>Your certificate of completion has been issued.</p>
+        <p><strong>Certificate No:</strong> ${data.certificateNo}</p>
+        <br/>
+        <a href="https://recruitmentinstitute.in/student-login" style="background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">View in Student Portal</a>
+        <br/><br/>
+        <p>Best regards,<br/><strong>Recruitment Institute Academic Team</strong></p>
+      </div>
+    `,
+  })
+}
+
+export async function sendBatchStartReminderEmail(data: {
+  recipientEmail: string
+  recipientName: string
+  role: 'student' | 'trainer'
+  batchName: string
+  courseTitle: string
+  startDate: string
+  leadLabel: string // e.g. "in 3 days" or "tomorrow"
+}) {
+  const audienceLine = data.role === 'trainer'
+    ? `Your batch <strong>${data.batchName}</strong> (${data.courseTitle}) that you're assigned to starts ${data.leadLabel}.`
+    : `Your batch <strong>${data.batchName}</strong> (${data.courseTitle}) starts ${data.leadLabel}.`
+
+  await sendMail({
+    from: FROM,
+    to: data.recipientEmail,
+    subject: `Batch Starting ${data.leadLabel === 'tomorrow' ? 'Tomorrow' : 'Soon'}: ${data.batchName}`,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
+        <h2 style="color: #2563EB;">⏳ Batch Starting Soon</h2>
+        <p>Hi <strong>${data.recipientName}</strong>,</p>
+        <p>${audienceLine}</p>
+        <p><strong>Start Date:</strong> ${data.startDate}</p>
+        <br/>
+        <p>Best regards,<br/><strong>Recruitment Institute Team</strong></p>
+      </div>
+    `,
+  })
+}
+
 export { sendMail }
 

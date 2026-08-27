@@ -1,0 +1,642 @@
+================================================================================
+RECRUITMENT INSTITUTE — DAILY DEVELOPMENT REPORT
+Date: 2026-08-26
+Project: recruitmentinstitute-nextjs (Next.js + Prisma + FastAPI)
+================================================================================
+
+SCOPE OF TODAY'S SESSION
+-------------------------------------------------------------------------------
+1. UI bug fixes: Razorpay enrollment modal full-width/unstyled rendering
+2. Root-cause fix: sitewide Tailwind CSS bug breaking max-width and spacing
+   utilities on every page (not just the modal)
+3. Feature build: Trainer Availability system (schema + admin form + API)
+4. Feature build: Automatic Next-Batch Generation + Smart Trainer Assignment
+5. Feature build: Certificate issuance service (manual-trigger, schema ready)
+6. Feature build: Batch-start countdown reminders (3-day / 1-day emails)
+7. Feature build: Batch-start countdown widgets (trainer dashboard + student
+   profile dashboard)
+8. Bug fix: public /trainers page was 100% static, never queried the database
+9. Bug fix: 5 trainers with no photo all rendered the same wrong stock photo
+10. Bug fix: Admin "Edit Trainer" page silently dropped saved availability
+    from view (data was safe in DB, but never loaded into the form)
+11. New trainer profiles: Brahmita Nayak, Shesha Shhiv Mohanty (real people,
+    real photos, full weekly availability)
+12. Feature build: "Live & Upcoming Sessions" section on /courses page
+13. Bug fix: Admin Courses table layout broke (page-wide horizontal overflow)
+    after adding a 5th action button to each row
+14. Test data: enrolled real candidate Rupali Patil in all UPCOMING batches
+    to verify countdown-reminder email delivery end-to-end
+15. Live functional test of "Generate Next Batch" against real course/DB data
+
+
+================================================================================
+SECTION 1 — BUG FIXES (PRE-EXISTING ISSUES FOUND & CORRECTED)
+================================================================================
+
+1.1 Razorpay Enrollment Modal — Full-Width / Unstyled Rendering
+--------------------------------------------------------------
+Symptom: The enrollment modal (RazorpayCheckoutModal.tsx) rendered edge-to-
+edge across the full browser width, top-anchored, no border-radius, no
+padding — despite the component JSX having correct Tailwind classes
+(max-w-lg, rounded-3xl, p-7, flex items-center justify-center, etc.)
+
+Investigation:
+  - Ruled out: stale .next build cache (cleared repeatedly, no change)
+  - Ruled out: dev server needing restart (restarted multiple times)
+  - Root cause found via live Playwright screenshot + computed-style
+    inspection of the actual rendered DOM:
+
+    ROOT CAUSE #1 (globals.css line 8):
+      --container-*: initial;
+    This line was intended to reset Tailwind's built-in ".container"
+    component scale. In Tailwind v4, --container-* is the SAME namespace
+    that generates ALL max-w-* utilities (max-w-sm, max-w-lg, max-w-xl,
+    max-w-6xl, etc.) sitewide. Setting it to `initial` silently deleted
+    every max-w-* utility class in the entire compiled CSS bundle —
+    confirmed via direct bundle inspection (grep found ZERO instances of
+    max-w-lg, max-w-xl, etc. in the compiled output).
+      FIX: Removed the line entirely. The project's actual container
+      layout uses a separate, hand-rolled `.container { max-width: 1320px }`
+      class (globals.css line ~87) that never referenced --container-* in
+      the first place, so nothing was actually depending on the reset.
+
+    ROOT CAUSE #2 (globals.css line 49-53):
+      * { box-sizing: border-box; padding: 0; margin: 0; }
+      This reset lived as a plain, UN-LAYERED CSS rule. In CSS cascade
+      rules, ANY unlayered style always beats ANY @layer style regardless
+      of selector specificity or source order. Tailwind v4 emits all its
+      utility classes (p-*, m-*, space-y-*, gap handling, etc.) inside
+      @layer utilities. This meant the plain `* { padding: 0; margin: 0; }`
+      was silently overriding EVERY Tailwind padding/margin utility on
+      EVERY page of the site, sitewide — not just the modal.
+      FIX: Wrapped the reset in `@layer base { ... }` so it now loses to
+      utilities the same way Tailwind's own preflight reset does.
+
+  Files changed: src/app/globals.css
+
+  Verification: Live Playwright screenshot before/after confirmed the
+  modal now renders correctly centered, rounded, and properly spaced.
+  This was a genuine SITEWIDE bug affecting every page using max-w-* or
+  spacing utilities — not limited to the one modal reported.
+
+1.2 Modal Redesign (after the CSS fix exposed the real layout)
+-----------------------------------------------------------------
+Once the CSS bug was fixed, redesigned RazorpayCheckoutModal.tsx to match
+the project's documented design system (Poppins font, blue-navy palette,
+gradient blue CTA) instead of the previous ad-hoc red/navy combination:
+  - Header: navy #0F172A (design-system --color-primary)
+  - CTA button: gradient blue (secondary -> secondary-light) replacing red
+  - Price summary boxed with clearer visual hierarchy
+  - Success-state and form-state close button now theme-aware
+  Files changed: components/payments/RazorpayCheckoutModal.tsx
+
+1.3 Public /trainers Page — Never Queried the Database
+-----------------------------------------------------------------
+Symptom: Newly created trainers (Brahmita Nayak, Shesha Shhiv Mohanty)
+did not appear on the public /trainers page after being added via the
+admin panel and confirmed present in the database.
+
+Root cause: src/app/(site)/trainers/page.tsx was a fully static page.
+It only ever rendered the hardcoded DEFAULT_TRAINERS array from
+lib/data/trainingData.ts (6 fictional demo trainers with fake companies/
+reviews) and never ran a Prisma query at all. This is different from the
+/courses page, which DOES fetch real trainers from the DB with a fallback
+— the assumption that /trainers worked the same way was WRONG and had to
+be corrected once actually verified.
+
+Fix: Converted the page to an async server component. It now fetches all
+active DB trainers via `prisma.trainer.findMany({ where: { isActive: true }})`,
+maps them to the TrainerItem shape, and MERGES them ahead of the static
+demo roster (real trainers first) rather than replacing it outright — per
+explicit decision to keep both visible for now.
+
+Files changed: src/app/(site)/trainers/page.tsx
+
+Verified live via Playwright: page now shows "13 of 13 master faculty
+members" (7 real DB trainers + 6 static demo trainers), both new trainers
+confirmed present by name-text-match on the rendered page.
+
+1.4 Same Stock Photo Duplicated Across 5 Trainers
+-----------------------------------------------------------------
+Symptom (reported via screenshot): Priya Sharma, Suresh Bansal, Priti Shah,
+Rohit Malhotra, and Vivek Srivastava all displayed the IDENTICAL photo on
+the public trainers page.
+
+Root cause: These 5 trainers have `image: null` in the database (no photo
+was ever uploaded for them). The page-mapping fallback logic used:
+    image: t.image || '/assets/images/trainers/rajesh_sharma.jpg'
+— a single hardcoded fallback photo applied to every trainer without one,
+causing all 5 to render the same face.
+
+Fix (first pass): Replaced the fallback with a per-trainer initials avatar,
+generated as an inline SVG data URI (distinct navy card with the trainer's
+own initials — "PS", "SB", "RM", "VS", etc.) — an honest placeholder that
+never fabricates a wrong photo for a real name.
+  - Required a small change to TrainerCard.tsx: next/image does not
+    optimize data: URIs, so the card now detects `src.startsWith('data:')`
+    and falls back to a plain <img> tag for that case only.
+
+Fix (second pass, per explicit user decision): Since no image-generation
+tool is available in this environment, and the user accepted the tradeoff,
+reused 6 existing stock photos already in public/assets/images/trainers/
+(previously used only by the static demo roster) and assigned one to each
+of the 5 photo-less trainers via a database update script:
+  - Priya Sharma      -> priyanka_kulkarni.jpg
+  - Suresh Bansal     -> amit_deshmukh.jpg
+  - Priti Shah        -> ananya_roy.jpg
+  - Rohit Malhotra    -> vikram_joshi.jpg
+  - Vivek Srivastava  -> rajesh_sharma.jpg
+
+KNOWN OPEN ISSUE (flagged to user, not yet resolved): these same 5 stock
+photos also appear elsewhere on the /trainers page as the ORIGINAL static
+demo trainers (Rajesh Sharma, Priyanka Kulkarni, etc.) — meaning each face
+currently appears twice under two different names. Acceptable for a dev/
+demo environment; needs real photos or retiring the static demo cards
+before production launch.
+
+Files changed: src/app/(site)/trainers/page.tsx, components/site/TrainerCard.tsx
+
+1.5 Admin "Edit Trainer" Page — Availability Not Displayed After Save
+-----------------------------------------------------------------
+Symptom (reported by user with screenshot): user set a trainer's weekly
+availability to Sat 06:00-23:00 (custom hours) plus other days, saved it,
+then reopened the Edit Trainer page and only saw Sunday selected — appeared
+as if the save had failed or been overwritten.
+
+Investigation: Queried the database directly for that trainer's saved
+TrainerAvailability rows. CONFIRMED all 7 days were correctly persisted,
+including the exact custom Saturday 06:00-23:00 time. The data was never
+lost — the bug was purely in what the edit page displayed.
+
+Root cause: src/app/(admin)/admin/trainers/[id]/edit/page.tsx ran a Prisma
+`select` for the trainer record that did NOT include the `availability`
+relation at all. TrainerForm.tsx therefore always received `availability:
+undefined` on every page load, regardless of what was actually saved,
+and always rendered as if the trainer had zero availability configured.
+Any subsequent save from that state would have genuinely overwritten the
+real data with whatever was visible in the (incomplete) form.
+
+Fix: Added `availability: { select: { id, dayOfWeek, startTime, endTime } }`
+to the Prisma select in the edit page query.
+
+Files changed: src/app/(admin)/admin/trainers/[id]/edit/page.tsx
+
+Verification: Re-ran the exact corrected query directly against the DB —
+confirmed it now returns all 7 previously-saved availability rows for the
+affected trainer (Brahmita Nayak, trainer id 7).
+
+1.6 Admin Courses Table — Page-Wide Horizontal Overflow
+-----------------------------------------------------------------
+Symptom (reported via screenshot): The Admin > Courses page rendered with
+the Course Title column completely missing, page content shifted/cut off
+on the left edge, and the whole page scrolled horizontally instead of just
+the table.
+
+Root cause: The courses table used a fixed CSS grid layout with a hardcoded
+140px-wide "Actions" column
+(`gridTemplateColumns: '1.8fr 140px 100px 100px 140px'`). Earlier in this
+session, a 5th action button ("Generate Next Batch") was added to
+CourseActions.tsx without checking it against this table's fixed-width
+layout. Five buttons (Curriculum, Assessment, Generate Next Batch, Edit,
+Delete) in an un-wrapped flex row no longer fit in 140px, so each table
+row overflowed horizontally and dragged the ENTIRE PAGE sideways with it,
+cutting off the leftmost column.
+
+Fix:
+  - CourseActions.tsx: changed button container from a rigid single-line
+    flex row to `flexWrap: 'wrap', justifyContent: 'flex-end'`
+  - Courses admin table: widened the Actions grid column to
+    `minmax(320px, auto)`, wrapped the entire table body in its own
+    `overflowX: 'auto'` container with `minWidth: 900` on both header and
+    rows — so any future overflow is contained to the table itself and
+    never again drags the surrounding page layout.
+
+Files changed: components/admin/CourseActions.tsx,
+                src/app/(admin)/admin/courses/page.tsx
+
+Verification: Created a temporary throwaway SUPER_ADMIN test account
+(deleted immediately after use), logged in via Playwright, screenshotted
+the live Admin > Courses page at 1920x1080. Confirmed: Course Title column
+visible, all 5 action buttons fit on one line at this width, page layout
+correct with no overflow.
+
+
+================================================================================
+SECTION 2 — NEW FEATURES BUILT
+================================================================================
+
+2.1 Trainer Availability System (CRITICAL requirement)
+-----------------------------------------------------------------
+Schema (prisma/schema.prisma):
+  New model `TrainerAvailability`:
+    - trainerId (FK to Trainer, cascade delete)
+    - dayOfWeek: Int (0=Sunday .. 6=Saturday, matches JS Date#getDay())
+    - startTime / endTime: String, "HH:mm" 24-hour, IST wall-clock
+    - One row per recurring weekly slot; a trainer can have multiple rows
+      per day (multiple time windows) and any number of days
+  Added `timezone: String @default("Asia/Kolkata")` to the Trainer model.
+  Pushed to the live database via `prisma db push` (NOT `prisma migrate
+  dev` — this project has no existing migration history, so `migrate dev`
+  would have demanded a full destructive database reset; db push updates
+  schema in place with zero data loss).
+
+Admin UI (components/admin/TrainerForm.tsx):
+  - Day-of-week pill selector (Sun-Sat, multi-select)
+  - Per-day time-range row(s): start time / end time pickers
+  - "+" button to add multiple time slots on the same day
+  - "x" button to remove a slot
+  - Validation: end time must be after start time for every slot
+  - Helper copy: "Times are IST. Used to auto-assign trainers to new
+    batches."
+
+API (src/app/api/admin/trainers/route.ts and [id]/route.ts):
+  - POST (create): accepts `availability: [{dayOfWeek, startTime, endTime}]`,
+    creates trainer + availability rows in one call
+  - PUT (update): availability has no stable per-slot ID from the client,
+    so update is implemented as delete-all-then-recreate inside a Prisma
+    transaction (safe, atomic, correct for a small list of ~7 rows)
+  - GET: both list and single-trainer endpoints now select and return
+    availability
+
+Public trainers page: now shows real trainers with real availability data
+(see 1.3 above for the page-level fix that made this visible at all).
+
+2.2 Automatic Next-Batch Generation + Smart Trainer Assignment (CRITICAL)
+-----------------------------------------------------------------
+lib/services/trainerAvailability.ts (NEW FILE):
+  `findAvailableTrainers(requirement, opts)`:
+    - Takes { classDays: number[], startTime, endTime } + optional
+      specialization hint
+    - Returns only ACTIVE trainers whose declared availability rows fully
+      COVER every requested class day and time window (a trainer's slot
+      must span the entire requested window, not just overlap it)
+    - A trainer with ZERO availability rows is always excluded — never
+      guessed into an assignment
+    - Ranks candidates by: (1) fewest currently active/upcoming batches
+      first [load-balancing], (2) specialization text match as tiebreak
+  `pickBestTrainer(requirement, opts)`: returns the top-ranked candidate
+  or null.
+
+lib/services/nextBatchGenerator.ts (NEW FILE):
+  `generateNextBatch(courseId, options)`:
+    - Looks up the course's most recent batch (by start date); if none
+      exists, uses today as the baseline
+    - Computes the earliest valid next start date as
+      max(lastBatch.end/start + gapDays[default 14], today), then advances
+      to the next date matching the requested class days
+    - Calls pickBestTrainer() for the requested schedule; throws a typed
+      `NoTrainerAvailableError` (with a human-readable message naming the
+      exact days/times that had no coverage) if nobody qualifies —- this
+      is surfaced to the admin UI as a clear message, not a crash
+    - Creates the Batch record (auto-generated name: "{Course title} —
+      Batch N"), then calls the EXISTING `generateSessionsForBatch()`
+      service (already in the codebase, unmodified) to auto-create one
+      session per syllabus module with real dates/topics and trigger the
+      existing student-notification emails — deliberately reused rather
+      than reimplemented
+    - Returns batchId, assigned trainer, computed start date, sessions
+      created, and the full session preview
+
+API: POST /api/admin/courses/[id]/generate-next-batch
+  - Admin-auth guarded
+  - Accepts optional override body: classDays, startTime, endTime,
+    capacity, mode, gapDays
+  - Returns 201 with the generation result, or 409 with code
+    NO_TRAINER_AVAILABLE and a descriptive message if no trainer qualifies
+
+Admin UI: "Generate Next Batch" button added to CourseActions.tsx (the
+per-course action row on Admin > Courses). Calls the API, shows the result
+in an alert (batch name, trainer assigned, sessions created, start date),
+then navigates to the new batch's detail page.
+
+LIVE FUNCTIONAL TEST PERFORMED (not just code review):
+  Ran `generateNextBatch(22)` twice in a row directly via a CLI test
+  script against the real database (course #22, "Corporate Training
+  Courses", which already had 4 real batches).
+    Run 1: Created "Corporate Traning Courses — Batch 5", assigned
+           trainer #7 (Brahmita Nayak), start date 2026-10-20, 6 sessions
+           created with real syllabus topics and dates.
+    Run 2: Created "Corporate Traning Courses — Batch 6", assigned
+           trainer #8 (Shesha Shhiv Mohanty) — DIFFERENT trainer, correctly
+           picked because Brahmita now had 1 active batch (load-balancing
+           confirmed working) — start date pushed to 2026-11-03 (correctly
+           computed off the newest last-batch date), 6 more sessions
+           created.
+  Both test batches were then deleted (along with their sessions) to keep
+  the admin's real batch list clean — this was explicitly a test run, not
+  production data.
+
+  KEY FINDING FROM TESTING: of the 7 active trainers in the database, only
+  2 (Brahmita Nayak, Shesha Shhiv Mohanty) have ANY availability rows set.
+  The other 5 (Priya Sharma, Suresh Bansal, Priti Shah, Rohit Malhotra,
+  Vivek Srivastava) have zero availability configured, so they can NEVER
+  be auto-assigned to a new batch regardless of the requested schedule.
+  This was flagged to the user as an action item — availability needs to
+  be filled in for those 5 trainers via Admin > Trainers > Edit for the
+  auto-assignment pool to actually use them.
+
+Files added: lib/services/trainerAvailability.ts,
+             lib/services/nextBatchGenerator.ts,
+             src/app/api/admin/courses/[id]/generate-next-batch/route.ts
+Files changed: components/admin/CourseActions.tsx
+Test harness kept in repo: scripts/test-generate-next-batch.ts
+  (usage: npx tsx -r dotenv/config scripts/test-generate-next-batch.ts <courseId>)
+
+2.3 Certificate Issuance (business feature #3 — PARTIAL)
+-----------------------------------------------------------------
+Schema: New `Certificate` model — one per Enrollment (unique), stores
+certificate number, student name + course title SNAPSHOT (so later name/
+title changes don't retroactively alter an issued certificate), final
+score, issue date, optional PDF URL.
+
+Service (lib/services/certificates.ts):
+  `issueCertificate(enrollmentId, finalScore)`:
+    - Idempotent: throws AlreadyCertifiedError if one already exists for
+      that enrollment (never silently duplicates)
+    - Enforces a passing-score threshold (flat 50%, marked with a
+      "ponytail:" code comment flagging this as a placeholder to make
+      configurable per-course later if the business needs differ)
+    - Generates certificate number as RI-CERT-{year}-{enrollmentId
+      zero-padded to 6 digits}
+    - Sends a confirmation email via new sendCertificateIssuedEmail()
+      function in lib/email.ts (matches existing email style/branding)
+
+API: POST /api/admin/enrollments/[id]/certificate — admin-triggered,
+  accepts { finalScore } in the request body.
+
+EXPLICITLY NOT DONE (flagged, not silently skipped): automatic issuance
+triggered by a student passing their final assessment. Investigated the
+grading pipeline and confirmed assessment scoring lives entirely in the
+separate FastAPI backend service (via SessionAssessment.fastapiAssessmentId
+foreign pointer + lib/fastapiClient.ts), not in this Prisma database. No
+verified webhook or callback contract exists yet between that service and
+this one, so building an automatic trigger would have meant guessing at
+an unconfirmed integration point. Built the safe manual-trigger path
+instead and left the automatic wiring as an open item pending that
+contract being defined.
+
+Also not done: actual PDF certificate generation/rendering — no PDF
+library exists in the project yet (would need e.g. pdf-lib added when
+this becomes a real requirement).
+
+2.4 Batch-Start Countdown Reminders (business feature #6)
+-----------------------------------------------------------------
+This is distinct from the SESSION-level reminders that already existed
+in the codebase (lib/jobs/sendReminder.ts, 24h/1h/15m before an individual
+live class). This new feature reminds people about an entire BATCH
+starting soon.
+
+lib/jobs/sendBatchStartReminder.ts (NEW FILE):
+  `sendBatchStartReminder({batchId, lead: '3d'|'1d'})`:
+    - Emails every actively-enrolled student in the batch AND the
+      assigned trainer
+    - Skips CANCELLED batches
+  `scheduleBatchStartReminders()`:
+    - Scans for UPCOMING batches whose start date falls in the
+      "exactly 3 days from now" or "exactly 1 day from now" windows
+    - For each match, enqueues one job into the EXISTING JobQueue table
+      (type: 'send_batch_start_reminder') — reused the project's existing
+      generic pending/runAfter/attempts/backoff job queue rather than
+      building a new mechanism
+    - De-duplicates: will not re-enqueue if a job for that exact
+      (batchId, lead) pair already exists in pending/processing/completed
+      state — but WILL retry if a prior attempt failed, since failed jobs
+      are excluded from the de-dupe check (this was a deliberate fix
+      during implementation — an earlier version would have permanently
+      blocked retries after any single failure)
+
+Email template: new sendBatchStartReminderEmail() in lib/email.ts,
+role-aware copy (different wording for student vs trainer recipient).
+
+Wiring: src/app/api/internal/cron/tick/route.ts — the project's existing
+Vercel cron endpoint (already configured to fire every 5 minutes via
+vercel.json) now also calls scheduleBatchStartReminders() on every tick,
+and the new job type is registered in the existing HANDLERS dispatch map.
+
+IMPORTANT CAVEAT (explained to user): Vercel's scheduled cron only
+executes in a deployed environment. On localhost, nothing calls
+POST /api/internal/cron/tick automatically — it must be invoked manually
+(with the CRON_SECRET bearer token) for the reminder scan to actually run
+during local testing.
+
+Files added: lib/jobs/sendBatchStartReminder.ts
+Files changed: lib/email.ts, src/app/api/internal/cron/tick/route.ts
+
+2.5 Batch-Start Countdown Widget (Student + Trainer Dashboards)
+-----------------------------------------------------------------
+components/shared/BatchCountdown.tsx (NEW FILE):
+  Client component, ticks every 60 seconds, shows "{batch name} starts in
+  Xd Yh Zm" for a given ISO start date. Renders nothing once the start
+  date has passed.
+
+Wired into:
+  - Trainer dashboard (src/app/(trainer)/trainer/dashboard/page.tsx):
+    shows the countdown for the trainer's soonest UPCOMING assigned batch
+  - Student dashboard, which is the EXISTING /profile page
+    (src/app/(site)/profile/page.tsx) — IMPORTANT CORRECTION MADE DURING
+    THIS SESSION: initially assumed no student dashboard existed and
+    nearly built a duplicate one from scratch; caught this before building
+    it by checking routes first and found /profile already IS the full
+    student dashboard (courses, assessments, session-assessments, etc.).
+    Added the countdown widget there instead of duplicating functionality.
+
+2.6 "Live & Upcoming Sessions" Section on /courses Page
+-----------------------------------------------------------------
+New requirement (explicit user request): show real upcoming/live class
+SESSIONS with trainer info on the public courses page, distinct from the
+existing batch-level cards (which already showed trainer photo/name but
+not individual session schedules).
+
+components/site/LiveAndUpcomingSessions.tsx (NEW FILE):
+  Server-rendered card grid. Each card shows: LIVE NOW / UPCOMING badge,
+  session title, course + batch name, time window (IST), trainer photo +
+  name, and a "Join" button (shown only when a session is genuinely live
+  AND has a meet link).
+
+Query added to src/app/(site)/courses/page.tsx:
+  Fetches Session records where status is LIVE or UPCOMING, endTime is in
+  the future, startTime is within the next 14 days, and the parent batch
+  is ACTIVE or UPCOMING — ordered by start time, limited to 6.
+
+BUG CAUGHT DURING TESTING: the first version of this query had no lower
+time bound (only `startTime <= windowEnd`), which pulled in sessions from
+July 2026 that had already fully concluded (today in this environment is
+2026-08-26). Fixed by adding `endTime: { gte: now }` to the query before
+considering the feature done. Verified visually via Playwright screenshot
+after the fix — correct upcoming sessions displayed (e.g. "Session 1:
+Module 1..." on Thu 27 Aug, trainer Suresh Bansal / Rohit Malhotra photos
+showing correctly).
+
+Files added: components/site/LiveAndUpcomingSessions.tsx
+Files changed: src/app/(site)/courses/page.tsx
+
+
+================================================================================
+SECTION 3 — NEW TRAINER PROFILES CREATED
+================================================================================
+
+Two real trainers added per explicit user request, using real photos the
+user supplied directly in chat (not AI-generated — no image-generation
+tool is available in this environment, and generating photorealistic
+images of named real people was declined as out of scope for what this
+assistant can do):
+
+  Brahmita Nayak (trainer id 7)
+    Email: brahmita.nayak@institute.com
+    Specialization: HR & Soft Skills
+    Photo: public/assets/images/trainers/brahmita_mam.jpg
+    Availability: Sun-Fri 19:00-23:00 IST, Sat 06:00-23:00 IST
+    Login password (seeded): Trainer@123
+
+  Shesha Shhiv Mohanty (trainer id 8)
+    Email: shesha.mohanty@institute.com
+    Specialization: AI Transformation & Recruitment
+    Photo: public/assets/images/trainers/shesha_sir.jpg
+    Availability: Sun 06:00-21:00 IST, Mon-Fri 19:00-23:00 IST,
+                  Sat 06:00-23:00 IST
+    Login password (seeded): Trainer@123
+
+Both are currently the ONLY two trainers in the system with configured
+availability, and are therefore the only two eligible for automatic
+batch/trainer assignment (see 2.2 above).
+
+Note on photo file naming: the user's actual uploaded files ended up
+named brahmita_mam.jpg / shesha_sir.jpg (not the brahmita_nayak.jpg /
+shesha_mohanty.jpg filenames originally requested) — the database image
+paths were corrected via script to point at the actual files that exist
+on disk rather than renaming the files.
+
+
+================================================================================
+SECTION 4 — TEST DATA CREATED (FOR EMAIL/COUNTDOWN VERIFICATION)
+================================================================================
+
+Real candidate enrolled per explicit user request, to test the batch-start
+countdown reminder email pipeline end-to-end against a real inbox:
+
+  Student: Rupali Patil (student id 70)
+    Email: patilrupalib@gmail.com
+    Phone (stored as `contact`): 9850063648
+    Login password (seeded): Student@123
+    isActive: true (required — the reminder job skips inactive students)
+
+  Enrolled in all 4 batches currently in UPCOMING status (a 5th batch that
+  looked upcoming, "HR and Recruitment Batch A" id 11, was excluded because
+  its actual status is ACTIVE, not UPCOMING):
+    - New Batch HR Corporate Training Course     — starts 2026-08-28
+    - New Batch B HR Corporate Training Course   — starts 2026-09-05
+    - Degree Courses — Batch 4                   — starts 2026-10-13
+    - Entrepreneur Courses — Batch 3              — starts 2026-08-25
+      (NOTE: this batch's start date is already in the PAST relative to
+      today, 2026-08-26, despite being marked UPCOMING — the countdown
+      reminder logic only looks FORWARD, so no reminder will ever fire
+      for this batch as currently dated. Worth investigating why this
+      batch wasn't transitioned to ACTIVE status.)
+
+Expected real-world timing: "New Batch HR Corporate Training Course"
+(starts 2026-08-28) enters the 1-day reminder window on 2026-08-27 —
+this is the most realistic near-term batch to watch
+patilrupalib@gmail.com for an actual reminder email, PROVIDED the
+Vercel cron (or a manual trigger of /api/internal/cron/tick) actually
+runs during that window.
+
+
+================================================================================
+SECTION 5 — CURRENT REPOSITORY STATE (UNCOMMITTED)
+================================================================================
+
+All work described above is currently UNCOMMITTED in the working tree —
+nothing has been committed or pushed to git yet. Diff summary:
+
+  17 files changed, 496 insertions(+), 132 deletions(-)
+
+  Modified:
+    components/admin/CourseActions.tsx
+    components/admin/TrainerForm.tsx
+    components/payments/RazorpayCheckoutModal.tsx
+    components/site/TrainerCard.tsx
+    lib/email.ts
+    lib/validations.ts
+    prisma/schema.prisma
+    src/app/(admin)/admin/courses/page.tsx
+    src/app/(admin)/admin/trainers/[id]/edit/page.tsx
+    src/app/(site)/courses/page.tsx
+    src/app/(site)/profile/page.tsx
+    src/app/(site)/trainers/page.tsx
+    src/app/(trainer)/trainer/dashboard/page.tsx
+    src/app/api/admin/trainers/[id]/route.ts
+    src/app/api/admin/trainers/route.ts
+    src/app/api/internal/cron/tick/route.ts
+    src/app/globals.css
+
+  New (untracked):
+    components/shared/BatchCountdown.tsx
+    components/site/LiveAndUpcomingSessions.tsx
+    lib/jobs/sendBatchStartReminder.ts
+    lib/services/certificates.ts
+    lib/services/nextBatchGenerator.ts
+    lib/services/trainerAvailability.ts
+    public/assets/images/trainers/brahmita_mam.jpg
+    public/assets/images/trainers/shesha_sir.jpg
+    public/uploads/trainers/  (photo upload directory, created by the
+                                admin photo-upload feature during testing)
+    scripts/seed-top-trainers.ts       (kept — reusable trainer seed script)
+    scripts/test-generate-next-batch.ts (kept — reusable CLI test harness)
+    src/app/api/admin/courses/[id]/generate-next-batch/route.ts
+    src/app/api/admin/enrollments/[id]/certificate/route.ts
+
+Database schema changes were applied directly to the live PostgreSQL
+database via `prisma db push` (safe, non-destructive, no migration
+history existed to preserve). Prisma client was regenerated. No `prisma
+migrate` history file was ever created for this project — if formal
+migrations are wanted going forward, that would need to be set up
+separately (currently out of scope / not requested).
+
+Verification method used throughout this session: every UI-facing change
+was verified with a LIVE Playwright screenshot against the actual running
+dev server (not just code review or TypeScript compilation) — including
+temporary admin/test accounts created and deleted specifically for
+verification purposes where no existing credentials were available.
+`npx tsc --noEmit` was run after every batch of changes and stayed clean
+throughout.
+
+
+================================================================================
+SECTION 6 — OPEN ITEMS / KNOWN GAPS (NOT YET RESOLVED)
+================================================================================
+
+1. 5 of 7 trainers (Priya Sharma, Suresh Bansal, Priti Shah, Rohit
+   Malhotra, Vivek Srivastava) have NO availability configured and are
+   therefore permanently ineligible for automatic batch assignment until
+   an admin fills in their weekly schedule.
+
+2. 5 trainers currently reuse stock photos that are ALSO used by unrelated
+   static demo trainers elsewhere on the same /trainers page — same face,
+   two different names, visible side-by-side. Needs either real photos or
+   retirement of the static demo roster before production.
+
+3. Certificate issuance is manual-only (admin-triggered via API). No
+   automatic trigger exists tying a passing FastAPI assessment score to
+   certificate issuance — the integration contract between the two
+   services was not available to build against safely.
+
+4. No PDF generation exists for certificates — only a database record and
+   an email notification. `pdfUrl` field exists on the Certificate model
+   but is never populated.
+
+5. Batch-start reminders will only actually fire in production via
+   Vercel's scheduled cron; there is currently no equivalent scheduled
+   trigger for local development — must be invoked manually with the
+   CRON_SECRET bearer token to test locally.
+
+6. "Entrepreneur Courses — Batch 3" (batch id 17) has status UPCOMING but
+   a start date (2026-08-25) that is already in the past relative to the
+   current date (2026-08-26) — likely needs its status corrected to ACTIVE
+   or its start date corrected; as-is, it will never trigger a countdown
+   reminder.
+
+7. None of today's work has been committed to git yet.
+
+================================================================================
+END OF REPORT
+================================================================================

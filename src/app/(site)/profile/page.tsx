@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
+import BatchCountdown from '@/components/shared/BatchCountdown'
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -63,6 +64,11 @@ export default async function ProfilePage() {
         )
         .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     : []
+
+  const nextUpcomingBatch = enrollments
+    .map((e) => e.batch)
+    .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > new Date())
+    .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0]
 
   const initials = session.name
     .split(' ')
@@ -201,6 +207,10 @@ export default async function ProfilePage() {
                 </p>
               </div>
             </div>
+
+            {nextUpcomingBatch && (
+              <BatchCountdown startDate={nextUpcomingBatch.startDate.toISOString()} batchName={nextUpcomingBatch.name} />
+            )}
 
             {upcomingSessions.length > 0 && (
               <div>

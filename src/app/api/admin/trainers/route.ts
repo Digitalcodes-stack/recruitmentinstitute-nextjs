@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAdminSession, hashPassword } from '@/lib/auth'
 import { z } from 'zod'
+import { trainerAvailabilitySlotSchema } from '@/lib/validations'
 
 const createSchema = z.object({
   name: z.string().min(2),
@@ -12,6 +13,7 @@ const createSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().default(true),
+  availability: z.array(trainerAvailabilitySlotSchema).optional(),
 })
 
 async function guard() {
@@ -30,6 +32,7 @@ export async function GET() {
     select: {
       id: true, name: true, email: true, phone: true, specialization: true,
       bio: true, image: true, isActive: true, createdAt: true,
+      availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
     },
   })
   return NextResponse.json({ success: true, data: trainers })
@@ -48,12 +51,17 @@ export async function POST(req: NextRequest) {
   if (existing)
     return NextResponse.json({ success: false, errors: { email: ['A trainer with this email already exists'] } }, { status: 400 })
 
-  const { password, ...rest } = validated.data
+  const { password, availability, ...rest } = validated.data
   const trainer = await prisma.trainer.create({
-    data: { ...rest, password: await hashPassword(password) },
+    data: {
+      ...rest,
+      password: await hashPassword(password),
+      availability: availability?.length ? { create: availability } : undefined,
+    },
     select: {
       id: true, name: true, email: true, phone: true, specialization: true,
       bio: true, image: true, isActive: true, createdAt: true,
+      availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
     },
   })
   return NextResponse.json({ success: true, data: trainer }, { status: 201 })

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
 import UpcomingBatches from '@/components/site/UpcomingBatches'
 import FeaturedTrainers from '@/components/site/FeaturedTrainers'
+import LiveAndUpcomingSessions, { SessionListItem } from '@/components/site/LiveAndUpcomingSessions'
 import { DEFAULT_BATCHES, DEFAULT_TRAINERS } from '@/lib/data/trainingData'
 import { BatchItem, TrainerItem } from '@/types/training'
 import {
@@ -189,7 +190,10 @@ function Stars({ rating }: { rating: number }) {
 /* ── Page ────────────────────────────────────────────────────────── */
 
 export default async function CoursesPage() {
-  const [categories, courses, fees, reviews, testimonials, rawDbBatches, rawDbTrainers] = await Promise.all([
+  const now = new Date()
+  const sessionWindowEnd = new Date(now.getTime() + 14 * 86_400_000)
+
+  const [categories, courses, fees, reviews, testimonials, rawDbBatches, rawDbTrainers, rawSessions] = await Promise.all([
     prisma.courseCategory.findMany({ orderBy: { id: 'asc' }, include: { courses: { orderBy: { id: 'asc' } }, fees: { orderBy: { id: 'asc' } } } }),
     prisma.course.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
     prisma.courseFee.findMany({ orderBy: { id: 'asc' }, include: { category: { include: { courses: true } } } }),
@@ -207,6 +211,20 @@ export default async function CoursesPage() {
     }).catch(() => []),
     prisma.trainer.findMany({
       where: { isActive: true },
+      take: 6,
+    }).catch(() => []),
+    prisma.session.findMany({
+      where: {
+        status: { in: ['LIVE', 'UPCOMING'] },
+        endTime: { gte: now },
+        startTime: { lte: sessionWindowEnd },
+        batch: { status: { in: ['ACTIVE', 'UPCOMING'] } },
+      },
+      include: {
+        batch: { select: { name: true, course: { select: { title: true } } } },
+        trainer: { select: { name: true, image: true } },
+      },
+      orderBy: { startTime: 'asc' },
       take: 6,
     }).catch(() => []),
   ])
@@ -227,15 +245,7 @@ export default async function CoursesPage() {
         cleanTitle = 'HR Corporate Training Course'
       }
       const trainerName = b.trainer?.name || defaultMatch.trainerName
-      const isFemaleTrainer =
-        trainerName.toLowerCase().includes('priya') ||
-        trainerName.toLowerCase().includes('priti') ||
-        trainerName.toLowerCase().includes('ananya') ||
-        trainerName.toLowerCase().includes('snehal') ||
-        trainerName.toLowerCase().includes('shah')
-      const trainerImg = isFemaleTrainer
-        ? '/assets/images/trainers/priyanka_kulkarni.jpg'
-        : '/assets/images/trainers/rajesh_sharma.jpg'
+      const trainerImg = b.trainer?.image || '/assets/images/trainers/rajesh_sharma.jpg'
 
       let batchMode: 'ONLINE' | 'OFFLINE' | 'HYBRID' = b.mode as 'ONLINE' | 'OFFLINE' | 'HYBRID'
       const schedLower = (b.schedule || '').toLowerCase()
@@ -283,13 +293,7 @@ export default async function CoursesPage() {
         lower.includes('ananya') ||
         lower.includes('snehal') ||
         lower.includes('shah')
-      const profileImg = isFemale
-        ? idx % 2 === 0
-          ? '/assets/images/trainers/priyanka_kulkarni.jpg'
-          : '/assets/images/trainers/ananya_roy.jpg'
-        : idx % 2 === 0
-        ? '/assets/images/trainers/rajesh_sharma.jpg'
-        : '/assets/images/trainers/amit_deshmukh.jpg'
+      const profileImg = t.image || (isFemale ? '/assets/images/trainers/priyanka_kulkarni.jpg' : '/assets/images/trainers/rajesh_sharma.jpg')
 
       return {
         id: t.id,
@@ -513,6 +517,23 @@ export default async function CoursesPage() {
         batches={formattedBatches}
         title="Upcoming Batches"
         subtitle="Limited seats • Live Online + Offline options • New batches every month"
+      />
+
+      {/* ── LIVE & UPCOMING SESSIONS ─────────────────────────────────── */}
+      <LiveAndUpcomingSessions
+        sessions={rawSessions.map((s): SessionListItem => ({
+          id: s.id,
+          title: s.title,
+          sessionDate: s.sessionDate.toISOString(),
+          startTime: s.startTime.toISOString(),
+          endTime: s.endTime.toISOString(),
+          isLive: s.status === 'LIVE' || (s.startTime <= now && s.endTime >= now),
+          meetLink: s.meetLink,
+          batchName: s.batch.name,
+          courseTitle: s.batch.course.title,
+          trainerName: s.trainer.name,
+          trainerImage: s.trainer.image,
+        }))}
       />
 
       {/* ── COURSE CARDS ────────────────────────────────────────────── */}

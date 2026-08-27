@@ -122,6 +122,12 @@ export const faqSchema = z.object({
   categoryId: z.number().int().positive().optional(),
 })
 
+export const trainerAvailabilitySlotSchema = z.object({
+  dayOfWeek: z.number().int().min(0).max(6),
+  startTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use HH:mm 24h format'),
+  endTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, 'Use HH:mm 24h format'),
+}).refine((s) => s.endTime > s.startTime, { message: 'End time must be after start time', path: ['endTime'] })
+
 export const trainerSchema = z.object({
   name: z.string().min(2, 'Name is required'),
   email: z.string().email('Invalid email address'),
@@ -130,6 +136,7 @@ export const trainerSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().default(true),
+  availability: z.array(trainerAvailabilitySlotSchema).optional(),
 })
 
 export const trainerLoginSchema = z.object({

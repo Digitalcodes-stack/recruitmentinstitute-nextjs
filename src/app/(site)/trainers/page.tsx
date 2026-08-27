@@ -7,6 +7,8 @@ import {
 } from 'lucide-react'
 import TrainersListClient from '@/components/site/TrainersListClient'
 import { DEFAULT_TRAINERS } from '@/lib/data/trainingData'
+import { prisma } from '@/lib/prisma'
+import { TrainerItem } from '@/types/training'
 
 export const metadata: Metadata = {
   title: 'Meet Our Expert HR & Recruitment Faculty in Pune | Recruitment Institute',
@@ -21,14 +23,54 @@ export const metadata: Metadata = {
   ],
 }
 
-export default function TrainersPage() {
+/** Neutral initials avatar for trainers with no photo on file — never guess a stock photo for a real person. */
+function initialsAvatar(name: string) {
+  const initials = name.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="640" viewBox="0 0 480 640"><rect width="480" height="640" fill="#0F172A"/><text x="240" y="340" font-family="Arial, sans-serif" font-size="160" font-weight="700" fill="#94A3B8" text-anchor="middle" dominant-baseline="middle">${initials}</text></svg>`
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+}
+
+export default async function TrainersPage() {
+  const dbTrainers = await prisma.trainer.findMany({ where: { isActive: true }, orderBy: { id: 'asc' } })
+  const TOP_TRAINERS = ['Brahmita Nayak', 'Shesha Shhiv Mohanty']
+  dbTrainers.sort((a, b) => {
+    const ai = TOP_TRAINERS.indexOf(a.name)
+    const bi = TOP_TRAINERS.indexOf(b.name)
+    if (ai === -1 && bi === -1) return 0
+    if (ai === -1) return 1
+    if (bi === -1) return -1
+    return ai - bi
+  })
+
+  // Real faculty on record, mapped to the same card shape the static roster uses.
+  // IDs are offset above the static range so they never collide with DEFAULT_TRAINERS.
+  const liveTrainers: TrainerItem[] = dbTrainers.map((t) => ({
+    id: 100000 + t.id,
+    name: t.name,
+    email: t.email,
+    phone: t.phone ?? undefined,
+    designation: t.specialization || 'Faculty Trainer',
+    experienceYears: 15,
+    specializationTags: t.specialization ? t.specialization.split(',').map((s) => s.trim()) : ['Recruitment & HR'],
+    bio: t.bio || 'Experienced recruitment and HR practitioner at Recruitment Institute.',
+    image: t.image || initialsAvatar(t.name),
+    rating: 5,
+    reviewsCount: 0,
+    studentsMentored: 1000,
+    coursesTaught: [],
+    modes: ['Online', 'Offline', 'Hybrid'],
+    featured: true,
+  }))
+
+  const allTrainers = [...liveTrainers, ...DEFAULT_TRAINERS]
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'EducationalOrganization',
     name: 'Recruitment Institute Faculty',
     description: 'Expert Recruitment & HR Faculty from top global companies.',
     url: 'https://recruitmentinstitute.in/trainers',
-    employee: DEFAULT_TRAINERS.map((t) => ({
+    employee: allTrainers.map((t) => ({
       '@type': 'Person',
       name: t.name,
       jobTitle: t.designation,
@@ -97,7 +139,7 @@ export default function TrainersPage() {
 
       {/* ── FACULTY DIRECTORY LIST ───────────────────────────────────── */}
       <section style={{ padding: '60px 0 80px' }}>
-        <TrainersListClient initialTrainers={DEFAULT_TRAINERS} />
+        <TrainersListClient initialTrainers={allTrainers} />
       </section>
 
       {/* ── BOTTOM CTA BANNER ────────────────────────────────────────── */}

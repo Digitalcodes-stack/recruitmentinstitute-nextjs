@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAdminSession, hashPassword } from '@/lib/auth'
 import { z } from 'zod'
+import { trainerAvailabilitySlotSchema } from '@/lib/validations'
 
 const updateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -12,11 +13,13 @@ const updateSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().optional(),
+  availability: z.array(trainerAvailabilitySlotSchema).optional(),
 })
 
 const trainerSelect = {
   id: true, name: true, email: true, phone: true, specialization: true,
   bio: true, image: true, isActive: true, createdAt: true,
+  availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
 } as const
 
 async function guard() {
@@ -46,13 +49,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!validated.success)
     return NextResponse.json({ success: false, errors: validated.error.flatten().fieldErrors }, { status: 400 })
 
-  const { password, ...rest } = validated.data
+  const { password, availability, ...rest } = validated.data
   const data = password ? { ...rest, password: await hashPassword(password) } : rest
+  const trainerId = parseInt(id)
 
-  const trainer = await prisma.trainer.update({
-    where: { id: parseInt(id) },
-    data,
-    select: trainerSelect,
+  // Availability has no stable per-slot identity from the client — replace the whole set.
+  const trainer = await prisma.$transaction(async (tx) => {
+    if (availability !== undefined) {
+      await tx.trainerAvailability.deleteMany({ where: { trainerId } })
+      if (availability.length) {
+        await tx.trainerAvailability.createMany({
+          data: availability.map((slot) => ({ ...slot, trainerId })),
+        })
+      }
+    }
+    return tx.trainer.update({ where: { id: trainerId }, data, select: trainerSelect })
   })
   return NextResponse.json({ success: true, data: trainer })
 }
