@@ -46,7 +46,17 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    await sendRegistrationEmail({ name, email, type: 'candidate' }).catch(console.error)
+    await sendRegistrationEmail({
+      name,
+      email,
+      type: 'candidate',
+      phone,
+      courseSelect,
+      city,
+      state,
+      address,
+      comments,
+    }).catch(console.error)
 
     return NextResponse.json({
       success: true,

@@ -9,6 +9,7 @@ import {
   GraduationCap, Search, Sparkles, User, Clock, Tag,
 } from 'lucide-react'
 import { buildPaginationPages } from '@/utils/pagination'
+import { getBlogTopicImage, getRecentPostImage } from '@/lib/blog-images'
 import type { BlogPost, PaginationMeta } from '@/types'
 
 interface Props {
@@ -17,27 +18,6 @@ interface Props {
   pagination: PaginationMeta & { hasNext: boolean; hasPrev: boolean; offset: number }
   search: string
 }
-
-const blogImages = [
-  '/assets/images/blog/inner/1.jpg',
-  '/assets/images/blog/inner/2.jpg',
-  '/assets/images/blog/inner/3.jpg',
-  '/assets/images/blog/inner/4.jpg',
-  '/assets/images/blog/inner/5.jpg',
-  '/assets/images/blog/inner/6.jpg',
-  '/assets/images/blog/inner/7.jpg',
-  '/assets/images/blog/inner/8.jpg',
-  '/assets/images/blog/style9/1.jpg',
-  '/assets/images/blog/style9/2.jpg',
-  '/assets/images/blog/style9/3.jpg',
-  '/assets/images/blog/style9/4.jpg',
-  '/assets/images/blog/style9/5.jpg',
-  '/assets/images/blog/style9/6.jpg',
-  '/assets/images/blog/style10/1.jpg',
-  '/assets/images/blog/style10/2.jpg',
-  '/assets/images/blog/style10/3.jpg',
-  '/assets/images/blog/style10/4.jpg',
-]
 
 const readTimes = ['5 min read', '7 min read', '4 min read', '6 min read', '8 min read', '5 min read', '9 min read']
 const categories = ['Recruitment', 'HR Strategy', 'Talent Acquisition', 'Career Advice', 'Hiring Tips', 'HR Ops', 'Leadership']
@@ -62,10 +42,6 @@ function formatDate(date: string | Date | null) {
     return String(date).replace(/00:00:00 GMT\+0530 \(India Standard Time\)/, '').trim()
   }
   return value.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-}
-
-function getBlogImage(index: number) {
-  return blogImages[index % blogImages.length]
 }
 
 function getAccent(index: number) {
@@ -230,8 +206,12 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
                       <Link href={`/blogs/${blog.slug}`} className="bl-card-img-wrap"
                         style={{ position: 'relative', height: isFeatured ? 340 : 280, background: '#0F172A', overflow: 'hidden', display: 'block' }}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={getBlogImage(index)} alt={blog.title} className="bl-card-img"
-                          style={{ position: 'absolute', inset: 0 }} />
+                        <img
+                          src={getBlogTopicImage(blog.title, blog.slug, blog.id)}
+                          alt={blog.title}
+                          className="bl-card-img"
+                          style={{ position: 'absolute', inset: 0 }}
+                        />
                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to right,transparent 55%,rgba(0,0,0,.2) 100%)' }} />
                         {/* Category pill */}
                         <div style={{ position: 'absolute', top: 16, left: 16, padding: '4px 12px', borderRadius: 50, background: `${accent.color}20`, border: `1px solid ${accent.border}`, backdropFilter: 'blur(10px)' }}>
@@ -359,8 +339,13 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
                   {recentBlogs.map((blog, index) => (
                     <li key={blog.id} style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: 12, paddingBottom: 16, borderBottom: index < recentBlogs.length - 1 ? '1px solid #F1F5F9' : 'none' }}>
                       <Link href={`/blogs/${blog.slug}`} style={{ position: 'relative', display: 'block', borderRadius: 10, overflow: 'hidden', background: '#E2E8F0', aspectRatio: '4/3', flexShrink: 0 }}>
-                        <Image src={getBlogImage(index + 1)} alt={blog.title} fill sizes="76px"
-                          style={{ objectFit: 'cover' }} />
+                        <Image
+                          src={getRecentPostImage(index, blog.slug)}
+                          alt={blog.title}
+                          fill
+                          sizes="76px"
+                          style={{ objectFit: 'cover' }}
+                        />
                       </Link>
                       <div>
                         <Link href={`/blogs/${blog.slug}`} className="bl-recent-link">

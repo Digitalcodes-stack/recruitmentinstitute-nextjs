@@ -9,29 +9,12 @@ import {
   ArrowLeft, ArrowRight, BookOpen, Calendar, ChevronRight,
   Clock, GraduationCap, Share2, Tag, User, Star, ChevronDown,
 } from 'lucide-react'
+import { getBlogTopicImage, getRecentPostImage } from '@/lib/blog-images'
 import RawHtmlScript from '@/components/RawHtmlScript'
 
 interface Props {
   params: Promise<{ slug: string }>
 }
-
-const blogImages = [
-  '/assets/images/blog/inner/1.jpg',
-  '/assets/images/blog/inner/2.jpg',
-  '/assets/images/blog/inner/3.jpg',
-  '/assets/images/blog/inner/4.jpg',
-  '/assets/images/blog/inner/5.jpg',
-  '/assets/images/blog/inner/6.jpg',
-  '/assets/images/blog/inner/7.jpg',
-  '/assets/images/blog/inner/8.jpg',
-  '/assets/images/blog/style9/1.jpg',
-  '/assets/images/blog/style9/2.jpg',
-  '/assets/images/blog/style9/3.jpg',
-  '/assets/images/blog/style9/4.jpg',
-  '/assets/images/blog/style10/1.jpg',
-  '/assets/images/blog/style10/2.jpg',
-  '/assets/images/blog/style10/3.jpg',
-]
 
 function stripHtml(content: string) {
   return content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
@@ -46,14 +29,6 @@ function formatDate(date: string | Date | null) {
   return value.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function getBlogImage(index: number) {
-  return blogImages[index % blogImages.length]
-}
-
-function imageIndexForSlug(slug: string) {
-  return [...slug].reduce((total, char) => total + char.charCodeAt(0), 0) % blogImages.length
-}
-
 function estimateReadTime(content: string) {
   const words = stripHtml(content).split(/\s+/).length
   const mins = Math.max(1, Math.round(words / 200))
@@ -64,6 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const blog = await prisma.blog.findUnique({ where: { slug } })
   if (!blog) return { title: 'Blog Post Not Found' }
+  const topicImage = getBlogTopicImage(blog.title, blog.slug, blog.id)
   return {
     title: blog.metaTitle || blog.title,
     description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
@@ -72,11 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: blog.metaTitle || blog.title,
       description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
-      images: [(() => {
-        if (!blog.featuredImage) return getBlogImage(0)
-        const diskPath = path.join(process.cwd(), 'public', blog.featuredImage)
-        return fs.existsSync(diskPath) ? `/${blog.featuredImage}` : getBlogImage(0)
-      })()],
+      images: [topicImage],
     },
   }
 }
@@ -114,14 +86,7 @@ export default async function BlogDetailPage({ params }: Props) {
     }),
   ])
 
-  const heroImage = getBlogImage(imageIndexForSlug(blog.slug))
-  // DB stores paths like "uploads/blog/image.jpg" — check if the file actually
-  // exists in public/. If not (images not yet migrated), fall back to a static hero.
-  const featuredSrc = (() => {
-    if (!blog.featuredImage) return heroImage
-    const diskPath = path.join(process.cwd(), 'public', blog.featuredImage)
-    return fs.existsSync(diskPath) ? `/${blog.featuredImage}` : heroImage
-  })()
+  const featuredSrc = getBlogTopicImage(blog.title, blog.slug, blog.id)
   const readTime = estimateReadTime(blog.content)
   const shareUrl = encodeURIComponent(`https://recruitmentinstitute.in/blogs/${blog.slug}`)
   const shareTitle = encodeURIComponent(blog.title)
@@ -226,7 +191,7 @@ export default async function BlogDetailPage({ params }: Props) {
       <section style={{ background: 'linear-gradient(130deg,#060D1C 0%,#0B1629 40%,#0E1F3A 72%,#071120 100%)', position: 'relative', overflow: 'hidden' }}>
         <div className="absolute inset-0" style={{ zIndex: 0 }}>
           <Image
-            src={heroImage}
+            src={featuredSrc}
             alt={`${blog.title} — Recruitment Institute blog`}
             fill priority sizes="100vw"
             style={{ objectFit: 'cover', opacity: .2 }}
@@ -447,7 +412,7 @@ export default async function BlogDetailPage({ params }: Props) {
               <div className="bd-sidebar-card">
                 <div style={{ position: 'relative', height: 130, background: '#0B1629', flexShrink: 0 }}>
                   <Image
-                    src={getBlogImage(2)}
+                    src="/assets/images/blog/inner/8.jpg"
                     alt="Related blog posts from Recruitment Institute"
                     fill sizes="360px"
                     style={{ objectFit: 'cover', opacity: .65 }}
@@ -469,7 +434,7 @@ export default async function BlogDetailPage({ params }: Props) {
                       <Link href={`/blogs/${related.slug}`}
                         style={{ position: 'relative', display: 'block', borderRadius: 10, overflow: 'hidden', background: '#E2E8F0', aspectRatio: '4/3', flexShrink: 0 }}>
                         <Image
-                          src={getBlogImage(index + 1)}
+                          src={getBlogTopicImage(related.title, related.slug, related.id)}
                           alt={`${related.title} — Recruitment Institute`}
                           fill sizes="76px"
                           className="bd-sidebar-img"

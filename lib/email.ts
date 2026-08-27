@@ -31,9 +31,9 @@ function getTransporter() {
 
 const getFrom = () => `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
 const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
-const getAdminEmail = () => process.env.ADMIN_EMAIL || 'patilrupalib@gmail.com'
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'patilrupalib@gmail.com'
-const getEmailCC = () => process.env.EMAIL_CC || 'patilrupalib@gmail.com'
+const getAdminEmail = () => process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com'
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com'
+const getEmailCC = () => process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
 
 async function sendMail(options: nodemailer.SendMailOptions) {
   try {
@@ -268,22 +268,139 @@ export async function sendRegistrationEmail(data: {
   name: string
   email: string
   type: 'student' | 'membership' | 'candidate'
+  phone?: string
+  courseSelect?: string
+  city?: string
+  state?: string
+  address?: string
+  comments?: string
 }) {
-  const subject =
-    data.type === 'candidate'
-      ? 'Registration Received "" Pending Approval'
-      : 'Welcome to Recruitment Institute!'
+  const isCandidate = data.type === 'candidate'
 
-  const body =
-    data.type === 'candidate'
-      ? `<p>Your registration is pending admin approval. You will receive an email once approved.</p>`
-      : `<p>Welcome ${data.name}! Your account has been created successfully.</p>`
+  // 1. ADMIN NOTIFICATION: Send registration details to sesasiba.es@gmail.com
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    replyTo: data.email,
+    subject: `👤 New ${isCandidate ? 'Candidate' : 'Student'} Registration: ${data.name}`,
+    html: `
+      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
+          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:28px 32px;color:#ffffff;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#93c5fd;margin-bottom:6px;">
+              Portal Registration Alert
+            </div>
+            <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.2;">
+              New ${isCandidate ? 'Candidate' : 'Student'} Registered
+            </h1>
+          </div>
+          <div style="padding:32px;">
+            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.6;">
+              A new user has just registered on the Recruitment Institute portal:
+            </p>
+            <table style="width:100%;border-collapse:separate;border-spacing:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:24px;overflow:hidden;">
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;width:35%;border-bottom:1px solid #e2e8f0;">Full Name</td>
+                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e8f0;">${data.name}</td>
+              </tr>
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Email Address</td>
+                <td style="padding:14px 18px;font-size:14px;color:#2563eb;border-bottom:1px solid #e2e8f0;">
+                  <a href="mailto:${data.email}" style="color:#2563eb;text-decoration:none;font-weight:600;">${data.email}</a>
+                </td>
+              </tr>
+              ${data.phone ? `
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Mobile / Phone</td>
+                <td style="padding:14px 18px;font-size:14px;font-weight:600;color:#0f172a;border-bottom:1px solid #e2e8f0;">
+                  <a href="tel:${data.phone}" style="color:#0f172a;text-decoration:none;">${data.phone}</a>
+                </td>
+              </tr>
+              ` : ''}
+              ${data.courseSelect ? `
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Course Track</td>
+                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#1e40af;border-bottom:1px solid #e2e8f0;">${data.courseSelect}</td>
+              </tr>
+              ` : ''}
+              ${(data.city || data.state) ? `
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Location</td>
+                <td style="padding:14px 18px;font-size:14px;color:#334155;border-bottom:1px solid #e2e8f0;">${[data.city, data.state].filter(Boolean).join(', ')}</td>
+              </tr>
+              ` : ''}
+              ${data.comments ? `
+              <tr>
+                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;">Comments / Goal</td>
+                <td style="padding:14px 18px;font-size:13px;color:#475569;line-height:1.5;">${data.comments}</td>
+              </tr>
+              ` : ''}
+            </table>
+            <div style="text-align:center;padding-top:8px;">
+              <a href="https://recruitmentinstitute.in/admin/candidates" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
+                Review &amp; Approve in Admin Panel &rarr;
+              </a>
+            </div>
+          </div>
+          <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;">
+            Recruitment Institute System Notification • Delivered to ${ADMIN_EMAIL}
+          </div>
+        </div>
+      </div>
+    `,
+  })
+
+  // 2. CANDIDATE CONFIRMATION EMAIL
+  const candidateSubject = isCandidate
+    ? 'Registration Received — Welcome to Recruitment Institute'
+    : 'Welcome to Recruitment Institute!'
 
   await sendMail({
     from: FROM,
     to: data.email,
-    subject,
-    html: `<h2>${subject}</h2>${body}`,
+    subject: candidateSubject,
+    html: `
+      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
+          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:32px;text-align:center;color:#ffffff;">
+            <div style="display:inline-block;padding:6px 16px;border-radius:50px;background:rgba(255,255,255,0.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">
+              Welcome to the Community
+            </div>
+            <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#ffffff;">
+              Hello, ${data.name}!
+            </h1>
+            <p style="margin:0;font-size:14px;color:#cbd5e1;">Your registration has been received successfully.</p>
+          </div>
+          <div style="padding:32px;">
+            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+              Dear <strong>${data.name}</strong>,
+            </p>
+            <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7;">
+              Thank you for registering with <strong>Recruitment Institute</strong>. Your candidate profile is being verified by our admissions team. Once activated, you will have complete access to student learning resources, batch timetables, and career support.
+            </p>
+            <div style="background:#f8fafc;border-radius:12px;padding:20px;margin:24px 0;border:1px solid #e2e8f0;">
+              <h3 style="margin:0 0 10px;font-size:14px;font-weight:700;color:#0f172a;">What’s Next?</h3>
+              <ul style="margin:0;padding-left:20px;font-size:13px;color:#475569;line-height:1.7;">
+                <li>Our academic counselor will verify your submitted details.</li>
+                <li>You can explore available batch timings and upcoming cohorts.</li>
+                <li>Connect with mentors directly for career counseling.</li>
+              </ul>
+            </div>
+            <div style="text-align:center;margin-top:24px;">
+              <a href="https://wa.me/917385204165?text=Hi%2C%20I%20have%20registered%20as%20a%20candidate%20on%20Recruitment%20Institute" style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
+                💬 Chat with Admissions Counselor (+91 7385204165)
+              </a>
+            </div>
+          </div>
+          <div style="background:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;line-height:1.6;">
+            <strong style="color:#64748b;">Recruitment Institute</strong><br/>
+            Pune Office • Live Interactive Virtual Sessions Worldwide<br/>
+            📧 <a href="mailto:support@recruitmentinstitute.in" style="color:#64748b;">support@recruitmentinstitute.in</a> | 📞 +91 7385204165
+          </div>
+        </div>
+      </div>
+    `,
   })
 }
 
