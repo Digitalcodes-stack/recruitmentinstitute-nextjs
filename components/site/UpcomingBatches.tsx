@@ -87,8 +87,135 @@ export default function UpcomingBatches({
     }
   }
 
+  const getCountdownInfo = (startDateStr?: string, displayStr?: string) => {
+    // Try to parse the date
+    let target: Date | null = null
+    if (startDateStr) {
+      const d = new Date(startDateStr)
+      if (!isNaN(d.getTime())) target = d
+    }
+    if (!target && displayStr) {
+      const d = new Date(displayStr)
+      if (!isNaN(d.getTime())) target = d
+    }
+
+    if (!target) {
+      return {
+        badgeText: '🔥 Admissions Open',
+        hurryText: '⚡ Limited seats available — Enroll now!',
+        badgeClass: 'badge-flash-amber',
+        isUrgent: false,
+      }
+    }
+
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    target.setHours(0, 0, 0, 0)
+
+    const diffTime = target.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+    if (diffDays === 0) {
+      return {
+        badgeText: '🔥 Starts Today! Last Call',
+        hurryText: '⚡ Batch starts today — Hurry up & claim your seat!',
+        badgeClass: 'badge-flash-red',
+        isUrgent: true,
+      }
+    } else if (diffDays === 1) {
+      return {
+        badgeText: '🚀 Starts Tomorrow! Hurry Up',
+        hurryText: '🔥 Starting tomorrow — Final registrations closing!',
+        badgeClass: 'badge-flash-red',
+        isUrgent: true,
+      }
+    } else if (diffDays > 1 && diffDays <= 3) {
+      return {
+        badgeText: `⚡ Starts in ${diffDays} Days!`,
+        hurryText: `⏳ Only ${diffDays} days left — Hurry up & secure your seat!`,
+        badgeClass: 'badge-flash-orange',
+        isUrgent: true,
+      }
+    } else if (diffDays > 3 && diffDays <= 7) {
+      return {
+        badgeText: `⏳ Starts in ${diffDays} Days`,
+        hurryText: `⚡ Starts in ${diffDays} days — Admissions closing fast!`,
+        badgeClass: 'badge-flash-amber',
+        isUrgent: true,
+      }
+    } else if (diffDays > 7) {
+      return {
+        badgeText: `📅 Starts in ${diffDays} Days`,
+        hurryText: `✨ Upcoming cohort — Enroll early to reserve seat`,
+        badgeClass: 'badge-flash-blue',
+        isUrgent: false,
+      }
+    } else {
+      return {
+        badgeText: '🎯 Cohort in Progress',
+        hurryText: '⚡ Late registrations open for next upcoming module',
+        badgeClass: 'badge-flash-green',
+        isUrgent: false,
+      }
+    }
+  }
+
   return (
     <section style={{ background: '#F8FAFC', padding: '80px 0', position: 'relative' }} id="upcoming-batches">
+      {/* ── CSS KEYFRAMES FOR FLASHING BADGES ── */}
+      <style>{`
+        @keyframes flashPulseRed {
+          0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); transform: scale(1); }
+          50% { box-shadow: 0 0 14px 4px rgba(220, 38, 38, 0.4); transform: scale(1.03); }
+          100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); transform: scale(1); }
+        }
+        @keyframes flashPulseOrange {
+          0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); transform: scale(1); }
+          50% { box-shadow: 0 0 12px 3px rgba(234, 88, 12, 0.4); transform: scale(1.03); }
+          100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); transform: scale(1); }
+        }
+        @keyframes flashPulseAmber {
+          0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
+          50% { box-shadow: 0 0 10px 2px rgba(217, 119, 6, 0.35); }
+          100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
+        }
+        @keyframes beaconBlink {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        .badge-flash-red {
+          background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+          color: #FFFFFF !important;
+          border: 1px solid #EF4444;
+          animation: flashPulseRed 2s infinite ease-in-out;
+        }
+        .badge-flash-orange {
+          background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
+          color: #FFFFFF !important;
+          border: 1px solid #F97316;
+          animation: flashPulseOrange 2.2s infinite ease-in-out;
+        }
+        .badge-flash-amber {
+          background: #FFFBEB;
+          color: #B45309 !important;
+          border: 1px solid #FDE68A;
+          animation: flashPulseAmber 2.5s infinite ease-in-out;
+        }
+        .badge-flash-blue {
+          background: #EFF6FF;
+          color: #1D4ED8 !important;
+          border: 1px solid #BFDBFE;
+        }
+        .badge-flash-green {
+          background: #F0FDF4;
+          color: #15803D !important;
+          border: 1px solid #BBF7D0;
+        }
+        .beacon-dot {
+          animation: beaconBlink 1.4s infinite ease-in-out;
+        }
+      `}</style>
+
       <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px' }}>
         {/* ── HEADER ─────────────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
@@ -174,6 +301,7 @@ export default function UpcomingBatches({
               const seatsRemaining = batch.seatsLeft ?? Math.max(0, batch.capacity - batch.enrolledCount)
               const isLowSeats = seatsRemaining <= 5
               const courseLink = batch.courseSlug.startsWith('/') ? batch.courseSlug : `/${batch.courseSlug}`
+              const countdown = getCountdownInfo(batch.startDate, batch.displayStartDate)
 
               return (
                 <div
@@ -181,31 +309,37 @@ export default function UpcomingBatches({
                   style={{
                     background: '#FFFFFF',
                     borderRadius: '24px',
-                    border: '1px solid #E2E8F0',
-                    boxShadow: '0 4px 20px rgba(15,23,42,0.05)',
+                    border: countdown.isUrgent ? '1.5px solid #FCA5A5' : '1px solid #E2E8F0',
+                    boxShadow: countdown.isUrgent ? '0 8px 30px rgba(220,38,38,0.12)' : '0 4px 20px rgba(15,23,42,0.05)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     overflow: 'hidden',
+                    position: 'relative',
                     transition: 'transform 0.25s ease, box-shadow 0.25s ease',
                   }}
                 >
                   {/* Top Color Accent Line */}
-                  <div style={{ height: '4px', width: '100%', background: modeInfo.accentBorder }} />
+                  <div style={{ height: '4px', width: '100%', background: countdown.isUrgent ? 'linear-gradient(90deg, #DC2626, #F97316)' : modeInfo.accentBorder }} />
 
                   <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       {/* Top Badges Row */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}>
                           <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
                           {modeInfo.icon}
                           <span>{modeInfo.label}</span>
                         </span>
 
-                        <span style={{ fontSize: '11px', fontFamily: 'monospace', color: '#64748B', fontWeight: 700, background: '#F1F5F9', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
-                          {batch.batchCode}
-                        </span>
+                        {/* Flashing Countdown Days Remaining Badge */}
+                        <div
+                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold ${countdown.badgeClass}`}
+                          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-white beacon-dot" />
+                          <span>{countdown.badgeText}</span>
+                        </div>
                       </div>
 
                       {/* Course Title & Track */}
@@ -215,9 +349,14 @@ export default function UpcomingBatches({
                         </h3>
                       </Link>
 
-                      <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 600, marginBottom: '16px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {batch.name}
-                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {batch.name}
+                        </p>
+                        <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#64748B', fontWeight: 700, background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E2E8F0' }}>
+                          {batch.batchCode}
+                        </span>
+                      </div>
 
                       {/* Date & Schedule Box */}
                       <div style={{ background: '#F8FAFC', borderRadius: '16px', padding: '14px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
@@ -305,7 +444,7 @@ export default function UpcomingBatches({
                       </div>
 
                       {/* Pricing Row */}
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '14px' }}>
                         <div>
                           <span style={{ fontSize: '12px', color: '#94A3B8', textDecoration: 'line-through', marginRight: '8px', fontWeight: 600 }}>
                             {formatPrice(batch.originalPrice)}
@@ -316,6 +455,27 @@ export default function UpcomingBatches({
                         </div>
                         <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', background: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
                           {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
+                        </span>
+                      </div>
+                      {/* Hurry Up Urgency Strip */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 10px',
+                          borderRadius: '8px',
+                          background: countdown.isUrgent ? '#FEF2F2' : '#F8FAFC',
+                          border: countdown.isUrgent ? '1px solid #FECACA' : '1px solid #E2E8F0',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          color: countdown.isUrgent ? '#DC2626' : '#475569',
+                          marginBottom: '14px',
+                        }}
+                      >
+                        <Zap style={{ width: '13px', height: '13px', color: countdown.isUrgent ? '#DC2626' : '#2563EB', flexShrink: 0 }} />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {countdown.hurryText}
                         </span>
                       </div>
 

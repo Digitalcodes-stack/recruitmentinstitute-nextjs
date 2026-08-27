@@ -32,6 +32,7 @@ function getTransporter() {
 const getFrom = () => `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
 const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
 const getAdminEmail = () => process.env.ADMIN_EMAIL || 'patilrupalib@gmail.com'
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'patilrupalib@gmail.com'
 const getEmailCC = () => process.env.EMAIL_CC || 'patilrupalib@gmail.com'
 
 async function sendMail(options: nodemailer.SendMailOptions) {
