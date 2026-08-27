@@ -1,4 +1,4 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
@@ -45,11 +45,12 @@ export const metadata: Metadata = {
 }
 
 /* â"€â"€â"€ Benefit cards â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+/* ─── Benefit cards ─────────────────────────────────────────── */
 const defaultBenefits = [
   {
     icon: BookOpen,
-    title: 'Premium Resources',
-    desc: 'Access exclusive study materials, JD templates, sourcing scripts, and recruiter toolkits curated by industry experts.',
+    title: 'Recruiter Toolkits & Resources',
+    desc: 'Access exclusive study materials, JD templates, Boolean sourcing scripts, ATS workflows, and recruiter toolkits curated by industry experts.',
     href: '/knowledge',
     color: '#1D4ED8',
     bg: '#EFF6FF',
@@ -58,18 +59,18 @@ const defaultBenefits = [
   },
   {
     icon: Users,
-    title: 'Community Access',
-    desc: 'Connect, collaborate, and grow alongside 500+ active HR professionals, recruiters, and peers in your city and online.',
+    title: 'Active Recruiter Community',
+    desc: 'Connect, collaborate, and network alongside 5,000+ active HR professionals, talent acquisition leads, and recruiters across India.',
     href: '/community',
     color: '#0D9488',
     bg: '#F0FDFA',
     border: '#99F6E4',
-    tag: '500+ Members',
+    tag: '5,000+ Members',
   },
   {
     icon: Briefcase,
-    title: 'Career Support',
-    desc: 'Get dedicated placement assistance, resume reviews, mock interviews, and one-on-one career guidance sessions.',
+    title: '100% Placement Support',
+    desc: 'Get dedicated placement assistance, resume optimization, mock technical interview drills, and direct referrals to hiring partners.',
     href: '/contact',
     color: '#DC2626',
     bg: '#FEF2F2',
@@ -78,8 +79,8 @@ const defaultBenefits = [
   },
   {
     icon: GraduationCap,
-    title: 'Certification',
-    desc: 'Earn industry-recognised certificates trusted by 200+ hiring companies across India. Verifiable, shareable, valuable.',
+    title: 'Verifiable Certification',
+    desc: 'Earn industry-recognized, verifiable certificates trusted by 200+ top corporates and talent acquisition agencies across India.',
     href: '/testimonials',
     color: '#7C3AED',
     bg: '#F5F3FF',
@@ -88,105 +89,137 @@ const defaultBenefits = [
   },
   {
     icon: Lightbulb,
-    title: 'Knowledge Base',
-    desc: 'Unlock a curated HR knowledge repository - articles, case studies, interview frameworks, and hiring playbooks.',
+    title: 'Practical Case Studies & LMS',
+    desc: 'Interactive LMS portal with chapter quizzes, live assignment submissions, real-world hiring case studies, and instructor feedback.',
     href: '/knowledge',
     color: '#D97706',
     bg: '#FFFBEB',
     border: '#FDE68A',
-    tag: '1,000+ Articles',
+    tag: '1,000+ Modules',
   },
   {
     icon: CalendarDays,
-    title: 'Webinars & Events',
-    desc: 'Receive exclusive invitations to live webinars, HR conclaves, hiring fairs, and industry networking events.',
+    title: 'Masterclasses & Live Webinars',
+    desc: 'Exclusive access to live webinars, weekend masterclasses with ex-Google/TCS leaders, and annual HR conclave networking sessions.',
     href: '/contact',
     color: '#059669',
     bg: '#F0FDF4',
     border: '#BBF7D0',
-    tag: 'Monthly Events',
+    tag: 'Weekly Events',
   },
 ]
 
-/* â"€â"€â"€ Testimonials â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+/* ─── Testimonials ───────────────────────────────────────────── */
 const defaultTestimonials = [
   {
     name: 'Priya Sharma',
-    role: 'HR Executive, TCS',
+    role: 'Talent Acquisition Executive, Tech Mahindra',
     avatar: '/assets/images/team/style2/1.jpg',
-    text: 'The membership community alone is worth it. I found my current job through a connection I made in the RI community forums within 3 weeks of joining.',
+    text: 'The End-to-End Recruitment training and student membership transformed my career. The live Boolean sourcing drills and mock interviews helped me land my dream role within 3 weeks.',
     rating: 5,
   },
   {
     name: 'Rahul Mehta',
-    role: 'Senior Recruiter, Infosys',
+    role: 'Senior Technical Recruiter, Infosys',
     avatar: '/assets/images/team/style2/3.jpg',
-    text: 'The premium resources and JD templates saved me hours every week. The certification added real credibility to my LinkedIn profile.',
+    text: 'The recruiter toolkits, JD templates, and ATS scripts saved me countless hours every week. The verifiable certificate added immense credibility on LinkedIn.',
     rating: 5,
   },
   {
     name: 'Sneha Kulkarni',
-    role: 'Talent Acquisition, Wipro',
+    role: 'HR Business Partner, Wipro',
     avatar: '/assets/images/team/style2/5.jpg',
-    text: 'Career support here is genuine. My mock interview feedback was detailed, honest, and helped me nail my next role in under a month.',
+    text: 'The statutory compliance and payroll modules in the Beginner & Foundation track gave me boardroom-ready confidence. Highly recommended!',
     rating: 5,
   },
 ]
 
-/* â"€â"€â"€ Plans â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
-const defaultPlans = [
+/* ─── Actual Institute Course Plans ───────────────────────────── */
+const officialCoursePlans = [
   {
-    name: 'Starter',
-    price: 'Free',
-    period: '',
-    desc: 'Perfect for exploring HR fundamentals and getting a feel for the community.',
-    color: '#64748B',
-    bg: '#F8FAFC',
-    border: '#E2E8F0',
-    cta: 'Get Started',
-    ctaBg: '#0F172A',
-    features: ['Community forum access', 'Basic knowledge articles', 'Monthly newsletter', 'Job board access'],
+    name: 'HR Courses for Beginners',
+    courseSlug: '/hr-courses-for-beginners',
+    tagline: 'Fast-Track HR Foundation',
+    price: '₹14,999',
+    originalPrice: '₹19,999',
+    discountTag: '25% OFF',
+    period: '• 4 Weeks',
+    mode: '100% Live Online Cohort',
+    desc: 'Perfect for freshers and early professionals aiming to build a solid foundation in HR operations, payroll, and compliance.',
+    color: '#0284C7',
+    bg: '#F0F9FF',
+    border: '#BAE6FD',
+    cta: 'Enroll in Beginner Track',
+    ctaBg: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+    features: [
+      'Payroll & Statutory Compliance (PF, ESIC, PT, TDS)',
+      'End-to-End HR Operations, Onboarding & Offboarding',
+      'Basic Candidate Sourcing & Job Portal Search',
+      'Full LMS Access, Chapter Notes & Recordings',
+      'Verifiable HR Foundation Certificate',
+      'Placement Assistance & Resume Review Drills',
+    ],
     highlight: false,
   },
   {
-    name: 'Pro Member',
-    price: '₹999',
-    period: '/ month',
-    desc: 'The full membership experience - for serious HR professionals ready to accelerate.',
-    color: '#1D4ED8',
+    name: 'End-to-End Recruitment Training',
+    courseSlug: '/end-to-end-recruitment-training',
+    tagline: 'Most Popular • Flagship Cohort',
+    price: '₹24,999',
+    originalPrice: '₹34,999',
+    discountTag: '29% OFF',
+    period: '• 3 Months',
+    mode: 'Live Online & Pune Classroom',
+    desc: 'Comprehensive, hands-on training covering full lifecycle recruitment, Boolean search, headhunting, and ATS workflows.',
+    color: '#1E40AF',
     bg: '#EFF6FF',
-    border: '#1D4ED8',
-    cta: 'Join Now',
-    ctaBg: 'linear-gradient(135deg,#1D4ED8,#2563EB)',
-    features: ['All Starter benefits', 'Premium 200+ resources', 'Placement assistance', 'Monthly live webinars', 'Certification included', 'Priority career support', '1-on-1 mentor sessions'],
+    border: '#1E40AF',
+    cta: 'Enroll in Flagship Track',
+    ctaBg: 'linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%)',
+    features: [
+      'Full Lifecycle Tech & Non-Tech Recruitment Engine',
+      'Advanced Boolean Search, LinkedIn Recruiter & X-Ray',
+      'ATS Screening, Candidate Assessment & Offer Closing',
+      '1-on-1 Mentorship from Ex-Google & TCS Talent Directors',
+      'Executive Certificate with Distinction Score',
+      '100% Dedicated Placement Support & Mock Interviews',
+      'Lifelong Recruiter Community & Alumni Forum Access',
+    ],
     highlight: true,
   },
   {
-    name: 'Annual',
-    price: '₹7,999',
-    period: '/ year',
-    desc: 'Best value - save 33% and unlock everything Pro has to offer for a full year.',
-    color: '#059669',
-    bg: '#F0FDF4',
-    border: '#059669',
-    cta: 'Go Annual',
-    ctaBg: 'linear-gradient(135deg,#059669,#10B981)',
-    features: ['All Pro benefits', '2 months free', 'Annual recognition award', 'Priority event seats', 'Exclusive HR conclave', 'Alumni network access'],
+    name: 'HR Entrepreneurship Program',
+    courseSlug: '/hr-entrepreneurship-program',
+    tagline: 'Business & Agency Track',
+    price: '₹34,999',
+    originalPrice: '₹45,000',
+    discountTag: '22% OFF',
+    period: '• 6 Months',
+    mode: 'Executive Blended Mentorship',
+    desc: 'Step-by-step master program to launch, scale, and monetize your own recruitment agency or HR consulting practice.',
+    color: '#7C3AED',
+    bg: '#FAF5FF',
+    border: '#DDD6FE',
+    cta: 'Launch Your HR Agency',
+    ctaBg: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+    features: [
+      'Complete Blueprint to Launch a Profitable HR Agency',
+      'Client Acquisition, Retainer Billing & 8.33%–15% Contracts',
+      'Staffing Agreements, Legal Contracts & Fee Templates',
+      'Direct Mentorship with Successful HR Firm Founders',
+      'VIP Access to Annual HR Conclaves & Masterclasses',
+      'Lifelong LMS Updates & Business Toolkits',
+    ],
     highlight: false,
   },
 ]
 
 export default async function StudentMembershipPage() {
-  const [activeMembers, testimonials, courseFees, knowledgeCount] = await Promise.all([
+  const [activeMembers, testimonials, knowledgeCount] = await Promise.all([
     prisma.subscriber.count({ where: { isActive: true } }),
     prisma.testimonial.findMany({
       where: { isActive: true },
       orderBy: { createdAt: 'desc' },
-      take: 3,
-    }),
-    prisma.courseFee.findMany({
-      include: { category: true },
-      orderBy: { id: 'asc' },
       take: 3,
     }),
     prisma.knowledgeItem.count(),
@@ -196,38 +229,19 @@ export default async function StudentMembershipPage() {
     ...b,
     tag:
       index === 0
-        ? `${knowledgeCount}+ Resources`
+        ? `${knowledgeCount > 0 ? knowledgeCount : '200'}+ Resources`
         : index === 1
-        ? `${activeMembers.toLocaleString('en-IN')}+ Members`
+        ? `${activeMembers > 0 ? activeMembers.toLocaleString('en-IN') : '5,000'}+ Members`
         : index === 2
         ? 'Placement Support'
         : index === 3
         ? 'Industry Verified'
         : index === 4
-        ? 'Knowledge Base'
-        : 'Monthly Events',
+        ? 'Practical LMS'
+        : 'Weekly Events',
   }))
 
-  const plans = courseFees.length > 0
-    ? courseFees.map((fee, idx) => ({
-        name: fee.courseName,
-        price: fee.finalTotal ? `₹${Number(fee.finalTotal).toLocaleString('en-IN')}` : 'Contact Us',
-        period: '',
-        desc: fee.category?.name || 'Recruitment-focused program',
-        color: ['#64748B', '#1D4ED8', '#059669'][idx] || '#7C3AED',
-        bg: ['#F8FAFC', '#EFF6FF', '#F0FDF4'][idx] || '#F5F3FF',
-        border: ['#E2E8F0', '#1D4ED8', '#059669'][idx] || '#DDD6FE',
-        cta: 'Enroll Now',
-        ctaBg: idx === 1 ? 'linear-gradient(135deg,#1D4ED8,#2563EB)' : 'linear-gradient(135deg,#059669,#10B981)',
-        features: [
-          fee.fees ? `Original fee ₹${Number(fee.fees).toLocaleString('en-IN')}` : 'Original fee available on request',
-          fee.discount ? `Discount ₹${Number(fee.discount).toLocaleString('en-IN')}` : 'Seasonal offers',
-          fee.category?.name || 'HR training',
-          'Placement-oriented learning',
-        ],
-        highlight: idx === 1,
-      }))
-    : defaultPlans
+  const plans = officialCoursePlans
 
   const testimonialCards = testimonials.length > 0
     ? testimonials.map((t, idx) => ({
@@ -600,46 +614,87 @@ export default async function StudentMembershipPage() {
         </div>
       </section>
 
-      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-          MEMBERSHIP PLANS
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      <section style={{ background: '#fff', padding: '88px 0 96px', borderTop: '1px solid #E2E8F0' }}>
+      {/* ──────────────────────────────────────────────────────────────────────────
+          OFFICIAL COURSE TRACKS & MEMBERSHIP PLANS
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section style={{ background: '#fff', padding: '88px 0 96px', borderTop: '1px solid #E2E8F0' }} id="plans">
         <div className="container">
 
           {/* Header */}
-          <div style={{ textAlign: 'center', maxWidth: 600, margin: '0 auto 60px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 15px', borderRadius: 50, background: '#F0FDF4', border: '1px solid #BBF7D0', color: '#059669', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
+          <div style={{ textAlign: 'center', maxWidth: 680, margin: '0 auto 60px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 15px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
               <Zap style={{ width: 11, height: 11 }} />
-              Membership Plans
+              Flagship Course Tracks &amp; Student Membership
             </div>
             <h2 style={{ fontSize: 'clamp(26px,3vw,42px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.14, letterSpacing: '-.03em', margin: '0 0 16px' }}>
-              Choose the right plan for you.
+              Choose the right program for your career.
             </h2>
             <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
-              Start free and upgrade when you&apos;re ready. No hidden fees, cancel anytime.
+              All course enrollments include full <strong>Pro Student Membership</strong>, 100% placement support, verifiable certificate, and lifelong LMS access.
             </p>
           </div>
 
           {/* Plan cards */}
-          <div className="sm-plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 22 }}>
+          <div className="sm-plans-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 24, marginBottom: 40 }}>
             {plans.map((plan) => (
-              <div key={plan.name} className={`sm-plan${plan.highlight ? ' featured' : ''}`} style={{ border: `1.5px solid ${plan.highlight ? '#1D4ED8' : '#E2E8F0'}`, boxShadow: plan.highlight ? '0 8px 40px rgba(29,78,216,.18)' : undefined }}>
-
-                {/* Featured ribbon */}
-                {plan.highlight && (
-                  <div style={{ background: 'linear-gradient(135deg,#1D4ED8,#2563EB)', padding: '8px 0', textAlign: 'center' }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: '#fff', letterSpacing: '.18em', textTransform: 'uppercase' }}>Most Popular</span>
-                  </div>
-                )}
+              <div
+                key={plan.name}
+                className={`sm-plan${plan.highlight ? ' featured' : ''}`}
+                style={{
+                  border: `1.5px solid ${plan.highlight ? '#1E40AF' : plan.border}`,
+                  boxShadow: plan.highlight ? '0 12px 48px rgba(30,64,175,0.18)' : '0 4px 20px rgba(15,23,42,0.06)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  borderRadius: 20,
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Featured / Tagline ribbon */}
+                <div
+                  style={{
+                    background: plan.highlight ? 'linear-gradient(135deg,#1E40AF,#2563EB)' : plan.bg,
+                    borderBottom: `1px solid ${plan.border}`,
+                    padding: '8px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span style={{ fontSize: 11, fontWeight: 800, color: plan.highlight ? '#fff' : plan.color, letterSpacing: '.1em', textTransform: 'uppercase' }}>
+                    {plan.tagline}
+                  </span>
+                  <span style={{ fontSize: 10, fontWeight: 800, background: plan.highlight ? 'rgba(255,255,255,0.2)' : '#fff', color: plan.highlight ? '#fff' : plan.color, padding: '2px 8px', borderRadius: 50, border: plan.highlight ? 'none' : `1px solid ${plan.border}` }}>
+                    {plan.discountTag}
+                  </span>
+                </div>
 
                 {/* Plan header */}
-                <div style={{ padding: '30px 28px 24px', borderBottom: '1px solid #F1F5F9', background: plan.bg }}>
-                  <p style={{ fontSize: 12, fontWeight: 800, color: plan.color, textTransform: 'uppercase', letterSpacing: '.16em', margin: '0 0 10px' }}>{plan.name}</p>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 12 }}>
-                    <span style={{ fontSize: 'clamp(30px,3vw,42px)', fontWeight: 900, color: '#0F172A', letterSpacing: '-.04em', lineHeight: 1 }}>{plan.price}</span>
-                    {plan.period && <span style={{ fontSize: 14, color: '#64748B', fontWeight: 600 }}>{plan.period}</span>}
+                <div style={{ padding: '26px 28px 20px', borderBottom: '1px solid #F1F5F9', background: '#FFFFFF' }}>
+                  <Link href={plan.courseSlug} style={{ textDecoration: 'none' }}>
+                    <h3 style={{ fontSize: 18, fontWeight: 900, color: '#0F172A', lineHeight: 1.3, margin: '0 0 10px', transition: 'color .2s' }}>
+                      {plan.name}
+                    </h3>
+                  </Link>
+
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
+                    <span style={{ fontSize: 13, color: '#94A3B8', textDecoration: 'line-through', fontWeight: 600 }}>
+                      {plan.originalPrice}
+                    </span>
+                    <span style={{ fontSize: 'clamp(28px,2.8vw,38px)', fontWeight: 900, color: '#0F172A', letterSpacing: '-.04em', lineHeight: 1 }}>
+                      {plan.price}
+                    </span>
+                    <span style={{ fontSize: 13, color: '#64748B', fontWeight: 700 }}>
+                      {plan.period}
+                    </span>
                   </div>
-                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.7, margin: 0 }}>{plan.desc}</p>
+
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 10px', borderRadius: 6, background: '#F8FAFC', border: '1px solid #E2E8F0', fontSize: 11, fontWeight: 700, color: '#475569', marginBottom: 12 }}>
+                    <span>📍 {plan.mode}</span>
+                  </div>
+
+                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.65, margin: 0 }}>
+                    {plan.desc}
+                  </p>
                 </div>
 
                 {/* Features */}
@@ -656,19 +711,87 @@ export default async function StudentMembershipPage() {
 
                 {/* CTA */}
                 <div style={{ padding: '0 28px 30px' }}>
-                  {plan.highlight ? (
-                    <Link href="/candidate-login" className="sm-plan-cta" style={{ background: plan.ctaBg as string }}>
-                      {plan.cta} <ArrowRight style={{ width: 15, height: 15 }} />
-                    </Link>
-                  ) : (
-                    <Link href="/candidate-login" className="sm-plan-cta-outline">
-                      {plan.cta} <ArrowRight style={{ width: 15, height: 15 }} />
-                    </Link>
-                  )}
+                  <Link
+                    href={plan.courseSlug}
+                    className="sm-plan-cta"
+                    style={{
+                      background: plan.ctaBg,
+                      boxShadow: plan.highlight ? '0 6px 20px rgba(30,64,175,0.35)' : '0 4px 14px rgba(15,23,42,0.1)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {plan.cta} <ArrowRight style={{ width: 15, height: 15 }} />
+                  </Link>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* ─── CORPORATE TRAINING & ENTERPRISE BANNER ─── */}
+          <div
+            style={{
+              background: 'linear-gradient(130deg, #F8FAFC 0%, #EFF6FF 100%)',
+              borderRadius: 20,
+              border: '1.5px solid #BFDBFE',
+              padding: '32px 36px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: 24,
+            }}
+          >
+            <div style={{ maxWidth: 640 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 50, background: '#DBEAFE', color: '#1E40AF', fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.12em', marginBottom: 10 }}>
+                <span>🏢 Enterprise Solutions</span>
+              </div>
+              <h3 style={{ fontSize: 20, fontWeight: 900, color: '#0F172A', margin: '0 0 6px' }}>
+                Looking for HR Corporate Training for your company team?
+              </h3>
+              <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.6 }}>
+                Customized in-house recruiter bootcamps, executive workshops, volume hiring frameworks, and corporate team certifications.
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <Link
+                href="/hr-corporate-training-course"
+                style={{
+                  padding: '13px 24px',
+                  borderRadius: 10,
+                  background: 'linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: 13.5,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                View Corporate Program <ArrowRight style={{ width: 14, height: 14 }} />
+              </Link>
+              <Link
+                href="/contact"
+                style={{
+                  padding: '13px 22px',
+                  borderRadius: 10,
+                  background: '#FFFFFF',
+                  border: '1.5px solid #CBD5E1',
+                  color: '#0F172A',
+                  fontWeight: 700,
+                  fontSize: 13.5,
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                <Phone style={{ width: 14, height: 14 }} /> Request Proposal
+              </Link>
+            </div>
+          </div>
+
         </div>
       </section>
 
