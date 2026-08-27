@@ -538,7 +538,7 @@ export async function sendBatchStartReminderEmail(data: {
     ? `You are assigned as the master mentor for the upcoming batch <strong style="color:#0F172A;">${data.batchName}</strong>.`
     : `Your live training program for <strong style="color:#0F172A;">${data.courseTitle}</strong> is starting <strong style="color:#2563EB;">${data.leadLabel}</strong>!`
 
-  await sendMail({
+  return await sendMail({
     from: FROM,
     to: data.recipientEmail,
     subject: `⏳ [Countdown Reminder] Batch Starts ${data.leadLabel.toUpperCase()}: ${data.batchName} - Recruitment Institute`,
