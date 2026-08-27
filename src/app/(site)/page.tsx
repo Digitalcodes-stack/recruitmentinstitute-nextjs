@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   },
 }
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function Page() {
   const [categories, testimonials, totalCourses, totalStudents, services, experts, clients] = await Promise.all([
     prisma.courseCategory.findMany({
@@ -79,10 +82,15 @@ export default async function Page() {
         ['Team Assessment', 'Process Optimisation', 'ATS Implementation'],
       ]
       const slugs = ['end-to-end-recruitment-training', 'hr-courses-for-beginners', 'hr-entrepreneurship-program', 'hr-corporate-training-course']
-      const titleMap = ['End-to-End Recruitment Training', 'HR Courses for Beginners', 'HR Entrepreneurship Program', 'HR Corporate Training']
+      const defaultTitleMap = ['End-to-End Recruitment Training', 'HR Courses for Beginners', 'HR Entrepreneurship Program', 'HR Corporate Training']
+      
+      const title = course.title && course.title !== 'Degree Courses' && course.title !== 'Certification Courses' && course.title !== 'Entrepreneur Courses' && course.title !== 'Corporate Traning Courses'
+        ? course.title
+        : defaultTitleMap[index] || course.title
+
       return {
         id: course.id,
-        title: titleMap[index] ?? course.title,
+        title,
         badge: badgeMap[index] || 'Featured',
         badgeCls: ['bg-red-500 text-white', 'bg-blue-600 text-white', 'bg-emerald-600 text-white', 'bg-purple-600 text-white'][index] || 'bg-slate-700 text-white',
         level: levelMap[index] || category.name,

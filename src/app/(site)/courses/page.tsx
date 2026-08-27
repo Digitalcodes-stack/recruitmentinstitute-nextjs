@@ -50,7 +50,10 @@ export const metadata: Metadata = {
   },
 }
 
-/* â"€â"€ Slug → route mapping â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€â"€ */
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+/* ─── Slug → route mapping ────────────────────────────────────── */
 const SLUG_TO_ROUTE: Record<string, string> = {
   degree_tag:            '/end-to-end-recruitment-training',
   certification_tag:     '/hr-courses-for-beginners',
