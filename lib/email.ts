@@ -512,22 +512,94 @@ export async function sendBatchStartReminderEmail(data: {
   startDate: string
   leadLabel: string // e.g. "in 3 days" or "tomorrow"
 }) {
-  const audienceLine = data.role === 'trainer'
-    ? `Your batch <strong>${data.batchName}</strong> (${data.courseTitle}) that you're assigned to starts ${data.leadLabel}.`
-    : `Your batch <strong>${data.batchName}</strong> (${data.courseTitle}) starts ${data.leadLabel}.`
+  const isTomorrow = data.leadLabel.toLowerCase().includes('tomorrow') || data.leadLabel.includes('1d')
+  const countdownText = isTomorrow ? '🚀 Starts Tomorrow' : '⏳ Starts in 3 Days'
+  const countdownColor = isTomorrow ? '#DC2626' : '#2563EB'
+  const countdownBg = isTomorrow ? '#FEF2F2' : '#EFF6FF'
+  const countdownBorder = isTomorrow ? '#FECACA' : '#BFDBFE'
+
+  const audienceMessage = data.role === 'trainer'
+    ? `You are assigned as the master mentor for the upcoming batch <strong style="color:#0F172A;">${data.batchName}</strong>.`
+    : `Your live training program for <strong style="color:#0F172A;">${data.courseTitle}</strong> is starting <strong style="color:#2563EB;">${data.leadLabel}</strong>!`
 
   await sendMail({
     from: FROM,
     to: data.recipientEmail,
-    subject: `Batch Starting ${data.leadLabel === 'tomorrow' ? 'Tomorrow' : 'Soon'}: ${data.batchName}`,
+    subject: `⏳ [Countdown Reminder] Batch Starts ${data.leadLabel.toUpperCase()}: ${data.batchName} - Recruitment Institute`,
     html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
-        <h2 style="color: #2563EB;">⏳ Batch Starting Soon</h2>
-        <p>Hi <strong>${data.recipientName}</strong>,</p>
-        <p>${audienceLine}</p>
-        <p><strong>Start Date:</strong> ${data.startDate}</p>
-        <br/>
-        <p>Best regards,<br/><strong>Recruitment Institute Team</strong></p>
+      <div style="background-color: #F8FAFC; padding: 40px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1E293B;">
+        <div style="max-width: 600px; margin: 0 auto; background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.06); border: 1px solid #E2E8F0;">
+          
+          {/* Header Banner */}
+          <div style="background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 100%); padding: 32px 36px; color: #FFFFFF; text-align: center;">
+            <div style="display: inline-block; padding: 6px 16px; border-radius: 50px; background: ${countdownBg}; border: 1px solid ${countdownBorder}; color: ${countdownColor}; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">
+              ${countdownText}
+            </div>
+            <h1 style="margin: 0; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1.25; letter-spacing: -0.02em;">
+              Batch Starting Countdown
+            </h1>
+            <p style="margin: 8px 0 0; font-size: 13px; color: #94A3B8; font-weight: 500;">
+              Get ready for your live interactive sessions &amp; practitioner mentorship
+            </p>
+          </div>
+
+          {/* Body Content */}
+          <div style="padding: 36px 32px;">
+            <p style="font-size: 16px; color: #0F172A; margin: 0 0 16px; line-height: 1.5;">
+              Dear <strong style="color: #1E3A8A;">${data.recipientName}</strong>,
+            </p>
+
+            <p style="font-size: 14px; color: #475569; margin: 0 0 24px; line-height: 1.6;">
+              ${audienceMessage} Please review your batch details below and ensure your student portal access is ready.
+            </p>
+
+            {/* Batch Info Card */}
+            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 16px; padding: 22px; margin-bottom: 28px;">
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; width: 35%;">Course Program</td>
+                  <td style="padding: 8px 0; font-size: 14px; font-weight: 800; color: #0F172A;">${data.courseTitle}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; border-top: 1px solid #F1F5F9;">Batch Name</td>
+                  <td style="padding: 8px 0; font-size: 14px; font-weight: 800; color: #2563EB; border-top: 1px solid #F1F5F9;">${data.batchName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; border-top: 1px solid #F1F5F9;">Start Date</td>
+                  <td style="padding: 8px 0; font-size: 14px; font-weight: 800; color: #059669; border-top: 1px solid #F1F5F9;">📅 ${data.startDate}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; border-top: 1px solid #F1F5F9;">Class Mode</td>
+                  <td style="padding: 8px 0; font-size: 13px; font-weight: 600; color: #334155; border-top: 1px solid #F1F5F9;">Live Video Class + LMS Portal</td>
+                </tr>
+              </table>
+            </div>
+
+            {/* Preparation Steps */}
+            <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 14px 18px; border-radius: 8px; margin-bottom: 28px;">
+              <p style="margin: 0; font-size: 12px; color: #92400E; font-weight: 600; line-height: 1.5;">
+                💡 <strong>Pre-session Checklist:</strong> Test your microphone/camera, log into your student dashboard to preview syllabus modules, and check the live Google Meet link prior to session kickoff.
+              </p>
+            </div>
+
+            {/* Action CTA Button */}
+            <div style="text-align: center; margin-bottom: 28px;">
+              <a href="https://recruitmentinstitute.in/student-login" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #0A1628 0%, #1E3A8A 100%); color: #FFFFFF; text-decoration: none; border-radius: 12px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 14px rgba(10,22,40,0.25);">
+                Access Student Dashboard &rarr;
+              </a>
+            </div>
+
+            <p style="font-size: 13px; color: #64748B; line-height: 1.6; margin: 0;">
+              Need help or have questions about your batch schedule? Reply directly to this email or connect with admissions on WhatsApp at <a href="https://wa.me/917385204165" style="color: #2563EB; font-weight: 600; text-decoration: none;">+91 7385204165</a>.
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div style="background: #F8FAFC; padding: 20px 32px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #94A3B8; text-align: center; line-height: 1.6;">
+            <strong>Recruitment Institute</strong> • Centre for Talent Acquisition &amp; HR Excellence<br/>
+            Pune, Maharashtra | Global Online Interactive Training
+          </div>
+        </div>
       </div>
     `,
   })
