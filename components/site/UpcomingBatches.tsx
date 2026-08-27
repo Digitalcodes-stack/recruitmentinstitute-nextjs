@@ -87,6 +87,117 @@ export default function UpcomingBatches({
     }
   }
 
+  const getCourseTheme = (courseTitle: string = '', courseSlug: string = '') => {
+    const normalized = (courseTitle + ' ' + courseSlug).toLowerCase()
+
+    if (normalized.includes('entrepreneur')) {
+      return {
+        name: 'Entrepreneurship',
+        accentColor: '#7C3AED',
+        headerGradient: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 100%)',
+        cardBorder: '#E9D5FF',
+        cardActiveBorder: '#C084FC',
+        cardShadow: 'rgba(124, 58, 237, 0.08)',
+        badgeBg: '#FAF5FF',
+        badgeText: '#7C3AED',
+        badgeBorder: '#DDD6FE',
+        dateBoxStartColor: '#7C3AED',
+        btnGradient: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+        btnShadow: 'rgba(124, 58, 237, 0.3)',
+        categoryTag: 'Entrepreneurship Track',
+      }
+    }
+
+    if (normalized.includes('corporate')) {
+      return {
+        name: 'Corporate Training',
+        accentColor: '#1E40AF',
+        headerGradient: 'linear-gradient(90deg, #1E40AF 0%, #3B82F6 100%)',
+        cardBorder: '#BFDBFE',
+        cardActiveBorder: '#60A5FA',
+        cardShadow: 'rgba(30, 64, 175, 0.08)',
+        badgeBg: '#EFF6FF',
+        badgeText: '#1E40AF',
+        badgeBorder: '#BFDBFE',
+        dateBoxStartColor: '#1E40AF',
+        btnGradient: 'linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%)',
+        btnShadow: 'rgba(30, 64, 175, 0.3)',
+        categoryTag: 'Corporate L&D Track',
+      }
+    }
+
+    if (normalized.includes('degree') || normalized.includes('diploma') || normalized.includes('academic')) {
+      return {
+        name: 'Degree Program',
+        accentColor: '#D97706',
+        headerGradient: 'linear-gradient(90deg, #D97706 0%, #F59E0B 100%)',
+        cardBorder: '#FDE68A',
+        cardActiveBorder: '#FBBF24',
+        cardShadow: 'rgba(217, 119, 6, 0.08)',
+        badgeBg: '#FFFBEB',
+        badgeText: '#B45309',
+        badgeBorder: '#FDE68A',
+        dateBoxStartColor: '#D97706',
+        btnGradient: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+        btnShadow: 'rgba(217, 119, 6, 0.3)',
+        categoryTag: 'University Degree Track',
+      }
+    }
+
+    if (normalized.includes('recruitment') || normalized.includes('talent') || normalized.includes('sourcing')) {
+      return {
+        name: 'Talent Acquisition',
+        accentColor: '#059669',
+        headerGradient: 'linear-gradient(90deg, #059669 0%, #10B981 100%)',
+        cardBorder: '#A7F3D0',
+        cardActiveBorder: '#34D399',
+        cardShadow: 'rgba(5, 150, 105, 0.08)',
+        badgeBg: '#ECFDF5',
+        badgeText: '#059669',
+        badgeBorder: '#A7F3D0',
+        dateBoxStartColor: '#059669',
+        btnGradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+        btnShadow: 'rgba(5, 150, 105, 0.3)',
+        categoryTag: 'Professional Recruitment Track',
+      }
+    }
+
+    if (normalized.includes('beginner') || normalized.includes('starter') || normalized.includes('foundation')) {
+      return {
+        name: 'Foundation',
+        accentColor: '#0284C7',
+        headerGradient: 'linear-gradient(90deg, #0284C7 0%, #06B6D4 100%)',
+        cardBorder: '#BAE6FD',
+        cardActiveBorder: '#38BDF8',
+        cardShadow: 'rgba(2, 132, 199, 0.08)',
+        badgeBg: '#F0F9FF',
+        badgeText: '#0284C7',
+        badgeBorder: '#BAE6FD',
+        dateBoxStartColor: '#0284C7',
+        btnGradient: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
+        btnShadow: 'rgba(2, 132, 199, 0.3)',
+        categoryTag: 'Beginner Fast-Track',
+      }
+    }
+
+    // Default theme
+    return {
+      name: 'Certified Program',
+      accentColor: '#DC2626',
+      headerGradient: 'linear-gradient(90deg, #DC2626 0%, #EF4444 100%)',
+      cardBorder: '#FECACA',
+      cardActiveBorder: '#F87171',
+      cardShadow: 'rgba(220, 38, 38, 0.08)',
+      badgeBg: '#FEF2F2',
+      badgeText: '#DC2626',
+      badgeBorder: '#FECACA',
+      dateBoxStartColor: '#DC2626',
+      btnGradient: 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)',
+      btnShadow: 'rgba(220, 38, 38, 0.3)',
+      categoryTag: 'Executive Certified Track',
+    }
+  }
+
   const getCountdownInfo = (startDateStr?: string, displayStr?: string) => {
     // Try to parse the date
     let target: Date | null = null
@@ -298,6 +409,7 @@ export default function UpcomingBatches({
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '28px' }}>
             {visibleBatches.map((batch) => {
               const modeInfo = getModeInfo(batch.mode)
+              const theme = getCourseTheme(batch.courseTitle, batch.courseSlug)
               const seatsRemaining = batch.seatsLeft ?? Math.max(0, batch.capacity - batch.enrolledCount)
               const isLowSeats = seatsRemaining <= 5
               const courseLink = batch.courseSlug.startsWith('/') ? batch.courseSlug : `/${batch.courseSlug}`
@@ -309,8 +421,8 @@ export default function UpcomingBatches({
                   style={{
                     background: '#FFFFFF',
                     borderRadius: '24px',
-                    border: countdown.isUrgent ? '1.5px solid #FCA5A5' : '1px solid #E2E8F0',
-                    boxShadow: countdown.isUrgent ? '0 8px 30px rgba(220,38,38,0.12)' : '0 4px 20px rgba(15,23,42,0.05)',
+                    border: countdown.isUrgent ? '1.5px solid #FCA5A5' : `1.5px solid ${theme.cardBorder}`,
+                    boxShadow: countdown.isUrgent ? '0 8px 30px rgba(220,38,38,0.12)' : `0 4px 20px ${theme.cardShadow}`,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
@@ -320,17 +432,23 @@ export default function UpcomingBatches({
                   }}
                 >
                   {/* Top Color Accent Line */}
-                  <div style={{ height: '4px', width: '100%', background: countdown.isUrgent ? 'linear-gradient(90deg, #DC2626, #F97316)' : modeInfo.accentBorder }} />
+                  <div style={{ height: '4px', width: '100%', background: theme.headerGradient }} />
 
                   <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       {/* Top Badges Row */}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
-                          {modeInfo.icon}
-                          <span>{modeInfo.label}</span>
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${modeInfo.badgeClass}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
+                            {modeInfo.icon}
+                            <span>{modeInfo.label}</span>
+                          </span>
+
+                          <span style={{ fontSize: '10px', fontWeight: 800, color: theme.badgeText, background: theme.badgeBg, border: `1px solid ${theme.badgeBorder}`, padding: '2px 8px', borderRadius: '50px' }}>
+                            {theme.name}
+                          </span>
+                        </div>
 
                         {/* Flashing Countdown Days Remaining Badge */}
                         <div
@@ -361,8 +479,8 @@ export default function UpcomingBatches({
                       {/* Date & Schedule Box */}
                       <div style={{ background: '#F8FAFC', borderRadius: '16px', padding: '14px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#FFFFFF', border: '1px solid #CBD5E1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', color: '#EF4444', letterSpacing: '.08em' }}>START</span>
+                          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#FFFFFF', border: `1px solid ${theme.cardBorder}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <span style={{ fontSize: '8.5px', fontWeight: 900, textTransform: 'uppercase', color: theme.dateBoxStartColor, letterSpacing: '.06em' }}>START</span>
                             <span style={{ fontSize: '13px', fontWeight: 900, color: '#0F172A', lineHeight: 1 }}>
                               {batch.displayStartDate ? batch.displayStartDate.split(' ')[0] : batch.startDate.split('-')[2] || '15'}
                             </span>
@@ -486,7 +604,7 @@ export default function UpcomingBatches({
                           style={{
                             padding: '12px 10px',
                             borderRadius: '12px',
-                            background: 'linear-gradient(135deg, #DC2626 0%, #E63946 100%)',
+                            background: theme.btnGradient,
                             color: '#FFFFFF',
                             fontWeight: 800,
                             fontSize: '12px',
@@ -496,7 +614,7 @@ export default function UpcomingBatches({
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '6px',
-                            boxShadow: '0 4px 14px rgba(220,38,38,0.25)',
+                            boxShadow: `0 4px 14px ${theme.btnShadow}`,
                           }}
                         >
                           <span>Enroll Now</span>
