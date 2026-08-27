@@ -2,13 +2,12 @@ import nodemailer from 'nodemailer'
 
 function getTransporter() {
   const host = process.env.SMTP_HOST || 'serenity.herosite.pro'
-  const port = parseInt(process.env.SMTP_PORT || '587')
-  const secure = process.env.SMTP_SECURE === 'true'
+  const port = parseInt(process.env.SMTP_PORT || '465')
+  const secure = port === 465 || process.env.SMTP_SECURE === 'true'
   const user = process.env.SMTP_USER || 'support@recruitmentinstitute.in'
   const pass = process.env.SMTP_PASS || 'support@recruitmentinstitute'
 
   const auth = user && pass ? { user, pass } : undefined
-
 
   return nodemailer.createTransport({
     host,
@@ -18,8 +17,8 @@ function getTransporter() {
     tls: {
       rejectUnauthorized: false,
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
   })
 }
 
@@ -30,14 +29,30 @@ const getEmailCC = () => process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
 const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'support@recruitmentinstitute.in'}>`
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'support@recruitmentinstitute.in'
 
-
 async function sendMail(options: nodemailer.SendMailOptions) {
   try {
     const transporter = getTransporter()
+    
+    // Generate text fallback from HTML if not provided to pass anti-spam checks
+    let textContent = options.text
+    if (!textContent && typeof options.html === 'string') {
+      textContent = options.html
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s{2,}/g, ' ')
+        .trim()
+    }
+
     const mailOptions: nodemailer.SendMailOptions = {
       from: options.from || getFrom(),
+      replyTo: options.replyTo || 'support@recruitmentinstitute.in',
       ...options,
-      cc: options.cc !== undefined ? options.cc : getEmailCC(),
+      text: textContent,
+      headers: {
+        'X-Mailer': 'RecruitmentInstitute/1.0',
+        'List-Unsubscribe': '<https://recruitmentinstitute.in/unsubscribe>',
+        ...(options.headers || {}),
+      },
     }
     const info = await transporter.sendMail(mailOptions)
     console.log(`[EmailService] Email sent successfully to ${options.to}. MessageId: ${info.messageId}`)
@@ -61,6 +76,7 @@ export async function sendContactEmail(data: {
   await sendMail({
     from: FROM,
     to: ADMIN_EMAIL,
+    cc: getEmailCC(),
     replyTo: data.email,
     subject: `🎯 New Lead: Contact Form Submission from ${data.name}`,
     html: `
