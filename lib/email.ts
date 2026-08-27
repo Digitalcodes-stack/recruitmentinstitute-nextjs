@@ -22,18 +22,16 @@ function getTransporter() {
   })
 }
 
-const getFrom = () => `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'support@recruitmentinstitute.in'}>`
-const getAdminEmail = () => process.env.ADMIN_EMAIL || 'support@recruitmentinstitute.in'
-const getEmailCC = () => process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
-
-const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || 'support@recruitmentinstitute.in'}>`
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'support@recruitmentinstitute.in'
+const getFrom = () => `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
+const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
+const getAdminEmail = () => process.env.ADMIN_EMAIL || 'patilrupalib@gmail.com'
+const getEmailCC = () => process.env.EMAIL_CC || 'patilrupalib@gmail.com'
 
 async function sendMail(options: nodemailer.SendMailOptions) {
   try {
     const transporter = getTransporter()
     
-    // Generate text fallback from HTML if not provided to pass anti-spam checks
+    // Generate clean text fallback
     let textContent = options.text
     if (!textContent && typeof options.html === 'string') {
       textContent = options.html
@@ -45,14 +43,9 @@ async function sendMail(options: nodemailer.SendMailOptions) {
 
     const mailOptions: nodemailer.SendMailOptions = {
       from: options.from || getFrom(),
-      replyTo: options.replyTo || 'support@recruitmentinstitute.in',
+      replyTo: options.replyTo || process.env.EMAIL_FROM || process.env.SMTP_USER,
       ...options,
       text: textContent,
-      headers: {
-        'X-Mailer': 'RecruitmentInstitute/1.0',
-        'List-Unsubscribe': '<https://recruitmentinstitute.in/unsubscribe>',
-        ...(options.headers || {}),
-      },
     }
     const info = await transporter.sendMail(mailOptions)
     console.log(`[EmailService] Email sent successfully to ${options.to}. MessageId: ${info.messageId}`)
