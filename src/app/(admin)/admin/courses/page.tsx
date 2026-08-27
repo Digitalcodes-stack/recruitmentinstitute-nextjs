@@ -550,6 +550,9 @@ export default async function AdminCoursesPage({
                                 </p>
                               )}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                                <span style={{ fontSize: 10.5, fontWeight: 700, background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '1px 7px', borderRadius: 5 }}>
+                                  {(course as any).duration || '3 Months'}
+                                </span>
                                 <span style={{ fontSize: 11, color: '#64748b' }}>
                                   Batches: <strong>{course.batches.length}</strong> · Enrolled: <strong>{totalEnrolled}</strong>
                                 </span>

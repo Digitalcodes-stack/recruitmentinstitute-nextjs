@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     categoryId:    Number(body.categoryId),
     totalStudents: Number(body.totalStudents ?? 0),
     rating:        body.rating !== '' && body.rating != null ? Number(body.rating) : undefined,
+    duration:      body.duration || undefined,
   })
   if (!validated.success)
     return NextResponse.json({ success: false, errors: validated.error.flatten().fieldErrors }, { status: 400 })

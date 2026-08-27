@@ -554,7 +554,7 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       categoryName: category?.name || config.defaultTitle,
       totalStudents,
       rating,
-      duration: config.defaultDuration,
+      duration: dbCourse?.duration?.trim() || config.defaultDuration,
       startDate: nextBatchDate,
       badge: config.badge,
       badgeColor: config.badgeColor,

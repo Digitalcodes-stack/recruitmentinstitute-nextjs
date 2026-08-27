@@ -335,6 +335,8 @@ export default async function CoursesPage() {
       : 4.8
     const description = linkedCourse ? stripHtml(linkedCourse.description) : `${cat.name} – a professional recruitment training program at Recruitment Institute.`
 
+    const duration = linkedCourse?.duration?.trim() || meta.duration || 'Flexible'
+
     return {
       index,
       slug: cat.slug,
@@ -345,6 +347,7 @@ export default async function CoursesPage() {
       enrolled: linkedCourse ? `${Number(linkedCourse.totalStudents).toLocaleString('en-IN')}+` : '500+',
       rating: avgRating,
       reviewCount: catReviews.length,
+      duration,
       meta,
     }
   })
@@ -632,9 +635,9 @@ export default async function CoursesPage() {
 
                       {/* Tags */}
                       <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:16 }}>
-                        {m.tags.map(tag => (
+                        {[card.duration, m.tags[1] || 'Online & Offline', m.tags[2] || 'Certificate'].map((tag, tIdx) => (
                           <span key={tag} style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'5px 12px', borderRadius:50, background:m.accentLight, border:`1px solid ${m.accentBorder}`, fontSize:11, fontWeight:700, color:m.accent }}>
-                            {tag === m.tags[0] ? <Clock style={{ width:10, height:10 }} /> : tag === m.tags[1] ? <Monitor style={{ width:10, height:10 }} /> : <BadgeCheck style={{ width:10, height:10 }} />}
+                            {tIdx === 0 ? <Clock style={{ width:10, height:10 }} /> : tIdx === 1 ? <Monitor style={{ width:10, height:10 }} /> : <BadgeCheck style={{ width:10, height:10 }} />}
                             {tag}
                           </span>
                         ))}
@@ -646,7 +649,7 @@ export default async function CoursesPage() {
                       {/* Key features */}
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 12px', marginBottom:22, paddingBottom:20, borderBottom:'1px solid #F1F5F9' }}>
                         {[
-                          `${m.duration} duration`,
+                          `${card.duration} duration`,
                           `${m.mode} delivery`,
                           'Industry certificate',
                           'Placement support',

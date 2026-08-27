@@ -34,6 +34,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     ...(body.categoryId    != null && { categoryId:    Number(body.categoryId) }),
     ...(body.totalStudents != null && { totalStudents: Number(body.totalStudents) }),
     ...(body.rating !== '' && body.rating != null && { rating: Number(body.rating) }),
+    ...(body.duration !== undefined && { duration: body.duration }),
   })
   if (!validated.success)
     return NextResponse.json({ success: false, errors: validated.error.flatten().fieldErrors }, { status: 400 })

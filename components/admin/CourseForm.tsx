@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { BookOpen, ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { BookOpen, ArrowLeft, Save, Loader2, Clock } from 'lucide-react'
 
 interface Category { id: number; name: string }
 
@@ -14,12 +14,15 @@ interface Course {
   totalStudents: number
   rating: number | null
   courseBy: string | null
+  duration?: string | null
 }
 
 interface Props {
   categories: Category[]
   course?: Course
 }
+
+const COMMON_DURATIONS = ['3 Months', '6 Weeks', '2 Months', '6 Months', '4 Weeks', '12 Weeks', 'Flexible / Custom']
 
 export default function CourseForm({ categories, course }: Props) {
   const router = useRouter()
@@ -29,6 +32,7 @@ export default function CourseForm({ categories, course }: Props) {
     title:         course?.title         ?? '',
     description:   course?.description   ?? '',
     categoryId:    course?.categoryId    ? String(course.categoryId) : '',
+    duration:      course?.duration      ?? '3 Months',
     totalStudents: String(course?.totalStudents ?? 0),
     rating:        course?.rating != null ? String(course.rating) : '',
     courseBy:      course?.courseBy      ?? '',
@@ -64,6 +68,7 @@ export default function CourseForm({ categories, course }: Props) {
           title:         form.title,
           description:   form.description,
           categoryId:    Number(form.categoryId),
+          duration:      form.duration.trim() || undefined,
           totalStudents: Number(form.totalStudents || 0),
           rating:        form.rating !== '' ? Number(form.rating) : undefined,
           courseBy:      form.courseBy || undefined,
@@ -96,7 +101,7 @@ export default function CourseForm({ categories, course }: Props) {
   })
 
   return (
-    <div style={{ maxWidth: 640 }}>
+    <div style={{ maxWidth: 680 }}>
       {/* Breadcrumb */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
         <button type="button" onClick={() => router.push('/admin/courses')}
@@ -115,7 +120,7 @@ export default function CourseForm({ categories, course }: Props) {
           {isEdit ? `Edit: ${course!.title}` : 'New Course'}
         </h2>
         <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>
-          {isEdit ? 'Update course details.' : 'Add a new course to a category.'}
+          {isEdit ? 'Update course details and duration. Changes immediately reflect across the site.' : 'Add a new course to a category.'}
         </p>
 
         {apiError && (
@@ -129,8 +134,46 @@ export default function CourseForm({ categories, course }: Props) {
           {/* Title */}
           <div>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Course Title *</label>
-            <input type="text" value={form.title} onChange={set('title')} placeholder="e.g. HR Management Fundamentals" style={inp('title')} />
+            <input type="text" value={form.title} onChange={set('title')} placeholder="e.g. End-to-End Recruitment Training" style={inp('title')} />
             {errors.title && <p style={{ fontSize: 11, color: '#ef4444', marginTop: 4 }}>{errors.title}</p>}
+          </div>
+
+          {/* Duration with quick suggestions */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: '#374151' }}>
+                <Clock style={{ width: 13, height: 13, color: '#2563eb' }} /> Course Duration * (e.g. 3 Months, 6 Weeks, 2 Months)
+              </label>
+            </div>
+            <input
+              type="text"
+              value={form.duration}
+              onChange={set('duration')}
+              placeholder="e.g. 3 Months or 6 Weeks"
+              style={inp('duration')}
+            />
+            {/* Quick Suggestions */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+              {COMMON_DURATIONS.map((dur) => (
+                <button
+                  key={dur}
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, duration: dur }))}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 600,
+                    padding: '3px 8px',
+                    borderRadius: 6,
+                    border: form.duration === dur ? '1px solid #3b82f6' : '1px solid #e2e8f0',
+                    background: form.duration === dur ? '#eff6ff' : '#f8fafc',
+                    color: form.duration === dur ? '#1d4ed8' : '#64748b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {dur}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Description */}
@@ -155,16 +198,16 @@ export default function CourseForm({ categories, course }: Props) {
           {/* Row: courseBy + rating + totalStudents */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Instructor</label>
-              <input type="text" value={form.courseBy} onChange={set('courseBy')} placeholder="e.g. Dr. Anand" style={inp('courseBy')} />
+              <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Instructor / By</label>
+              <input type="text" value={form.courseBy} onChange={set('courseBy')} placeholder="e.g. Industry Mentors" style={inp('courseBy')} />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Rating (0–5)</label>
-              <input type="number" min="0" max="5" step="0.1" value={form.rating} onChange={set('rating')} placeholder="e.g. 4.5" style={inp('rating')} />
+              <input type="number" min="0" max="5" step="0.1" value={form.rating} onChange={set('rating')} placeholder="e.g. 4.9" style={inp('rating')} />
             </div>
             <div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Total Students</label>
-              <input type="number" min="0" value={form.totalStudents} onChange={set('totalStudents')} placeholder="0" style={inp('totalStudents')} />
+              <input type="number" min="0" value={form.totalStudents} onChange={set('totalStudents')} placeholder="5000" style={inp('totalStudents')} />
             </div>
           </div>
 

@@ -114,6 +114,7 @@ export const courseSchema = z.object({
   totalStudents: z.number().int().default(0),
   rating: z.number().min(0).max(5).optional(),
   courseBy: z.string().optional(),
+  duration: z.string().optional(),
 })
 
 export const faqSchema = z.object({

@@ -94,7 +94,7 @@ export default async function Page() {
         badge: badgeMap[index] || 'Featured',
         badgeCls: ['bg-red-500 text-white', 'bg-blue-600 text-white', 'bg-emerald-600 text-white', 'bg-purple-600 text-white'][index] || 'bg-slate-700 text-white',
         level: levelMap[index] || category.name,
-        duration: durations[index] || 'Flexible',
+        duration: (course as any).duration?.trim() || durations[index] || 'Flexible',
         desc: stripHtml(course.description),
         href: `/${slugs[index] || category.slug}`,
         image: courseImages[index] || '/assets/images/banner/home-students-banner.jpg',

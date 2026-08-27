@@ -116,6 +116,7 @@ model Course {
   rating        Decimal?            @db.Decimal(3, 1)
   review        String?
   courseBy      String?             @map("course_by")
+  duration      String?             @default("3 Months") @map("duration")
   startDate     DateTime?           @map("start_date") @db.Date
   createdAt     DateTime            @default(now()) @map("created_at")
   updatedAt     DateTime            @updatedAt @map("updated_at")
