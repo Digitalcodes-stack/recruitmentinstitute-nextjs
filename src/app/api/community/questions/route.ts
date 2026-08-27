@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getUserSession } from '@/lib/auth'
 import { communityQuestionSchema } from '@/lib/validations'
+import { sendCommunityQuestionAdminAlert } from '@/lib/email'
 
 export async function GET(req: NextRequest) {
   try {
@@ -71,6 +72,13 @@ export async function POST(req: NextRequest) {
       data: { question: validated.data.question, userId: communityUser.id },
       include: { user: { select: { name: true } } },
     })
+
+    await sendCommunityQuestionAdminAlert({
+      userName: communityUser.name || session.name || 'Community Member',
+      userEmail: session.email,
+      question: question.question,
+      questionId: question.id,
+    }).catch(console.error)
 
     return NextResponse.json({ success: true, data: question }, { status: 201 })
   } catch {

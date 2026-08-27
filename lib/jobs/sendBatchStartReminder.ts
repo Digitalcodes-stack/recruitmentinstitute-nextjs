@@ -50,6 +50,15 @@ export async function sendBatchStartReminder(payload: BatchStartReminderPayload)
       startDate: startDateStr,
       leadLabel,
     }),
+    sendBatchStartReminderEmail({
+      recipientEmail: process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com',
+      recipientName: 'Administrator',
+      role: 'trainer',
+      batchName: batch.name,
+      courseTitle: batch.course.title,
+      startDate: startDateStr,
+      leadLabel,
+    }),
   ])
 }
 

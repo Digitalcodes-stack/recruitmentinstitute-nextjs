@@ -53,9 +53,17 @@ async function sendClassEmails(
     }
 
     if (kind === 'scheduled') {
-      await sendSessionScheduledEmail(base)
+      await sendSessionScheduledEmail({
+        ...base,
+        sessionDate,
+        startTime,
+      })
     } else if (kind === 'rescheduled') {
-      await sendSessionRescheduledEmail(base)
+      await sendSessionRescheduledEmail({
+        ...base,
+        newDate: sessionDate,
+        newStartTime: startTime,
+      })
     } else {
       await sendSessionCancelledEmail({
         ...base,

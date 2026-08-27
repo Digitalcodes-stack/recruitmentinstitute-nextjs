@@ -1,25 +1,30 @@
 import nodemailer from 'nodemailer'
+import { renderExecutiveEmailHtml, EmailRow } from './email-templates'
+
+let transporter: nodemailer.Transporter | null = null
 
 function getTransporter() {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com'
-  const user = process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'
-  const pass = process.env.SMTP_PASS || 'ledemkmjiesdqfpk'
+  if (transporter) return transporter
 
-  if (host === 'smtp.gmail.com' || host.includes('gmail')) {
-    return nodemailer.createTransport({
+  const auth = process.env.SMTP_USER && process.env.SMTP_PASS
+    ? {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      }
+    : undefined
+
+  if (process.env.SMTP_SERVICE === 'gmail' || (!process.env.SMTP_HOST && process.env.SMTP_USER?.includes('gmail'))) {
+    transporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: { user, pass },
+      auth,
     })
+    return transporter
   }
 
-  const port = parseInt(process.env.SMTP_PORT || '465')
-  const secure = port === 465 || process.env.SMTP_SECURE === 'true'
-  const auth = user && pass ? { user, pass } : undefined
-
   return nodemailer.createTransport({
-    host,
-    port,
-    secure,
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT || '587'),
+    secure: process.env.SMTP_PORT === '465',
     auth,
     tls: {
       rejectUnauthorized: false,
@@ -31,7 +36,6 @@ function getTransporter() {
 
 const getFrom = () => `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
 const FROM = `"${process.env.EMAIL_FROM_NAME || 'Recruitment Institute'}" <${process.env.EMAIL_FROM || process.env.SMTP_USER || 'recruitmentinstitute5@gmail.com'}>`
-const getAdminEmail = () => process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com'
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com'
 const getEmailCC = () => process.env.EMAIL_CC || 'sesasiba.es@gmail.com'
 
@@ -64,59 +68,45 @@ async function sendMail(options: nodemailer.SendMailOptions) {
   }
 }
 
-
+// ─────────────────────────────────────────────────────────────────────────────
+// 1. CONTACT US FORM SUBMISSION
+// ─────────────────────────────────────────────────────────────────────────────
 export async function sendContactEmail(data: {
   name: string
   email: string
   mobile: string
   message: string
 }) {
-  const formattedMessage = data.message.replace(/\n/g, '<br/>')
+  const rows: EmailRow[] = [
+    { label: 'Full Name', value: data.name },
+    { label: 'Email Address', value: data.email, isEmail: true },
+    { label: 'Mobile Number', value: data.mobile, isPhone: true },
+    { label: 'Message / Query', value: data.message },
+  ]
 
-  // 1. Notification to Admin & CC
+  // 1. Notification to Admin
   await sendMail({
     from: FROM,
     to: ADMIN_EMAIL,
     cc: getEmailCC(),
     replyTo: data.email,
     subject: `🎯 New Lead: Contact Form Submission from ${data.name}`,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:28px 32px;color:#ffffff;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#93c5fd;margin-bottom:6px;">New Lead Enquiry</div>
-            <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.2;">Contact Form Submission</h1>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.6;">A new visitor has submitted an enquiry through the Recruitment Institute contact form:</p>
-            <table style="width:100%;border-collapse:separate;border-spacing:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:24px;overflow:hidden;">
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;width:30%;border-bottom:1px solid #e2e8f0;">Full Name</td>
-                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e8f0;">${data.name}</td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Email Address</td>
-                <td style="padding:14px 18px;font-size:14px;color:#2563eb;border-bottom:1px solid #e2e8f0;"><a href="mailto:${data.email}" style="color:#2563eb;text-decoration:none;font-weight:600;">${data.email}</a></td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Mobile Number</td>
-                <td style="padding:14px 18px;font-size:14px;color:#0f172a;font-weight:600;border-bottom:1px solid #e2e8f0;"><a href="tel:${data.mobile}" style="color:#0f172a;text-decoration:none;">${data.mobile}</a></td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;vertical-align:top;">Message / Query</td>
-                <td style="padding:14px 18px;font-size:14px;color:#1e293b;line-height:1.6;">${formattedMessage}</td>
-              </tr>
-            </table>
-            <div style="text-align:center;margin-top:20px;">
-              <a href="mailto:${data.email}?subject=Re:%20Inquiry%20at%20Recruitment%20Institute" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Reply to Candidate</a>
-            </div>
-          </div>
-          <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;">
-            Recruitment Institute Platform • Pune, Maharashtra | Global Online Training Worldwide
-          </div>
-        </div>
-      </div>
-    `,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'New Lead Enquiry',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: 'Contact Form Submission',
+      subtitle: `Enquiry submitted by ${data.name}`,
+      introText: 'A new visitor has submitted an enquiry through the Recruitment Institute contact form:',
+      rows,
+      actionButton: {
+        text: 'Reply to Candidate',
+        url: `mailto:${data.email}?subject=Re:%20Inquiry%20at%20Recruitment%20Institute`,
+        color: '#2563eb',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
   })
 
   // 2. Professional Confirmation to Candidate
@@ -124,146 +114,175 @@ export async function sendContactEmail(data: {
     from: FROM,
     to: data.email,
     subject: `Thank you for contacting Recruitment Institute, ${data.name}!`,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:32px;text-align:center;color:#ffffff;">
-            <div style="display:inline-block;padding:6px 16px;border-radius:50px;background:rgba(255,255,255,0.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">Inquiry Received</div>
-            <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#ffffff;">Thank You, ${data.name}!</h1>
-            <p style="margin:0;font-size:14px;color:#cbd5e1;">We have received your enquiry and our admissions team is already reviewing it.</p>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Dear <strong>${data.name}</strong>,</p>
-            <p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.7;">
-              Thank you for reaching out to <strong>Recruitment Institute</strong> — the leading training institute for End-to-End Recruitment, HR Operations, and Talent Acquisition.
-            </p>
-            <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:24px;">
-              <p style="margin:0 0 8px;font-size:14px;font-weight:700;color:#1e3a8a;">What happens next?</p>
-              <ul style="margin:0;padding-left:18px;font-size:13px;color:#334155;line-height:1.7;">
-                <li>Our Senior Course Advisor will get in touch with you within <strong>30 minutes</strong> (Mon–Sat 9:00 AM – 7:00 PM).</li>
-                <li>We will share the comprehensive syllabus, batch schedules, and fee details tailored to your career goals.</li>
-                <li>You will receive an invitation to attend a <strong>Free Live Demo Session</strong>.</li>
-              </ul>
-            </div>
-            <div style="border-top:1px solid #e2e8f0;padding-top:20px;margin-bottom:24px;">
-              <h3 style="margin:0 0 12px;font-size:14px;font-weight:700;color:#0f172a;">Need Immediate Assistance?</h3>
-              <table style="width:100%;">
-                <tr>
-                  <td style="padding-right:8px;width:50%;">
-                    <a href="https://wa.me/917385204165?text=Hi%2C%20I%20have%20an%20enquiry%20regarding%20HR%20courses" style="display:block;background:#059669;color:#ffffff;text-align:center;padding:12px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;">💬 WhatsApp Helpline</a>
-                  </td>
-                  <td style="padding-left:8px;width:50%;">
-                    <a href="tel:+917385204165" style="display:block;background:#0f172a;color:#ffffff;text-align:center;padding:12px;border-radius:8px;font-weight:600;font-size:13px;text-decoration:none;">📞 Call +91 7385204165</a>
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div style="background:#f8fafc;border-radius:12px;padding:16px;text-align:center;border:1px solid #e2e8f0;">
-              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#0f172a;">Explore Our Industry-Ready HR Programs</p>
-              <a href="https://recruitmentinstitute.in/courses" style="color:#2563eb;font-size:13px;font-weight:600;text-decoration:underline;">View All Courses &amp; Certifications →</a>
-            </div>
-          </div>
-          <div style="background:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;line-height:1.6;">
-            <strong style="color:#64748b;">Recruitment Institute</strong><br/>
-            Pune Office: Recruitment Institute, Pune, Maharashtra – 411001<br/>
-            Online Training Institute: Live Interactive Sessions Worldwide<br/>
-            📧 <a href="mailto:support@recruitmentinstitute.in" style="color:#64748b;">support@recruitmentinstitute.in</a> | 📞 +91 7385204165
-          </div>
-        </div>
-      </div>
-    `,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Inquiry Received',
+      badgeBg: '#f0fdf4',
+      badgeColor: '#15803d',
+      badgeBorder: '#bbf7d0',
+      title: `Thank You, ${data.name}!`,
+      subtitle: 'We have received your enquiry and our admissions team is reviewing it.',
+      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong> — the leading training institute for End-to-End Recruitment, HR Operations, and Talent Acquisition.<br/><br/><strong>What happens next?</strong><br/>• Our Senior Course Advisor will contact you within 30 minutes.<br/>• We will share the comprehensive syllabus, batch schedules, and customized fee options.<br/>• You will receive an invitation to attend a Free Live Demo Session.',
+      rows: [
+        { label: 'Inquiry Reference', value: data.name },
+        { label: 'Contact Phone', value: data.mobile, isPhone: true },
+      ],
+      actionButton: {
+        text: '💬 Chat on WhatsApp Helpline',
+        url: 'https://wa.me/917385204165?text=Hi%2C%20I%20have%20an%20enquiry%20regarding%20HR%20courses',
+        color: '#059669',
+      },
+      secondaryButton: {
+        text: 'Explore All Courses & Certifications →',
+        url: 'https://recruitmentinstitute.in/courses',
+      },
+    }),
   })
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 2. COURSE ENQUIRY MODAL SUBMISSION
+// ─────────────────────────────────────────────────────────────────────────────
 export async function sendCourseEnquiryEmail(data: {
   firstName: string
   lastName: string
   email: string
   contact: string
+  courseName?: string
+  visitorDate?: string
 }) {
   const fullName = `${data.firstName} ${data.lastName}`.trim()
+  const courseTitle = data.courseName || 'HR Training Program'
+  const rows: EmailRow[] = [
+    { label: 'Candidate Name', value: fullName },
+    { label: 'Target Course', value: courseTitle, isHighlight: true },
+    { label: 'Email Address', value: data.email, isEmail: true },
+    { label: 'Contact Number', value: data.contact, isPhone: true },
+    ...(data.visitorDate ? [{ label: 'Preferred Date', value: data.visitorDate }] : []),
+  ]
 
   // 1. Notification to Admin
   await sendMail({
     from: FROM,
     to: ADMIN_EMAIL,
+    cc: getEmailCC(),
     replyTo: data.email,
-    subject: `🎓 New Course Enquiry: ${fullName}`,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:28px 32px;color:#ffffff;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#93c5fd;margin-bottom:6px;">Course Admissions</div>
-            <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.2;">New Course Enquiry</h1>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 20px;font-size:15px;color:#334155;">A new student enquiry has been submitted:</p>
-            <table style="width:100%;border-collapse:separate;border-spacing:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:24px;overflow:hidden;">
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;width:30%;border-bottom:1px solid #e2e8f0;">Candidate Name</td>
-                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e8f0;">${fullName}</td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Email Address</td>
-                <td style="padding:14px 18px;font-size:14px;color:#2563eb;border-bottom:1px solid #e2e8f0;"><a href="mailto:${data.email}" style="color:#2563eb;text-decoration:none;font-weight:600;">${data.email}</a></td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;">Contact Number</td>
-                <td style="padding:14px 18px;font-size:14px;color:#0f172a;font-weight:600;"><a href="tel:${data.contact}" style="color:#0f172a;text-decoration:none;">${data.contact}</a></td>
-              </tr>
-            </table>
-            <div style="text-align:center;">
-              <a href="mailto:${data.email}?subject=Course%20Information%20-%20Recruitment%20Institute" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">Contact Student</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `,
+    subject: `🎓 Course Enquiry: ${fullName} — ${courseTitle}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Course Lead Alert',
+      badgeBg: '#faf5ff',
+      badgeColor: '#7e22ce',
+      badgeBorder: '#e9d5ff',
+      title: 'New Course Enquiry',
+      subtitle: `Expressed interest in ${courseTitle}`,
+      introText: 'A new candidate has submitted a course information request:',
+      rows,
+      actionButton: {
+        text: 'Contact Student',
+        url: `mailto:${data.email}?subject=Course%20Information%20-%20Recruitment%20Institute`,
+        color: '#7c3aed',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
   })
 
-  // 2. Confirmation to Student
+  // 2. Confirmation to Candidate
   await sendMail({
     from: FROM,
     to: data.email,
-    subject: `Course Enquiry Received — Recruitment Institute`,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:32px;text-align:center;color:#ffffff;">
-            <div style="display:inline-block;padding:6px 16px;border-radius:50px;background:rgba(255,255,255,0.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">Enquiry Received</div>
-            <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#ffffff;">Thank You, ${data.firstName}!</h1>
-            <p style="margin:0;font-size:14px;color:#cbd5e1;">We have received your course enquiry.</p>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">Dear <strong>${data.firstName}</strong>,</p>
-            <p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.7;">
-              Thank you for your interest in advancing your career with <strong>Recruitment Institute</strong>. Our admissions counselor will contact you shortly with complete batch details, fee structure, and syllabus.
-            </p>
-            <div style="text-align:center;margin-top:24px;">
-              <a href="https://wa.me/917385204165?text=Hi%2C%20I%20have%20a%20question%20about%20your%20HR%20courses" style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:600;font-size:14px;">💬 Chat on WhatsApp (+91 7385204165)</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    `,
+    subject: `Course Information: ${courseTitle} — Recruitment Institute`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Course Enquiry Received',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: `Hello, ${data.firstName}!`,
+      subtitle: `Thank you for your interest in ${courseTitle}`,
+      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong>. Our senior counselor will contact you shortly with complete batch details, fee structure, and syllabus.',
+      rows: [
+        { label: 'Course', value: courseTitle, isHighlight: true },
+        { label: 'Contact', value: data.contact, isPhone: true },
+      ],
+      actionButton: {
+        text: '💬 Chat on WhatsApp (+91 7385204165)',
+        url: 'https://wa.me/917385204165?text=Hi%2C%20I%20have%20a%20question%20about%20your%20HR%20courses',
+        color: '#059669',
+      },
+    }),
   })
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 3. FEES ENQUIRY & EMI SUBMISSION
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendFeesEnquiryEmail(data: {
+  firstName: string
+  lastName?: string
+  email: string
+  contact: string
+  visitorDate?: string
+}) {
+  const fullName = `${data.firstName} ${data.lastName || ''}`.trim()
+  const rows: EmailRow[] = [
+    { label: 'Candidate Name', value: fullName },
+    { label: 'Email Address', value: data.email, isEmail: true },
+    { label: 'Contact Number', value: data.contact, isPhone: true },
+    ...(data.visitorDate ? [{ label: 'Preferred Date', value: data.visitorDate }] : []),
+  ]
 
-export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+  // 1. Notification to Admin
   await sendMail({
     from: FROM,
-    to: email,
-    subject: 'Password Reset "" Recruitment Institute',
-    html: `
-      <h2>Reset Your Password</h2>
-      <p>Click the link below to reset your password. This link expires in 1 hour.</p>
-      <a href="${resetUrl}" style="background:#e74c3c;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Reset Password</a>
-      <p>If you did not request this, please ignore this email.</p>
-    `,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    replyTo: data.email,
+    subject: `💰 New Fees Enquiry: ${fullName}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Fees & EMI Lead',
+      badgeBg: '#fef3c7',
+      badgeColor: '#b45309',
+      badgeBorder: '#fde68a',
+      title: 'New Fees Enquiry',
+      subtitle: `Requested pricing & installment plan`,
+      introText: 'A new candidate requested fee structure and EMI breakdown:',
+      rows,
+      actionButton: {
+        text: 'Share Fee Structure',
+        url: `mailto:${data.email}?subject=Fee%20Structure%20-%20Recruitment%20Institute`,
+        color: '#d97706',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+
+  // 2. Confirmation to Candidate
+  await sendMail({
+    from: FROM,
+    to: data.email,
+    subject: `Fee Structure & EMI Information — Recruitment Institute`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Fees Enquiry Received',
+      badgeBg: '#f0fdf4',
+      badgeColor: '#15803d',
+      badgeBorder: '#bbf7d0',
+      title: `Hello, ${data.firstName}!`,
+      subtitle: 'Thank you for requesting fee information',
+      introText: 'We have received your enquiry. Our admissions team will share the complete program pricing, scholarship concessions, and flexible EMI options with you shortly.',
+      rows: [
+        { label: 'Requested By', value: fullName },
+        { label: 'Contact Phone', value: data.contact, isPhone: true },
+      ],
+      actionButton: {
+        text: '💬 Chat on WhatsApp (+91 7385204165)',
+        url: 'https://wa.me/917385204165?text=Hi%2C%20I%20requested%20fee%20details%20for%20HR%20courses',
+        color: '#059669',
+      },
+    }),
   })
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// 4. REGISTRATION (CANDIDATE / STUDENT)
+// ─────────────────────────────────────────────────────────────────────────────
 export async function sendRegistrationEmail(data: {
   name: string
   email: string
@@ -276,6 +295,17 @@ export async function sendRegistrationEmail(data: {
   comments?: string
 }) {
   const isCandidate = data.type === 'candidate'
+  const locationStr = [data.city, data.state].filter(Boolean).join(', ')
+
+  const adminRows: EmailRow[] = [
+    { label: 'Full Name', value: data.name },
+    { label: 'Email Address', value: data.email, isEmail: true },
+    ...(data.phone ? [{ label: 'Mobile / Phone', value: data.phone, isPhone: true }] : []),
+    ...(data.courseSelect ? [{ label: 'Course Track', value: data.courseSelect, isHighlight: true }] : []),
+    ...(locationStr ? [{ label: 'Location', value: locationStr }] : []),
+    ...(data.address ? [{ label: 'Street Address', value: data.address }] : []),
+    ...(data.comments ? [{ label: 'Comments / Goal', value: data.comments }] : []),
+  ]
 
   // 1. ADMIN NOTIFICATION: Send registration details to sesasiba.es@gmail.com
   await sendMail({
@@ -284,178 +314,348 @@ export async function sendRegistrationEmail(data: {
     cc: getEmailCC(),
     replyTo: data.email,
     subject: `👤 New ${isCandidate ? 'Candidate' : 'Student'} Registration: ${data.name}`,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:28px 32px;color:#ffffff;">
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#93c5fd;margin-bottom:6px;">
-              Portal Registration Alert
-            </div>
-            <h1 style="margin:0;font-size:22px;font-weight:700;color:#ffffff;line-height:1.2;">
-              New ${isCandidate ? 'Candidate' : 'Student'} Registered
-            </h1>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 20px;font-size:15px;color:#334155;line-height:1.6;">
-              A new user has just registered on the Recruitment Institute portal:
-            </p>
-            <table style="width:100%;border-collapse:separate;border-spacing:0;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:24px;overflow:hidden;">
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;width:35%;border-bottom:1px solid #e2e8f0;">Full Name</td>
-                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e8f0;">${data.name}</td>
-              </tr>
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Email Address</td>
-                <td style="padding:14px 18px;font-size:14px;color:#2563eb;border-bottom:1px solid #e2e8f0;">
-                  <a href="mailto:${data.email}" style="color:#2563eb;text-decoration:none;font-weight:600;">${data.email}</a>
-                </td>
-              </tr>
-              ${data.phone ? `
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Mobile / Phone</td>
-                <td style="padding:14px 18px;font-size:14px;font-weight:600;color:#0f172a;border-bottom:1px solid #e2e8f0;">
-                  <a href="tel:${data.phone}" style="color:#0f172a;text-decoration:none;">${data.phone}</a>
-                </td>
-              </tr>
-              ` : ''}
-              ${data.courseSelect ? `
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Course Track</td>
-                <td style="padding:14px 18px;font-size:14px;font-weight:700;color:#1e40af;border-bottom:1px solid #e2e8f0;">${data.courseSelect}</td>
-              </tr>
-              ` : ''}
-              ${(data.city || data.state) ? `
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;border-bottom:1px solid #e2e8f0;">Location</td>
-                <td style="padding:14px 18px;font-size:14px;color:#334155;border-bottom:1px solid #e2e8f0;">${[data.city, data.state].filter(Boolean).join(', ')}</td>
-              </tr>
-              ` : ''}
-              ${data.comments ? `
-              <tr>
-                <td style="padding:14px 18px;font-size:13px;font-weight:600;color:#64748b;">Comments / Goal</td>
-                <td style="padding:14px 18px;font-size:13px;color:#475569;line-height:1.5;">${data.comments}</td>
-              </tr>
-              ` : ''}
-            </table>
-            <div style="text-align:center;padding-top:8px;">
-              <a href="https://recruitmentinstitute.in/admin/candidates" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
-                Review &amp; Approve in Admin Panel &rarr;
-              </a>
-            </div>
-          </div>
-          <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;">
-            Recruitment Institute System Notification • Delivered to ${ADMIN_EMAIL}
-          </div>
-        </div>
-      </div>
-    `,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Portal Registration Alert',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: `New ${isCandidate ? 'Candidate' : 'Student'} Registered`,
+      subtitle: `Account created for ${data.name}`,
+      introText: 'A new user has just registered on the Recruitment Institute portal:',
+      rows: adminRows,
+      actionButton: {
+        text: 'Review in Admin Panel →',
+        url: 'https://recruitmentinstitute.in/admin/candidates',
+        color: '#2563eb',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
   })
 
-  // 2. CANDIDATE CONFIRMATION EMAIL
-  const candidateSubject = isCandidate
-    ? 'Registration Received — Welcome to Recruitment Institute'
-    : 'Welcome to Recruitment Institute!'
-
+  // 2. CANDIDATE CONFIRMATION
   await sendMail({
     from: FROM,
     to: data.email,
-    subject: candidateSubject,
-    html: `
-      <div style="background:#f1f5f9;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-        <div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;">
-          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:32px;text-align:center;color:#ffffff;">
-            <div style="display:inline-block;padding:6px 16px;border-radius:50px;background:rgba(255,255,255,0.15);color:#93c5fd;font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px;">
-              Welcome to the Community
-            </div>
-            <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:#ffffff;">
-              Hello, ${data.name}!
-            </h1>
-            <p style="margin:0;font-size:14px;color:#cbd5e1;">Your registration has been received successfully.</p>
-          </div>
-          <div style="padding:32px;">
-            <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
-              Dear <strong>${data.name}</strong>,
-            </p>
-            <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7;">
-              Thank you for registering with <strong>Recruitment Institute</strong>. Your candidate profile is being verified by our admissions team. Once activated, you will have complete access to student learning resources, batch timetables, and career support.
-            </p>
-            <div style="background:#f8fafc;border-radius:12px;padding:20px;margin:24px 0;border:1px solid #e2e8f0;">
-              <h3 style="margin:0 0 10px;font-size:14px;font-weight:700;color:#0f172a;">What’s Next?</h3>
-              <ul style="margin:0;padding-left:20px;font-size:13px;color:#475569;line-height:1.7;">
-                <li>Our academic counselor will verify your submitted details.</li>
-                <li>You can explore available batch timings and upcoming cohorts.</li>
-                <li>Connect with mentors directly for career counseling.</li>
-              </ul>
-            </div>
-            <div style="text-align:center;margin-top:24px;">
-              <a href="https://wa.me/917385204165?text=Hi%2C%20I%20have%20registered%20as%20a%20candidate%20on%20Recruitment%20Institute" style="display:inline-block;background:#059669;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:14px;">
-                💬 Chat with Admissions Counselor (+91 7385204165)
-              </a>
-            </div>
-          </div>
-          <div style="background:#f8fafc;padding:20px 32px;border-top:1px solid #e2e8f0;font-size:12px;color:#94a3b8;text-align:center;line-height:1.6;">
-            <strong style="color:#64748b;">Recruitment Institute</strong><br/>
-            Pune Office • Live Interactive Virtual Sessions Worldwide<br/>
-            📧 <a href="mailto:support@recruitmentinstitute.in" style="color:#64748b;">support@recruitmentinstitute.in</a> | 📞 +91 7385204165
-          </div>
-        </div>
-      </div>
-    `,
+    subject: `Welcome to Recruitment Institute, ${data.name}!`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Registration Received',
+      badgeBg: '#f0fdf4',
+      badgeColor: '#15803d',
+      badgeBorder: '#bbf7d0',
+      title: `Welcome, ${data.name}!`,
+      subtitle: 'Your candidate enrollment registration is received',
+      introText: 'Thank you for registering with <strong>Recruitment Institute</strong>. Our academic team is reviewing your profile and will activate your student access once verified.',
+      rows: [
+        { label: 'Full Name', value: data.name },
+        { label: 'Registered Email', value: data.email, isEmail: true },
+        ...(data.courseSelect ? [{ label: 'Selected Track', value: data.courseSelect, isHighlight: true }] : []),
+      ],
+      actionButton: {
+        text: '💬 Connect with Counselor on WhatsApp',
+        url: 'https://wa.me/917385204165?text=Hi%2C%20I%20just%20registered%20on%20Recruitment%20Institute',
+        color: '#059669',
+      },
+      secondaryButton: {
+        text: 'Go to Candidate Portal →',
+        url: 'https://recruitmentinstitute.in/candidate-login',
+      },
+    }),
   })
 }
 
-export async function sendBlogNotificationToSubscribers(
-  subscribers: string[],
-  blog: { title: string; slug: string }
-) {
-  const blogUrl = `https://recruitmentinstitute.in/blogs/${blog.slug}`
-  for (const email of subscribers) {
-    await sendMail({
-      from: FROM,
-      to: email,
-      subject: `New Article: ${blog.title} "" Recruitment Institute`,
-      html: `
-        <h2>New Blog Post Published</h2>
-        <h3>${blog.title}</h3>
-        <a href="${blogUrl}">Read Now →</a>
-        <br/><br/>
-        <small><a href="https://recruitmentinstitute.in/unsubscribe?email=${encodeURIComponent(email)}">Unsubscribe</a></small>
-      `,
-    })
-  }
-}
-
-const REMINDER_LABEL: Record<'24h' | '1h' | '15m', string> = {
-  '24h': 'tomorrow',
-  '1h': 'in 1 hour',
-  '15m': 'in 15 minutes',
-}
-
-export async function sendSessionReminderEmail(data: {
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. ENROLLMENT & PAYMENT CONFIRMATION
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendPaymentConfirmationEmail(data: {
   studentEmail: string
   studentName: string
-  sessionTitle: string
-  batchName: string
-  sessionDate: string
-  startTime: string
-  meetLink: string | null
-  lead: '24h' | '1h' | '15m'
+  courseTitle: string
+  amount: number
+  transactionId: string
+  invoiceNumber: string
+  planName?: string
 }) {
+  const formattedAmount = `₹${data.amount.toLocaleString('en-IN')}`
+  const rows: EmailRow[] = [
+    { label: 'Student Name', value: data.studentName },
+    { label: 'Student Email', value: data.studentEmail, isEmail: true },
+    { label: 'Course Enrolled', value: data.courseTitle, isHighlight: true },
+    { label: 'Amount Paid', value: formattedAmount, isHighlight: true },
+    { label: 'Transaction ID', value: data.transactionId, isMonospace: true },
+    { label: 'Invoice Number', value: data.invoiceNumber, isMonospace: true },
+  ]
+
+  // 1. ADMIN NOTIFICATION: Send payment alert to sesasiba.es@gmail.com
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `💳 [PAYMENT SUCCESS] ${data.studentName} enrolled in ${data.courseTitle} (${formattedAmount})`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Payment & Enrollment Activated',
+      badgeBg: '#ecfdf5',
+      badgeColor: '#047857',
+      badgeBorder: '#a7f3d0',
+      title: 'New Enrollment Payment Received',
+      subtitle: `${data.studentName} enrolled in ${data.courseTitle}`,
+      introText: `A successful fee payment of <strong>${formattedAmount}</strong> has been processed via Razorpay:`,
+      rows,
+      actionButton: {
+        text: 'Manage Student in Admin Panel →',
+        url: 'https://recruitmentinstitute.in/admin/enrollments',
+        color: '#059669',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+
+  // 2. STUDENT CONFIRMATION
   await sendMail({
     from: FROM,
     to: data.studentEmail,
-    subject: `Reminder: ${data.sessionTitle} starts ${REMINDER_LABEL[data.lead]}`,
-    html: `
-      <h2>Upcoming Training Session</h2>
-      <p>Hi ${data.studentName},</p>
-      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}) starts ${REMINDER_LABEL[data.lead]}.</p>
-      <p><strong>Date:</strong> ${data.sessionDate}<br/><strong>Time:</strong> ${data.startTime}</p>
-      ${data.meetLink
-        ? `<a href="${data.meetLink}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Join Session</a>`
-        : `<p>The trainer will add the meeting link shortly before the session starts — check your dashboard.</p>`}
-      <br/>
-      <p>Best regards,<br/>Recruitment Institute Team</p>
-    `,
+    subject: `Payment Successful! Welcome to ${data.courseTitle} — Recruitment Institute`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Payment Confirmed',
+      badgeBg: '#ecfdf5',
+      badgeColor: '#047857',
+      badgeBorder: '#a7f3d0',
+      title: `Welcome, ${data.studentName}!`,
+      subtitle: `Your enrollment in ${data.courseTitle} is active`,
+      introText: `We have received your payment of <strong>${formattedAmount}</strong>. Your official tax invoice <strong>${data.invoiceNumber}</strong> has been generated and your student dashboard is ready.`,
+      rows: [
+        { label: 'Course', value: data.courseTitle, isHighlight: true },
+        { label: 'Amount Paid', value: formattedAmount },
+        { label: 'Transaction Ref', value: data.transactionId, isMonospace: true },
+        { label: 'Invoice No', value: data.invoiceNumber, isMonospace: true },
+      ],
+      actionButton: {
+        text: 'Access Student LMS Dashboard →',
+        url: 'https://recruitmentinstitute.in/student-login',
+        color: '#2563eb',
+      },
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. COMMUNITY FORUM ACTIVITY
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendCommunityQuestionAdminAlert(data: {
+  userName: string
+  userEmail?: string | null
+  question: string
+  questionId: number
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Author Name', value: data.userName },
+    ...(data.userEmail ? [{ label: 'Author Email', value: data.userEmail, isEmail: true }] : []),
+    { label: 'Question', value: `“${data.question}”` },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `💬 [Community Discussion] New Question Posted by ${data.userName}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Community Forum Activity',
+      badgeBg: '#eef2ff',
+      badgeColor: '#4338ca',
+      badgeBorder: '#c7d2fe',
+      title: 'New Discussion Question Posted',
+      subtitle: `Posted by ${data.userName}`,
+      introText: 'A new question has been posted on the Recruitment Institute community discussion board:',
+      rows,
+      actionButton: {
+        text: 'View & Answer in Forum →',
+        url: `https://recruitmentinstitute.in/community/${data.questionId}`,
+        color: '#4f46e5',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+}
+
+export async function sendCommunityAnswerAdminAlert(data: {
+  authorName: string
+  authorEmail?: string | null
+  questionText: string
+  answer: string
+  questionId: number
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Reply Author', value: data.authorName },
+    ...(data.authorEmail ? [{ label: 'Author Email', value: data.authorEmail, isEmail: true }] : []),
+    { label: 'Original Topic', value: data.questionText },
+    { label: 'Submitted Answer', value: data.answer },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `💬 [Community Reply] ${data.authorName} answered a question`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Community Forum Reply',
+      badgeBg: '#f8fafc',
+      badgeColor: '#334155',
+      badgeBorder: '#cbd5e1',
+      title: 'New Reply on Discussion Board',
+      subtitle: `Response by ${data.authorName}`,
+      introText: 'A member has contributed a reply to a discussion topic:',
+      rows,
+      actionButton: {
+        text: 'Moderate Community Post →',
+        url: `https://recruitmentinstitute.in/community/${data.questionId}`,
+        color: '#0f172a',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 7. BATCH CREATION & REMINDERS
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendBatchCreatedAdminAlert(data: {
+  batchName: string
+  courseTitle: string
+  startDate: string
+  trainerName?: string
+  maxSeats?: number
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Batch Name', value: data.batchName },
+    { label: 'Course Track', value: data.courseTitle, isHighlight: true },
+    { label: 'Start Date', value: data.startDate, isHighlight: true },
+    ...(data.trainerName ? [{ label: 'Assigned Trainer', value: data.trainerName }] : []),
+    ...(data.maxSeats ? [{ label: 'Max Capacity', value: `${data.maxSeats} Students` }] : []),
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `🚀 [New Batch Alert] ${data.batchName} for ${data.courseTitle}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Cohort Management',
+      badgeBg: '#faf5ff',
+      badgeColor: '#7e22ce',
+      badgeBorder: '#e9d5ff',
+      title: 'New Training Batch Created',
+      subtitle: `${data.batchName} • ${data.courseTitle}`,
+      introText: 'A new training cohort has been scheduled on the platform:',
+      rows,
+      actionButton: {
+        text: 'Open Batch Management →',
+        url: 'https://recruitmentinstitute.in/admin/batches',
+        color: '#7c3aed',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+}
+
+export async function sendBatchStartReminderEmail(data: {
+  recipientEmail: string
+  recipientName: string
+  role: 'student' | 'trainer'
+  batchName: string
+  courseTitle: string
+  startDate: string
+  leadLabel: string
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Batch Name', value: data.batchName },
+    { label: 'Course Track', value: data.courseTitle, isHighlight: true },
+    { label: 'Start Date', value: data.startDate },
+    { label: 'Starts In', value: data.leadLabel, isHighlight: true },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: data.recipientEmail,
+    subject: `Reminder: ${data.batchName} starts ${data.leadLabel} (${data.startDate})`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Batch Starting Soon',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: `Upcoming Batch: ${data.batchName}`,
+      subtitle: `Your cohort starts ${data.leadLabel}`,
+      introText: `Hi <strong>${data.recipientName}</strong>,<br/>This is a reminder that your training batch for <strong>${data.courseTitle}</strong> is scheduled to commence <strong>${data.leadLabel}</strong>.`,
+      rows,
+      actionButton: {
+        text: data.role === 'trainer' ? 'Open Trainer Portal →' : 'Access Student Dashboard →',
+        url: data.role === 'trainer' ? 'https://recruitmentinstitute.in/trainer-login' : 'https://recruitmentinstitute.in/student-login',
+        color: '#2563eb',
+      },
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 8. LIVE SESSIONS & ATTENDANCE REPORT
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendSessionAttendanceAdminReportEmail(data: {
+  trainerName: string
+  batchName: string
+  courseTitle: string
+  sessionTitle: string
+  sessionDate: string
+  startTime: string
+  endTime?: string
+  totalEnrolled: number
+  presentCount: number
+  absentCount: number
+  presentStudentNames?: string[]
+  absentStudentNames?: string[]
+}) {
+  const attendanceRate = data.totalEnrolled > 0
+    ? Math.round((data.presentCount / data.totalEnrolled) * 100)
+    : 0
+
+  const presentList = data.presentStudentNames && data.presentStudentNames.length > 0
+    ? data.presentStudentNames.join(', ')
+    : 'None'
+
+  const absentList = data.absentStudentNames && data.absentStudentNames.length > 0
+    ? data.absentStudentNames.join(', ')
+    : 'None'
+
+  const rows: EmailRow[] = [
+    { label: 'Session Title', value: data.sessionTitle },
+    { label: 'Batch / Course', value: `${data.batchName} (${data.courseTitle})` },
+    { label: 'Trainer', value: data.trainerName },
+    { label: 'Date & Time', value: `${data.sessionDate} • ${data.startTime} - ${data.endTime || 'End'}` },
+    { label: 'Total Enrolled', value: `${data.totalEnrolled} Students` },
+    { label: 'Present Students', value: `${data.presentCount} Present (${attendanceRate}%)`, isHighlight: true },
+    { label: 'Absent Students', value: `${data.absentCount} Absent` },
+    { label: 'Present Names', value: presentList },
+    { label: 'Absent Names', value: absentList },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `📊 [Session Completed] ${data.sessionTitle} Attendance: ${data.presentCount}/${data.totalEnrolled} (${attendanceRate}%)`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Live Class Attendance Summary',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: 'Session Finalized & Attendance Report',
+      subtitle: `${data.sessionTitle} • ${data.batchName}`,
+      introText: `Live session has concluded and attendance has been verified by mentor <strong>${data.trainerName}</strong>:`,
+      rows,
+      actionButton: {
+        text: 'View Sessions & LMS Logs →',
+        url: 'https://recruitmentinstitute.in/admin/sessions',
+        color: '#0f172a',
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
   })
 }
 
@@ -471,66 +671,194 @@ export async function sendSessionScheduledEmail(data: {
   meetLink: string | null
   trainerName?: string
 }) {
-  try {
-    const meetButton = data.meetLink
-      ? `<div style="margin: 24px 0;">
-           <a href="${data.meetLink}" target="_blank" rel="noopener noreferrer" style="background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(37,99,235,0.2);">
-             🚀 Join Google Meet Room
-           </a>
-           <p style="margin-top: 8px; font-size: 12px; color: #64748b;">Link: <a href="${data.meetLink}" style="color: #2563eb;">${data.meetLink}</a></p>
-         </div>`
-      : `<p style="color: #d97706; font-size: 13px;">The meeting room link will be updated in your student dashboard before class starts.</p>`
+  const rows: EmailRow[] = [
+    { label: 'Session Title', value: data.sessionTitle },
+    { label: 'Batch', value: data.batchName },
+    ...(data.courseTitle ? [{ label: 'Course', value: data.courseTitle }] : []),
+    ...(data.sessionDate ? [{ label: 'Date', value: data.sessionDate }] : []),
+    ...(data.startTime ? [{ label: 'Time', value: `${data.startTime} - ${data.endTime || ''}` }] : []),
+    ...(data.trainerName ? [{ label: 'Trainer', value: data.trainerName }] : []),
+    ...(data.meetLink ? [{ label: 'Google Meet', value: data.meetLink, isMonospace: true }] : []),
+  ]
 
-    await sendMail({
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `New Live Class Scheduled: ${data.sessionTitle} (${data.batchName})`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Live Class Scheduled',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: 'New Live Class Scheduled',
+      subtitle: `${data.sessionTitle} • ${data.batchName}`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>A new live class has been scheduled for your cohort:`,
+      rows,
+      actionButton: data.meetLink
+        ? {
+            text: '🚀 Join Google Meet Room',
+            url: data.meetLink,
+            color: '#2563eb',
+          }
+        : undefined,
+      secondaryButton: {
+        text: 'Go to Student Dashboard →',
+        url: 'https://recruitmentinstitute.in/student-login',
+      },
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 9. CERTIFICATE & PASSWORD RESET
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendCertificateIssuedEmail(data: {
+  studentEmail: string
+  studentName: string
+  courseTitle: string
+  certificateNo: string
+  finalScore: number
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Student Name', value: data.studentName },
+    { label: 'Course Completed', value: data.courseTitle, isHighlight: true },
+    { label: 'Certificate No', value: data.certificateNo, isMonospace: true },
+    { label: 'Final Score', value: `${data.finalScore}%`, isHighlight: true },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `🎓 Certificate Issued: ${data.courseTitle}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Official Certification',
+      badgeBg: '#ecfdf5',
+      badgeColor: '#047857',
+      badgeBorder: '#a7f3d0',
+      title: 'Congratulations on Your Certification!',
+      subtitle: `Issued to ${data.studentName}`,
+      introText: `Congratulations <strong>${data.studentName}</strong>! You have successfully completed all curriculum requirements and assessments for <strong>${data.courseTitle}</strong>.`,
+      rows,
+      actionButton: {
+        text: 'Download Official Certificate (PDF) →',
+        url: 'https://recruitmentinstitute.in/profile/certificate',
+        color: '#059669',
+      },
+    }),
+  })
+}
+
+export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+  await sendMail({
+    from: FROM,
+    to: email,
+    subject: 'Password Reset — Recruitment Institute',
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Security Alert',
+      badgeBg: '#fef2f2',
+      badgeColor: '#b91c1c',
+      badgeBorder: '#fecaca',
+      title: 'Reset Your Password',
+      subtitle: 'Account security notification',
+      introText: 'We received a request to reset your password. Click the button below to set a new password. This link expires in 1 hour.',
+      rows: [
+        { label: 'Account Email', value: email, isEmail: true },
+        { label: 'Expiry', value: '1 Hour' },
+      ],
+      actionButton: {
+        text: 'Reset Password Now →',
+        url: resetUrl,
+        color: '#dc2626',
+      },
+      footerNote: 'If you did not request a password reset, you can safely ignore this email.',
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 10. BLOG NOTIFICATIONS & SESSION LIFECYCLE ALERTS
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendBlogNotificationToSubscribers(subscribers: Array<string | { email: string }>, post: { title: string; excerpt?: string | null; slug: string }) {
+  const postUrl = `https://recruitmentinstitute.in/blogs/${post.slug}`
+  for (const sub of subscribers) {
+    const email = typeof sub === 'string' ? sub : sub?.email
+    if (!email) continue
+    sendMail({
       from: FROM,
-      to: data.studentEmail,
-      subject: `New Live Class Scheduled: ${data.sessionTitle} (${data.batchName})`,
-      html: `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
-          <div style="border-bottom: 2px solid #3b82f6; padding-bottom: 12px; margin-bottom: 20px;">
-            <h2 style="color: #0f172a; margin: 0; font-size: 20px;">📅 New Live Training Session Scheduled</h2>
-            <p style="color: #64748b; font-size: 13px; margin: 4px 0 0 0;">Recruitment Institute — Live Virtual Classroom</p>
-          </div>
-          
-          <p style="color: #334155; font-size: 14px;">Hi <strong>${data.studentName}</strong>,</p>
-          <p style="color: #334155; font-size: 14px;">A new live class has been scheduled for your cohort in <strong>${data.batchName}</strong>${data.courseTitle ? ` (${data.courseTitle})` : ''}.</p>
-          
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 20px 0;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
-              <tr>
-                <td style="padding: 6px 0; color: #64748b; width: 120px;"><strong>Topic:</strong></td>
-                <td style="padding: 6px 0; color: #0f172a; font-weight: 600;">${data.sessionTitle}</td>
-              </tr>
-              ${data.sessionDate ? `
-              <tr>
-                <td style="padding: 6px 0; color: #64748b;"><strong>Date:</strong></td>
-                <td style="padding: 6px 0; color: #0f172a;">${data.sessionDate}</td>
-              </tr>` : ''}
-              ${data.startTime ? `
-              <tr>
-                <td style="padding: 6px 0; color: #64748b;"><strong>Time:</strong></td>
-                <td style="padding: 6px 0; color: #0f172a;">${data.startTime} ${data.endTime ? `— ${data.endTime}` : ''} (IST)</td>
-              </tr>` : ''}
-              ${data.trainerName ? `
-              <tr>
-                <td style="padding: 6px 0; color: #64748b;"><strong>Faculty:</strong></td>
-                <td style="padding: 6px 0; color: #0f172a;">${data.trainerName}</td>
-              </tr>` : ''}
-            </table>
-          </div>
-
-          ${meetButton}
-
-          <p style="color: #64748b; font-size: 12px; margin-top: 24px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
-            Please ensure you have a working microphone and camera before joining. Attendance will be marked by the instructor during the class.
-          </p>
-          <p style="color: #334155; font-size: 13px; margin-bottom: 0;">Best regards,<br/><strong>Recruitment Institute Academic Team</strong></p>
-        </div>
-      `,
-    })
-  } catch (err: any) {
-    console.error('Failed to send session scheduled email:', err.message)
+      to: email,
+      subject: `New Article: ${post.title} — Recruitment Institute`,
+      html: renderExecutiveEmailHtml({
+        badgeText: 'New Article Published',
+        badgeBg: '#eff6ff',
+        badgeColor: '#1d4ed8',
+        badgeBorder: '#bfdbfe',
+        title: post.title,
+        subtitle: 'HR & Recruitment Industry Insights',
+        introText: post.excerpt || 'We have published a new expert guide to help elevate your talent acquisition strategies.',
+        rows: [
+          { label: 'Published By', value: 'Recruitment Institute Editorial' },
+        ],
+        actionButton: {
+          text: 'Read Full Article →',
+          url: postUrl,
+          color: '#2563eb',
+        },
+      }),
+    }).catch(console.error)
   }
+}
+
+export async function sendSessionReminderEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  sessionDate: string
+  startTime: string
+  meetLink: string | null
+  lead: '24h' | '1h' | '15m'
+}) {
+  const leadLabels: Record<string, string> = {
+    '24h': 'in 24 hours',
+    '1h': 'in 1 hour',
+    '15m': 'in 15 minutes',
+  }
+  const startsIn = leadLabels[data.lead] || `in ${data.lead}`
+
+  const rows: EmailRow[] = [
+    { label: 'Session Title', value: data.sessionTitle },
+    { label: 'Batch', value: data.batchName },
+    { label: 'Date', value: data.sessionDate },
+    { label: 'Time', value: data.startTime, isHighlight: true },
+    ...(data.meetLink ? [{ label: 'Google Meet', value: data.meetLink, isMonospace: true }] : []),
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Reminder: ${data.sessionTitle} starts ${startsIn}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Class Starting Soon',
+      badgeBg: '#fef3c7',
+      badgeColor: '#b45309',
+      badgeBorder: '#fde68a',
+      title: 'Training Session Reminder',
+      subtitle: `${data.sessionTitle} starts ${startsIn}`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>Your live training class for <strong>${data.batchName}</strong> is about to begin.`,
+      rows,
+      actionButton: data.meetLink
+        ? {
+            text: '🚀 Join Live Class Now',
+            url: data.meetLink,
+            color: '#2563eb',
+          }
+        : {
+            text: 'Open Student Dashboard →',
+            url: 'https://recruitmentinstitute.in/student-login',
+            color: '#2563eb',
+          },
+    }),
+  })
 }
 
 export async function sendSessionRescheduledEmail(data: {
@@ -538,22 +866,42 @@ export async function sendSessionRescheduledEmail(data: {
   studentName: string
   sessionTitle: string
   batchName: string
+  oldDate?: string
+  oldTime?: string
+  newDate?: string
+  newStartTime?: string
+  newEndTime?: string
   meetLink: string | null
 }) {
+  const rows: EmailRow[] = [
+    { label: 'Session Title', value: data.sessionTitle },
+    { label: 'Batch', value: data.batchName },
+    ...(data.newDate && data.newStartTime ? [{ label: 'New Date & Time', value: `${data.newDate} at ${data.newStartTime}`, isHighlight: true }] : []),
+    ...(data.oldDate ? [{ label: 'Previous Schedule', value: `${data.oldDate} at ${data.oldTime || ''}` }] : []),
+    ...(data.meetLink ? [{ label: 'Google Meet', value: data.meetLink, isMonospace: true }] : []),
+  ]
+
   await sendMail({
     from: FROM,
     to: data.studentEmail,
-    subject: `Session Rescheduled: ${data.sessionTitle}`,
-    html: `
-      <h2>Training Session Updated</h2>
-      <p>Hi ${data.studentName},</p>
-      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}) has been rescheduled. Check your calendar invite or dashboard for the new date and time.</p>
-      ${data.meetLink
-        ? `<a href="${data.meetLink}" style="background:#2563eb;color:#fff;padding:10px 20px;text-decoration:none;border-radius:4px;">Join Session</a>`
-        : ''}
-      <br/>
-      <p>Best regards,<br/>Recruitment Institute Team</p>
-    `,
+    subject: `Schedule Update: ${data.sessionTitle} (${data.batchName})`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Schedule Updated',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: 'Session Rescheduled',
+      subtitle: `${data.sessionTitle} has a new time`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>Please note that the timing for your upcoming live class has been updated:`,
+      rows,
+      actionButton: data.meetLink
+        ? {
+            text: '🚀 Join Live Room at New Time',
+            url: data.meetLink,
+            color: '#2563eb',
+          }
+        : undefined,
+    }),
   })
 }
 
@@ -565,162 +913,30 @@ export async function sendSessionCancelledEmail(data: {
   sessionDate: string
   startTime: string
 }) {
+  const rows: EmailRow[] = [
+    { label: 'Session Title', value: data.sessionTitle },
+    { label: 'Batch', value: data.batchName },
+    { label: 'Original Schedule', value: `${data.sessionDate} at ${data.startTime}` },
+  ]
+
   await sendMail({
     from: FROM,
     to: data.studentEmail,
     subject: `Session Cancelled: ${data.sessionTitle}`,
-    html: `
-      <h2>Training Session Cancelled</h2>
-      <p>Hi ${data.studentName},</p>
-      <p>Your session <strong>${data.sessionTitle}</strong> (${data.batchName}), originally scheduled for ${data.sessionDate} at ${data.startTime}, has been cancelled.</p>
-      <p>It has also been removed from your Google Calendar.</p>
-      <br/>
-      <p>Best regards,<br/>Recruitment Institute Team</p>
-    `,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Session Cancelled',
+      badgeBg: '#fef2f2',
+      badgeColor: '#b91c1c',
+      badgeBorder: '#fecaca',
+      title: 'Training Session Cancelled',
+      subtitle: `${data.sessionTitle} (${data.batchName})`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>Your session scheduled for <strong>${data.sessionDate} at ${data.startTime}</strong> has been cancelled. Your trainer or administrator will update the revised schedule in your student dashboard.`,
+      rows,
+      actionButton: {
+        text: 'View Updated Schedule →',
+        url: 'https://recruitmentinstitute.in/student-login',
+        color: '#0f172a',
+      },
+    }),
   })
 }
-
-export async function sendPaymentConfirmationEmail(data: {
-  studentEmail: string
-  studentName: string
-  courseTitle: string
-  amount: number
-  transactionId: string
-  invoiceNumber: string
-}) {
-  await sendMail({
-    from: FROM,
-    to: data.studentEmail,
-    subject: `Enrollment Confirmed: ${data.courseTitle} - Recruitment Institute`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
-        <h2 style="color: #E63946;">Welcome to Recruitment Institute!</h2>
-        <p>Hi <strong>${data.studentName}</strong>,</p>
-        <p>Your payment of <strong>₹${Number(data.amount).toLocaleString('en-IN')}</strong> has been successfully processed via Razorpay.</p>
-        <p><strong>Course Enrolled:</strong> ${data.courseTitle}</p>
-        <p><strong>Transaction ID:</strong> ${data.transactionId}</p>
-        <p><strong>Invoice Number:</strong> ${data.invoiceNumber}</p>
-        <br/>
-        <p>You can now log in to your Student Portal to access your learning schedule, study materials, and live batches:</p>
-        <a href="https://recruitmentinstitute.in/student-login" style="background-color: #E63946; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">Access Student Dashboard</a>
-        <br/><br/>
-        <p>If you have any questions, reply to this email or message our support team on WhatsApp at +91 7385204165.</p>
-        <p>Best regards,<br/><strong>Recruitment Institute Admissions Team</strong></p>
-      </div>
-    `,
-  })
-}
-
-export async function sendCertificateIssuedEmail(data: {
-  studentEmail: string
-  studentName: string
-  courseTitle: string
-  certificateNo: string
-  finalScore: number
-}) {
-  await sendMail({
-    from: FROM,
-    to: data.studentEmail,
-    subject: `🎓 Certificate Issued: ${data.courseTitle}`,
-    html: `
-      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #0A1628;">
-        <h2 style="color: #059669;">Congratulations, ${data.studentName}!</h2>
-        <p>You've successfully completed <strong>${data.courseTitle}</strong> with a final score of <strong>${data.finalScore}%</strong>.</p>
-        <p>Your certificate of completion has been issued.</p>
-        <p><strong>Certificate No:</strong> ${data.certificateNo}</p>
-        <br/>
-        <a href="https://recruitmentinstitute.in/student-login" style="background-color: #2563EB; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">View in Student Portal</a>
-        <br/><br/>
-        <p>Best regards,<br/><strong>Recruitment Institute Academic Team</strong></p>
-      </div>
-    `,
-  })
-}
-
-export async function sendBatchStartReminderEmail(data: {
-  recipientEmail: string
-  recipientName: string
-  role: 'student' | 'trainer'
-  batchName: string
-  courseTitle: string
-  startDate: string
-  leadLabel: string // e.g. "in 3 days" or "tomorrow"
-}) {
-  const isTomorrow = data.leadLabel.toLowerCase().includes('tomorrow') || data.leadLabel.includes('1d')
-  const cleanSubject = isTomorrow
-    ? `Reminder: Your training batch starts tomorrow (${data.batchName})`
-    : `Batch Schedule: ${data.batchName} starts in 3 days`
-
-  const audienceMessage = data.role === 'trainer'
-    ? `You are assigned as the mentor for the upcoming batch <strong style="color:#0F172A;">${data.batchName}</strong>.`
-    : `Your live training program for <strong style="color:#0F172A;">${data.courseTitle}</strong> begins <strong>${data.leadLabel}</strong>.`
-
-  return await sendMail({
-    from: FROM,
-    to: data.recipientEmail,
-    subject: cleanSubject,
-    html: `
-      <div style="background-color: #F8FAFC; padding: 32px 16px; font-family: Arial, Helvetica, sans-serif; color: #1E293B; line-height: 1.6;">
-        <div style="max-width: 580px; margin: 0 auto; background: #FFFFFF; border-radius: 12px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
-          
-          <div style="background: #0A1628; padding: 24px 28px; color: #FFFFFF; text-align: left;">
-            <p style="margin: 0 0 4px; font-size: 11px; font-weight: bold; color: #93C5FD; text-transform: uppercase; letter-spacing: 0.08em;">
-              Recruitment Institute • Batch Countdown
-            </p>
-            <h2 style="margin: 0; font-size: 20px; font-weight: bold; color: #FFFFFF;">
-              ${isTomorrow ? 'Batch Starts Tomorrow' : 'Batch Starts in 3 Days'}
-            </h2>
-          </div>
-
-          <div style="padding: 28px;">
-            <p style="font-size: 15px; color: #0F172A; margin: 0 0 16px;">
-              Dear <strong>${data.recipientName}</strong>,
-            </p>
-
-            <p style="font-size: 14px; color: #475569; margin: 0 0 20px;">
-              ${audienceMessage} Please review your schedule details below to prepare for the live session:
-            </p>
-
-            <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 18px; margin-bottom: 24px;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
-                <tr>
-                  <td style="padding: 6px 0; color: #64748B; width: 35%;"><strong>Course:</strong></td>
-                  <td style="padding: 6px 0; color: #0F172A; font-weight: bold;">${data.courseTitle}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: #64748B; border-top: 1px solid #F1F5F9;"><strong>Batch:</strong></td>
-                  <td style="padding: 6px 0; color: #2563EB; font-weight: bold; border-top: 1px solid #F1F5F9;">${data.batchName}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: #64748B; border-top: 1px solid #F1F5F9;"><strong>Start Date:</strong></td>
-                  <td style="padding: 6px 0; color: #059669; font-weight: bold; border-top: 1px solid #F1F5F9;">${data.startDate}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; color: #64748B; border-top: 1px solid #F1F5F9;"><strong>Format:</strong></td>
-                  <td style="padding: 6px 0; color: #334155; border-top: 1px solid #F1F5F9;">Live Video Sessions + Student LMS</td>
-                </tr>
-              </table>
-            </div>
-
-            <div style="text-align: center; margin-bottom: 24px;">
-              <a href="https://recruitmentinstitute.in/student-login" style="display: inline-block; padding: 12px 28px; background: #2563EB; color: #FFFFFF; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 14px;">
-                Access Student Dashboard &rarr;
-              </a>
-            </div>
-
-            <p style="font-size: 13px; color: #64748B; margin: 0; line-height: 1.5;">
-              If you have any questions regarding your batch timing, reply to this email or contact support on WhatsApp at +91 7385204165.
-            </p>
-          </div>
-
-          <div style="background: #F8FAFC; padding: 16px 28px; border-top: 1px solid #E2E8F0; font-size: 11px; color: #94A3B8; text-align: center;">
-            Recruitment Institute • Pune, Maharashtra | Online Interactive Training Worldwide
-          </div>
-        </div>
-      </div>
-    `,
-  })
-}
-
-export { sendMail }
-

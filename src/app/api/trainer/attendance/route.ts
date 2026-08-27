@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getUserSession } from '@/lib/auth'
 import { releaseAssessmentForPresentStudents } from '@/lib/services/assessmentReleaseService'
+import { sendSessionAttendanceAdminReportEmail } from '@/lib/email'
 
 export async function GET(req: NextRequest) {
   const session = await getUserSession()
@@ -129,9 +130,15 @@ export async function POST(req: NextRequest) {
       include: {
         batch: {
           include: {
-            enrollments: true,
+            course: { select: { id: true, title: true } },
+            enrollments: {
+              include: {
+                student: { select: { id: true, name: true, email: true } },
+              },
+            },
           },
         },
+        trainer: { select: { id: true, name: true } },
       },
     })
 
@@ -195,6 +202,39 @@ export async function POST(req: NextRequest) {
       : assessmentReleaseResult.skipped
         ? 'Assessment already released for this session.'
         : 'No assessment released (no syllabus module or no present students).'
+
+    // ── Dispatch attendance report email to admin ─────────────────────────
+    try {
+      const recordMap = new Map(records.map((r: { enrollmentId: number; present: boolean }) => [r.enrollmentId, r.present]))
+      const presentStudentNames: string[] = []
+      const absentStudentNames: string[] = []
+
+      classSession.batch.enrollments.forEach((en) => {
+        const isPres = recordMap.get(en.id)
+        if (isPres) {
+          presentStudentNames.push(en.student.name)
+        } else {
+          absentStudentNames.push(en.student.name)
+        }
+      })
+
+      await sendSessionAttendanceAdminReportEmail({
+        trainerName: classSession.trainer?.name || session.name || 'Assigned Mentor',
+        batchName: classSession.batch.name,
+        courseTitle: classSession.batch.course?.title || 'Program',
+        sessionTitle: classSession.title,
+        sessionDate: new Date(classSession.sessionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' }),
+        startTime: new Date(classSession.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }),
+        endTime: classSession.endTime ? new Date(classSession.endTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' }) : undefined,
+        totalEnrolled: classSession.batch.enrollments.length,
+        presentCount: presentStudentNames.length,
+        absentCount: absentStudentNames.length,
+        presentStudentNames,
+        absentStudentNames,
+      })
+    } catch (adminMailErr) {
+      console.error('[attendance POST] Admin attendance report email failed:', adminMailErr)
+    }
 
     return NextResponse.json({
       success: true,

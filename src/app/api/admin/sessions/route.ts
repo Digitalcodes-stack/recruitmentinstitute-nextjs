@@ -144,6 +144,20 @@ export async function POST(req: NextRequest) {
         notifiedCount++
       }
     }
+
+    // Also notify Administrator
+    sendSessionScheduledEmail({
+      studentEmail: process.env.ADMIN_EMAIL || 'sesasiba.es@gmail.com',
+      studentName: 'Administrator',
+      sessionTitle: session.title,
+      batchName: batch.name,
+      courseTitle: batch.course?.title,
+      sessionDate: dDate,
+      startTime: dStart,
+      endTime: dEnd,
+      meetLink: finalMeetLink,
+      trainerName: session.trainer?.name,
+    }).catch((e) => console.error('Admin session email error:', e.message))
   }
 
   await enqueueSessionReminders(session.id, startTimeDate)

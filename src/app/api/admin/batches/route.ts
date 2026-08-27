@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/auth'
 import { batchSchema } from '@/lib/validations'
 import { generateSessionsForBatch } from '@/lib/services/batchSessionGenerator'
+import { sendBatchCreatedAdminAlert } from '@/lib/email'
 
 async function guard() {
   const session = await getAdminSession()
@@ -68,6 +69,30 @@ export async function POST(req: NextRequest) {
       console.error('[batches POST] Session generation failed:', err)
       // Don't fail the batch creation — sessions can be generated later
     }
+  }
+
+  // ── Notify admin of new batch ──────────────────────────────────────────
+  try {
+    const courseInfo = await prisma.course.findUnique({
+      where: { id: batch.courseId },
+      select: { title: true },
+    })
+    const trainerInfo = batch.trainerId
+      ? await prisma.trainer.findUnique({
+          where: { id: batch.trainerId },
+          select: { name: true },
+        })
+      : null
+
+    await sendBatchCreatedAdminAlert({
+      batchName: batch.name,
+      courseTitle: courseInfo?.title || 'Course Program',
+      startDate: new Date(batch.startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      trainerName: trainerInfo?.name,
+      maxSeats: batch.capacity || undefined,
+    })
+  } catch (err) {
+    console.error('[batches POST] Admin alert failed:', err)
   }
 
   return NextResponse.json(

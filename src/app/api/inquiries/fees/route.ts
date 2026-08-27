@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
+import { sendFeesEnquiryEmail } from '@/lib/email'
 
 const feesEnquirySchema = z.object({
   firstName: z.string().min(1),
@@ -30,6 +31,8 @@ export async function POST(req: NextRequest) {
         visitorDate: visitorDate ? new Date(visitorDate) : null,
       },
     })
+
+    await sendFeesEnquiryEmail({ firstName, lastName, email, contact, visitorDate }).catch(console.error)
 
     return NextResponse.json({ success: true, message: 'Fees enquiry submitted' })
   } catch (error) {
