@@ -16,6 +16,7 @@ import {
   Zap,
   Award,
   BookOpen,
+  Sparkles,
 } from 'lucide-react'
 import { BatchItem, UpcomingBatchesProps } from '@/types/training'
 import { DEFAULT_BATCHES } from '@/lib/data/trainingData'
@@ -90,49 +91,12 @@ export default function UpcomingBatches({
   const getCourseTheme = (courseTitle: string = '', courseSlug: string = '') => {
     const normalized = (courseTitle + ' ' + courseSlug).toLowerCase()
 
-    if (normalized.includes('entrepreneur')) {
+    if (normalized.includes('entrepreneur') || normalized.includes('accelerator')) {
       return {
         name: 'Entrepreneurship',
-        accentColor: '#7C3AED',
-        headerGradient: 'linear-gradient(90deg, #7C3AED 0%, #A855F7 100%)',
-        cardBorder: '#E9D5FF',
-        cardActiveBorder: '#C084FC',
-        cardShadow: 'rgba(124, 58, 237, 0.08)',
-        badgeBg: '#FAF5FF',
-        badgeText: '#7C3AED',
-        badgeBorder: '#DDD6FE',
-        dateBoxStartColor: '#7C3AED',
-        btnGradient: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
-        btnShadow: 'rgba(124, 58, 237, 0.3)',
-        categoryTag: 'Entrepreneurship Track',
-      }
-    }
-
-    if (normalized.includes('corporate')) {
-      return {
-        name: 'Corporate Training',
-        accentColor: '#1E40AF',
-        headerGradient: 'linear-gradient(90deg, #1E40AF 0%, #3B82F6 100%)',
-        cardBorder: '#BFDBFE',
-        cardActiveBorder: '#60A5FA',
-        cardShadow: 'rgba(30, 64, 175, 0.08)',
-        badgeBg: '#EFF6FF',
-        badgeText: '#1E40AF',
-        badgeBorder: '#BFDBFE',
-        dateBoxStartColor: '#1E40AF',
-        btnGradient: 'linear-gradient(135deg, #1E40AF 0%, #1D4ED8 100%)',
-        btnShadow: 'rgba(30, 64, 175, 0.3)',
-        categoryTag: 'Corporate L&D Track',
-      }
-    }
-
-    if (normalized.includes('degree') || normalized.includes('diploma') || normalized.includes('academic')) {
-      return {
-        name: 'Degree Program',
         accentColor: '#D97706',
         headerGradient: 'linear-gradient(90deg, #D97706 0%, #F59E0B 100%)',
         cardBorder: '#FDE68A',
-        cardActiveBorder: '#FBBF24',
         cardShadow: 'rgba(217, 119, 6, 0.08)',
         badgeBg: '#FFFBEB',
         badgeText: '#B45309',
@@ -140,66 +104,90 @@ export default function UpcomingBatches({
         dateBoxStartColor: '#D97706',
         btnGradient: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
         btnShadow: 'rgba(217, 119, 6, 0.3)',
-        categoryTag: 'University Degree Track',
       }
     }
 
-    if (normalized.includes('recruitment') || normalized.includes('talent') || normalized.includes('sourcing')) {
+    if (normalized.includes('corporate')) {
       return {
-        name: 'Talent Acquisition',
+        name: 'Corporate Training',
+        accentColor: '#4F46E5',
+        headerGradient: 'linear-gradient(90deg, #4F46E5 0%, #6366F1 100%)',
+        cardBorder: '#C7D2FE',
+        cardShadow: 'rgba(79, 70, 229, 0.08)',
+        badgeBg: '#EEF2FF',
+        badgeText: '#4338CA',
+        badgeBorder: '#C7D2FE',
+        dateBoxStartColor: '#4F46E5',
+        btnGradient: 'linear-gradient(135deg, #4F46E5 0%, #4338CA 100%)',
+        btnShadow: 'rgba(79, 70, 229, 0.3)',
+      }
+    }
+
+    if (normalized.includes('consulting') || normalized.includes('growth')) {
+      return {
+        name: 'Business Consulting',
         accentColor: '#059669',
         headerGradient: 'linear-gradient(90deg, #059669 0%, #10B981 100%)',
-        cardBorder: '#A7F3D0',
-        cardActiveBorder: '#34D399',
+        cardBorder: '#BBF7D0',
         cardShadow: 'rgba(5, 150, 105, 0.08)',
-        badgeBg: '#ECFDF5',
-        badgeText: '#059669',
-        badgeBorder: '#A7F3D0',
+        badgeBg: '#F0FDF4',
+        badgeText: '#047857',
+        badgeBorder: '#BBF7D0',
         dateBoxStartColor: '#059669',
         btnGradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
         btnShadow: 'rgba(5, 150, 105, 0.3)',
-        categoryTag: 'Professional Recruitment Track',
       }
     }
 
-    if (normalized.includes('beginner') || normalized.includes('starter') || normalized.includes('foundation')) {
+    if (normalized.includes('masterclass') || normalized.includes('senior') || normalized.includes('advanced')) {
       return {
-        name: 'Foundation',
+        name: 'Senior Professionals',
+        accentColor: '#7C3AED',
+        headerGradient: 'linear-gradient(90deg, #7C3AED 0%, #9333EA 100%)',
+        cardBorder: '#DDD6FE',
+        cardShadow: 'rgba(124, 58, 237, 0.08)',
+        badgeBg: '#F5F3FF',
+        badgeText: '#6D28D9',
+        badgeBorder: '#DDD6FE',
+        dateBoxStartColor: '#7C3AED',
+        btnGradient: 'linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%)',
+        btnShadow: 'rgba(124, 58, 237, 0.3)',
+      }
+    }
+
+    if (normalized.includes('starter') || normalized.includes('fresher') || normalized.includes('beginner')) {
+      return {
+        name: 'For Freshers',
         accentColor: '#0284C7',
         headerGradient: 'linear-gradient(90deg, #0284C7 0%, #06B6D4 100%)',
         cardBorder: '#BAE6FD',
-        cardActiveBorder: '#38BDF8',
         cardShadow: 'rgba(2, 132, 199, 0.08)',
         badgeBg: '#F0F9FF',
-        badgeText: '#0284C7',
+        badgeText: '#0369A1',
         badgeBorder: '#BAE6FD',
         dateBoxStartColor: '#0284C7',
         btnGradient: 'linear-gradient(135deg, #0284C7 0%, #0369A1 100%)',
         btnShadow: 'rgba(2, 132, 199, 0.3)',
-        categoryTag: 'Beginner Fast-Track',
       }
     }
 
-    // Default theme
+    // Default / Professional
     return {
-      name: 'Certified Program',
+      name: 'For Professionals',
       accentColor: '#DC2626',
       headerGradient: 'linear-gradient(90deg, #DC2626 0%, #EF4444 100%)',
       cardBorder: '#FECACA',
-      cardActiveBorder: '#F87171',
       cardShadow: 'rgba(220, 38, 38, 0.08)',
       badgeBg: '#FEF2F2',
-      badgeText: '#DC2626',
+      badgeText: '#B91C1C',
       badgeBorder: '#FECACA',
       dateBoxStartColor: '#DC2626',
       btnGradient: 'linear-gradient(135deg, #DC2626 0%, #B91C1C 100%)',
       btnShadow: 'rgba(220, 38, 38, 0.3)',
-      categoryTag: 'Executive Certified Track',
     }
   }
 
   const getCountdownInfo = (startDateStr?: string, displayStr?: string) => {
-    // Try to parse the date
     let target: Date | null = null
     if (startDateStr) {
       const d = new Date(startDateStr)
@@ -212,8 +200,8 @@ export default function UpcomingBatches({
 
     if (!target) {
       return {
-        badgeText: '🔥 Admissions Open',
-        hurryText: '⚡ Limited seats available — Enroll now!',
+        badgeText: 'Admissions Open',
+        hurryText: '⚡ Limited seats available — Reserve your seat!',
         badgeClass: 'badge-flash-amber',
         isUrgent: false,
       }
@@ -228,43 +216,43 @@ export default function UpcomingBatches({
 
     if (diffDays === 0) {
       return {
-        badgeText: '🔥 Starts Today! Last Call',
-        hurryText: '⚡ Batch starts today — Hurry up & claim your seat!',
+        badgeText: '🔥 Starts Today',
+        hurryText: '⚡ Batch starts today — Final registrations closing!',
         badgeClass: 'badge-flash-red',
         isUrgent: true,
       }
     } else if (diffDays === 1) {
       return {
-        badgeText: '🚀 Starts Tomorrow! Hurry Up',
+        badgeText: '🚀 Starts Tomorrow',
         hurryText: '🔥 Starting tomorrow — Final registrations closing!',
         badgeClass: 'badge-flash-red',
         isUrgent: true,
       }
-    } else if (diffDays > 1 && diffDays <= 3) {
+    } else if (diffDays > 1 && diffDays <= 7) {
       return {
-        badgeText: `⚡ Starts in ${diffDays} Days!`,
-        hurryText: `⏳ Only ${diffDays} days left — Hurry up & secure your seat!`,
+        badgeText: `⚡ Starts in ${diffDays} Days`,
+        hurryText: `⏳ Only ${diffDays} days left — Admissions closing fast!`,
         badgeClass: 'badge-flash-orange',
         isUrgent: true,
       }
-    } else if (diffDays > 3 && diffDays <= 7) {
-      return {
-        badgeText: `⏳ Starts in ${diffDays} Days`,
-        hurryText: `⚡ Starts in ${diffDays} days — Admissions closing fast!`,
-        badgeClass: 'badge-flash-amber',
-        isUrgent: true,
-      }
-    } else if (diffDays > 7) {
+    } else if (diffDays > 7 && diffDays <= 20) {
       return {
         badgeText: `📅 Starts in ${diffDays} Days`,
-        hurryText: `✨ Upcoming cohort — Enroll early to reserve seat`,
+        hurryText: `✨ Upcoming cohort — Enroll early to secure seat`,
+        badgeClass: 'badge-flash-amber',
+        isUrgent: false,
+      }
+    } else if (diffDays > 20) {
+      return {
+        badgeText: `🗓️ Starting Soon`,
+        hurryText: `✨ Pre-registrations open for this batch`,
         badgeClass: 'badge-flash-blue',
         isUrgent: false,
       }
     } else {
       return {
-        badgeText: '🎯 Cohort in Progress',
-        hurryText: '⚡ Late registrations open for next upcoming module',
+        badgeText: '🎯 Admissions Open',
+        hurryText: '⚡ New registrations open for this cohort',
         badgeClass: 'badge-flash-green',
         isUrgent: false,
       }
@@ -272,27 +260,17 @@ export default function UpcomingBatches({
   }
 
   return (
-    <section style={{ background: '#F8FAFC', padding: '80px 0', position: 'relative' }} id="upcoming-batches">
-      {/* ── CSS KEYFRAMES FOR FLASHING BADGES ── */}
+    <section style={{ background: '#F8FAFC', padding: '80px 0 96px', position: 'relative' }} id="upcoming-batches">
       <style>{`
         @keyframes flashPulseRed {
-          0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); transform: scale(1); }
-          50% { box-shadow: 0 0 14px 4px rgba(220, 38, 38, 0.4); transform: scale(1.03); }
-          100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); transform: scale(1); }
+          0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+          50% { box-shadow: 0 0 12px 3px rgba(220, 38, 38, 0.35); }
+          100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
         }
         @keyframes flashPulseOrange {
-          0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); transform: scale(1); }
-          50% { box-shadow: 0 0 12px 3px rgba(234, 88, 12, 0.4); transform: scale(1.03); }
-          100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); transform: scale(1); }
-        }
-        @keyframes flashPulseAmber {
-          0% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
-          50% { box-shadow: 0 0 10px 2px rgba(217, 119, 6, 0.35); }
-          100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.6); }
-        }
-        @keyframes beaconBlink {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.4; transform: scale(0.85); }
+          0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); }
+          50% { box-shadow: 0 0 10px 2px rgba(234, 88, 12, 0.35); }
+          100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.7); }
         }
         .badge-flash-red {
           background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
@@ -301,16 +279,15 @@ export default function UpcomingBatches({
           animation: flashPulseRed 2s infinite ease-in-out;
         }
         .badge-flash-orange {
-          background: linear-gradient(135deg, #EA580C 0%, #C2410C 100%);
-          color: #FFFFFF !important;
-          border: 1px solid #F97316;
+          background: #FFF7ED;
+          color: #C2410C !important;
+          border: 1px solid #FDBA74;
           animation: flashPulseOrange 2.2s infinite ease-in-out;
         }
         .badge-flash-amber {
           background: #FFFBEB;
           color: #B45309 !important;
           border: 1px solid #FDE68A;
-          animation: flashPulseAmber 2.5s infinite ease-in-out;
         }
         .badge-flash-blue {
           background: #EFF6FF;
@@ -322,16 +299,25 @@ export default function UpcomingBatches({
           color: #15803D !important;
           border: 1px solid #BBF7D0;
         }
-        .beacon-dot {
-          animation: beaconBlink 1.4s infinite ease-in-out;
+        .batch-card-hover {
+          transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+        }
+        .batch-card-hover:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12) !important;
+        }
+        @media (max-width: 768px) {
+          .batches-grid {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
 
       <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px' }}>
         {/* ── HEADER ─────────────────────────────────────────────────── */}
-        <div style={{ textAlign: 'center', maxWidth: '720px', margin: '0 auto 48px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: '11px', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: '16px' }}>
-            <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#EF4444', display: 'inline-block' }} />
+        <div style={{ textAlign: 'center', maxWidth: '760px', margin: '0 auto 48px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 18px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: '11px', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: '16px' }}>
+            <Sparkles style={{ width: '13px', height: '13px', color: '#DC2626' }} />
             <span>2025–2026 Admissions Open</span>
           </div>
 
@@ -344,7 +330,7 @@ export default function UpcomingBatches({
           </p>
 
           {/* ── SEGMENTED FILTER CONTROLS ───────────────────────────── */}
-          <div style={{ marginTop: '28px', display: 'inline-flex', padding: '6px', borderRadius: '16px', background: '#E2E8F0', maxWidth: '100%', overflowX: 'auto' }}>
+          <div style={{ marginTop: '28px', display: 'inline-flex', padding: '5px', borderRadius: '16px', background: '#E2E8F0', maxWidth: '100%', overflowX: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[
                 { id: 'ALL', label: 'All Cohorts', count: rawBatches.length },
@@ -374,7 +360,7 @@ export default function UpcomingBatches({
                   <span>{tab.label}</span>
                   <span
                     style={{
-                      fontSize: '10px',
+                      fontSize: '10.5px',
                       padding: '2px 7px',
                       borderRadius: '50px',
                       fontWeight: 800,
@@ -406,7 +392,7 @@ export default function UpcomingBatches({
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '28px' }}>
+          <div className="batches-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '28px' }}>
             {visibleBatches.map((batch) => {
               const modeInfo = getModeInfo(batch.mode)
               const theme = getCourseTheme(batch.courseTitle, batch.courseSlug)
@@ -418,117 +404,119 @@ export default function UpcomingBatches({
               return (
                 <div
                   key={batch.id}
+                  className="batch-card-hover"
                   style={{
                     background: '#FFFFFF',
                     borderRadius: '24px',
                     border: countdown.isUrgent ? '1.5px solid #FCA5A5' : `1.5px solid ${theme.cardBorder}`,
-                    boxShadow: countdown.isUrgent ? '0 8px 30px rgba(220,38,38,0.12)' : `0 4px 20px ${theme.cardShadow}`,
+                    boxShadow: `0 4px 20px ${theme.cardShadow}`,
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     overflow: 'hidden',
                     position: 'relative',
-                    transition: 'transform 0.25s ease, box-shadow 0.25s ease',
                   }}
                 >
                   {/* Top Color Accent Line */}
-                  <div style={{ height: '4px', width: '100%', background: theme.headerGradient }} />
+                  <div style={{ height: '5px', width: '100%', background: theme.headerGradient }} />
 
                   <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <div>
                       {/* Top Badges Row */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-bold border ${modeInfo.badgeClass}`}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${modeInfo.badgeClass}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${modeInfo.dotClass}`} />
                             {modeInfo.icon}
                             <span>{modeInfo.label}</span>
                           </span>
 
-                          <span style={{ fontSize: '10px', fontWeight: 800, color: theme.badgeText, background: theme.badgeBg, border: `1px solid ${theme.badgeBorder}`, padding: '2px 8px', borderRadius: '50px' }}>
+                          <span style={{ fontSize: '10.5px', fontWeight: 800, color: theme.badgeText, background: theme.badgeBg, border: `1px solid ${theme.badgeBorder}`, padding: '3px 9px', borderRadius: '50px' }}>
                             {theme.name}
                           </span>
                         </div>
 
-                        {/* Flashing Countdown Days Remaining Badge */}
+                        {/* Countdown Badge */}
                         <div
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold ${countdown.badgeClass}`}
-                          style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold ${countdown.badgeClass}`}
+                          style={{ boxShadow: '0 2px 6px rgba(0,0,0,0.06)' }}
                         >
-                          <span className="w-2 h-2 rounded-full bg-white beacon-dot" />
                           <span>{countdown.badgeText}</span>
                         </div>
                       </div>
 
-                      {/* Course Title & Track */}
-                      <Link href={courseLink} style={{ textDecoration: 'none', display: 'block' }}>
-                        <h3 style={{ fontSize: '17px', fontWeight: 800, color: '#0F172A', lineHeight: 1.35, marginBottom: '4px' }}>
+                      {/* Course Title */}
+                      <Link href={courseLink} style={{ textDecoration: 'none', display: 'block', marginBottom: '6px' }}>
+                        <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', lineHeight: 1.3, transition: 'color 0.2s' }}>
                           {batch.courseTitle}
                         </h3>
                       </Link>
 
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                        <p style={{ fontSize: '12px', color: '#64748B', fontWeight: 600, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {/* Cohort Name & Batch Code (Redesigned: Clean Stack without overflow) */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '10px', marginBottom: '16px' }}>
+                        <p style={{ fontSize: '12.5px', color: '#475569', fontWeight: 600, margin: 0, lineHeight: 1.4, flex: 1 }}>
                           {batch.name}
                         </p>
-                        <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#64748B', fontWeight: 700, background: '#F1F5F9', padding: '2px 6px', borderRadius: '4px', border: '1px solid #E2E8F0' }}>
+                        <span style={{ fontSize: '10.5px', fontFamily: 'monospace', color: '#475569', fontWeight: 800, background: '#F1F5F9', padding: '3px 8px', borderRadius: '6px', border: '1px solid #E2E8F0', flexShrink: 0, whiteSpace: 'nowrap' }}>
                           {batch.batchCode}
                         </span>
                       </div>
 
-                      {/* Date & Schedule Box */}
-                      <div style={{ background: '#F8FAFC', borderRadius: '16px', padding: '14px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
-                          <div style={{ width: '42px', height: '42px', borderRadius: '10px', background: '#FFFFFF', border: `1px solid ${theme.cardBorder}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                            <span style={{ fontSize: '8.5px', fontWeight: 900, textTransform: 'uppercase', color: theme.dateBoxStartColor, letterSpacing: '.06em' }}>START</span>
-                            <span style={{ fontSize: '13px', fontWeight: 900, color: '#0F172A', lineHeight: 1 }}>
-                              {batch.displayStartDate ? batch.displayStartDate.split(' ')[0] : batch.startDate.split('-')[2] || '15'}
+                      {/* Date & Schedule Box (Redesigned: Clean Spacing, Full Content Visible) */}
+                      <div style={{ background: '#F8FAFC', borderRadius: '16px', padding: '16px', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                          <div style={{ width: '46px', height: '46px', borderRadius: '12px', background: '#FFFFFF', border: `1.5px solid ${theme.cardBorder}`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
+                            <span style={{ fontSize: '9px', fontWeight: 900, textTransform: 'uppercase', color: theme.dateBoxStartColor, letterSpacing: '.06em' }}>START</span>
+                            <span style={{ fontSize: '15px', fontWeight: 900, color: '#0F172A', lineHeight: 1 }}>
+                              {batch.displayStartDate ? batch.displayStartDate.split(' ')[0] : batch.startDate.split('-')[2] || '12'}
                             </span>
                           </div>
                           <div>
-                            <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800, color: '#94A3B8', display: 'block' }}>
+                            <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800, color: '#94A3B8', display: 'block', marginBottom: '2px' }}>
                               Cohort Commences
                             </span>
-                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>
+                            <span style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>
                               {batch.displayStartDate || batch.startDate}
                             </span>
                           </div>
                         </div>
 
-                        <div style={{ paddingTop: '8px', borderTop: '1px solid #E2E8F0', display: 'grid', gap: '4px', fontSize: '11.5px', color: '#475569', fontWeight: 500 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Clock style={{ width: '13px', height: '13px', color: '#94A3B8', flexShrink: 0 }} />
-                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{batch.schedule}</span>
+                        {/* Schedule & Duration rows with full wrapping */}
+                        <div style={{ paddingTop: '10px', borderTop: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px', color: '#334155', fontWeight: 500 }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
+                            <Clock style={{ width: '14px', height: '14px', color: '#64748B', flexShrink: 0, marginTop: '2px' }} />
+                            <span style={{ lineHeight: 1.45 }}>{batch.schedule}</span>
                           </div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <Calendar style={{ width: '13px', height: '13px', color: '#94A3B8', flexShrink: 0 }} />
-                            <span>Duration: {batch.duration}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Calendar style={{ width: '14px', height: '14px', color: '#64748B', flexShrink: 0 }} />
+                            <span style={{ fontWeight: 700, color: '#0F172A' }}>Duration: {batch.duration}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Faculty Lead Pill */}
                       {batch.trainerName && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', borderRadius: '12px', background: '#FFFFFF', border: '1px solid #E2E8F0', marginBottom: '16px' }}>
                           {batch.trainerImage ? (
-                            <div style={{ position: 'relative', width: '32px', height: '32px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid #CBD5E1' }}>
+                            <div style={{ position: 'relative', width: '34px', height: '34px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1.5px solid #CBD5E1' }}>
                               <Image
                                 src={batch.trainerImage}
                                 alt={batch.trainerName}
                                 fill
+                                sizes="34px"
                                 style={{ objectFit: 'cover', objectPosition: 'top' }}
                               />
                             </div>
                           ) : (
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
+                            <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>
                               {batch.trainerName[0]}
                             </div>
                           )}
-                          <div style={{ minWidth: 0 }}>
+                          <div style={{ minWidth: 0, flex: 1 }}>
                             <span style={{ fontSize: '9.5px', textTransform: 'uppercase', letterSpacing: '.08em', fontWeight: 800, color: '#94A3B8', display: 'block', lineHeight: 1, marginBottom: '2px' }}>
                               Faculty Lead
                             </span>
-                            <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {batch.trainerName}
                             </span>
                           </div>
@@ -539,9 +527,9 @@ export default function UpcomingBatches({
                     {/* Bottom Pricing, Urgency & Actions */}
                     <div style={{ paddingTop: '16px', borderTop: '1px solid #F1F5F9' }}>
                       {/* Seat Urgency Indicator */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11px', fontWeight: 700, marginBottom: '6px' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: isLowSeats ? '#DC2626' : '#475569' }}>
-                          <Users style={{ width: '12px', height: '12px' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 700, marginBottom: '6px' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: isLowSeats ? '#DC2626' : '#475569' }}>
+                          <Users style={{ width: '13px', height: '13px' }} />
                           <span>{isLowSeats ? `Only ${seatsRemaining} seats remaining` : `${seatsRemaining} seats available`}</span>
                         </span>
                         <span style={{ color: '#94A3B8', fontWeight: 600 }}>
@@ -556,39 +544,44 @@ export default function UpcomingBatches({
                             height: '100%',
                             borderRadius: '50px',
                             background: isLowSeats ? '#EF4444' : '#10B981',
-                            width: `${(batch.enrolledCount / batch.capacity) * 100}%`,
+                            width: `${Math.max(8, (batch.enrolledCount / batch.capacity) * 100)}%`,
                           }}
                         />
                       </div>
 
                       {/* Pricing Row */}
                       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '14px' }}>
-                        <div>
-                          <span style={{ fontSize: '12px', color: '#94A3B8', textDecoration: 'line-through', marginRight: '8px', fontWeight: 600 }}>
-                            {formatPrice(batch.originalPrice)}
-                          </span>
-                          <span style={{ fontSize: '20px', fontWeight: 900, color: '#0F172A' }}>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                          {batch.originalPrice > batch.discountedPrice && (
+                            <span style={{ fontSize: '13px', color: '#94A3B8', textDecoration: 'line-through', fontWeight: 600 }}>
+                              {formatPrice(batch.originalPrice)}
+                            </span>
+                          )}
+                          <span style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', letterSpacing: '-0.02em' }}>
                             {formatPrice(batch.discountedPrice)}
                           </span>
                         </div>
-                        <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', background: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
-                          {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
-                        </span>
+                        {batch.originalPrice > batch.discountedPrice && (
+                          <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', background: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
+                            {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
+                          </span>
+                        )}
                       </div>
+
                       {/* Hurry Up Urgency Strip */}
                       <div
                         style={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: '6px',
-                          padding: '6px 10px',
-                          borderRadius: '8px',
+                          padding: '8px 12px',
+                          borderRadius: '10px',
                           background: countdown.isUrgent ? '#FEF2F2' : '#F8FAFC',
                           border: countdown.isUrgent ? '1px solid #FECACA' : '1px solid #E2E8F0',
-                          fontSize: '11px',
+                          fontSize: '11.5px',
                           fontWeight: 700,
                           color: countdown.isUrgent ? '#DC2626' : '#475569',
-                          marginBottom: '14px',
+                          marginBottom: '16px',
                         }}
                       >
                         <Zap style={{ width: '13px', height: '13px', color: countdown.isUrgent ? '#DC2626' : '#2563EB', flexShrink: 0 }} />
@@ -607,7 +600,7 @@ export default function UpcomingBatches({
                             background: theme.btnGradient,
                             color: '#FFFFFF',
                             fontWeight: 800,
-                            fontSize: '12px',
+                            fontSize: '13px',
                             border: 'none',
                             cursor: 'pointer',
                             display: 'flex',
@@ -615,10 +608,11 @@ export default function UpcomingBatches({
                             justifyContent: 'center',
                             gap: '6px',
                             boxShadow: `0 4px 14px ${theme.btnShadow}`,
+                            transition: 'transform 0.18s ease, box-shadow 0.18s ease',
                           }}
                         >
                           <span>Enroll Now</span>
-                          <ArrowRight style={{ width: '13px', height: '13px' }} />
+                          <ArrowRight style={{ width: '14px', height: '14px' }} />
                         </button>
 
                         <Link
@@ -629,17 +623,18 @@ export default function UpcomingBatches({
                             background: '#F1F5F9',
                             color: '#334155',
                             fontWeight: 700,
-                            fontSize: '12px',
+                            fontSize: '13px',
                             textDecoration: 'none',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '5px',
-                            border: '1px solid #E2E8F0',
+                            gap: '6px',
+                            border: '1px solid #CBD5E1',
                             textAlign: 'center',
+                            transition: 'background 0.18s ease',
                           }}
                         >
-                          <BookOpen style={{ width: '13px', height: '13px' }} />
+                          <BookOpen style={{ width: '14px', height: '14px' }} />
                           <span>Curriculum</span>
                         </Link>
                       </div>
@@ -660,15 +655,16 @@ export default function UpcomingBatches({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '12px 24px',
+                padding: '12px 28px',
                 borderRadius: '12px',
-                border: '1px solid #CBD5E1',
+                border: '1.5px solid #CBD5E1',
                 background: '#FFFFFF',
                 fontSize: '13px',
-                fontWeight: 700,
-                color: '#334155',
+                fontWeight: 800,
+                color: '#1E293B',
                 cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(15,23,42,0.04)',
+                boxShadow: '0 2px 10px rgba(15,23,42,0.06)',
+                transition: 'all 0.2s ease',
               }}
             >
               <span>{showAll ? 'Show Less Batches' : `View All ${filteredBatches.length} Batches`}</span>

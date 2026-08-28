@@ -291,35 +291,35 @@ export default async function CoursesPage() {
   // Map DB Batches with graceful fallback
   let formattedBatches: BatchItem[] = DEFAULT_BATCHES
   if (rawDbBatches && rawDbBatches.length > 0) {
-    formattedBatches = rawDbBatches.map((b, idx) => {
-      const defaultMatch = DEFAULT_BATCHES[idx % DEFAULT_BATCHES.length]
+    formattedBatches = rawDbBatches.map((b) => {
       const enrolled = b._count?.enrollments ?? 0
-      const cap = b.capacity || 25
+      const cap = b.capacity || 30
       const left = Math.max(1, cap - enrolled)
-      const startDateStr = b.startDate ? new Date(b.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : defaultMatch.displayStartDate
+      const startDateStr = b.startDate
+        ? new Date(b.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : 'Upcoming Cohort'
 
-      const rawTitle = b.course?.title || defaultMatch.courseTitle
-      let cleanTitle = rawTitle.replace(/Traning/gi, 'Training')
-      if (cleanTitle.toLowerCase().includes('corporate')) {
-        cleanTitle = 'HR Corporate Training Course'
-      }
-      const trainerName = b.trainer?.name || defaultMatch.trainerName
+      const cleanTitle = b.course?.title || 'Professional Recruitment Specialist'
+      const trainerName = b.trainer?.name || 'Lead Faculty'
       const trainerImg = b.trainer?.image || '/assets/images/trainers/rajesh_sharma.jpg'
 
-      let batchMode: 'ONLINE' | 'OFFLINE' | 'HYBRID' = b.mode as 'ONLINE' | 'OFFLINE' | 'HYBRID'
-      const schedLower = (b.schedule || '').toLowerCase()
-      const nameLower = (b.name || '').toLowerCase()
-      if (schedLower.includes('pune') || schedLower.includes('classroom') || nameLower.includes('pune') || nameLower.includes('classroom') || nameLower.includes('intensive cohort')) {
-        batchMode = 'OFFLINE'
-      }
+      const matchedFee = fees.find((f) => f.categoryId === b.course?.category?.id)
+      const basePrice = matchedFee?.fees ? Number(matchedFee.fees) : 14999
+      const disc = matchedFee?.discount ? Number(matchedFee.discount) : 5000
+      const finalPrice = matchedFee?.finalTotal ? Number(matchedFee.finalTotal) : Math.max(0, basePrice - disc)
+      const duration = b.course?.duration?.trim() || '8 Weeks'
+
+      const slugCode = b.course?.category?.slug
+        ? b.course.category.slug.replace(/for-|-/g, '').slice(0, 3).toUpperCase()
+        : 'CRS'
 
       return {
         id: b.id,
         name: b.name,
-        batchCode: `RI-${b.course?.category?.slug?.slice(0, 3)?.toUpperCase() || 'CRS'}-${b.id}`,
+        batchCode: `RI-${slugCode}-${String(b.id).padStart(2, '0')}`,
         courseId: b.courseId,
         courseTitle: cleanTitle,
-        courseSlug: b.course?.category?.slug ? getCourseRoute(b.course.category.slug).replace('/', '') : defaultMatch.courseSlug,
+        courseSlug: b.course?.category?.slug ? getCourseRoute(b.course.category.slug).replace('/', '') : 'courses',
         trainerId: b.trainerId,
         trainerName,
         trainerImage: trainerImg,
@@ -327,13 +327,13 @@ export default async function CoursesPage() {
         capacity: cap,
         enrolledCount: enrolled,
         seatsLeft: left,
-        mode: batchMode,
-        startDate: b.startDate ? new Date(b.startDate).toISOString().split('T')[0] : defaultMatch.startDate,
+        mode: b.mode as 'ONLINE' | 'OFFLINE' | 'HYBRID',
+        startDate: b.startDate ? new Date(b.startDate).toISOString().split('T')[0] : '2026-09-15',
         displayStartDate: startDateStr,
-        schedule: b.schedule || defaultMatch.schedule,
-        duration: defaultMatch.duration,
-        originalPrice: defaultMatch.originalPrice,
-        discountedPrice: defaultMatch.discountedPrice,
+        schedule: b.schedule || 'Sat & Sun 10:00 AM – 1:00 PM IST',
+        duration,
+        originalPrice: basePrice,
+        discountedPrice: finalPrice,
         currency: 'INR',
         isFastFilling: left <= 8,
         isGuaranteed: true,
