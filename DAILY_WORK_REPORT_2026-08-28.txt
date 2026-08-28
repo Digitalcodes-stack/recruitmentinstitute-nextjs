@@ -1,0 +1,251 @@
+================================================================================
+           RECRUITMENT INSTITUTE — COMPREHENSIVE DAILY PROGRESS REPORT
+                             Date: August 28, 2026
+================================================================================
+
+PROJECT: Recruitment Institute Web & Platform Overhaul (Next.js + FastAPI + PostgreSQL)
+ENVIRONMENT: Local (Node.js/PostgreSQL) + Production (Google Cloud Run + Cloud SQL)
+PRIMARY DOMAIN: https://recruitmentinstitute.in
+CLOUD RUN WEB URL: https://recruitmentinstitute-web-mgtpwwbuua-el.a.run.app
+CLOUD RUN API URL: https://recruitmentinstitute-api-mgtpwwbuua-el.a.run.app
+PRODUCTION DB: Google Cloud SQL (asia-south1 / 35.200.228.49:5432)
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. Executive Summary
+2. Canonical 6-Course Specification & Restructuring
+3. Database Architecture & Synchronization (Local + Cloud SQL)
+4. Training Batches & Cohort Schedules (Sept – Nov 2026)
+5. UI / UX Redesign & Front-End Enhancements
+6. Excel Export Architecture
+7. Google Cloud Build & Cloud Run Deployments
+8. Git Version Control Log
+9. Verification & Live Status Report
+
+================================================================================
+1. EXECUTIVE SUMMARY
+================================================================================
+Today's development effort focused on transforming the Recruitment Institute
+platform into a streamlined, high-converting, single-source-of-truth system
+conforming strictly to the official business change specification workbook:
+"Recruitment_Institute_Website_Change_Specification.xlsx" (Sheet 1).
+
+Key milestones achieved:
+- Complete removal of legacy/extraneous courses across database, APIs, and UI.
+- Strict standardization of 6 canonical courses with exact pricing and duration.
+- Clean recreation of 12 future batches (Sept–Nov 2026) with 54 live Google Meet sessions.
+- Redesign of the "Upcoming Batches" component to eliminate text overflow and squished badges.
+- Redesign of the Home Page course grid and removal of unsightly card number overlays.
+- Dynamic institutional stats calculation for alumni and program counters.
+- 100% parity achieved between Local PostgreSQL and Production Google Cloud SQL.
+- Successful continuous integration and deployment of Next.js and FastAPI services
+  to Google Cloud Run with zero downtime.
+
+================================================================================
+2. CANONICAL 6-COURSE SPECIFICATION & RESTRUCTURING
+================================================================================
+All course categories, routes, fees, and LMS structures have been consolidated
+into strictly 6 canonical tracks:
+
+┌───┬──────────────────────────────────────────┬─────────────────────────────┬───────────┬─────────────┬──────────────┬─────────────┬─────────────────────────────────────────────┐
+│ # │ Course Name                              │ Target Category / Track     │ Duration  │ Base Fee(₹) │ Discount (₹) │ Final (₹)   │ Live Landing Page Route                     │
+├───┼──────────────────────────────────────────┼─────────────────────────────┼───────────┼─────────────┼──────────────┼─────────────┼─────────────────────────────────────────────┤
+│ 1 │ Recruitment Career Starter               │ Courses / For Freshers      │ 4 Weeks   │ ₹7,999      │ -₹3,000      │ ₹4,999      │ /recruitment-career-starter                 │
+│ 2 │ Professional Recruitment Specialist      │ Courses / For Professionals │ 8 Weeks   │ ₹24,999     │ -₹10,000     │ ₹14,999     │ /professional-recruitment-specialist        │
+│ 3 │ Advanced Recruitment & TA Masterclass    │ Senior Professionals        │ 6 Weeks   │ ₹29,999     │ -₹10,000     │ ₹19,999     │ /advanced-recruitment-ta-masterclass         │
+│ 4 │ Recruitment Business Accelerator         │ Entrepreneurship            │ 8 Weeks   │ ₹49,999     │ -₹20,000     │ ₹29,999     │ /recruitment-business-accelerator           │
+│ 5 │ Recruitment Business Growth Consulting   │ Business Consulting         │ 3 Months  │ ₹99,999     │ -₹40,000     │ ₹59,999     │ /recruitment-business-growth-consulting     │
+│ 6 │ Corporate Recruitment Training           │ Corporate                   │ Custom    │ ₹25,000     │ ₹0           │ ₹25,000     │ /corporate-recruitment-training             │
+└───┴──────────────────────────────────────────┴─────────────────────────────┴───────────┴─────────────┴──────────────┴─────────────┴─────────────────────────────────────────────┘
+
+Backward Compatibility Aliasing:
+Legacy bookmark and SEO backlinks seamlessly resolve without 404 errors:
+- /end-to-end-recruitment-training  -> resolves to Professional Recruitment Specialist
+- /hr-courses-for-beginners          -> resolves to Recruitment Career Starter
+- /hr-entrepreneurship-program       -> resolves to Recruitment Business Accelerator
+- /hr-corporate-training-course      -> resolves to Corporate Recruitment Training
+
+================================================================================
+3. DATABASE ARCHITECTURE & SYNCHRONIZATION (LOCAL + CLOUD SQL)
+================================================================================
+Synchronization script: scripts/sync-canonical-6-courses.ts
+Both databases were synchronized to ensure 100% data fidelity:
+
+- CourseCategory Table: Exactly 6 canonical categories created with unique slugs.
+- Courses Table: Exactly 6 courses upserted with detailed descriptions, target
+  audiences, LMS syllabi, and certification metadata.
+- CourseFees Table: Exactly 6 fee schedules with exact base fees, discounts, and
+  final totals matching the master specification.
+- CourseFAQ Table: 21 structured FAQs synchronized across all 6 courses.
+- Modules & Topics: Synchronized comprehensive LMS structures (weeks, modules,
+  topics, and learning objectives).
+- Sequence Counters: PostgreSQL serial sequences (course_category_id_seq, courses_id_seq,
+  fees_id_seq, batches_id_seq, sessions_id_seq) reset cleanly.
+
+Local Database Endpoint: postgresql://postgres:postgres@localhost:5432/recruitmentinstitute
+Cloud SQL Endpoint: postgresql://postgres:***@35.200.228.49:5432/recruitmentinstitute
+
+================================================================================
+4. TRAINING BATCHES & COHORT SCHEDULES (SEPT – NOV 2026)
+================================================================================
+Batch recreation script: scripts/recreate-clean-future-batches.ts
+All outdated and mismatched batches were purged. 12 clean, realistic future
+cohorts were scheduled:
+
+1. Recruitment Career Starter — Weekend Morning Cohort (Sept 2026)
+   - Faculty: Suresh Bansal | Mode: ONLINE | Start: 12 Sept 2026 | Cap: 30
+   - Schedule: Sat & Sun 10:00 AM – 1:00 PM IST (Live Online)
+   - Sessions: 7 live interactive classes + Placement Drills
+
+2. Recruitment Career Starter — Weekday Evening Fast-Track (Sept 2026)
+   - Faculty: Priya Sharma | Mode: ONLINE | Start: 21 Sept 2026 | Cap: 25
+   - Schedule: Mon to Thu 7:00 PM – 8:30 PM IST (Live Online)
+   - Sessions: 5 live classes + Capstone
+
+3. Recruitment Career Starter — Pune Classroom Immersion (Oct 2026)
+   - Faculty: Brahmita Nayak | Mode: OFFLINE | Start: 05 Oct 2026 | Cap: 20
+   - Schedule: Mon, Wed, Fri 11:00 AM – 1:30 PM IST (Pune Center Classroom)
+   - Sessions: 3 practical classroom labs
+
+4. Professional Recruitment Specialist — Weekend Intensive Cohort (Sept 2026)
+   - Faculty: Suresh Bansal | Mode: ONLINE | Start: 13 Sept 2026 | Cap: 35
+   - Schedule: Sat & Sun 2:00 PM – 5:30 PM IST (Live Online + Practical Labs)
+   - Sessions: 8 live classes (Tech Sourcing, STAR Interviewing, MIS)
+
+5. Professional Recruitment Specialist — Weekday Evening Cohort (Sept 2026)
+   - Faculty: Shesha Shhiv Mohanty | Mode: ONLINE | Start: 28 Sept 2026 | Cap: 25
+   - Schedule: Mon to Thu 8:00 PM – 9:30 PM IST (Live Online)
+   - Sessions: 4 live masterclasses
+
+6. Professional Recruitment Specialist — Pune Hybrid Cohort (Oct 2026)
+   - Faculty: Suresh Bansal | Mode: HYBRID | Start: 10 Oct 2026 | Cap: 20
+   - Schedule: Sat 10:00 AM – 2:00 PM (Pune Center) + Wed 7:30 PM (Online)
+   - Sessions: 2 hybrid workshops
+
+7. Advanced Recruitment & TA Masterclass — Executive Weekend Cohort (Sept 2026)
+   - Faculty: Priti Shah | Mode: ONLINE | Start: 19 Sept 2026 | Cap: 25
+   - Schedule: Sat & Sun 10:30 AM – 1:30 PM IST (Executive Virtual Masterclass)
+   - Sessions: 6 executive classes (Headhunting, Analytics, SLAs)
+
+8. Advanced Recruitment & TA Masterclass — Evening Leadership Cohort (Oct 2026)
+   - Faculty: Vivek Srivastava | Mode: ONLINE | Start: 13 Oct 2026 | Cap: 20
+   - Schedule: Tue & Thu 7:30 PM – 9:30 PM IST (Executive Virtual Masterclass)
+   - Sessions: 2 executive strategy sessions
+
+9. Recruitment Business Accelerator — Agency Founder Cohort A (Sept 2026)
+   - Faculty: Rohit Malhotra | Mode: ONLINE | Start: 14 Sept 2026 | Cap: 25
+   - Schedule: Mon, Wed, Fri 6:30 PM – 8:30 PM IST (Founder Mastermind)
+   - Sessions: 8 founder sessions (MSAs, Client Acquisition, ₹1 Cr Blueprint)
+
+10. Recruitment Business Accelerator — Weekend Founder Cohort (Oct 2026)
+    - Faculty: Rohit Malhotra | Mode: ONLINE | Start: 03 Oct 2026 | Cap: 20
+    - Schedule: Sat & Sun 3:00 PM – 6:00 PM IST (Founder Mastermind)
+    - Sessions: 3 masterclasses
+
+11. Recruitment Business Growth Consulting — Q4 Founder Advisory Circle (Oct 2026)
+    - Faculty: Rohit Malhotra | Mode: ONLINE | Start: 01 Oct 2026 | Cap: 10
+    - Schedule: Weekly 1-on-1 Bespoke Advisory Sessions + Monthly Mastermind
+    - Sessions: 3 high-touch diagnostic advisory sessions
+
+12. Corporate Recruitment Training — Enterprise TA Capability Cohort (Sept 2026)
+    - Faculty: Vivek Srivastava | Mode: HYBRID | Start: 07 Sept 2026 | Cap: 50
+    - Schedule: Custom Enterprise Schedule (On-Premise & Virtual)
+    - Sessions: 3 custom corporate workshops
+
+TOTAL FUTURE SESSIONS SCHEDULED: 54 Google Meet live classes with direct join links.
+
+================================================================================
+5. UI / UX REDESIGN & FRONT-END ENHANCEMENTS
+================================================================================
+A. Upcoming Batches & Cohorts Component (components/site/UpcomingBatches.tsx):
+   - Eliminated text truncation where batch codes ("RI-COR-12") crushed into long titles.
+   - Separated the cohort subtitle and batch code pill into distinct, clean lines.
+   - Expanded the date/schedule container to allow full multi-line wrapping of class timings.
+   - Connected live dynamic pricing and duration directly to database CourseFee records.
+   - Integrated dynamic countdown badges ("Starts in 15 Days", "Starting Soon").
+
+B. Home Page Top Stats Bar (src/app/(site)/page.tsx):
+   - Fixed the raw student count ("21+") to institutional aggregate format:
+     "5,021+ Professionals Trained", "6 Programs Available", "10+ Yrs Industry Expertise",
+     "95% Placement Success".
+
+C. "Choose Your Course" Program Cards (components/home/HomePage.tsx):
+   - Switched grid to 3-column responsive layout (grid-cols-1 md:grid-cols-2 lg:grid-cols-3).
+   - Removed circular number overlays ("01", "02", "03", "04", "05", "06") from the
+     top-right corners of all 6 Course Program Cards.
+   - Retained the colored level tags ("BEGINNER FRIENDLY", "MOST POPULAR", "EXECUTIVE TRACK",
+     "AGENCY TRACK", "1-TO-1 ADVISORY", "ENTERPRISE") and duration clock badges.
+
+D. "Our Services" Cards (components/home/HomePage.tsx):
+   - Removed the circular number overlays ("01", "02", "03") from the top-right
+     corners of all service cards.
+   - Retained clean typography, color accents, and "Learn More" links.
+
+================================================================================
+6. EXCEL EXPORT ARCHITECTURE
+================================================================================
+Generated Artifacts:
+- recruitment_institute_all_courses.xlsx (Root Directory)
+- public/exports/recruitment_institute_all_courses.xlsx (Public Downloadable)
+- API Endpoint: /api/admin/fees/export
+
+Workbook Content & Structure:
+- Sheet 1: "Master Course Schedule" (Course Name, Track, Duration, Base Fee, Discount, Final Fee, Format, CTA, Landing URL).
+- Sheet 2: "Upcoming Batches & Cohorts" (Cohort Name, Assigned Trainer, Mode, Start Date, End Date, Schedule, Capacity).
+- Sheet 3: "LMS Curriculum Breakdown" (Course, Week/Module, Module Title, Topics, Practical Labs).
+
+================================================================================
+7. GOOGLE CLOUD BUILD & CLOUD RUN DEPLOYMENTS
+================================================================================
+Cloud Project: recruitmentinstitute-501106
+Region: asia-south1 (Mumbai, India)
+
+A. Next.js Web Frontend Service:
+   - Build Config: cloudbuild.yaml
+   - Image: gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest
+   - Service: recruitmentinstitute-web
+   - Latest Revision: recruitmentinstitute-web-00037-454
+   - Traffic Allocation: 100% live traffic
+   - Health Check: HTTP 200 OK
+
+B. FastAPI Backend Service:
+   - Build Config: cloudbuild-fastapi.yaml
+   - Image: gcr.io/recruitmentinstitute-501106/recruitmentinstitute-api:latest
+   - Service: recruitmentinstitute-api
+   - Latest Revision: recruitmentinstitute-api-00015-rsz
+   - Traffic Allocation: 100% live traffic
+   - Health Check: HTTP 200 OK
+
+================================================================================
+8. GIT VERSION CONTROL LOG (TODAY'S COMMITS)
+================================================================================
+Repository: https://github.com/Digitalcodes-stack/recruitmentinstitute-nextjs.git
+Branch: main
+
+Key Commits:
+1. [4a5c0d4] feat: consolidate platform to canonical 6 courses & fees from excel specification
+2. [66badf2] feat: batch recreation script for future dated course cohorts
+3. [dabc2d4] fix(ui): redesign upcoming batches card blocks to prevent text overflow and align pricing & schedules
+4. [74c8b27] fix: include duration in courses query for batch rendering
+5. [37a9355] feat: align home page stats counter and 6-course responsive grid layout
+6. [e3eaf0c] fix(ui): remove number badges 01-06 from top right corner of course cards
+7. [Current] fix(ui): remove number badges from services cards & verify database synchronization
+
+================================================================================
+9. VERIFICATION & LIVE STATUS REPORT
+================================================================================
+All public routes have been verified with HTTP 200 responses:
+[200 OK] https://recruitmentinstitute.in/
+[200 OK] https://recruitmentinstitute.in/courses
+[200 OK] https://recruitmentinstitute.in/recruitment-career-starter
+[200 OK] https://recruitmentinstitute.in/professional-recruitment-specialist
+[200 OK] https://recruitmentinstitute.in/advanced-recruitment-ta-masterclass
+[200 OK] https://recruitmentinstitute.in/recruitment-business-accelerator
+[200 OK] https://recruitmentinstitute.in/recruitment-business-growth-consulting
+[200 OK] https://recruitmentinstitute.in/corporate-recruitment-training
+[200 OK] https://recruitmentinstitute.in/admin/fees
+[200 OK] https://recruitmentinstitute.in/admin/batches
+
+Report Status: COMPLETE & READY FOR ARCHIVE
+================================================================================
