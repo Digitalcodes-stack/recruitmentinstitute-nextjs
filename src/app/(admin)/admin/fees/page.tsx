@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import AdminLayout from '@/components/admin/AdminLayout'
-import { CreditCard, Plus, IndianRupee, Tag, TrendingDown, Pencil, Trash2, X, Check } from 'lucide-react'
+import { CreditCard, Plus, IndianRupee, Tag, TrendingDown, Pencil, Trash2, X, Check, FileSpreadsheet, Download } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface Category { id: number; name: string }
@@ -135,6 +135,13 @@ export default function AdminFeesPage() {
               <span style={{ fontSize: 20, fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em' }}>{value}</span>
             </div>
           ))}
+          <a
+            href="/api/admin/fees/export"
+            download="recruitment_institute_all_courses.xlsx"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 12, background: '#10b981', color: '#fff', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', textDecoration: 'none', boxShadow: '0 4px 14px rgba(16,185,129,0.3)' }}
+          >
+            <FileSpreadsheet style={{ width: 15, height: 15 }} /> Export to Excel
+          </a>
           <button onClick={openNew}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 12, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', fontSize: 13, fontWeight: 600, border: 'none', cursor: 'pointer', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}>
             <Plus style={{ width: 14, height: 14 }} /> Add Fee Entry
