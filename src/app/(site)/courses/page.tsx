@@ -261,7 +261,7 @@ export default async function CoursesPage() {
     prisma.batch.findMany({
       where: { status: 'UPCOMING' },
       include: {
-        course: { select: { id: true, title: true, category: true } },
+        course: { select: { id: true, title: true, duration: true, category: true } },
         trainer: { select: { id: true, name: true, image: true, specialization: true } },
         _count: { select: { enrollments: true } },
       },
