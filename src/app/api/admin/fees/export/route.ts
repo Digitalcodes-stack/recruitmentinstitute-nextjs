@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/navigation'
+import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAdminSession } from '@/lib/auth'
 import * as XLSX from 'xlsx'
