@@ -18,11 +18,11 @@ gcloud config set project $PROJECT_ID
 
 Write-Host ""
 Write-Host "=== Step 1: Building & pushing Next.js image via Google Cloud Build ===" -ForegroundColor Cyan
-gcloud builds submit --tag $NEXTJS_IMAGE -f docker/Dockerfile.nextjs .
+gcloud builds submit --config=cloudbuild.yaml .
 
 Write-Host ""
 Write-Host "=== Step 2: Building & pushing FastAPI image via Google Cloud Build ===" -ForegroundColor Cyan
-gcloud builds submit --tag $FASTAPI_IMAGE -f docker/Dockerfile.fastapi .
+gcloud builds submit --config=cloudbuild-fastapi.yaml .
 
 Write-Host ""
 Write-Host "=== Step 3: Deploying FastAPI to Google Cloud Run ===" -ForegroundColor Cyan
@@ -37,7 +37,7 @@ gcloud run deploy $FASTAPI_SERVICE `
   --min-instances 1 `
   --max-instances 5 `
   --timeout 120 `
-  --set-env-vars "APP_ENV=production,APP_DEBUG=false,AI_PROVIDER=gemini,AI_PROVIDER_FALLBACK_ORDER=gemini,local_ai,claude,openai,GEMINI_MODEL_PRIMARY=gemini-2.5-flash,GEMINI_MODEL_OVERFLOW=gemini-2.5-flash-lite,GEMINI_TEMPERATURE=0.2,EMAIL_ENABLED=true,SMTP_HOST=mail.recruitmentinstitute.in,SMTP_PORT=587,SMTP_USERNAME=support@recruitmentinstitute.in,SMTP_FROM_EMAIL=support@recruitmentinstitute.in,SMTP_FROM_NAME=Recruitment Institute,SMTP_USE_TLS=true,SMTP_CC_EMAIL=sesasiba.es@gmail.com" `
+  --set-env-vars "APP_ENV=production,APP_DEBUG=false,AI_PROVIDER=gemini,AI_PROVIDER_FALLBACK_ORDER=gemini\,local_ai\,claude\,openai,GEMINI_MODEL_PRIMARY=gemini-2.5-flash,GEMINI_MODEL_OVERFLOW=gemini-2.5-flash-lite,GEMINI_TEMPERATURE=0.2,EMAIL_ENABLED=true,SMTP_HOST=mail.recruitmentinstitute.in,SMTP_PORT=587,SMTP_USERNAME=support@recruitmentinstitute.in,SMTP_FROM_EMAIL=support@recruitmentinstitute.in,SMTP_FROM_NAME=Recruitment Institute,SMTP_USE_TLS=true,SMTP_CC_EMAIL=sesasiba.es@gmail.com" `
   --set-secrets "DATABASE_URL=FASTAPI_DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest,SERVICE_API_KEY=SERVICE_API_KEY:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest,SMTP_PASSWORD=SMTP_PASSWORD:latest"
 
 # Fetch FastAPI public URL
@@ -57,7 +57,7 @@ gcloud run deploy $NEXTJS_SERVICE `
   --min-instances 1 `
   --max-instances 10 `
   --timeout 60 `
-  --set-env-vars "NODE_ENV=production,FASTAPI_SERVICE_URL=$FASTAPI_URL,SMTP_HOST=mail.recruitmentinstitute.in,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=support@recruitmentinstitute.in,EMAIL_FROM=support@recruitmentinstitute.in,EMAIL_FROM_NAME=Recruitment Institute,ADMIN_EMAIL=support@recruitmentinstitute.in,EMAIL_CC=sesasiba.es@gmail.com,GOOGLE_IMPERSONATE_EMAIL=digitalaimlsystem@gmail.com" `
+  --set-env-vars "NODE_ENV=production,FASTAPI_SERVICE_URL=$FASTAPI_URL,SMTP_HOST=mail.recruitmentinstitute.in,SMTP_PORT=587,SMTP_SECURE=false,SMTP_USER=support@recruitmentinstitute.in,EMAIL_FROM=support@recruitmentinstitute.in,EMAIL_FROM_NAME=Recruitment Institute,ADMIN_EMAIL=patilrupalib@gmail.com,EMAIL_CC=patilrupalib@gmail.com,GOOGLE_IMPERSONATE_EMAIL=digitalaimlsystem@gmail.com" `
   --set-secrets "DATABASE_URL=NEXTJS_DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest,CRON_SECRET=CRON_SECRET:latest,GOOGLE_SERVICE_ACCOUNT_KEY_BASE64=GOOGLE_SERVICE_ACCOUNT_KEY_BASE64:latest,SMTP_PASS=SMTP_PASSWORD:latest"
 
 $NEXTJS_URL = (gcloud run services describe $NEXTJS_SERVICE --region $REGION --format "value(status.url)")
