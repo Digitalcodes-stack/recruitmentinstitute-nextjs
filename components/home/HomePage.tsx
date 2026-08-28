@@ -428,8 +428,6 @@ export default function HomePage({
                       <span className={`font-extrabold uppercase ${c.badgeCls}`}>{c.badge}</span>
                     </div>
 
-                    <div className="course-card-num" style={{ color: a.solid }}>{a.num}</div>
-
                     <div className="course-card-duration">
                       <Clock className="w-3 h-3" style={{ color: a.solid }} />
                       <span className="course-card-duration-text">{c.duration}</span>
