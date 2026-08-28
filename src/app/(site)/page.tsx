@@ -62,44 +62,75 @@ export default async function Page() {
     }),
   ])
 
+  const SLUG_ROUTE_MAP: Record<string, { href: string; badge: string; badgeCls: string; bar: string; image: string }> = {
+    'for-freshers': {
+      href: '/recruitment-career-starter',
+      badge: 'Beginner Friendly',
+      badgeCls: 'bg-sky-600 text-white',
+      bar: 'from-sky-500 to-sky-700',
+      image: '/assets/images/about/tab1.jpg',
+    },
+    'for-professionals': {
+      href: '/professional-recruitment-specialist',
+      badge: 'Most Popular',
+      badgeCls: 'bg-red-600 text-white',
+      bar: 'from-red-500 to-red-700',
+      image: '/assets/images/banner/home9.jpg',
+    },
+    'senior-professionals': {
+      href: '/advanced-recruitment-ta-masterclass',
+      badge: 'Executive Track',
+      badgeCls: 'bg-purple-600 text-white',
+      bar: 'from-purple-500 to-purple-700',
+      image: '/assets/images/courses/home14/3.jpg',
+    },
+    'entrepreneurship': {
+      href: '/recruitment-business-accelerator',
+      badge: 'Agency Track',
+      badgeCls: 'bg-amber-600 text-white',
+      bar: 'from-amber-500 to-amber-700',
+      image: '/assets/images/courses/style4/4.jpg',
+    },
+    'business-consulting': {
+      href: '/recruitment-business-growth-consulting',
+      badge: '1-to-1 Advisory',
+      badgeCls: 'bg-emerald-600 text-white',
+      bar: 'from-emerald-500 to-emerald-700',
+      image: '/assets/images/courses/home14/4.jpg',
+    },
+    'corporate': {
+      href: '/corporate-recruitment-training',
+      badge: 'Enterprise',
+      badgeCls: 'bg-indigo-600 text-white',
+      bar: 'from-indigo-500 to-indigo-700',
+      image: '/assets/images/courses/home14/2.jpg',
+    },
+  }
+
   const courses = categories
     .filter((category) => category.courses.length > 0)
-    .map((category, index) => {
+    .map((category) => {
       const course = category.courses[0]
-      const courseImages = [
-        '/assets/images/banner/home9.jpg',          // End-to-End: office team working on laptops
-        '/assets/images/about/tab1.jpg',             // HR Beginners: students learning at laptop
-        '/assets/images/bg/about-bg.jpg',            // Entrepreneurship: professional on call
-        '/assets/images/about/tab2.jpg',             // Corporate: team collaborating
-      ]
-      const badgeMap = ['Most Popular', 'Beginner Friendly', 'Business Track', 'Enterprise']
-      const levelMap = ['Advanced / Professional', 'Foundational', 'Advanced / Business', 'Tailored / Executive']
-      const durations = ['3 Months', '6 Weeks', '2 Months', 'Flexible']
-      const highlights = [
-        ['Boolean Search & LinkedIn', 'ATS Tools & Sourcing', 'All Industry Domains'],
-        ['HR Fundamentals', 'Recruitment Basics', 'Resume Screening'],
-        ['Agency Setup', 'Client Acquisition', 'Pricing Strategy'],
-        ['Team Assessment', 'Process Optimisation', 'ATS Implementation'],
-      ]
-      const slugs = ['end-to-end-recruitment-training', 'hr-courses-for-beginners', 'hr-entrepreneurship-program', 'hr-corporate-training-course']
-      const defaultTitleMap = ['End-to-End Recruitment Training', 'HR Courses for Beginners', 'HR Entrepreneurship Program', 'HR Corporate Training']
-      
-      const title = course.title && course.title !== 'Degree Courses' && course.title !== 'Certification Courses' && course.title !== 'Entrepreneur Courses' && course.title !== 'Corporate Traning Courses'
-        ? course.title
-        : defaultTitleMap[index] || course.title
+      const meta = SLUG_ROUTE_MAP[category.slug] || {
+        href: `/${category.slug}`,
+        badge: 'Featured',
+        badgeCls: 'bg-slate-700 text-white',
+        bar: 'from-slate-500 to-slate-700',
+        image: '/assets/images/banner/home-students-banner.jpg',
+      }
 
       return {
         id: course.id,
-        title,
-        badge: badgeMap[index] || 'Featured',
-        badgeCls: ['bg-red-500 text-white', 'bg-blue-600 text-white', 'bg-emerald-600 text-white', 'bg-purple-600 text-white'][index] || 'bg-slate-700 text-white',
-        level: levelMap[index] || category.name,
-        duration: (course as any).duration?.trim() || durations[index] || 'Flexible',
+        title: course.title,
+        badge: meta.badge,
+        badgeCls: meta.badgeCls,
+        level: category.name,
+        duration: course.duration?.trim() || 'Flexible',
         desc: stripHtml(course.description),
-        href: `/${slugs[index] || category.slug}`,
-        image: courseImages[index] || '/assets/images/banner/home-students-banner.jpg',
-        bar: ['from-red-500 to-red-700', 'from-blue-500 to-blue-700', 'from-emerald-500 to-emerald-700', 'from-purple-500 to-purple-700'][index] || 'from-slate-500 to-slate-700',
-        highlights: highlights[index] || [],
+        href: meta.href,
+        image: meta.image,
+        bar: meta.bar,
+        highlights: ['Live Classes & Labs', 'Practical Mandates', 'ISO Certificate'],
       }
     })
 

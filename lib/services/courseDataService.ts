@@ -61,9 +61,10 @@ export interface DynamicCourseData {
   features: Array<{ title: string; desc: string }>
 }
 
-const DEFAULT_COURSE_CONFIGS: Record<string, {
+export const CANONICAL_COURSE_CONFIGS: Record<string, {
   slugKey: string
   route: string
+  aliases: string[]
   defaultTitle: string
   defaultShortDescription: string
   defaultOverview: string
@@ -90,14 +91,155 @@ const DEFAULT_COURSE_CONFIGS: Record<string, {
   defaultFaqs: DynamicFaqItem[]
   defaultLmsStructure: Array<{ week: string; title: string; desc: string }>
 }> = {
-  'degree_tag': {
-    slugKey: 'degree_tag',
-    route: '/end-to-end-recruitment-training',
-    defaultTitle: 'End-to-End Recruitment Training',
-    defaultShortDescription: 'Master the complete talent acquisition lifecycle with our industry-accredited End-to-End Recruitment Training. Covers candidate sourcing, Boolean search, portal management, competency-based interviewing, multi-domain hiring (IT, Healthcare, BFSI), and statutory compliance with dedicated placement support.',
-    defaultOverview: 'In today’s competitive talent landscape, organizations require agile, tech-savvy recruiters who can identify, engage, and close high-impact talent efficiently. The End-to-End Recruitment Training program delivers a 360-degree, practical grounding in modern recruitment methodologies, bridging academic HR concepts with real-world corporate hiring practices. You will master talent mapping, multi-channel candidate sourcing across LinkedIn Recruiter, Naukri, and GitHub, advanced Boolean search strings, structured screening frameworks (STAR method), offer negotiation, employer branding, and labour law compliance.',
-    defaultDuration: '3 Months',
-    defaultDurationShort: '3 Mo',
+  'for-freshers': {
+    slugKey: 'for-freshers',
+    route: '/recruitment-career-starter',
+    aliases: ['recruitment-career-starter', 'hr-courses-for-beginners', 'certification_tag'],
+    defaultTitle: 'Recruitment Career Starter',
+    defaultShortDescription: 'Become Job-Ready for Your First Recruitment Job in 4 Weeks. Master candidate sourcing, Boolean search, Naukri Resdex, structured screening calls, and interview coordination.',
+    defaultOverview: 'The Recruitment Career Starter program is specifically engineered for fresh graduates, career switchers, and non-HR professionals seeking a fast, practical pathway into corporate talent acquisition. Over 4 intensive weeks, you will learn the core foundations of recruitment lifecycles, resume parsing, candidate calling, interview coordination, and portal sourcing with dedicated placement support.',
+    defaultDuration: '4 Weeks',
+    defaultDurationShort: '4 Wk',
+    badge: 'Entry Level',
+    badgeColor: '#0EA5E9',
+    badgeBg: 'rgba(14,165,233,.15)',
+    badgeBorder: 'rgba(14,165,233,.35)',
+    accent: '#0EA5E9',
+    accentLight: '#F0F9FF',
+    accentBorder: '#BAE6FD',
+    accentGlow: 'rgba(14,165,233,.2)',
+    gradient: 'linear-gradient(135deg,#075985,#0EA5E9,#0284C7)',
+    image: '/assets/images/about/tab1.jpg',
+    defaultFees: 7999,
+    defaultDiscount: 3000,
+    defaultFinal: 4999,
+    defaultCurriculum: [
+      {
+        week: 'Week 1',
+        title: 'Recruitment Fundamentals & Job Analysis',
+        duration: 'Week 1',
+        accent: '#0EA5E9',
+        description: 'Recruitment lifecycle, HR models, job description breakdown, and requirement understanding.',
+        learningObjectives: [
+          'Understand end-to-end recruitment from job requisition to candidate onboarding.',
+          'Differentiate between In-house HR, Staffing Agencies, and RPO models.',
+          'Interpret and draft actionable Job Descriptions (JDs) and qualification requirements.',
+        ],
+        details: [
+          'Overview of recruitment lifecycle and corporate HR hierarchy',
+          'Understanding Job Descriptions (JDs) and key qualification mapping',
+          'In-house TA vs staffing agency recruitment models',
+          'Recruiter key metrics: TAT, pipeline volume, and candidate communication',
+        ],
+        practicalActivity: 'Analyze a live job description and draft a candidate qualification checklist.',
+      },
+      {
+        week: 'Week 2',
+        title: 'Candidate Sourcing, Portals & Boolean Search',
+        duration: 'Week 2',
+        accent: '#2563EB',
+        description: 'Hands-on candidate discovery across Naukri, LinkedIn, and Boolean/X-Ray search engines.',
+        learningObjectives: [
+          'Master Boolean search operators (AND, OR, NOT, Quotes, Parentheses).',
+          'Navigate Naukri Resdex filters, keyword targeting, and candidate search.',
+          'Build talent search queries on LinkedIn and Google X-Ray.',
+        ],
+        details: [
+          'Boolean search operators and nested search strings',
+          'Naukri Resdex search filters, active candidate targeting, and keywords',
+          'LinkedIn talent search: Title filters, locations, and Boolean strings',
+          'Building custom candidate pipelines and talent databases',
+        ],
+        practicalActivity: 'Build 5 complex Boolean search strings for tech and non-tech job profiles.',
+      },
+      {
+        week: 'Week 3',
+        title: 'Screening, Calling & Interview Coordination',
+        duration: 'Week 3',
+        accent: '#059669',
+        description: 'First-round candidate screening calls, pitch scripts, salary benchmarking, and schedule management.',
+        learningObjectives: [
+          'Conduct professional phone screening calls with candidate pitch scripts.',
+          'Assess candidate notice period, CTC, expected salary, and location fit.',
+          'Manage interview scheduling and candidate communication.',
+        ],
+        details: [
+          'Structured screening calls: Assessing notice period, CTC, and location fit',
+          'Objection handling: Notice period buyouts and counter-offers',
+          'Interview scheduling, panel management, and candidate prep',
+          'Writing recruiter assessment summaries for hiring managers',
+        ],
+        practicalActivity: 'Simulate a candidate telephone screening call using our standardized assessment script.',
+      },
+      {
+        week: 'Week 4',
+        title: 'Practical Project, Resume Building & Mock Interviews',
+        duration: 'Week 4',
+        accent: '#D97706',
+        description: 'End-to-end recruitment capstone assignment, ATS tracking, portfolio creation, and interview mastery.',
+        learningObjectives: [
+          'Execute a live recruitment search mandate from JD intake to candidate shortlist.',
+          'Build an ATS-compliant HR recruiter resume highlighting hands-on tools.',
+          'Crack HR recruiter job interviews with mock interview simulations.',
+        ],
+        details: [
+          'Executing a live candidate search mandate from JD to shortlist',
+          'Building an ATS-friendly HR recruiter resume with verified credentials',
+          'Mock technical & HR interview simulations with industry mentors',
+          'Job application strategy and placement assistance support',
+        ],
+        practicalActivity: 'Complete a live candidate sourcing mandate and participate in a 1-on-1 mock interview.',
+      },
+    ],
+    defaultLearningOutcomes: [
+      'Master the complete end-to-end recruitment lifecycle and corporate hiring processes.',
+      'Construct advanced Boolean and Google X-Ray search strings to source qualified candidates.',
+      'Navigate professional recruitment job portals including Naukri Resdex and LinkedIn.',
+      'Conduct confident telephone screening interviews and assess candidate CTC and notice period.',
+      'Manage interview coordination, candidate prep, and hiring manager communications.',
+      'Receive an ATS-optimized recruiter resume and portfolio to secure your first HR role.',
+    ],
+    defaultWhoShouldEnroll: [
+      { role: 'Fresh Graduates & Final Year Students', desc: 'Graduates looking for high-growth corporate careers in HR and Talent Acquisition.' },
+      { role: 'Career Switchers & Non-HR Professionals', desc: 'Professionals transitioning into recruitment from customer service, sales, or operations.' },
+      { role: 'Entry-Level HR Associates', desc: 'Junior HR coordinators seeking structured practical recruitment training.' },
+    ],
+    defaultToolsCovered: [
+      { category: 'Job Portals', tools: ['Naukri Resdex', 'LinkedIn', 'Indeed', 'Foundit'] },
+      { category: 'Search Engines', tools: ['Google X-Ray', 'Boolean Search Builders'] },
+      { category: 'Productivity', tools: ['MS Excel', 'Google Sheets', 'Canva'] },
+    ],
+    defaultCertificationDetails: {
+      title: 'Certificate of Excellence: Recruitment Career Starter',
+      bullets: [
+        'Accredited certification with individual QR Code verification.',
+        'Lifetime access to practical recruitment templates, calling scripts, and trackers.',
+        '100% dedicated placement support, resume review, and interview coaching.',
+      ],
+    },
+    defaultFaqs: [
+      { q: 'Is this course suitable for someone with zero HR experience?', a: 'Yes! The Recruitment Career Starter is designed from the ground up for absolute beginners, freshers, and non-HR graduates.' },
+      { q: 'What is the course duration and schedule?', a: 'The program spans 4 weeks with weekend live interactive sessions and weekday practical hands-on labs.' },
+      { q: 'Do you offer placement assistance?', a: 'Yes, graduates receive 1-on-1 resume building, LinkedIn profile makeover, mock interviews, and direct referral opportunities with hiring partners.' },
+      { q: 'Will I get an accredited certificate?', a: 'Yes, upon completing the weekly assignments and final capstone mandate, you will receive a verifiable certificate of completion.' },
+    ],
+    defaultLmsStructure: [
+      { week: 'Week 1', title: 'Recruitment Fundamentals', desc: 'Full lifecycle overview, JD analysis, and candidate persona creation.' },
+      { week: 'Week 2', title: 'Candidate Sourcing & Boolean', desc: 'Naukri, LinkedIn, Boolean search, and talent pool construction.' },
+      { week: 'Week 3', title: 'Screening & Coordination', desc: 'Candidate calling, salary screening, notice period, and panel scheduling.' },
+      { week: 'Week 4', title: 'Capstone & Placement Prep', desc: 'Live mandate execution, ATS resume drafting, and interview simulations.' },
+    ],
+  },
+
+  'for-professionals': {
+    slugKey: 'for-professionals',
+    route: '/professional-recruitment-specialist',
+    aliases: ['professional-recruitment-specialist', 'end-to-end-recruitment-training', 'degree_tag'],
+    defaultTitle: 'Professional Recruitment Specialist',
+    defaultShortDescription: 'Master End-to-End Recruitment With Practical Industry Training. Covers multi-domain sourcing (IT, Non-IT, BFSI), structured STAR interviewing, offer negotiation, MIS analytics, and AI recruitment tools.',
+    defaultOverview: 'The Professional Recruitment Specialist program delivers comprehensive, practical grounding in modern recruitment methodologies. You will master multi-channel candidate sourcing across IT, Non-IT, and BFSI sectors, advanced Boolean search strings, structured screening frameworks (STAR method), offer negotiation, candidate dropout mitigation, recruitment MIS analytics, and AI tools.',
+    defaultDuration: '8 Weeks',
+    defaultDurationShort: '8 Wk',
     badge: 'Most Popular',
     badgeColor: '#DC2626',
     badgeBg: 'rgba(220,38,38,.15)',
@@ -108,386 +250,255 @@ const DEFAULT_COURSE_CONFIGS: Record<string, {
     accentGlow: 'rgba(220,38,38,.2)',
     gradient: 'linear-gradient(135deg,#7F1D1D,#DC2626,#B91C1C)',
     image: '/assets/images/banner/home9.jpg',
-    defaultFees: 95000,
+    defaultFees: 24999,
     defaultDiscount: 10000,
-    defaultFinal: 85000,
+    defaultFinal: 14999,
     defaultCurriculum: [
       {
-        week: 'Module 1',
-        title: 'Full-Lifecycle Recruitment Fundamentals & Job Analysis',
-        duration: '1.5 Weeks (6 Hours Live + 4 Hours Labs)',
+        week: 'Week 1–2',
+        title: 'Full-Lifecycle Recruitment Mastery & Intake Frameworks',
+        duration: '2 Weeks',
         accent: '#DC2626',
-        description: 'Understand the end-to-end recruitment lifecycle, differentiate HR models, and translate business needs into Job Descriptions.',
+        description: 'Advanced stakeholder intake meetings, competency frameworks, talent mapping, and market intelligence.',
         learningObjectives: [
-          'Understand end-to-end recruitment from job requisition to onboarding.',
-          'Differentiate between Corporate HR, Staffing Agencies, RPOs, and Executive Search.',
-          'Interpret and draft comprehensive Job Descriptions (JDs) and candidate personas.',
-          'Formulate hiring metrics: Time-to-Hire, Cost-per-Hire, and Quality-of-Hire.',
+          'Conduct structured intake sessions with hiring managers and corporate clients.',
+          'Map technical and functional competency frameworks.',
+          'Design conversion-focused recruitment funnels and SLAs.',
         ],
         details: [
-          'Talent Acquisition vs. Traditional Recruitment paradigms',
-          'Anatomy of a Job Requisition: Intake meetings, stakeholder alignment & SLAs',
-          'Translating business requirements into actionable JDs & competency matrices',
-          'Recruiter KPIs, funnels, conversion rates, and pipeline management',
+          'Conducting structured intake sessions with hiring managers & clients',
+          'Competency-based job profiling and skill architecture mapping',
+          'Recruitment funnel design: Top-of-funnel volume vs conversion velocity',
+          'Full statutory compliance & legal fundamentals in hiring',
         ],
-        practicalActivity: 'Conduct a simulated Hiring Manager Intake Meeting and draft a standardized Job Description with essential vs. desirable skills.',
+        practicalActivity: 'Conduct a simulated stakeholder intake meeting and build a complete requisition brief.',
       },
       {
-        week: 'Module 2',
-        title: 'Candidate Sourcing, Boolean Search & Social Platforms',
-        duration: '2.5 Weeks (10 Hours Live + 8 Hours Labs)',
+        week: 'Week 3–4',
+        title: 'Multi-Domain Sourcing & Advanced Boolean/X-Ray Search',
+        duration: '2 Weeks',
         accent: '#EA580C',
-        description: 'Master Boolean logic, Google X-Ray, LinkedIn Recruiter, Naukri Resdex, and social candidate engagement.',
+        description: 'Deep-web sourcing, GitHub/StackOverflow tech recruiting, niche headhunting, and X-Ray search.',
         learningObjectives: [
-          'Construct complex Boolean search operators across search engines and portals.',
-          'Leverage LinkedIn Recruiter, Naukri Resdex, Monster/Foundit, and Indeed effectively.',
-          'Execute passive candidate sourcing via GitHub, Stack Overflow, and Google X-Ray.',
-          'Draft high-converting cold outreach messages, InMails, and automated sequences.',
+          'Master IT recruitment tech stacks: Frontend, Backend, DevOps, Cloud, AI.',
+          'Execute Non-IT, BFSI, Sales, and Operations recruitment mandates.',
+          'Deploy Google X-Ray, GitHub, and LinkedIn Recruiter search strings.',
         ],
         details: [
-          'Boolean Search logic: AND, OR, NOT, quotation marks, parentheses & wildcards',
-          'Google X-Ray Search: Finding unlisted resumes, portfolio links & contact directories',
-          'Job Portal Mastery: Advanced filtering on Naukri (IT/Non-IT keywords, CTC, notice periods)',
-          'Social & Tech Sourcing: LinkedIn outreach, GitHub commit analysis & Stack Overflow',
-          'Email deliverability, personalized cold messaging & drip sequences',
+          'Advanced Boolean logic: Nested expressions, site search, and filetype targeting',
+          'IT Recruitment: Tech stack identification (Frontend, Backend, DevOps, Cloud, AI)',
+          'Non-IT & BFSI Hiring: Sales, operations, finance, and engineering profiles',
+          'Direct passive talent outreach via personalized InMails and cold emails',
         ],
-        practicalActivity: 'Live Sourcing Drill: Source 15 qualified candidate profiles for a given role within 60 minutes using multi-channel search.',
+        practicalActivity: 'Source 15 qualified candidate profiles for a Senior Full-Stack Engineer and a BFSI Branch Head.',
       },
       {
-        week: 'Module 3',
-        title: 'Resume Screening, Assessment & Competency Interviewing',
-        duration: '2 Weeks (8 Hours Live + 6 Hours Mock Labs)',
-        accent: '#D97706',
-        description: 'Screen resumes in 30 seconds, detect red flags, and lead competency-based interviews using STAR.',
-        learningObjectives: [
-          'Evaluate resumes systematically against Job Descriptions within 30 seconds.',
-          'Spot red flags, employment gaps, fabricated credentials, and job-hopping patterns.',
-          'Design structured telephonic screening questionnaires and scorecards.',
-          'Conduct Behavioral and Competency-Based Interviews using the STAR framework.',
-        ],
-        details: [
-          'Resume screening frameworks: Keyword matching, career trajectory & pedigree',
-          'Initial telephonic screening: Salary expectation, notice period & cultural fit',
-          'Interviewing Methodologies: Behavioral, situational & technical screening',
-          'The STAR Method (Situation, Task, Action, Result) in candidate assessment',
-          'Eliminating unconscious bias and standardizing candidate evaluation scorecards',
-        ],
-        practicalActivity: 'Screen 25 mixed-quality resumes, shortlist the top 5, and conduct a recorded 15-minute mock telephonic screening interview.',
-      },
-      {
-        week: 'Module 4',
-        title: 'Domain-Specific Recruitment (IT, Healthcare & Finance)',
-        duration: '2 Weeks (8 Hours Live + 6 Hours Case Studies)',
-        accent: '#16A34A',
-        description: 'Deep-dive into specialized recruitment ecosystems for Information Technology, Healthcare, and BFSI sectors.',
-        learningObjectives: [
-          'Understand terminology, tech stacks, and career paths in IT/Software Recruitment.',
-          'Navigate hiring regulations, clinical certifications, and licensures in Healthcare.',
-          'Master skill frameworks for Banking, Financial Services, and Insurance (BFSI).',
-          'Adapt sourcing and screening strategies according to domain nuances.',
-        ],
-        details: [
-          'IT Recruitment: Frontend, Backend, Full Stack, Cloud/DevOps, Data Engineering & Cyber',
-          'Healthcare Recruitment: Doctors, Nursing staff, Clinical Research & Medical Council checks',
-          'BFSI Recruitment: Chartered Accountants (CA), Investment Bankers, Risk Analysts & NISM/CFA',
-        ],
-        practicalActivity: 'Map the technical ecosystem for a Microservices Architecture role and complete a 3-domain sourcing case study.',
-      },
-      {
-        week: 'Module 5',
-        title: 'Advanced Recruitment Strategies & Employer Branding',
-        duration: '1.5 Weeks (6 Hours Live + 4 Hours Projects)',
+        week: 'Week 5–6',
+        title: 'Structured Interviewing, Offer Management & Pre-Boarding',
+        duration: '2 Weeks',
         accent: '#2563EB',
-        description: 'Employer value proposition (EVP), talent communities, salary negotiation, and candidate drop-off prevention.',
+        description: 'Behavioral interviewing (STAR method), salary negotiation, offer generation, and dropout mitigation.',
         learningObjectives: [
-          'Develop an Employer Value Proposition (EVP) and recruitment marketing campaigns.',
-          'Implement proactive candidate engagement and talent pipelining.',
-          'Master salary negotiation techniques, counter-offer handling, and offer rollouts.',
-          'Optimize candidate experience to minimize offer dropouts and ghosting.',
+          'Conduct structured competency interviews using the STAR method.',
+          'Structure CTC components, fixed/variable payouts, and compensation benchmarking.',
+          'Implement post-offer engagement protocols to minimize candidate dropouts.',
         ],
         details: [
-          'Employer Branding Fundamentals: Job posts, employee spotlights & career page messaging',
-          'Talent Nurturing: Building Warm Talent Pools for high-demand roles',
-          'Offer Formulation & Negotiation: Total Rewards breakdown (Fixed, Variable, ESOPs)',
-          'Post-Offer Engagement: Pre-boarding touchpoints & first-90-day retention drivers',
+          'Conducting competency & behavioral interviews with structured rubrics',
+          'CTC breakdown: Fixed, variable, ESOPs, perks, and market benchmarking',
+          'Counter-offer management and pre-joining candidate engagement protocols',
+          'Mitigating early attrition and building candidate loyalty',
         ],
-        practicalActivity: 'Roleplay a difficult compensation negotiation and offer acceptance scenario with a candidate holding competing offers.',
+        practicalActivity: 'Negotiate salary terms with a candidate holding multiple offers and design a 30-day pre-boarding engagement plan.',
       },
       {
-        week: 'Module 6',
-        title: 'Legal Frameworks, Labour Compliance & Ethics in Recruitment',
-        duration: '1 Week (4 Hours Live + 3 Hours Policy Review)',
-        accent: '#7C3AED',
-        description: 'Indian labour laws, Background Verification (BGV), data privacy (DPDP), and recruitment ethics.',
+        week: 'Week 7–8',
+        title: 'Recruitment Analytics, AI Sourcing Tools & Live Mandates',
+        duration: '2 Weeks',
+        accent: '#059669',
+        description: 'ATS management, AI-assisted recruiter workflows, weekly MIS dashboards, and final capstone.',
         learningObjectives: [
-          'Understand statutory and legal frameworks governing hiring in India.',
-          'Implement compliant Background Verification (BGV) and credential checks.',
-          'Ensure equal opportunity, diversity & inclusion (D&I), and data privacy compliance.',
-          'Maintain professional recruitment ethics and prevent malpractice.',
+          'Automate recruiter workflows using generative AI and modern ATS platforms.',
+          'Calculate and track Time-to-Fill, Cost-per-Hire, and Quality-of-Hire metrics.',
+          'Build automated executive recruitment MIS dashboards in Excel and Google Sheets.',
         ],
         details: [
-          'Key Indian Labour Laws: Equal Remuneration Act, POSH awareness & Shops & Establishment Act',
-          'Background Verification (BGV): Education, employment, criminal records & reference checks',
-          'Candidate Data Privacy (DPDP Act compliance) and confidential data handling',
-          'Ethical recruitment: Anti-poaching agreements, non-compete clauses & fee ethics',
+          'AI tools for recruiters: ChatGPT prompts, JD drafting, and automated outreach',
+          'Recruitment KPIs: Time-to-Fill, Cost-per-Hire, Quality-of-Hire, Offer-to-Join Ratio',
+          'Building real-time executive recruitment MIS dashboards in Excel & Google Sheets',
+          'Live recruitment project: Delivering closed profiles for verified mandates',
         ],
-        practicalActivity: 'Design an end-to-end Background Verification (BGV) workflow policy and consent documentation.',
-      },
-      {
-        week: 'Module 7',
-        title: 'Capstone Project & Real-World Hiring Simulation',
-        duration: '1.5 Weeks (6 Hours Mentorship + 12 Hours Capstone)',
-        accent: '#0F172A',
-        description: 'Full-cycle hiring simulation from job mandate intake to candidate offer closure and analytics dashboard.',
-        learningObjectives: [
-          'Execute a complete recruitment lifecycle from Job Requisition to Final Offer.',
-          'Demonstrate proficiency in ATS management, candidate tracking, and reporting.',
-          'Present a structured Recruitment Analytics Dashboard to industry mentors.',
-        ],
-        details: [
-          'Real-world project kickoff: Allocation of enterprise hiring mandates',
-          'Sourcing, screening, scheduling, assessment & candidate dossier preparation',
-          'Compiling a comprehensive Recruiter Portfolio and capstone presentation',
-        ],
-        practicalActivity: 'Full-Cycle Hiring Simulation: Source a 10-candidate pipeline, screen 3 finalists, prepare submission dossiers, and present a hiring closure report.',
+        practicalActivity: 'Build a live executive recruitment dashboard tracking 5 active client mandates from sourcing to offer acceptance.',
       },
     ],
     defaultLearningOutcomes: [
-      'Independently execute end-to-end recruitment workflows from requirement gathering to onboarding.',
-      'Construct sophisticated Boolean search strings and Google X-Ray queries for active and passive talent.',
-      'Navigate major job portals (Naukri Resdex, LinkedIn Recruiter, Indeed) and enterprise ATS platforms.',
-      'Screen resumes in under 30 seconds and conduct structured competency interviews using the STAR method.',
-      'Confidently recruit across specialized domains including IT, Healthcare, and BFSI.',
-      'Structure competitive compensation offers, negotiate counter-offers, and reduce candidate dropouts.',
-      'Apply Indian labour laws, standard BGV workflows, and data privacy compliance in daily hiring.',
-      'Implement employer branding and maintain active talent communities for recurring mandates.',
-      'Track and optimize core hiring metrics: Time-to-Fill, Cost-per-Hire, and Offer Acceptance Ratios.',
+      'Master end-to-end recruitment execution across IT, Non-IT, BFSI, and Healthcare domains.',
+      'Source high-caliber passive candidates via advanced Boolean search, X-Ray, and GitHub.',
+      'Conduct competency-based behavioral interviews using the structured STAR framework.',
+      'Negotiate complex compensation packages, manage counter-offers, and eliminate dropouts.',
+      'Track recruitment metrics (TAT, Cost-per-Hire, Quality-of-Hire) on automated MIS dashboards.',
+      'Leverage AI tools and ATS platforms to increase sourcing speed and closure velocity 3x.',
     ],
     defaultWhoShouldEnroll: [
-      { role: 'Aspiring HR & Recruitment Professionals', desc: 'Fresh graduates (BBA, B.Com, MBA-HR, MSW) seeking high-growth entry into Talent Acquisition.' },
-      { role: 'Junior Recruiters & HR Executives', desc: 'Early-career professionals (0–2 years) wanting to upgrade their sourcing capabilities, domain expertise, and closing ratios.' },
-      { role: 'Non-HR Career Switchers', desc: 'Professionals from sales, customer service, BPO, or administration transitioning into high-demand recruitment roles.' },
-      { role: 'Freelance Recruiters & Staffing Consultants', desc: 'Independent headhunters aiming to master modern recruitment tools, employer branding, and enterprise client handling.' },
+      { role: 'Recruiters & HR Executives (0–3 Years)', desc: 'Practitioners wanting to master multi-domain hiring and high-ticket candidate closures.' },
+      { role: 'Staffing & Agency Consultants', desc: 'Recruitment consultants aiming to increase billing and closure rates.' },
+      { role: 'Generalist HR Professionals', desc: 'HR generalists looking to specialize in high-demand Talent Acquisition.' },
     ],
     defaultToolsCovered: [
-      { category: 'Sourcing & Talent Search', tools: ['LinkedIn Recruiter', 'LinkedIn Sales Navigator', 'Google X-Ray Search', 'GitHub', 'Stack Overflow'] },
-      { category: 'Job Portals & Databases', tools: ['Naukri.com (Resdex & Job Postings)', 'Indeed India', 'Foundit (Monster)', 'Shine'] },
-      { category: 'Applicant Tracking Systems (ATS)', tools: ['Zoho Recruit', 'Greenhouse', 'Lever', 'Google Sheets Recruiter Pipelines'] },
-      { category: 'Assessment & Scheduling', tools: ['Google Meet', 'Zoom', 'MS Teams', 'Calendly', 'TestGorilla'] },
-      { category: 'AI Sourcing & Productivity', tools: ['ChatGPT for Recruiter Prompts', 'Magical AI', 'Claude for JD Writing', 'Loom'] },
+      { category: 'Applicant Tracking Systems', tools: ['Zoho Recruit', 'Greenhouse', 'Ceipal', 'Freshteam'] },
+      { category: 'Sourcing & Search', tools: ['LinkedIn Recruiter', 'Naukri Resdex', 'GitHub', 'Google X-Ray'] },
+      { category: 'AI & Analytics', tools: ['ChatGPT for TA', 'MS Excel Advanced MIS', 'Google Looker Studio'] },
     ],
     defaultCertificationDetails: {
-      title: 'Certified Talent Acquisition & Full-Lifecycle Recruitment Specialist',
+      title: 'Certified Professional Recruitment Specialist (CPRS)',
       bullets: [
-        'Tamper-proof certificate with unique verifiable QR Code for instant employer verification.',
-        'Accredited by Recruitment Institute adhering to ISO-standard corporate training quality.',
-        'Lifetime access to LMS learning portal, recorded sessions, sourcing templates, and cheat sheets.',
-        'One-click verifiable LinkedIn digital certification badge.',
+        'ISO-accredited certificate with verifiable QR Code authentication.',
+        'Lifetime access to complete recruitment templates, negotiation scripts, and MIS trackers.',
+        'Direct career placement and interview opportunities with leading recruitment partners.',
       ],
     },
     defaultFaqs: [
-      { q: 'What is the duration and schedule of the course?', a: 'The course spans 3 Months (12 weeks). Classes are held on weekends (Saturday & Sunday, 2 hours/day) with weekday doubt-clearing sessions and hands-on sourcing labs.' },
-      { q: 'What are the prerequisites to join this program?', a: 'There are no strict prerequisites. A bachelor’s degree in any discipline (or final-year students), basic computer literacy, and strong communication skills are sufficient.' },
-      { q: 'How is this course different from generic HR management courses?', a: 'Unlike broad theoretical HR courses, this program is 100% focused on Talent Acquisition and Recruitment operations. You spend over 60% of class time actively sourcing, screening, and simulating hiring mandates.' },
-      { q: 'Is placement support provided?', a: 'Yes. We provide comprehensive career support including 1-on-1 resume rebuilding, LinkedIn profile optimization, mock recruitment interviews, and direct referrals to our network of 150+ hiring partners.' },
-      { q: 'Are flexible installment / EMI options available?', a: 'Yes. The course fee of ₹85,000 can be paid through easy no-cost and low-cost EMI options starting at ₹14,167/month across major credit cards, debit cards, and loan partners.' },
-      { q: 'What if I miss a live class?', a: 'All live classes are recorded in HD quality and uploaded to your LMS student portal within 4 hours. You enjoy lifetime access to review recordings at your convenience.' },
-      { q: 'Will I get hands-on access to recruitment tools?', a: 'Yes. You will participate in live walkthroughs and practical assignments utilizing LinkedIn Recruiter workflows, Boolean search engines, Naukri simulation frameworks, and ATS tools.' },
-      { q: 'Is the certificate recognized by employers?', a: 'Yes. Our certificate is widely acknowledged across corporate HR departments, IT staffing firms, and RPO firms in India and abroad with instant QR-code verification.' },
+      { q: 'Who is the Professional Recruitment Specialist course for?', a: 'It is tailored for recruiters with 0–3 years of experience, HR executives, and talent advisors looking to master IT, BFSI, and niche recruitment.' },
+      { q: 'How long is the program?', a: 'The program runs for 8 weeks (2 months) with weekend live classes, practical weekday case studies, and lifetime LMS access.' },
+      { q: 'Do you cover AI tools for recruiters?', a: 'Yes! You will learn how to leverage generative AI, ChatGPT, automated Boolean builders, and modern ATS platforms to 3x your sourcing speed.' },
+      { q: 'What is the certification issued?', a: 'You receive an ISO-accredited Professional Recruitment Specialist certificate with a unique QR code for LinkedIn and resume verification.' },
     ],
     defaultLmsStructure: [
-      { week: 'Week 01', title: 'Recruitment Fundamentals & JD Structuring', desc: 'Talent Acquisition ecosystem, Corporate vs. Agency hiring, Intake meetings, and JD structuring.' },
-      { week: 'Week 02', title: 'Recruiter Metrics & Persona Mapping', desc: 'Hiring funnels, KPIs (Time-to-Hire, Cost-per-Hire), Candidate Personas, and Competency Mapping.' },
-      { week: 'Week 03', title: 'Boolean Search & Google X-Ray Logic', desc: 'Boolean Operators, search string construction, nesting logic, and Google X-Ray search methodology.' },
-      { week: 'Week 04', title: 'Portal Sourcing (Naukri, Indeed, Foundit)', desc: 'Job portal architecture, Naukri Resdex advanced search, keyword density, and portal posting.' },
-      { week: 'Week 05', title: 'Social & Niche Sourcing (LinkedIn, GitHub)', desc: 'LinkedIn Recruiter workflows, Boolean on social networks, GitHub candidate identification, and InMail writing.' },
-      { week: 'Week 06', title: 'Resume Screening & Red Flag Detection', desc: '30-second resume screening, career gap verification, telephonic screening frameworks, and candidate dossiers.' },
-      { week: 'Week 07', title: 'Competency-Based & STAR Interviewing', desc: 'Structured interviewing, STAR assessment sheets, rating rubrics, and unconscious bias mitigation.' },
-      { week: 'Week 08', title: 'IT & Tech Recruitment Deep Dive', desc: 'Frontend/Backend/Cloud stacks, understanding developer resumes, tech screening questions.' },
-      { week: 'Week 09', title: 'Healthcare & BFSI Sector Hiring', desc: 'Non-IT hiring: Healthcare credentials, Nursing/Doctor registries, CA/CFA/Banking profiles, and compliance.' },
-      { week: 'Week 10', title: 'Employer Branding & Outreach Strategies', desc: 'Recruitment marketing, LinkedIn personal branding for recruiters, employer value proposition (EVP), and candidate nurturing.' },
-      { week: 'Week 11', title: 'Offer Negotiation & Labour Law Compliance', desc: 'CTC breakups, offer letter negotiation, counter-offer handling, pre-boarding touchpoints, and Indian labour laws.' },
-      { week: 'Week 12', title: 'Capstone Project, Recruiter Portfolio & Certificate', desc: 'Capstone project execution, live peer review, LMS final assessment quiz, and issuance of QR-coded certificates.' },
+      { week: 'Week 1–2', title: 'Recruitment Lifecycle & Intake', desc: 'Competency frameworks, stakeholder intake, and requisition briefs.' },
+      { week: 'Week 3–4', title: 'Multi-Domain Sourcing & Boolean', desc: 'IT/Non-IT sourcing, GitHub, X-Ray, and passive candidate outreach.' },
+      { week: 'Week 5–6', title: 'Interviewing & Offer Negotiation', desc: 'STAR interviewing, CTC benchmarking, and counter-offer management.' },
+      { week: 'Week 7–8', title: 'MIS Dashboards, AI & Capstone', desc: 'AI tools for recruiters, executive MIS dashboards, and live project submission.' },
     ],
   },
 
-  'certification_tag': {
-    slugKey: 'certification_tag',
-    route: '/hr-courses-for-beginners',
-    defaultTitle: 'HR Courses for Beginners',
-    defaultShortDescription: 'Kickstart your Human Resources career with our foundational 6-week intensive certificate program. Covers HR operations, entry-level recruitment, resume screening, calling etiquette, portal basics (Naukri & LinkedIn), interview scheduling, and basic documentation.',
-    defaultOverview: 'Entering the Human Resources domain without formal training can feel daunting. The HR Courses for Beginners is an accessible, career-starter program engineered to transform beginners into job-ready HR professionals in just 6 weeks. You will learn how modern organizations structure their HR teams, how to read job descriptions, search candidates on Naukri and LinkedIn, conduct telephonic screening calls, manage interview calendars, and coordinate onboarding.',
+  'senior-professionals': {
+    slugKey: 'senior-professionals',
+    route: '/advanced-recruitment-ta-masterclass',
+    aliases: ['advanced-recruitment-ta-masterclass'],
+    defaultTitle: 'Advanced Recruitment & TA Masterclass',
+    defaultShortDescription: 'Upgrade From Recruiter to Strategic Talent Acquisition Professional. Master strategic workforce planning, TA metrics, executive search, employer branding, and recruiter team leadership.',
+    defaultOverview: 'A high-impact executive program designed for senior recruiters, TA leads, and HR managers. Transition from tactical transactional recruiting to high-value strategic talent partnership. Master workforce forecasting, hiring manager alignment, executive C-suite search, TA budget optimization, employer branding, and AI automated pipelines.',
     defaultDuration: '6 Weeks',
     defaultDurationShort: '6 Wk',
-    badge: 'Beginner Friendly',
-    badgeColor: '#0EA5E9',
-    badgeBg: 'rgba(14,165,233,.15)',
-    badgeBorder: 'rgba(14,165,233,.35)',
-    accent: '#0EA5E9',
-    accentLight: '#F0F9FF',
-    accentBorder: '#BAE6FD',
-    accentGlow: 'rgba(14,165,233,.2)',
-    gradient: 'linear-gradient(135deg,#075985,#0EA5E9,#0284C7)',
-    image: '/assets/images/about/tab1.jpg',
-    defaultFees: 18000,
-    defaultDiscount: 2000,
-    defaultFinal: 16000,
+    badge: 'Executive Level',
+    badgeColor: '#7C3AED',
+    badgeBg: 'rgba(124,58,237,.15)',
+    badgeBorder: 'rgba(124,58,237,.35)',
+    accent: '#7C3AED',
+    accentLight: '#F5F3FF',
+    accentBorder: '#DDD6FE',
+    accentGlow: 'rgba(124,58,237,.2)',
+    gradient: 'linear-gradient(135deg,#3B0764,#7C3AED,#6D28D9)',
+    image: '/assets/images/courses/home14/3.jpg',
+    defaultFees: 29999,
+    defaultDiscount: 10000,
+    defaultFinal: 19999,
     defaultCurriculum: [
       {
-        week: 'Module 1',
-        title: 'HR Foundations & the Modern Talent Landscape',
-        duration: '1 Week (6 Hours Live + 3 Hours Labs)',
-        accent: '#0EA5E9',
-        description: 'Core pillars of Human Resource Management, recruiter responsibilities, and key terminology.',
+        week: 'Week 1–2',
+        title: 'Strategic Talent Acquisition & Workforce Forecasting',
+        duration: '2 Weeks',
+        accent: '#7C3AED',
+        description: 'Aligning talent acquisition strategy with business goals, capacity models, and hiring manager alignment.',
         learningObjectives: [
-          'Understand the core pillars of Human Resource Management (HRM).',
-          'Identify roles, daily responsibilities, and growth paths of an entry-level recruiter.',
-          'Decode organizational charts, hiring hierarchies, and team workflows.',
-          'Master fundamental HR and recruitment terminology.',
+          'Transition from tactical recruiter to strategic talent acquisition partner.',
+          'Build headcount forecasting models and recruiter capacity plans.',
+          'Manage senior business leaders and establish operational SLAs.',
         ],
         details: [
-          'Introduction to Corporate HR vs. Staffing vs. HR Operations',
-          'The employee lifecycle: Hire to Retire overview',
-          'Key HR terms: CTC, Notice Period, In-hand Salary, Gross, SLAs, Requisition',
-          'Day-in-the-life of a Junior Recruiter and HR Trainee',
+          'Transitioning from tactical recruiter to strategic talent partner',
+          'Workforce planning, headcount forecasting, and capacity modeling',
+          'Managing executive hiring managers and setting SLAs',
+          'Recruitment budget allocation and vendor/consultant management',
         ],
-        practicalActivity: 'Map an organizational chart for a 100-person tech company and create a glossary of 25 essential HR terms.',
+        practicalActivity: 'Develop a 12-month headcount capacity and hiring budget model for an enterprise organization.',
       },
       {
-        week: 'Module 2',
-        title: 'Job Descriptions & Sourcing Fundamentals',
-        duration: '1.5 Weeks (8 Hours Live + 6 Hours Labs)',
-        accent: '#0284C7',
-        description: 'Deconstruct JDs, search keywords, and perform candidate searches on Naukri and LinkedIn.',
+        week: 'Week 3–4',
+        title: 'Advanced Metrics, Dashboards & Executive Search',
+        duration: '2 Weeks',
+        accent: '#2563EB',
+        description: 'Designing board-level TA dashboards, calculating Cost/Time/Quality of Hire, and C-suite headhunting.',
         learningObjectives: [
-          'Deconstruct job descriptions to identify mandatory vs. optional qualifications.',
-          'Perform basic keyword search queries on Naukri and LinkedIn.',
-          'Search for candidates by location, experience, and salary criteria.',
-          'Organize candidate profiles into structured spreadsheets.',
+          'Design automated executive TA analytics dashboards in PowerBI / Looker.',
+          'Execute confidential C-suite executive search and headhunting mandates.',
+          'Balance high-volume campus hiring with niche leadership recruitment.',
         ],
         details: [
-          'Reading and analyzing Job Descriptions (JDs)',
-          'Navigating job boards: Naukri Resdex basics, filters, and keyword fields',
-          'Basic LinkedIn searching: Utilizing search filters, titles, and location tags',
-          'Building structured Google Sheet candidate trackers',
+          'Core TA analytics: Funnel conversion, offer acceptance ratios, and sourcing channel ROI',
+          'Building automated PowerBI / Google Looker Studio executive TA dashboards',
+          'Executive search & headhunting: Confidential mandates, mapping, and board hiring',
+          'Managing bulk campus hiring drives vs niche leadership recruitment',
         ],
-        practicalActivity: 'Extract 5 key search criteria from an Entry-Level JD and build a candidate tracker on Google Sheets with 10 shortlisted profiles.',
+        practicalActivity: 'Design an interactive PowerBI executive TA dashboard with channel ROI metrics.',
       },
       {
-        week: 'Module 3',
-        title: 'Resume Screening & Calling Etiquette',
-        duration: '1.5 Weeks (8 Hours Live + 6 Hours Roleplays)',
-        accent: '#0369A1',
-        description: 'Apply the 30-second resume evaluation checklist and conduct polite telephonic screening calls.',
+        week: 'Week 5–6',
+        title: 'Employer Branding, Recruiter Productivity & AI Automation',
+        duration: '2 Weeks',
+        accent: '#059669',
+        description: 'Employer value proposition (EVP), team performance management, advanced ATS integrations, and AI.',
         learningObjectives: [
-          'Apply the 30-second resume evaluation checklist.',
-          'Conduct polite, structured telephonic candidate screening calls.',
-          'Inquire about salary expectations, location, and notice periods professionally.',
-          'Handle candidate hesitations and basic objections effectively.',
+          'Architect a compelling Employer Value Proposition (EVP) and talent community.',
+          'Manage recruiter team productivity, KPI scorecards, and incentive schemes.',
+          'Automate end-to-end talent acquisition pipelines using AI workflows.',
         ],
         details: [
-          'The 30-second resume scan: Identifying relevant experience, education, and tenure',
-          'Telephonic screening scripts and professional phone etiquette',
-          'How to verify CTC details, expected compensation, and notice period constraints',
-          'Writing clear, professional candidate email invitations and WhatsApp messages',
+          'Building an attractive Employer Value Proposition (EVP) and talent community',
+          'Managing recruiter team productivity, incentive models, and KPIs',
+          'Enterprise ATS stack evaluation: Workday, Greenhouse, Lever, and Zoho Recruit',
+          'Automating end-to-end recruitment pipelines with AI and workflow triggers',
         ],
-        practicalActivity: 'Conduct a recorded 5-minute telephonic screening roleplay with an instructor and screen 15 student resumes.',
-      },
-      {
-        week: 'Module 4',
-        title: 'Interview Coordination & Documentation Basics',
-        duration: '1 Week (6 Hours Live + 4 Hours Workflows)',
-        accent: '#075985',
-        description: 'Coordinate interview rounds, manage calendars, and audit pre-onboarding document checklists.',
-        learningObjectives: [
-          'Coordinate interview rounds between candidates and hiring managers seamlessly.',
-          'Manage calendar invites, video interview links, and reminder notifications.',
-          'Understand standard document checklists required for onboarding.',
-          'Assist in basic offer letter dispatch and joining confirmation workflows.',
-        ],
-        details: [
-          'Interview scheduling workflows: Coordinating panel calendars & sending meeting invites',
-          'Managing candidate dropouts and rescheduling requests',
-          'Standard onboarding document checklist: Identity proofs, certificates, payslips & relieving letters',
-          'Basic offer letter components and pre-joining check-ins',
-        ],
-        practicalActivity: 'Draft an interview confirmation email with calendar attachments and create a standardized document verification checklist.',
-      },
-      {
-        week: 'Module 5',
-        title: 'Practical Capstone, Resume Rebuilding & Placement Prep',
-        duration: '1 Week (6 Hours Mentorship + 4 Hours Mocks)',
-        accent: '#0C4A6E',
-        description: 'Complete full-cycle fresher hiring simulation, format ATS-friendly resume, and attend mock HR interviews.',
-        learningObjectives: [
-          'Complete an end-to-end entry-level sourcing and screening simulation.',
-          'Format an ATS-friendly HR resume highlighting course projects and competencies.',
-          'Clear foundational HR interview questions and behavioral rounds.',
-          'Register with the Recruitment Institute Placement Cell.',
-        ],
-        details: [
-          'Full-cycle mini-project: Source, screen, and schedule candidates for an assigned role',
-          'Recruiter resume crafting: Highlighting keywords, project work, and certifications',
-          'Common HR interview questions and model answers for freshers',
-          'Job application strategies on LinkedIn, Naukri, and entry-level job boards',
-        ],
-        practicalActivity: 'Complete the "First Hire Simulation", finalize your optimized HR resume, and attend a 1-on-1 mock interview with faculty.',
+        practicalActivity: 'Draft an enterprise EVP framework and recruiter incentive scorecard.',
       },
     ],
     defaultLearningOutcomes: [
-      'Explain core HR and talent acquisition processes within corporate and agency setups.',
-      'Accurately identify core requirements, experience brackets, and skill priorities from JDs.',
-      'Search and retrieve relevant candidate profiles using basic filters on Naukri and LinkedIn.',
-      'Evaluate resumes in under a minute using structured screening criteria.',
-      'Conduct confident, articulate telephonic screening conversations with prospective candidates.',
-      'Manage end-to-end interview logistics, Google Meet invites, and candidate follow-ups.',
-      'Compile and audit basic candidate onboarding documents and credential records.',
-      'Build an industry-ready resume tailored for Junior Recruiter and HR Trainee openings.',
+      'Lead talent acquisition teams and align recruitment operations with board-level business goals.',
+      'Build predictive headcount forecasting and recruiter capacity planning models.',
+      'Construct real-time executive TA dashboards measuring Channel ROI, Quality-of-Hire, and Velocity.',
+      'Execute confidential leadership and executive search headhunting assignments.',
+      'Design attractive Employer Branding campaigns to attract high-caliber passive candidates.',
+      'Optimize recruitment budgets, vendor empanelment agreements, and enterprise ATS workflows.',
     ],
     defaultWhoShouldEnroll: [
-      { role: 'Fresh Graduates', desc: 'Students from Arts, Commerce, Science, BBA, and MBA seeking an immediate start in corporate HR.' },
-      { role: 'Career Switchers', desc: 'Individuals from non-HR backgrounds (BPO, Sales, Customer Support, Retail) looking to transition into HR.' },
-      { role: 'Aspiring HR Assistants', desc: 'Professionals seeking formal foundational certification to qualify for corporate entry-level roles.' },
+      { role: 'Senior Recruiters & TA Leads (3–10+ Years)', desc: 'Practitioners aiming to step up into TA Manager, Head of Talent, or HR Business Partner roles.' },
+      { role: 'HR Managers & Generalists', desc: 'HR professionals responsible for leading organizational recruitment strategy.' },
+      { role: 'Senior Agency Account Managers', desc: 'Agency leaders managing large client portfolios and recruiting teams.' },
     ],
     defaultToolsCovered: [
-      { category: 'Job Portals', tools: ['Naukri.com (Basic Resdex overview)', 'LinkedIn Jobs', 'Indeed India'] },
-      { category: 'Productivity & Tracking', tools: ['Google Sheets', 'MS Excel (Recruitment Trackers)', 'Google Docs'] },
-      { category: 'Communication & Scheduling', tools: ['Google Meet', 'Zoom', 'MS Outlook', 'Gmail', 'WhatsApp Business'] },
+      { category: 'Enterprise ATS', tools: ['Workday', 'Greenhouse', 'SuccessFactors', 'Lever'] },
+      { category: 'Executive Sourcing', tools: ['LinkedIn Talent Insights', 'ExecuNet', 'Board Search'] },
+      { category: 'Analytics', tools: ['PowerBI', 'Google Looker Studio', 'Advanced Excel Modeling'] },
     ],
     defaultCertificationDetails: {
-      title: 'Certificate in Foundational HR & Recruitment Practices',
+      title: 'Executive Master Certificate in Strategic Talent Acquisition',
       bullets: [
-        'Tamper-proof verifiable QR Code for instant employer verification.',
-        'Lifetime access to foundational HR templates, calling scripts, and interview checklists.',
-        'Sharable digital PDF Certificate and LinkedIn badge.',
+        'Accredited executive credential with QR Code verification.',
+        'Access to complete TA leadership frameworks, capacity models, and vendor contracts.',
+        'Exclusive executive alumni networking community and leadership mastermind sessions.',
       ],
     },
     defaultFaqs: [
-      { q: 'Do I need an MBA in HR to join this course?', a: 'No. A graduate degree in any discipline or final-year student status is sufficient. Prior HR knowledge is not required.' },
-      { q: 'How many hours per week do I need to commit?', a: 'Approximately 6 to 8 hours per week, including live classes and hands-on practice.' },
-      { q: 'What job roles can I apply for after completing this course?', a: 'Junior Recruiter, HR Trainee, Talent Acquisition Associate, HR Coordinator, and Sourcing Specialist.' },
-      { q: 'Is the course conducted in English?', a: 'Yes, classes are delivered in clear, simple Business English to help you build workplace communication confidence.' },
-      { q: 'Are recorded sessions provided if I miss a lecture?', a: 'Yes. All sessions are recorded and made available on the LMS portal within 4 hours.' },
-      { q: 'What is the course fee and are there installment options?', a: 'The fee is ₹16,000 (all-inclusive), payable in 2 installments or via zero-cost monthly EMI options starting at ₹2,667/month.' },
+      { q: 'Is this program suitable for TA Leads and Managers?', a: 'Yes! It is specifically created for professionals with 3+ years of experience who want to lead talent acquisition teams and drive strategy.' },
+      { q: 'What is the duration?', a: '6 intensive weeks with executive weekend masterclasses and strategic leadership workshops.' },
+      { q: 'Are there live case studies?', a: 'Yes, you will work on real-world leadership hiring mandates, budget forecasting models, and executive dashboard implementations.' },
     ],
     defaultLmsStructure: [
-      { week: 'Week 1', title: 'HR Foundations & Recruiter Roles', desc: 'Introduction to Human Resource Management, Organizational Structures, and Recruiter Roles.' },
-      { week: 'Week 2', title: 'Job Descriptions & Portal Searching', desc: 'Understanding Job Descriptions, Keyword Extraction, and Job Portal Fundamentals (Naukri/LinkedIn).' },
-      { week: 'Week 3', title: 'Resume Screening & Candidate Calling', desc: '30-Second Resume Screening Techniques, Shortlisting Criteria, and Tracker Management.' },
-      { week: 'Week 4', title: 'Calling Scripts & Notice Period Handling', desc: 'Telephonic Calling Scripts, Candidate Communication, and Negotiation of Notice Periods/CTC.' },
-      { week: 'Week 5', title: 'Interview Scheduling & Document Checklists', desc: 'Interview Logistics, Calendar Coordination, Onboarding Document Checklists, and Offer Basics.' },
-      { week: 'Week 6', title: 'First-Hire Simulation & Career Launch', desc: 'First-Hire Capstone Simulation, Resume Rebuilding Workshop, Mock Interviews, and Certification.' },
+      { week: 'Week 1–2', title: 'Strategic TA & Workforce Planning', desc: 'Headcount forecasting, SLA alignment, and stakeholder management.' },
+      { week: 'Week 3–4', title: 'Executive TA Metrics & Search', desc: 'Executive search, confidential mandates, and PowerBI dashboards.' },
+      { week: 'Week 5–6', title: 'EVP, Team KPIs & Automation', desc: 'Employer branding, recruiter incentive plans, and automated AI pipelines.' },
     ],
   },
 
-  'entrepreneur_tag': {
-    slugKey: 'entrepreneur_tag',
-    route: '/hr-entrepreneurship-program',
-    defaultTitle: 'HR Entrepreneurship Program',
-    defaultShortDescription: 'Launch, operate, and scale your own profitable recruitment consultancy or staffing agency with our 2-month executive masterclass. Covers niche selection, GST/MSME registration, B2B client acquisition, SLA/NDA contracts, 48-hour shortlisting, and cash flow management.',
-    defaultOverview: 'Starting a recruitment agency offers high profit margins with low initial capital requirements, but building a scalable, resilient staffing business requires structured business acumen. The HR Entrepreneurship Program is a practical business blueprint designed to guide entrepreneurs through the entire agency lifecycle—from zero to their first ₹10 Lakhs in billing. You will master niche selection, B2B client outreach, commercial negotiation (8.33% to 15% placement fees), lean ATS infrastructure, and billing cycles.',
-    defaultDuration: '2 Months',
-    defaultDurationShort: '2 Mo',
+  'entrepreneurship': {
+    slugKey: 'entrepreneurship',
+    route: '/recruitment-business-accelerator',
+    aliases: ['recruitment-business-accelerator', 'hr-entrepreneurship-program', 'become-an-entrepreneur', 'entrepreneur_tag'],
+    defaultTitle: 'Recruitment Business Accelerator',
+    defaultShortDescription: "Don't Just Become a Recruiter. Build Your Recruitment Business. Launch, monetize, and scale your own profitable recruitment agency or HR consultancy firm in 8 weeks.",
+    defaultOverview: 'The definitive blueprint for launching, monetizing, and scaling your own profitable recruitment agency or HR consultancy. Learn how to select high-margin niches, structure legal MSME/GST contracts, acquire enterprise corporate clients, manage contingency and retainer commercials, hire recruiters, and scale past ₹1 Crore ARR.',
+    defaultDuration: '8 Weeks',
+    defaultDurationShort: '8 Wk',
     badge: 'Business Track',
     badgeColor: '#D97706',
     badgeBg: 'rgba(217,119,6,.15)',
@@ -498,148 +509,248 @@ const DEFAULT_COURSE_CONFIGS: Record<string, {
     accentGlow: 'rgba(217,119,6,.2)',
     gradient: 'linear-gradient(135deg,#78350F,#D97706,#B45309)',
     image: '/assets/images/courses/style4/4.jpg',
-    defaultFees: 25000,
-    defaultDiscount: 3000,
-    defaultFinal: 22000,
+    defaultFees: 49999,
+    defaultDiscount: 20000,
+    defaultFinal: 29999,
     defaultCurriculum: [
       {
-        week: 'Module 1',
-        title: 'Niche Selection, Positioning & Legal Setup',
-        duration: '2 Weeks (8 Hours Live + 6 Hours Planning)',
+        week: 'Week 1',
+        title: 'Business Model, Niche Selection & Agency Positioning',
+        duration: 'Week 1',
         accent: '#D97706',
-        description: 'Agency business models, high-margin staffing niches, entity incorporation (LLP/Pvt Ltd), and GST/MSME compliance.',
-        learningObjectives: [
-          'Select a high-margin, sustainable recruitment niche based on market demand.',
-          'Decide between Sole Proprietorship, LLP, and Private Limited company structures.',
-          'Complete statutory registrations: GST, MSME/Udyam, and Current Account setup.',
-          'Establish agency branding, corporate domain, website, and digital presence.',
-        ],
-        details: [
-          'Market analysis: Identifying high-growth staffing niches (IT, GCCs, BFSI, Healthcare)',
-          'Legal company incorporation: Proprietorship vs. LLP vs. Pvt Ltd in India',
-          'Tax compliance: GST registration, TDS on recruitment fees (Section 194J) & MSME benefits',
-          'Corporate identity: Crafting agency value proposition, service brochure & website',
-        ],
-        practicalActivity: 'Complete the Agency Niche Scoring Matrix and draft your agency service deck showcasing domain specializations.',
+        description: 'Recruitment vs staffing vs RPO, finding high-margin niches, and defining your value proposition.',
+        learningObjectives: ['Select your profitable high-margin recruitment niche.', 'Structure pricing and revenue models (8.33% to 20%).'],
+        details: ['Agency business models: Contingency vs Retained vs RPO', 'Selecting high-margin niches (Tech, BFSI, Healthcare)', 'Target client profiling and rate card structuring'],
+        practicalActivity: 'Draft your agency value proposition and commercial rate card.',
       },
       {
-        week: 'Module 2',
-        title: 'B2B Client Acquisition & Commercial Contracts',
-        duration: '2 Weeks (8 Hours Live + 8 Hours Outreach)',
+        week: 'Week 2',
+        title: 'Legal Setup, Commercial Contracts & Terms of Business',
+        duration: 'Week 2',
         accent: '#B45309',
-        description: 'Target CXOs and HR Heads, execute cold outreach campaigns, and negotiate commercial SLAs and NDAs.',
-        learningObjectives: [
-          'Identify and target key hiring decision-makers (Founders, VP-HR, TA Heads).',
-          'Execute cold outreach campaigns across LinkedIn, email, and phone.',
-          'Structure and negotiate Client Service Agreements (SLA), NDAs, and fee models.',
-          'Pitch contingency vs. retained vs. executive search recruitment models.',
-        ],
-        details: [
-          'Prospecting target clients: Building a database of high-growth companies',
-          'Proven 3-touch outbound cold outreach scripts: Email, LinkedIn InMail & calling frameworks',
-          'Commercial terms: 8.33% vs. 10–12.5% vs. 15% tiers; 30/60-day credit terms',
-          'Contract clauses: 90-day replacement guarantee, non-solicitation & exclusivity',
-        ],
-        practicalActivity: 'Customize an industry-standard Client Service Agreement (SLA) and execute a 3-step outreach campaign targeting 30 companies.',
+        description: 'GST, MSME, NDA, SLA agreements, non-compete clauses, and risk mitigation frameworks.',
+        learningObjectives: ['Incorporate your company and set up legal agreements.', 'Draft Master Services Agreements (MSAs) and payment terms.'],
+        details: ['Sole Proprietorship, LLP, or Pvt Ltd incorporation', 'Drafting client service agreements (SLA) & replacement clauses', 'Setting up banking, invoicing, and tax accounting'],
+        practicalActivity: 'Customize your Master Service Agreement (MSA) and client pitch deck.',
       },
       {
-        week: 'Module 3',
-        title: 'Delivery Excellence & 48-Hour Shortlisting',
-        duration: '2 Weeks (8 Hours Live + 6 Hours Workflows)',
-        accent: '#92400E',
-        description: 'Implement lean ATS infrastructure, build candidate benches, and deliver candidate dossiers within 48 hours.',
-        learningObjectives: [
-          'Implement low-cost, scalable ATS and candidate tracking infrastructure.',
-          'Master the "48-Hour Shortlist" standard to deliver rapid candidate pipelines to clients.',
-          'Manage candidate offer acceptance, counter-offer risks, and joining confirmations.',
-          'Handle difficult client feedback, scope changes, and rejected submissions.',
-        ],
-        details: [
-          'Setting up lean recruitment tech stack: Low-cost ATS & email automation tools',
-          'Talent bench strategy: Pre-sourcing candidates before client mandates are released',
-          'Submitting compelling candidate dossiers that maximize shortlist rates',
-          'Candidate control: Pre-closing salary expectations & managing notice period buyouts',
-        ],
-        practicalActivity: 'Configure a client pipeline board on a cloud ATS and prepare a formal 3-candidate submission dossier.',
+        week: 'Week 3',
+        title: 'Agency Infrastructure, ATS & Sourcing Operations',
+        duration: 'Week 3',
+        accent: '#059669',
+        description: 'Building lean tech stacks, multi-portal access, database management, and standard SOPs.',
+        learningObjectives: ['Deploy an agency-grade ATS and candidate database.', 'Establish Standard Operating Procedures (SOPs).'],
+        details: ['Setting up Zoho Recruit or Ceipal ATS', 'Cost-effective portal subscription strategies', 'Standard Operating Procedures for candidate fulfillment'],
+        practicalActivity: 'Configure your agency ATS pipeline and candidate submission template.',
       },
       {
-        week: 'Module 4',
-        title: 'Billing, Cash Flow Management & Scaling',
-        duration: '2 Weeks (8 Hours Live + 6 Hours Modelling)',
-        accent: '#78350F',
-        description: 'Manage client invoicing cycles, GST billing, debt collection, freelancer commission models, and agency scaling.',
-        learningObjectives: [
-          'Master client invoicing, GST billing, and collections cycles.',
-          'Handle delayed payments, disputed invoices, and debt recovery professionally.',
-          'Structure commission schemes and incentives for freelance sourcers.',
-          'Formulate a 12-month agency growth and revenue roadmap.',
-        ],
-        details: [
-          'Invoicing best practices: Tax invoice formats, milestone tracking & GST TDS credits',
-          'Managing receivables: Payment reminder sequences, escalations & legal notice triggers',
-          'Hiring your first team member: Freelancer models & variable incentive plans',
-          'Scaling strategies: Moving to retained search, RPO contracts & international staffing',
-        ],
-        practicalActivity: 'Build an Agency Cash Flow & Revenue Projection Model for Year 1 and finalize your comprehensive Business Launch Plan.',
+        week: 'Week 4',
+        title: 'B2B Client Acquisition & Outbound Sales Engine',
+        duration: 'Week 4',
+        accent: '#2563EB',
+        description: 'LinkedIn prospecting, cold email sequences, HR head calling scripts, and pitch meetings.',
+        learningObjectives: ['Generate predictable B2B corporate client leads on LinkedIn.', 'Run high-converting cold email and calling outreach campaigns.'],
+        details: ['LinkedIn prospecting and outreach for CHROs/Founders', 'Cold email sequences with 40%+ open rates', 'B2B sales call scripts and discovery meeting framework'],
+        practicalActivity: 'Launch a live outbound campaign to 50 targeted corporate HR leaders.',
+      },
+      {
+        week: 'Week 5',
+        title: 'Closing Clients & Commercial Contract Negotiation',
+        duration: 'Week 5',
+        accent: '#7C3AED',
+        description: 'Negotiating placement percentages, credit periods, retainer models, and exclusivity.',
+        learningObjectives: ['Negotiate and sign commercial contracts with corporate clients.', 'Win exclusive and retained search mandates.'],
+        details: ['Negotiating commercial fee terms (8.33% to 15%+)', 'Winning exclusive search mandates and upfront retainers', 'Signing and executing Master Services Agreements'],
+        practicalActivity: 'Role-play a commercial fee negotiation call with an enterprise client.',
+      },
+      {
+        week: 'Week 6',
+        title: 'Fulfillment Engine, Delivery & Cash Collections',
+        duration: 'Week 6',
+        accent: '#DC2626',
+        description: 'Shortlisting frameworks, client submission decks, feedback turnaround, and invoice collection.',
+        learningObjectives: ['Deliver candidate shortlists in under 48 hours.', 'Collect invoices rapidly and minimize payment delays.'],
+        details: ['High-velocity candidate delivery protocols', 'Managing candidate offer-to-joining to avoid dropouts', 'Invoice dispatch workflows and rapid receivables collection'],
+        practicalActivity: 'Prepare a 3-candidate submission deck and simulated invoice follow-up schedule.',
+      },
+      {
+        week: 'Week 7',
+        title: 'Hiring Recruiters, Team Structure & AI Automation',
+        duration: 'Week 7',
+        accent: '#0EA5E9',
+        description: 'Hiring freelance vs full-time recruiters, incentive structures, and AI agency tools.',
+        learningObjectives: ['Hire and manage your first team of recruiters.', 'Design commission structures that drive monthly revenue.'],
+        details: ['Hiring freelance and full-time recruiters', 'Recruiter incentive models and daily KPI scorecards', 'Deploying AI copilots to multiply team output'],
+        practicalActivity: 'Draft a recruiter job description and performance incentive plan.',
+      },
+      {
+        week: 'Week 8',
+        title: 'Financial Management, Working Capital & Scaling to ₹1 Cr+',
+        duration: 'Week 8',
+        accent: '#059669',
+        description: 'Cash flow forecasting, working capital, invoice discounting, and 12-month agency roadmap.',
+        learningObjectives: ['Manage agency cash flow and working capital.', 'Execute a 12-month scaling roadmap to cross ₹1 Cr ARR.'],
+        details: ['Managing receivables, GST liability, and operating expenses', 'Invoice discounting and working capital finance', '12-month scaling roadmap: Solo recruiter to multi-member agency'],
+        practicalActivity: 'Build your agency 12-month financial revenue and cash flow model.',
       },
     ],
     defaultLearningOutcomes: [
-      'Register and structure a fully compliant recruitment business (GST, MSME, Banking, Contracts).',
-      'Position your agency within a profitable, high-demand sector with strong commercial margins.',
-      'Execute multi-channel cold outreach campaigns to sign corporate client mandates.',
-      'Draft and negotiate robust Client Service Agreements with favorable commercial terms.',
-      'Fulfill client mandates within 48 to 72 hours using proactive talent pipelines.',
-      'Protect revenue by managing counter-offers, notice period hurdles, and candidate dropouts.',
-      'Manage billing cycles, GST compliance, and debt collection effectively.',
-      'Hire and manage freelance sourcers and recruiters using commission-driven structures.',
+      'Incorporate and legally set up a high-margin recruitment or staffing agency in India.',
+      'Draft ironclad client service agreements (MSAs), NDA terms, and commercial rate cards.',
+      'Generate corporate client leads using automated LinkedIn prospecting and cold email sequences.',
+      'Negotiate favorable recruitment fees (8.33% to 15%+) and win exclusive client mandates.',
+      'Deploy modern agency ATS infrastructure and Standard Operating Procedures (SOPs).',
+      'Hire, train, and manage freelance/full-time recruiters with high-performing incentive plans.',
+      'Scale your recruitment business to ₹1 Crore+ in annual revenue with healthy cash flows.',
     ],
     defaultWhoShouldEnroll: [
-      { role: 'Experienced Recruiters & HR Professionals', desc: 'Individuals with 2+ years experience wanting to transition from employee to business owner.' },
-      { role: 'Freelance Headhunters', desc: 'Solo recruiters seeking to formalize their business, sign direct enterprise clients, and increase billing rates.' },
-      { role: 'HR Consultancies', desc: 'Small consultancy founders looking to refine client acquisition, commercial terms, and scaling systems.' },
+      { role: 'Aspiring Recruitment Agency Founders', desc: 'Recruiters and professionals ready to start their own independent recruitment firm.' },
+      { role: 'Freelance Recruiters', desc: 'Solo consultants wanting to scale into a structured multi-client agency.' },
+      { role: 'HR Consultants & Trainers', desc: 'HR practitioners looking to add high-ticket placement and staffing services.' },
     ],
     defaultToolsCovered: [
-      { category: 'Agency Tech Stack', tools: ['Zoho Recruit', 'Google Workspace for Business', 'Calendly'] },
-      { category: 'B2B Outreach', tools: ['LinkedIn Sales Navigator', 'Hunter.io / Apollo.io', 'Lemlist / Mailshake'] },
-      { category: 'Invoicing & Finance', tools: ['Zoho Books', 'QuickBooks', 'MS Excel Financial Models'] },
-      { category: 'Contract Templates', tools: ['Lawyer-vetted Client SLA', 'NDA Templates', 'Candidate Consent Forms', 'Freelancer Agreements'] },
+      { category: 'Agency ATS', tools: ['Zoho Recruit', 'Ceipal', 'Recruit CRM'] },
+      { category: 'B2B Sales & Outreach', tools: ['Apollo.io', 'LinkedIn Sales Navigator', 'Hunter.io', 'Instantly'] },
+      { category: 'Billing & Legal', tools: ['Zoho Books', 'DocuSign', 'GST Portal'] },
     ],
     defaultCertificationDetails: {
-      title: 'Executive Certification in Recruitment Agency Management & HR Entrepreneurship',
+      title: 'Certified Recruitment Business Entrepreneur (CRBE)',
       bullets: [
-        'Verifiable QR Code on digital credentials with permanent institutional verification.',
-        'Complete Agency Launchpad Toolkit (10+ Editable Contracts, Proposal Decks, Outreach Scripts, Trackers).',
-        '1-on-1 Business Plan review with experienced agency founders.',
+        'Accredited certification with individual QR Code verification.',
+        'Complete repository of ready-to-use MSAs, client contracts, cold email scripts, and rate cards.',
+        'Ongoing agency founder mastermind community and 1-on-1 discovery mentorship.',
       ],
     },
     defaultFaqs: [
-      { q: 'Can I start a recruitment agency from home with minimal capital?', a: 'Yes. Recruitment is a service business that can be operated remotely with a laptop, phone, internet, and basic sourcing subscriptions.' },
-      { q: 'Do I need prior recruitment experience to succeed?', a: 'While prior HR/recruitment or B2B sales experience is advantageous, the program provides comprehensive end-to-end guidance.' },
-      { q: 'Are legal contract templates included in the course?', a: 'Yes. You receive fully editable, lawyer-vetted Client Service Agreements (SLAs), Non-Disclosure Agreements (NDAs), and Invoicing templates.' },
-      { q: 'How long does it typically take to sign the first corporate client?', a: 'By following the outreach methodology in Module 2, most active students sign their first client contract within 30 to 45 days of launch.' },
-      { q: 'What is the course fee and installment schedule?', a: 'The fee is ₹22,000 (all-inclusive), payable in 2 installments or via zero-cost monthly EMI options starting at ₹3,667/month.' },
+      { q: 'Can I start a recruitment agency alongside a full-time job?', a: 'Yes, many of our successful agency founders started as solo part-time consultants before transitioning full-time once they closed their first 2–3 clients.' },
+      { q: 'Do you provide ready-to-use agency templates?', a: 'Yes! You receive complete Master Services Agreements (MSAs), fee agreements, NDA templates, recruiter calling scripts, and pitch decks.' },
+      { q: 'What is the duration?', a: '8 weeks of hands-on business building, client acquisition training, and 1-on-1 mentorship.' },
+      { q: 'Will I learn how to acquire real corporate clients?', a: 'Yes! Over 50% of the program focuses on practical B2B client acquisition, LinkedIn outreach, cold pitching, and closing hiring mandates.' },
     ],
     defaultLmsStructure: [
-      { week: 'Week 1', title: 'Agency Business Models & Niche Strategy', desc: 'Agency Business Models, Niche Identification, Market Analysis, and Value Proposition.' },
-      { week: 'Week 2', title: 'Company Incorporation & Compliance', desc: 'Company Registration, GST/MSME Compliance, Banking, Domain, and Corporate Brand Assets.' },
-      { week: 'Week 3', title: 'Client Prospecting & B2B Outreach', desc: 'Target Client Prospecting, Building CXO Databases, and Outbound Cold Outreach Systems.' },
-      { week: 'Week 4', title: 'Commercial Negotiations & SLAs', desc: 'Commercial Negotiations, Contingency vs. Retained Fees, SLAs, NDAs, and Contract Closures.' },
-      { week: 'Week 5', title: 'Lean Tech Stack & 48-Hour Delivery', desc: 'Lean Tech Stack Setup, Talent Bench Sourcing, and the 48-Hour Shortlist Delivery Standard.' },
-      { week: 'Week 6', title: 'Candidate Submissions & Offer Control', desc: 'Candidate Dossier Submissions, Interview Management, Offer Control, and Drop-off Prevention.' },
-      { week: 'Week 7', title: 'Invoicing, Collections & Cash Flow', desc: 'GST Invoicing, Payment Collections, Debt Recovery, and MSME Protections.' },
-      { week: 'Week 8', title: 'Financial Planning & Agency Scaling', desc: 'Financial Planning, Commission Models for Freelancers, Agency Scaling, and Final Business Plan Review.' },
+      { week: 'Week 1', title: 'Agency Business Model', desc: 'Niche selection, business models, and value proposition.' },
+      { week: 'Week 2', title: 'Legal & Commercial Setup', desc: 'Incorporation, GST/MSME, contracts, and terms of business.' },
+      { week: 'Week 3', title: 'Agency Tech & ATS', desc: 'ATS deployment, portal access, and recruitment SOPs.' },
+      { week: 'Week 4', title: 'B2B Client Acquisition', desc: 'LinkedIn prospecting, cold outreach, and pitch scripts.' },
+      { week: 'Week 5', title: 'Contract Negotiation', desc: 'Commercial negotiation, retainers, and signing MSAs.' },
+      { week: 'Week 6', title: 'Delivery & Collections', desc: 'Candidate delivery, offer management, and invoice collections.' },
+      { week: 'Week 7', title: 'Hiring Recruiters', desc: 'Team structure, commission models, and AI automation.' },
+      { week: 'Week 8', title: 'Scaling to ₹1 Cr+', desc: 'Working capital, cash flow, and 12-month scaling roadmap.' },
     ],
   },
 
-  'corporate_traning_tag': {
-    slugKey: 'corporate_traning_tag',
-    route: '/hr-corporate-training-course',
-    defaultTitle: 'HR Corporate Training Course',
-    defaultShortDescription: 'Empower your in-house talent acquisition and Human Resources teams with our customized corporate training. Upskills internal recruiters and hiring managers in advanced talent mapping, passive sourcing, structured STAR interviewing, and recruitment analytics.',
-    defaultOverview: 'In high-performance corporate environments, the capability of the internal talent acquisition team directly impacts business velocity and organizational growth. The HR Corporate Training Course is an enterprise-grade capability-building program engineered to optimize your company’s internal hiring machine. We audit your recruitment metrics, train internal recruiters on advanced Boolean search and passive talent mapping, standardize competency scorecards for hiring managers, and reduce agency dependency.',
-    defaultDuration: 'Flexible (2–6 Wks)',
-    defaultDurationShort: 'Bespoke',
-    badge: 'Enterprise Track',
+  'business-consulting': {
+    slugKey: 'business-consulting',
+    route: '/recruitment-business-growth-consulting',
+    aliases: ['recruitment-business-growth-consulting'],
+    defaultTitle: 'Recruitment Business Growth Consulting',
+    defaultShortDescription: 'Build, Acquire Clients, Deliver, Collect and Scale. Exclusive 1-on-1 strategic growth consulting and operational advisory for existing recruitment agency founders.',
+    defaultOverview: 'An exclusive 1-on-1 bespoke advisory and growth consulting engagement for established recruitment agency owners. We audit your existing sales pipeline, restructure fulfillment operations, optimize commercials, automate ATS workflows, and build an aggressive 12-month roadmap to scale past ₹1 Crore ARR.',
+    defaultDuration: '3 Months',
+    defaultDurationShort: '3 Mo',
+    badge: '1-to-1 Advisory',
+    badgeColor: '#059669',
+    badgeBg: 'rgba(5,150,105,.15)',
+    badgeBorder: 'rgba(5,150,105,.35)',
+    accent: '#059669',
+    accentLight: '#F0FDF4',
+    accentBorder: '#BBF7D0',
+    accentGlow: 'rgba(5,150,105,.2)',
+    gradient: 'linear-gradient(135deg,#064E3B,#059669,#047857)',
+    image: '/assets/images/courses/home14/4.jpg',
+    defaultFees: 99999,
+    defaultDiscount: 40000,
+    defaultFinal: 59999,
+    defaultCurriculum: [
+      {
+        week: 'Month 1',
+        title: 'Agency Diagnostics & Commercial Restructuring',
+        duration: 'Month 1',
+        accent: '#059669',
+        description: 'Comprehensive audit of margins, client concentration, team output, and contract terms.',
+        learningObjectives: ['Audit and restructure existing client accounts for maximum profitability.', 'Renegotiate legacy terms into retainer and exclusive search models.'],
+        details: [
+          'Auditing existing client portfolio: Identifying low-margin vs high-yield accounts',
+          'Renegotiating legacy terms and introducing retainer/exclusive search models',
+          'Restructuring recruiter KPI scorecards and incentive plans',
+        ],
+        practicalActivity: 'Complete a full commercial and operational audit of your existing agency accounts.',
+      },
+      {
+        week: 'Month 2',
+        title: 'Outbound Client Acquisition Engine & High-Ticket Mandates',
+        duration: 'Month 2',
+        accent: '#2563EB',
+        description: 'Implementing high-ticket enterprise client acquisition funnels and executive networking.',
+        learningObjectives: ['Deploy automated multichannel outbound client acquisition funnels.', 'Secure high-margin C-suite and leadership retained mandates.'],
+        details: [
+          'Deploying multichannel automated B2B client acquisition campaigns',
+          'Positioning for leadership and C-suite retained search mandates',
+          'Building strategic corporate vendor empanelment channels',
+        ],
+        practicalActivity: 'Launch a high-ticket enterprise client acquisition funnel for your agency.',
+      },
+      {
+        week: 'Month 3',
+        title: 'Operational Automation, Cash Flow & Multi-Branch Scaling',
+        duration: 'Month 3',
+        accent: '#7C3AED',
+        description: 'Systematizing fulfillment, automated billing, working capital finance, and expansion.',
+        learningObjectives: ['Automate agency ATS and billing operations.', 'Reduce DSO (debtor days) under 30 days and scale recruiter headcount.'],
+        details: [
+          'Automating recruitment operations and ATS reporting workflows',
+          'Working capital optimization and reducing debtor days (DSO) under 30 days',
+          'Executive hiring for agency team leads and branch expansion plan',
+        ],
+        practicalActivity: 'Finalize your 12-month agency revenue expansion and financial scaling roadmap.',
+      },
+    ],
+    defaultLearningOutcomes: [
+      'Restructure legacy agency client contracts to secure retainers and 15%+ commercial terms.',
+      'Deploy scalable outbound B2B sales pipelines to acquire 5–10 new enterprise clients quarterly.',
+      'Automate fulfillment workflows to increase individual recruiter monthly billing 2x.',
+      'Systematize receivables collection and reduce invoice realization time under 30 days.',
+      'Build a self-managing agency team structure with experienced recruitment team leads.',
+    ],
+    defaultWhoShouldEnroll: [
+      { role: 'Existing Recruitment Agency Owners', desc: 'Founders running registered agencies wanting to scale revenue and build systems.' },
+      { role: 'Staffing Firm Managing Partners', desc: 'Partners looking to optimize cash flows, client contracts, and team productivity.' },
+    ],
+    defaultToolsCovered: [
+      { category: 'Enterprise Sourcing', tools: ['LinkedIn Recruiter Enterprise', 'Sales Navigator'] },
+      { category: 'Agency CRM', tools: ['Recruit CRM', 'Zoho Recruit Enterprise'] },
+      { category: 'Finance', tools: ['Working Capital Finance Models', 'QuickBooks / Zoho Books'] },
+    ],
+    defaultCertificationDetails: {
+      title: 'Certified Agency Growth Partner',
+      bullets: [
+        'Official Growth Partnership certificate and executive endorsement.',
+        'Direct quarterly business reviews with master recruitment consultants.',
+        'Priority access to institutional co-brokering and mandate sharing networks.',
+      ],
+    },
+    defaultFaqs: [
+      { q: 'Who is this consulting program for?', a: 'It is tailored for agency founders who already have registered recruitment companies and want 1-on-1 advisory to scale revenue and build systems.' },
+      { q: 'Is it group training or 1-on-1 advisory?', a: 'It is a 1-to-1 personalized consulting engagement directly with senior industry advisors.' },
+      { q: 'What is the engagement timeline?', a: '3 months of structured weekly advisory sessions, pipeline audits, and execution support.' },
+    ],
+    defaultLmsStructure: [
+      { week: 'Month 1', title: 'Commercial Audit & Restructuring', desc: 'Margin optimization, contract renegotiation, and recruiter KPI overhauls.' },
+      { week: 'Month 2', title: 'High-Ticket Client Acquisition', desc: 'Outbound sales engine, executive retained search, and enterprise vendor empanelment.' },
+      { week: 'Month 3', title: 'Systematization & Scale', desc: 'Fulfillment automation, cash flow optimization, and 12-month expansion roadmap.' },
+    ],
+  },
+
+  'corporate': {
+    slugKey: 'corporate',
+    route: '/corporate-recruitment-training',
+    aliases: ['corporate-recruitment-training', 'hr-corporate-training-course', 'corporate_traning_tag'],
+    defaultTitle: 'Corporate Recruitment Training',
+    defaultShortDescription: 'Practical Recruitment Training Designed Around Your Hiring Requirements. Tailored capability programs for enterprise HR departments, TA teams, and hiring managers.',
+    defaultOverview: 'Customized corporate talent acquisition capability programs built specifically for enterprise HR teams and hiring managers. Upskill your in-house recruiters in modern passive sourcing, tech hiring, structured STAR interviewing, diversity hiring, employer branding, and AI productivity tools.',
+    defaultDuration: 'Flexible (2–6 Weeks)',
+    defaultDurationShort: 'Custom',
+    badge: 'Enterprise',
     badgeColor: '#7C3AED',
     badgeBg: 'rgba(124,58,237,.15)',
     badgeBorder: 'rgba(124,58,237,.35)',
@@ -648,134 +759,103 @@ const DEFAULT_COURSE_CONFIGS: Record<string, {
     accentBorder: '#DDD6FE',
     accentGlow: 'rgba(124,58,237,.2)',
     gradient: 'linear-gradient(135deg,#3B0764,#7C3AED,#6D28D9)',
-    image: '/assets/images/about/tab2.jpg',
-    defaultFees: 20000,
-    defaultDiscount: 2500,
-    defaultFinal: 17500,
+    image: '/assets/images/courses/home14/2.jpg',
+    defaultFees: 25000,
+    defaultDiscount: 0,
+    defaultFinal: 25000,
     defaultCurriculum: [
       {
         week: 'Module 1',
-        title: 'Talent Acquisition Process Audit & Strategic Alignment',
-        duration: 'Week 1 (6 Hours Interactive Workshop)',
+        title: 'Custom In-House Sourcing & Boolean Mastery',
+        duration: 'Module 1',
         accent: '#7C3AED',
-        description: 'Audit internal hiring bottlenecks, standardize the job intake process, and align on hiring SLAs.',
-        learningObjectives: [
-          'Audit current internal hiring bottlenecks, conversion funnels, and recruitment spend.',
-          'Standardize the Job Requisition and Intake process between Recruiters and Hiring Managers.',
-          'Benchmark your organization\'s candidate experience against industry standards.',
-          'Establish clear SLAs, turnaround times (TAT), and accountability metrics.',
-        ],
+        description: 'Tailored sourcing frameworks for your industry (Tech, Non-IT, BFSI, Manufacturing).',
+        learningObjectives: ['Source high-caliber passive candidates directly without high agency spend.', 'Master industry-specific Boolean and X-Ray search operators.'],
         details: [
-          'Analyzing internal recruitment funnel metrics: Sourcing-to-Interview, Interview-to-Offer',
-          'The Strategic Intake Meeting: Aligning on core competencies, culture fit & timelines',
-          'Employer Value Proposition (EVP) audit: Identifying why candidates accept or reject offers',
-          'Standardizing Service Level Agreements (SLAs) across business units',
+          'Multi-channel passive candidate sourcing for enterprise hiring needs',
+          'Advanced Boolean logic tailored to company-specific target profiles',
+          'Optimizing recruiter outreach and reducing agency dependency',
         ],
-        practicalActivity: 'Map your company’s current hiring workflow and co-create a standardized Job Requisition Intake Template.',
+        practicalActivity: 'Build a customized talent sourcing pipeline for your top 3 open company requisitions.',
       },
       {
         week: 'Module 2',
-        title: 'Advanced Sourcing & Direct Talent Pipeline Architecture',
-        duration: 'Week 2 (8 Hours Sourcing Labs)',
-        accent: '#6D28D9',
-        description: 'Reduce agency dependency by mastering advanced Boolean search, LinkedIn Recruiter, and passive candidate engagement.',
-        learningObjectives: [
-          'Reduce external agency dependency by building strong direct sourcing capabilities.',
-          'Master advanced Boolean search, LinkedIn Recruiter workflows, and Google X-Ray.',
-          'Engage high-caliber passive talent using customized, brand-aligned outreach sequences.',
-          'Build proprietary talent pools for recurring and niche technical mandates.',
-        ],
+        title: 'Structured Interviewing & Hiring Manager Alignment',
+        duration: 'Module 2',
+        accent: '#2563EB',
+        description: 'Equipping hiring managers and TA teams with standardized evaluation rubrics.',
+        learningObjectives: ['Standardize evaluation criteria across all interview panels.', 'Eliminate bias and accelerate time-to-hire.'],
         details: [
-          'Complex Boolean string construction for niche corporate roles',
-          'Advanced LinkedIn Recruiter seat optimization: Pipeline projects, custom tags & InMail analytics',
-          'Niche talent search: GitHub, Stack Overflow, Behance & conference attendee lists',
-          'Crafting high-converting corporate outreach messages that achieve >40% response rates',
+          'Competency-based behavioral interviewing techniques (STAR methodology)',
+          'Eliminating unconscious bias in evaluation and candidate selection',
+          'Streamlining hiring manager feedback loops to accelerate time-to-hire',
         ],
-        practicalActivity: 'Live Sourcing Hackathon: Internal team sources 20 high-priority passive profiles for an open internal requisition.',
+        practicalActivity: 'Design a competency rubric and structured question guide for your hiring managers.',
       },
       {
         week: 'Module 3',
-        title: 'Structured Interviewing & Objective Selection for Managers',
-        duration: 'Week 3 (6 Hours Joint Workshop)',
-        accent: '#5B21B6',
-        description: 'Eliminate unconscious bias, develop role-specific scorecards, and train hiring managers on STAR interviewing.',
-        learningObjectives: [
-          'Eliminate unconscious bias and subjective "gut-feel" hiring decisions.',
-          'Design role-specific competency matrices and standardized rating scorecards.',
-          'Train technical and functional hiring managers to conduct behavioral STAR interviews.',
-          'Deliver a consistent, professional, and respectful candidate interview experience.',
-        ],
+        title: 'Employer Branding, Candidate Experience & AI Tools',
+        duration: 'Module 3',
+        accent: '#059669',
+        description: 'Enhancing the candidate journey, offer acceptance rates, and AI efficiency.',
+        learningObjectives: ['Deploy AI productivity tools to accelerate screening and outreach.', 'Measure internal TA metrics and improve candidate experience.'],
         details: [
-          'Types of cognitive bias in interviews (Halo effect, Confirmation bias) & mitigation',
-          'Developing behavioral and situational interview question banks mapped to values',
-          'Constructing objective 5-point evaluation scorecards for interview panels',
-          'Training interviewers on candidate-friendly communication & employer brand representation',
+          'Building a standout candidate experience from application to onboarding',
+          'Deploying AI tools for JD writing, outreach personalization, and interview notes',
+          'Measuring and optimizing internal recruitment KPIs (TAT, Cost per Hire, Quality of Hire)',
         ],
-        practicalActivity: 'Conduct mock panel interviews with real-time feedback and design a Competency Interview Scorecard for 2 critical roles.',
-      },
-      {
-        week: 'Module 4',
-        title: 'Recruitment Analytics, Executive Reporting & Retention',
-        duration: 'Week 4 (6 Hours Interactive Session)',
-        accent: '#4C1D95',
-        description: 'Build executive hiring dashboards, track Cost-per-Hire and Quality-of-Hire, and eliminate offer ghosting.',
-        learningObjectives: [
-          'Build and maintain real-time recruitment analytics dashboards.',
-          'Track and report Cost-per-Hire, Source Channel Efficiency, and Quality-of-Hire.',
-          'Implement post-offer engagement strategies to reduce joining dropouts.',
-          'Establish 30-60-90 day onboarding integration touchpoints.',
-        ],
-        details: [
-          'Core corporate TA metrics: Time-to-Fill, Offer Acceptance Rate & Sourcing ROI',
-          'Designing executive-ready TA dashboards using PowerBI, Tableau, or Looker Studio',
-          'Post-offer engagement: Pre-boarding communication cadences & welcome calls',
-          'Measuring Quality-of-Hire and first-year employee retention correlations',
-        ],
-        practicalActivity: 'Build an Executive Recruitment Dashboard and design a 30-day Post-Offer Pre-boarding Cadence.',
+        practicalActivity: 'Create an automated recruiter workflow and candidate journey audit for your company.',
       },
     ],
     defaultLearningOutcomes: [
-      'Increase direct in-house sourcing share to significantly cut third-party agency recruitment fees.',
-      'Streamline hiring workflows to reduce average days-to-hire across technical and non-technical roles.',
-      'Ensure complete alignment between recruiters and hiring managers before opening requisitions.',
-      'Equip internal teams with modern Boolean, social, and passive talent engagement techniques.',
-      'Standardize interview scorecards and STAR questioning frameworks across all hiring panels.',
-      'Implement proactive pre-boarding touchpoints to minimize offer dropouts and candidate ghosting.',
-      'Track and present high-impact recruitment analytics dashboards to Board and HR leadership.',
-      'Deliver a consistent, high-quality candidate experience that strengthens organizational reputation.',
+      'Reduce third-party agency dependency by strengthening internal direct sourcing capabilities.',
+      'Train hiring managers in structured competency interviewing using the STAR method.',
+      'Improve offer-to-joining ratios through structured pre-boarding engagement protocols.',
+      'Deploy AI sourcing copilots to automate JD drafting and candidate communications.',
+      'Track recruitment performance metrics on centralized executive dashboards.',
     ],
     defaultWhoShouldEnroll: [
-      { role: 'In-House Talent Acquisition Teams', desc: 'Corporate recruiters, talent sourcers, and TA team leads.' },
-      { role: 'HR Business Partners (HRBPs)', desc: 'HR generalists and business partners managing departmental staffing.' },
-      { role: 'Hiring Managers & Department Heads', desc: 'Engineering leads and department heads actively interviewing candidate panels.' },
+      { role: 'Enterprise Talent Acquisition Teams', desc: 'In-house recruitment teams seeking to master modern direct sourcing and speed up TAT.' },
+      { role: 'Hiring Managers & Engineering Leads', desc: 'Panel interviewers looking to conduct structured, unbiased competency assessments.' },
+      { role: 'CHROs & Heads of HR', desc: 'HR leaders seeking to upskill their entire talent acquisition division.' },
     ],
     defaultToolsCovered: [
-      { category: 'Enterprise ATS', tools: ['Workday', 'Greenhouse', 'SuccessFactors', 'Taleo', 'Zoho Recruit'] },
-      { category: 'Sourcing & Talent Intelligence', tools: ['LinkedIn Recruiter Enterprise', 'LinkedIn Talent Insights', 'Google X-Ray'] },
-      { category: 'Analytics & Dashboards', tools: ['PowerBI', 'MS Excel Advanced Dashboards', 'Google Looker Studio'] },
+      { category: 'Enterprise ATS', tools: ['Workday', 'SuccessFactors', 'Greenhouse', 'Zoho Recruit'] },
+      { category: 'Talent Sourcing', tools: ['LinkedIn Recruiter Enterprise', 'Google X-Ray'] },
+      { category: 'Assessment & Analytics', tools: ['PowerBI', 'HackerRank', 'SHL'] },
     ],
     defaultCertificationDetails: {
-      title: 'Corporate Certificate in Strategic Talent Acquisition & Modern Recruitment Operations',
+      title: 'Corporate Certificate in Strategic Talent Acquisition Operations',
       bullets: [
-        'Company-branded digital certificate with individual QR Code verification.',
+        'Company-branded digital certificates with individual QR Code verification.',
         'Permanent access to corporate workshop recordings and editable hiring kits.',
         '60-day post-training implementation review and metric audit.',
       ],
     },
     defaultFaqs: [
-      { q: 'Can the corporate curriculum be customized for our specific industry?', a: 'Yes. All case studies, sourcing drills, and scorecards are tailored specifically to your industry sector (e.g., IT, Manufacturing, BFSI, Healthcare).' },
+      { q: 'Can the corporate curriculum be customized for our specific industry?', a: 'Yes! All case studies, sourcing drills, and scorecards are tailored specifically to your industry sector (e.g., IT, Manufacturing, BFSI, Healthcare).' },
       { q: 'Is training conducted on-site or virtually?', a: 'We offer flexible delivery options: interactive on-premise workshops at your corporate facility or live virtual masterclasses.' },
-      { q: 'What is the recommended team size per cohort?', a: 'We accommodate cohorts ranging from small specialized teams (5–10 recruiters) up to enterprise-wide batches (50–100+ members).' },
-      { q: 'Can we include technical hiring managers in the interview training modules?', a: 'Yes. Module 3 is specifically designed as a joint workshop for recruiters and technical hiring managers.' },
-      { q: 'How do you measure the ROI and impact of the corporate training?', a: 'We establish baseline metrics before the program and conduct 30-day and 60-day post-training audits to measure quantitative improvements.' },
+      { q: 'How do we request a proposal?', a: 'Click Request Corporate Proposal or contact us directly at support@recruitmentinstitute.in / +91 7385204165.' },
     ],
     defaultLmsStructure: [
-      { week: 'Module 01 (Week 1)', title: 'Process Audit & Intake Alignment', desc: 'Recruitment Process Audit, SLA Definition, and Hiring Manager Intake Alignment.' },
-      { week: 'Module 02 (Week 2)', title: 'Advanced Sourcing & Pipeline Architecture', desc: 'Advanced Boolean Sourcing, Talent Mapping, and Direct Passive Candidate Engagement.' },
-      { week: 'Module 03 (Week 3)', title: 'Structured STAR Interviewing & Scorecards', desc: 'Structured STAR Interviewing, Competency Scorecards, and Unconscious Bias Elimination.' },
-      { week: 'Module 04 (Week 4)', title: 'Recruitment Analytics & Retention Strategy', desc: 'Recruitment Analytics, Executive Dashboards, Post-Offer Engagement, and Retention Strategy.' },
+      { week: 'Module 1', title: 'Direct Sourcing & Boolean', desc: 'Passive talent discovery, advanced Boolean search, and reducing agency reliance.' },
+      { week: 'Module 2', title: 'STAR Interviewing & Scorecards', desc: 'Competency evaluation rubrics, manager workshops, and bias reduction.' },
+      { week: 'Module 3', title: 'EVP, Metrics & AI Tools', desc: 'Candidate experience, AI recruitment tools, and executive TA analytics.' },
     ],
   },
+}
+
+function resolveConfig(slugOrId: string) {
+  const clean = slugOrId.toLowerCase().trim()
+  if (CANONICAL_COURSE_CONFIGS[clean]) {
+    return CANONICAL_COURSE_CONFIGS[clean]
+  }
+  for (const cfg of Object.values(CANONICAL_COURSE_CONFIGS)) {
+    if (cfg.slugKey === clean || cfg.aliases.includes(clean) || cfg.route.replace('/', '') === clean) {
+      return cfg
+    }
+  }
+  return CANONICAL_COURSE_CONFIGS['for-professionals']
 }
 
 function stripHtml(input: string = '') {
@@ -792,11 +872,10 @@ function stripHtml(input: string = '') {
 }
 
 /**
- * Fetches dynamic, comprehensive data for any course track from the database.
- * Reconciles Course, Category, LMS Modules, Chapters, Fees, and Category FAQs.
+ * Fetches dynamic, comprehensive data for any of the 6 canonical courses.
  */
 export async function getDynamicCourseData(categorySlug: string): Promise<DynamicCourseData> {
-  const config = DEFAULT_COURSE_CONFIGS[categorySlug] || DEFAULT_COURSE_CONFIGS['degree_tag']
+  const config = resolveConfig(categorySlug)
 
   try {
     const category = await prisma.courseCategory.findFirst({
@@ -804,6 +883,7 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         OR: [
           { slug: categorySlug },
           { slug: config.slugKey },
+          { slug: { in: config.aliases } },
         ],
       },
       include: {
@@ -843,105 +923,93 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
     const dbFee = category?.fees[0]
 
     // 1. Resolve Course Title
-    const title = dbCourse?.title &&
-      dbCourse.title !== 'Degree Courses' &&
-      dbCourse.title !== 'Certification Courses' &&
-      dbCourse.title !== 'Entrepreneur Courses' &&
-      dbCourse.title !== 'Corporate Traning Courses'
-        ? dbCourse.title
-        : config.defaultTitle
+    const title = dbCourse?.title || config.defaultTitle
 
-    // 2. Resolve Description: If DB has an old raw module dump, clean it to default short description
-    let description = dbCourse?.description ? stripHtml(dbCourse.description) : config.defaultShortDescription
-    if (description.startsWith('Module 1:') || description.length < 20) {
-      description = config.defaultShortDescription
-    }
-
+    // 2. Resolve Descriptions
+    const rawDesc = dbCourse?.description?.trim()
+    const description = rawDesc && rawDesc.length > 30 ? stripHtml(rawDesc) : config.defaultOverview
     const shortDescription = config.defaultShortDescription
-    const overview = config.defaultOverview
+    const overview = description
 
-    const totalStudents = dbCourse?.totalStudents && dbCourse.totalStudents > 0
-      ? dbCourse.totalStudents
-      : 5000
+    // 3. Resolve Duration & Students
+    const duration = dbCourse?.duration?.trim() || config.defaultDuration
+    const totalStudents = dbCourse?.totalStudents || 2500
+    const rating = dbCourse?.rating ? Number(dbCourse.rating) : 4.9
 
-    const rating = dbCourse?.rating ? Number(dbCourse.rating) : 5.0
-
-    // 3. Resolve Pricing
+    // 4. Resolve Pricing
     let baseFee = config.defaultFees
     let discount = config.defaultDiscount
     let finalFee = config.defaultFinal
 
     if (dbFee) {
-      const fBase = dbFee.fees ? Number(dbFee.fees) : 0
-      const fDisc = dbFee.discount ? Number(dbFee.discount) : 0
-      const fFinal = dbFee.finalTotal ? Number(dbFee.finalTotal) : (fBase - fDisc > 0 ? fBase - fDisc : fBase)
+      const parsedBase = dbFee.fees ? Number(dbFee.fees) : 0
+      const parsedDisc = dbFee.discount ? Number(dbFee.discount) : 0
+      const parsedFinal = dbFee.finalTotal ? Number(dbFee.finalTotal) : (dbFee.subtotal ? Number(dbFee.subtotal) : 0)
 
-      if (fBase > 0) baseFee = fBase
-      if (fDisc >= 0) discount = fDisc
-      if (fFinal > 0) finalFee = fFinal
+      if (parsedBase > 0) baseFee = parsedBase
+      if (parsedDisc >= 0) discount = parsedDisc
+      if (parsedFinal > 0) finalFee = parsedFinal
+      else finalFee = Math.max(0, baseFee - discount)
     }
 
-    const savingsPercent = baseFee > 0 && discount > 0 ? Math.round((discount / baseFee) * 100) : 0
-    const emiPerMonth = Math.round(finalFee / 6)
+    const savingsPercent = baseFee > 0 ? Math.round((discount / baseFee) * 100) : 0
+    const emiPerMonth = Math.round(finalFee / 3)
 
-    // 4. Resolve Curriculum
-    let curriculum: DynamicCurriculumModule[] = []
+    // 5. Resolve Curriculum
+    let curriculum: DynamicCurriculumModule[] = config.defaultCurriculum
 
-    if (dbCourse && dbCourse.modules && dbCourse.modules.length > 0) {
+    if (dbCourse?.modules && dbCourse.modules.length > 0) {
       curriculum = dbCourse.modules.map((m, idx) => {
-        const configMatch = config.defaultCurriculum[idx]
-        const chapterDetails = m.chapters.flatMap((c) => c.topics.map((t) => t.title))
-        const details = chapterDetails.length > 0
-          ? chapterDetails
-          : (m.chapters.map((c) => c.title).length > 0 ? m.chapters.map((c) => c.title) : (configMatch?.details || [m.description || 'Interactive hands-on training module.']))
+        const fallbackMod = config.defaultCurriculum[idx % config.defaultCurriculum.length]
+        const allTopics: string[] = []
+        if (m.chapters && m.chapters.length > 0) {
+          m.chapters.forEach((ch) => {
+            if (ch.topics && ch.topics.length > 0) {
+              ch.topics.forEach((t) => allTopics.push(t.title))
+            } else {
+              allTopics.push(ch.title)
+            }
+          })
+        }
 
         return {
           id: m.id,
-          week: configMatch?.week || `Module ${idx + 1}`,
+          week: fallbackMod.week || `Module ${idx + 1}`,
           title: m.title,
-          duration: configMatch?.duration,
-          description: m.description || configMatch?.description,
-          accent: config.accent,
-          learningObjectives: configMatch?.learningObjectives,
-          details,
-          practicalActivity: configMatch?.practicalActivity,
+          duration: fallbackMod.duration || `${idx + 1} Week`,
+          accent: fallbackMod.accent || config.accent,
+          description: m.description || fallbackMod.description,
+          learningObjectives: fallbackMod.learningObjectives,
+          details: allTopics.length > 0 ? allTopics : fallbackMod.details,
+          practicalActivity: fallbackMod.practicalActivity,
         }
       })
     }
 
-    if (curriculum.length === 0) {
-      curriculum = config.defaultCurriculum
-    }
-
-    // 5. Resolve FAQs
-    let faqs: DynamicFaqItem[] = []
+    // 6. Resolve FAQs
+    let faqs: DynamicFaqItem[] = config.defaultFaqs
     if (category?.faqs && category.faqs.length > 0) {
-      const seen = new Set<string>()
-      for (const f of category.faqs) {
-        const qClean = f.question.trim().toLowerCase()
-        if (!seen.has(qClean)) {
-          seen.add(qClean)
-          faqs.push({
-            id: f.id,
-            q: f.question,
-            a: f.answer,
-          })
-        }
-      }
+      faqs = category.faqs.map((f) => ({
+        id: f.id,
+        q: f.question,
+        a: f.answer,
+      }))
     }
 
-    if (faqs.length === 0) {
-      faqs = config.defaultFaqs
+    // 7. Resolve Batch Start Date
+    const upcomingBatch = dbCourse?.batches?.[0]
+    let startDate = 'New Batch Starting Soon'
+    if (upcomingBatch?.startDate) {
+      startDate = new Date(upcomingBatch.startDate).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+      })
     }
-
-    // 6. Next Batch Date
-    const nextBatchDate = dbCourse?.batches?.[0]?.startDate
-      ? new Date(dbCourse.batches[0].startDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })
-      : '13 Oct 2026'
 
     return {
       id: dbCourse?.id || 1,
-      slug: categorySlug,
+      slug: category?.slug || config.slugKey,
       route: config.route,
       title,
       shortDescription,
@@ -950,8 +1018,8 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       categoryName: category?.name || config.defaultTitle,
       totalStudents,
       rating,
-      duration: dbCourse?.duration?.trim() || config.defaultDuration,
-      startDate: nextBatchDate,
+      duration,
+      startDate,
       badge: config.badge,
       badgeColor: config.badgeColor,
       badgeBg: config.badgeBg,
@@ -977,29 +1045,27 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       faqs,
       lmsStructure: config.defaultLmsStructure,
       features: [
-        { title: 'Job Analysis & Sourcing', desc: 'Master active/passive sourcing, Boolean search, LinkedIn recruiting, and talent pool development.' },
-        { title: 'Resume Screening & Selection', desc: 'Screen at scale using automation tools, competency frameworks, and structured decision criteria.' },
-        { title: 'Interview Design & Execution', desc: 'Build behavioral, situational, and technical interview blueprints for every role type.' },
-        { title: 'Domain-Specific Recruitment', desc: 'Deep-dive into IT, BFSI, Pharma, Healthcare, Manufacturing, and FMCG hiring workflows.' },
-        { title: 'Employer Branding & Marketing', desc: 'Craft job descriptions, run email campaigns, and leverage SEO to attract top talent.' },
-        { title: 'Metrics, ATS & Career Planning', desc: 'Track KPIs, master modern ATS tools, and prepare your placement profile for the market.' },
+        { title: `${duration} Practical Training`, desc: 'Live instructor-led masterclasses and interactive practical drills.' },
+        { title: 'ISO-Accredited Credential', desc: 'Verifiable certificate with unique QR Code for LinkedIn.' },
+        { title: 'Dedicated Career Support', desc: '1-on-1 resume building, mock interviews, and direct placement assistance.' },
+        { title: 'Lifetime LMS Access', desc: 'Full access to class recordings, templates, spreadsheets, and scripts.' },
       ],
     }
-  } catch (error) {
-    console.error(`Error loading dynamic course data for ${categorySlug}:`, error)
+  } catch (err) {
+    console.error(`Error loading dynamic course data for ${categorySlug}:`, err)
     return {
       id: 1,
-      slug: categorySlug,
+      slug: config.slugKey,
       route: config.route,
       title: config.defaultTitle,
       shortDescription: config.defaultShortDescription,
-      description: config.defaultShortDescription,
+      description: config.defaultOverview,
       overview: config.defaultOverview,
       categoryName: config.defaultTitle,
-      totalStudents: 5000,
-      rating: 5.0,
+      totalStudents: 2500,
+      rating: 4.9,
       duration: config.defaultDuration,
-      startDate: '13 Oct 2026',
+      startDate: 'New Cohort Starting Soon',
       badge: config.badge,
       badgeColor: config.badgeColor,
       badgeBg: config.badgeBg,
@@ -1015,7 +1081,7 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         discount: config.defaultDiscount,
         finalFee: config.defaultFinal,
         savingsPercent: Math.round((config.defaultDiscount / config.defaultFees) * 100),
-        emiPerMonth: Math.round(config.defaultFinal / 6),
+        emiPerMonth: Math.round(config.defaultFinal / 3),
       },
       curriculum: config.defaultCurriculum,
       learningOutcomes: config.defaultLearningOutcomes,
@@ -1024,7 +1090,12 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       certificationDetails: config.defaultCertificationDetails,
       faqs: config.defaultFaqs,
       lmsStructure: config.defaultLmsStructure,
-      features: [],
+      features: [
+        { title: `${config.defaultDuration} Practical Training`, desc: 'Live instructor-led masterclasses and interactive practical drills.' },
+        { title: 'ISO-Accredited Credential', desc: 'Verifiable certificate with unique QR Code for LinkedIn.' },
+        { title: 'Dedicated Career Support', desc: '1-on-1 resume building, mock interviews, and direct placement assistance.' },
+        { title: 'Lifetime LMS Access', desc: 'Full access to class recordings, templates, spreadsheets, and scripts.' },
+      ],
     }
   }
 }
