@@ -17,61 +17,87 @@ import homeStudentsBanner from '../../public/assets/images/banner/home9.jpg'
 const defaultCourses = [
   {
     id: 1,
-    title: 'End-to-End Recruitment Training',
-    badge: 'Most Popular',
-    badgeCls: 'bg-red-500 text-white',
-    level: 'Advanced / Professional',
-    duration: '3 Months',
-    desc: 'Master the complete recruitment lifecycle — from sourcing strategies and boolean search to offer negotiation and onboarding across all industry domains.',
-    href: '/end-to-end-recruitment-training',
-    image: '/assets/images/courses/main-home/1.jpg',
-    bar: 'from-red-500 to-red-700',
-    highlights: ['Boolean Search & LinkedIn', 'ATS Tools & Sourcing', 'All Industry Domains'],
+    title: 'Recruitment Career Starter',
+    badge: 'Beginner Friendly',
+    badgeCls: 'bg-sky-600 text-white',
+    level: 'For Freshers',
+    duration: '4 Weeks',
+    desc: 'Become job-ready for your first recruitment job in 4 weeks. Master candidate sourcing, Boolean search, Naukri Resdex, and screening calls.',
+    href: '/recruitment-career-starter',
+    image: '/assets/images/about/tab1.jpg',
+    bar: 'from-sky-500 to-sky-700',
+    highlights: ['Naukri Resdex & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
   },
   {
     id: 2,
-    title: 'HR Courses for Beginners',
-    badge: 'Beginner Friendly',
-    badgeCls: 'bg-blue-600 text-white',
-    level: 'Foundational',
-    duration: '6 Weeks',
-    desc: 'Perfect for freshers and career switchers. Build strong foundations in HR, recruitment basics, resume screening, and human resource management.',
-    href: '/hr-courses-for-beginners',
-    image: '/assets/images/courses/main-home/2.jpg',
-    bar: 'from-blue-500 to-blue-700',
-    highlights: ['HR Fundamentals', 'Recruitment Basics', 'Resume Screening'],
+    title: 'Professional Recruitment Specialist',
+    badge: 'Most Popular',
+    badgeCls: 'bg-red-600 text-white',
+    level: 'For Professionals',
+    duration: '8 Weeks',
+    desc: 'Master end-to-end recruitment with practical industry training. Full lifecycle requisition management, IT/Non-IT sourcing, and STAR interviewing.',
+    href: '/professional-recruitment-specialist',
+    image: '/assets/images/banner/home9.jpg',
+    bar: 'from-red-500 to-red-700',
+    highlights: ['IT & Non-IT Tech Sourcing', 'STAR Interview Framework', 'Salary & Offer Negotiation'],
   },
   {
     id: 3,
-    title: 'HR Entrepreneurship Program',
-    badge: 'Business Track',
-    badgeCls: 'bg-emerald-600 text-white',
-    level: 'Advanced / Business',
-    duration: '2 Months',
-    desc: 'Learn to start and grow your own recruitment consultancy or HR agency. Master client acquisition, billing strategies, and operational scaling.',
-    href: '/hr-entrepreneurship-program',
-    image: '/assets/images/courses/home8/3.jpg',
-    bar: 'from-emerald-500 to-emerald-700',
-    highlights: ['Agency Setup', 'Client Acquisition', 'Pricing Strategy'],
+    title: 'Advanced Recruitment & TA Masterclass',
+    badge: 'Executive Track',
+    badgeCls: 'bg-purple-600 text-white',
+    level: 'Senior Professionals',
+    duration: '6 Weeks',
+    desc: 'Upgrade from recruiter to strategic talent acquisition leader. Headhunting, TA analytics, headcount forecasting, and leadership SLAs.',
+    href: '/advanced-recruitment-ta-masterclass',
+    image: '/assets/images/courses/home14/3.jpg',
+    bar: 'from-purple-500 to-purple-700',
+    highlights: ['Executive Headhunting', 'TA Dashboards & Analytics', 'Leadership Hiring SLAs'],
   },
   {
     id: 4,
-    title: 'HR Corporate Training',
+    title: 'Recruitment Business Accelerator',
+    badge: 'Agency Track',
+    badgeCls: 'bg-amber-600 text-white',
+    level: 'Entrepreneurship',
+    duration: '8 Weeks',
+    desc: 'Don’t just become a recruiter — build your recruitment agency. Legal incorporation, B2B client acquisition, MSAs, and 12-month ₹1 Cr scaling roadmap.',
+    href: '/recruitment-business-accelerator',
+    image: '/assets/images/courses/style4/4.jpg',
+    bar: 'from-amber-500 to-amber-700',
+    highlights: ['Agency Legal & MSA Setup', 'B2B Client Prospecting', '12-Month ₹1 Cr Blueprint'],
+  },
+  {
+    id: 5,
+    title: 'Recruitment Business Growth Consulting',
+    badge: '1-to-1 Advisory',
+    badgeCls: 'bg-emerald-600 text-white',
+    level: 'Business Consulting',
+    duration: '3 Months',
+    desc: 'Build, acquire clients, deliver, collect and scale. Bespoke 1-on-1 advisory for existing recruitment and HR outsourcing agency founders.',
+    href: '/recruitment-business-growth-consulting',
+    image: '/assets/images/courses/home14/4.jpg',
+    bar: 'from-emerald-500 to-emerald-700',
+    highlights: ['Retained Search Positioning', 'Cash Flow & DSO Optimization', 'Direct Founder Mentorship'],
+  },
+  {
+    id: 6,
+    title: 'Corporate Recruitment Training',
     badge: 'Enterprise',
-    badgeCls: 'bg-purple-600 text-white',
-    level: 'Tailored / Executive',
-    duration: 'Flexible',
-    desc: 'Custom corporate training for HR teams and organisations. Improve internal recruitment processes, reduce time-to-hire, and enhance quality of hires.',
-    href: '/hr-corporate-training-course',
-    image: '/assets/images/courses/home8/1.jpg',
-    bar: 'from-purple-500 to-purple-700',
-    highlights: ['Team Assessment', 'Process Optimisation', 'ATS Implementation'],
+    badgeCls: 'bg-indigo-600 text-white',
+    level: 'Corporate',
+    duration: 'Custom (2–6 Wks)',
+    desc: 'Practical recruitment training designed around your enterprise hiring requirements. Interview calibration and talent retention workflows.',
+    href: '/corporate-recruitment-training',
+    image: '/assets/images/courses/home14/2.jpg',
+    bar: 'from-indigo-500 to-indigo-700',
+    highlights: ['Custom Hiring Playbooks', 'Interviewer Calibration', 'Pre-Boarding Retention'],
   },
 ]
 
 const defaultStats = [
   { icon: 'users',   value: '5,000+',  label: 'Professionals Trained', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
-  { icon: 'book',    value: '4',       label: 'Premium Programs',       iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+  { icon: 'book',    value: '6',       label: 'Programs Available',     iconBg: '#F5F3FF', iconColor: '#7C3AED' },
   { icon: 'award',   value: '10+ Yrs', label: 'Industry Expertise',     iconBg: '#FFFBEB', iconColor: '#D97706' },
   { icon: 'trending',value: '95%',     label: 'Placement Success',      iconBg: '#F0FDF4', iconColor: '#16A34A' },
 ]
@@ -82,7 +108,7 @@ const whyUs = [
   { icon: <PlayCircle className="w-6 h-6" />, title: '100% Practical Focus',     desc: 'Work with live ATS platforms, boolean search strings, and real-world recruitment cases.',            iconBg: '#F0FDF4', iconColor: '#16A34A' },
   { icon: <GraduationCap className="w-6 h-6" />, title: 'Placement Assistance',  desc: 'Receive mock interview coaching, resume reviews, and partner company referrals.',                   iconBg: '#FFFBEB', iconColor: '#D97706' },
   { icon: <Clock      className="w-6 h-6" />, title: 'Flexible Batches',         desc: 'Weekday and weekend batches designed for working professionals and students alike.',                  iconBg: '#FFF1F2', iconColor: '#E11D48' },
-  { icon: <Award      className="w-6 h-6" />, title: 'Industry Certificate',     desc: 'Earn a recognised certification that demonstrates your HR and recruitment expertise.',               iconBg: '#F0F9FF', iconColor: '#0284C7' },
+  { icon: <Award      className="w-6 h-6" />, title: 'Industry Certificate',     desc: 'Earn a recognised certification that demonstrates your HR and recruitment expertise.',               iconBg: '#F0FDF4', iconColor: '#059669' },
 ]
 
 const process = [
@@ -116,10 +142,12 @@ interface HomePageProps {
 
 /* ─── Accent palette per course card ──────────────────────── */
 const ACCENTS = [
-  { glow: 'rgba(220,38,38,0.18)',   light: '#FEF2F2', border: '#FECACA', solid: '#DC2626', grad: 'linear-gradient(135deg,#B91C1C,#DC2626)',  num: '01' },
-  { glow: 'rgba(14,165,233,0.18)',  light: '#EFF6FF', border: '#BFDBFE', solid: '#1D4ED8', grad: 'linear-gradient(135deg,#1E40AF,#2563EB)',  num: '02' },
-  { glow: 'rgba(5,150,105,0.18)',   light: '#F0FDF4', border: '#BBF7D0', solid: '#059669', grad: 'linear-gradient(135deg,#047857,#059669)',  num: '03' },
-  { glow: 'rgba(124,58,237,0.18)',  light: '#F5F3FF', border: '#DDD6FE', solid: '#7C3AED', grad: 'linear-gradient(135deg,#6D28D9,#7C3AED)', num: '04' },
+  { glow: 'rgba(14,165,233,0.18)',  light: '#EFF6FF', border: '#BAE6FD', solid: '#0284C7', grad: 'linear-gradient(135deg,#0284C7,#0369A1)',  num: '01' },
+  { glow: 'rgba(220,38,38,0.18)',   light: '#FEF2F2', border: '#FECACA', solid: '#DC2626', grad: 'linear-gradient(135deg,#B91C1C,#DC2626)',  num: '02' },
+  { glow: 'rgba(124,58,237,0.18)',  light: '#F5F3FF', border: '#DDD6FE', solid: '#7C3AED', grad: 'linear-gradient(135deg,#6D28D9,#7C3AED)', num: '03' },
+  { glow: 'rgba(217,119,6,0.18)',   light: '#FFFBEB', border: '#FDE68A', solid: '#D97706', grad: 'linear-gradient(135deg,#D97706,#B45309)', num: '04' },
+  { glow: 'rgba(5,150,105,0.18)',   light: '#F0FDF4', border: '#BBF7D0', solid: '#059669', grad: 'linear-gradient(135deg,#047857,#059669)',  num: '05' },
+  { glow: 'rgba(79,70,229,0.18)',   light: '#EEF2FF', border: '#C7D2FE', solid: '#4F46E5', grad: 'linear-gradient(135deg,#4F46E5,#4338CA)', num: '06' },
 ]
 
 /* ─── Testimonial colour palette ───────────────────────────── */
@@ -367,7 +395,7 @@ export default function HomePage({
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((c, i) => {
               const a = ACCENTS[i] ?? ACCENTS[0]
               return (

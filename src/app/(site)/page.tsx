@@ -62,13 +62,23 @@ export default async function Page() {
     }),
   ])
 
-  const SLUG_ROUTE_MAP: Record<string, { href: string; badge: string; badgeCls: string; bar: string; image: string }> = {
+  const SLUG_ORDER = [
+    'for-freshers',
+    'for-professionals',
+    'senior-professionals',
+    'entrepreneurship',
+    'business-consulting',
+    'corporate',
+  ]
+
+  const SLUG_ROUTE_MAP: Record<string, { href: string; badge: string; badgeCls: string; bar: string; image: string; highlights: string[] }> = {
     'for-freshers': {
       href: '/recruitment-career-starter',
       badge: 'Beginner Friendly',
       badgeCls: 'bg-sky-600 text-white',
       bar: 'from-sky-500 to-sky-700',
       image: '/assets/images/about/tab1.jpg',
+      highlights: ['Naukri Resdex & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
     },
     'for-professionals': {
       href: '/professional-recruitment-specialist',
@@ -76,6 +86,7 @@ export default async function Page() {
       badgeCls: 'bg-red-600 text-white',
       bar: 'from-red-500 to-red-700',
       image: '/assets/images/banner/home9.jpg',
+      highlights: ['IT & Non-IT Tech Sourcing', 'STAR Interview Framework', 'Salary & Offer Negotiation'],
     },
     'senior-professionals': {
       href: '/advanced-recruitment-ta-masterclass',
@@ -83,6 +94,7 @@ export default async function Page() {
       badgeCls: 'bg-purple-600 text-white',
       bar: 'from-purple-500 to-purple-700',
       image: '/assets/images/courses/home14/3.jpg',
+      highlights: ['Executive Headhunting', 'TA Dashboards & Analytics', 'Leadership Hiring SLAs'],
     },
     'entrepreneurship': {
       href: '/recruitment-business-accelerator',
@@ -90,6 +102,7 @@ export default async function Page() {
       badgeCls: 'bg-amber-600 text-white',
       bar: 'from-amber-500 to-amber-700',
       image: '/assets/images/courses/style4/4.jpg',
+      highlights: ['Agency Legal & MSA Setup', 'B2B Client Prospecting', '12-Month ₹1 Cr Blueprint'],
     },
     'business-consulting': {
       href: '/recruitment-business-growth-consulting',
@@ -97,6 +110,7 @@ export default async function Page() {
       badgeCls: 'bg-emerald-600 text-white',
       bar: 'from-emerald-500 to-emerald-700',
       image: '/assets/images/courses/home14/4.jpg',
+      highlights: ['Retained Search Positioning', 'Cash Flow & DSO Optimization', 'Direct Founder Mentorship'],
     },
     'corporate': {
       href: '/corporate-recruitment-training',
@@ -104,10 +118,21 @@ export default async function Page() {
       badgeCls: 'bg-indigo-600 text-white',
       bar: 'from-indigo-500 to-indigo-700',
       image: '/assets/images/courses/home14/2.jpg',
+      highlights: ['Custom Hiring Playbooks', 'Interviewer Calibration', 'Pre-Boarding Retention'],
     },
   }
 
-  const courses = categories
+  // Sort categories strictly according to canonical 6-course order
+  const sortedCategories = [...categories].sort((a, b) => {
+    const aIdx = SLUG_ORDER.indexOf(a.slug)
+    const bIdx = SLUG_ORDER.indexOf(b.slug)
+    if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx
+    if (aIdx !== -1) return -1
+    if (bIdx !== -1) return 1
+    return a.id - b.id
+  })
+
+  const courses = sortedCategories
     .filter((category) => category.courses.length > 0)
     .map((category) => {
       const course = category.courses[0]
@@ -117,6 +142,7 @@ export default async function Page() {
         badgeCls: 'bg-slate-700 text-white',
         bar: 'from-slate-500 to-slate-700',
         image: '/assets/images/banner/home-students-banner.jpg',
+        highlights: ['Live Classes & Labs', 'Practical Mandates', 'ISO Certificate'],
       }
 
       return {
@@ -125,18 +151,20 @@ export default async function Page() {
         badge: meta.badge,
         badgeCls: meta.badgeCls,
         level: category.name,
-        duration: course.duration?.trim() || 'Flexible',
+        duration: course.duration?.trim() || '6 Weeks',
         desc: stripHtml(course.description),
         href: meta.href,
         image: meta.image,
         bar: meta.bar,
-        highlights: ['Live Classes & Labs', 'Practical Mandates', 'ISO Certificate'],
+        highlights: meta.highlights,
       }
     })
 
+  const totalAlumniCount = 5000 + totalStudents
+
   const stats = [
-    { icon: 'users' as const, value: `${totalStudents.toLocaleString('en-IN')}+`, label: 'Professionals Trained', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
-    { icon: 'book' as const, value: `${totalCourses}`, label: 'Programs Available', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+    { icon: 'users' as const, value: `${totalAlumniCount.toLocaleString('en-IN')}+`, label: 'Professionals Trained', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
+    { icon: 'book' as const, value: `${courses.length || totalCourses}`, label: 'Programs Available', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
     { icon: 'award' as const, value: '10+ Yrs', label: 'Industry Expertise', iconBg: '#FFFBEB', iconColor: '#D97706' },
     { icon: 'trending' as const, value: '95%', label: 'Placement Success', iconBg: '#F0FDF4', iconColor: '#16A34A' },
   ]
