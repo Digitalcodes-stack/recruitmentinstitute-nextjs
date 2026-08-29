@@ -341,8 +341,8 @@ export default async function CoursesPage() {
     })
   }
 
-  // Map DB Trainers with graceful fallback
-  let formattedTrainers: TrainerItem[] = DEFAULT_TRAINERS
+  // Map DB Trainers — only show real DB trainers, no static fallbacks
+  let formattedTrainers: TrainerItem[] = []
   if (rawDbTrainers && rawDbTrainers.length > 0) {
     formattedTrainers = rawDbTrainers.map((t, idx) => {
       const lower = t.name.toLowerCase()

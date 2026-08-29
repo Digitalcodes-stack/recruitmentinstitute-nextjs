@@ -62,7 +62,8 @@ export default async function TrainersPage() {
     featured: true,
   }))
 
-  const allTrainers = [...liveTrainers, ...DEFAULT_TRAINERS]
+  // Only show DB trainers (no static fallback trainers)
+  const allTrainers = liveTrainers
 
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -83,7 +83,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'About Us',     href: '/admin/about',        icon: Info },
       { label: 'Testimonials', href: '/admin/testimonials', icon: Star },
-      { label: 'Services',     href: '/admin/services',     icon: Settings2 },
+      // { label: 'Services',     href: '/admin/services',     icon: Settings2 }, // COMMENTED OUT PER USER REQUEST
       { label: 'Client Logos', href: '/admin/clients',      icon: Building2 },
       { label: 'Site Settings',href: '/admin/settings',     icon: Settings2 },
       { label: 'Database Log', href: '/admin/database',     icon: Database },

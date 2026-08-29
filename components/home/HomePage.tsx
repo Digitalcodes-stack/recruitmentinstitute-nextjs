@@ -605,8 +605,8 @@ export default function HomePage({
         </div>
       </section>
 
-      {/* ══ SERVICES ══════════════════════════════════════════ */}
-      {services.length > 0 && (
+      {/* ══ SERVICES — COMMENTED OUT PER USER REQUEST ══════════════════════════════════════════ */}
+      {/* {services.length > 0 && (
         <section className="services-section">
           <div className="container">
             <div className="services-header">
@@ -672,7 +672,7 @@ export default function HomePage({
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* ══ EXPERTS ═══════════════════════════════════════════ */}
       {experts.length > 0 && (

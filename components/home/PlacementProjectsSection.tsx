@@ -89,8 +89,8 @@ export default function PlacementProjectsSection() {
         </div>
       </section>
 
-      {/* ── Top Hiring Partners ── */}
-      <section className="pps-section-grey">
+      {/* ── Top Hiring Partners — COMMENTED OUT PER USER REQUEST ── */}
+      {/* <section className="pps-section-grey">
         <div className="container">
 
           <div className="pps-header">
@@ -104,7 +104,6 @@ export default function PlacementProjectsSection() {
 
           <div className="pps-partners-grid">
 
-            {/* Left — benefits list */}
             <div className="pps-benefits-list">
               {BENEFITS.map((b) => (
                 <div key={b.text} className="pps-benefit">
@@ -114,7 +113,6 @@ export default function PlacementProjectsSection() {
               ))}
             </div>
 
-            {/* Right — company grid + CTA */}
             <div>
               <div className="pps-partners-box">
                 <p className="pps-partners-label">Companies Hiring Our Graduates</p>
@@ -142,7 +140,7 @@ export default function PlacementProjectsSection() {
 
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   )
 }
