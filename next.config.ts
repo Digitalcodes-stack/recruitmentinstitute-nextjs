@@ -15,17 +15,15 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
-    // AI Desk voice assistant — dev-only bridge. In production /desk/* is
-    // proxied at the nginx layer (see docker/nginx.conf) so it can forward
-    // WebSocket upgrade headers; nginx intercepts that path before it ever
-    // reaches Next, so this rewrite is inert there. It exists so the Talk
-    // widget can be verified against `docker compose up` in AI-Desk/ without
-    // needing nginx running locally too.
-    if (process.env.NODE_ENV !== 'development') return []
+    const fastApiUrl = process.env.FASTAPI_SERVICE_URL || 'http://localhost:8000'
     return [
       {
-        source: '/desk/:path*',
-        destination: 'http://localhost:8000/:path*',
+        source: '/desk/ws/:path*',
+        destination: `${fastApiUrl}/ws/:path*`,
+      },
+      {
+        source: '/desk/api/:path*',
+        destination: `${fastApiUrl}/api/:path*`,
       },
     ]
   },
