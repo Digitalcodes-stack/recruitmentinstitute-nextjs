@@ -366,7 +366,6 @@ export default async function CoursesPage() {
         email: t.email,
         phone: t.phone || undefined,
         designation: t.specialization ? `${t.specialization} Specialist` : 'Senior Recruitment Mentor',
-        companyEx: isFemale ? 'Ex-TCS, Infosys, Wipro' : 'Ex-Google, Amazon, Microsoft',
         experienceYears: 14 + (idx % 5),
         specializationTags: t.specialization ? t.specialization.split(',').map(s => s.trim()) : ['Recruitment & Sourcing', 'Talent Acquisition'],
         bio: t.bio ? t.bio.slice(0, 160) + '…' : 'Active recruitment practitioner and talent advisor with 10+ years experience.',
