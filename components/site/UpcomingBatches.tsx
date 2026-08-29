@@ -549,23 +549,24 @@ export default function UpcomingBatches({
                         />
                       </div>
 
-                      {/* Pricing Row */}
-                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                          {batch.originalPrice > batch.discountedPrice && (
-                            <span style={{ fontSize: '13px', color: '#94A3B8', textDecoration: 'line-through', fontWeight: 600 }}>
-                              {formatPrice(batch.originalPrice)}
-                            </span>
-                          )}
-                          <span style={{ fontSize: '22px', fontWeight: 900, color: '#0F172A', letterSpacing: '-0.02em' }}>
-                            {formatPrice(batch.discountedPrice)}
+                      {/* Pricing Row — Online & Offline side by side */}
+                      <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: '10px 14px', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
+                            Online 50% OFF
+                          </span>
+                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
+                            {formatPrice(batch.onlinePrice)}
                           </span>
                         </div>
-                        {batch.originalPrice > batch.discountedPrice && (
-                          <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 8px', borderRadius: '6px', background: '#ECFDF5', color: '#047857', border: '1px solid #A7F3D0' }}>
-                            {Math.round(((batch.originalPrice - batch.discountedPrice) / batch.originalPrice) * 100)}% OFF
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
+                            Classroom 10% OFF
                           </span>
-                        )}
+                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
+                            {formatPrice(batch.offlinePrice)}
+                          </span>
+                        </div>
                       </div>
 
                       {/* Hurry Up Urgency Strip */}

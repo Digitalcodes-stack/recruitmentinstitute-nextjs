@@ -304,9 +304,13 @@ export default async function CoursesPage() {
       const trainerImg = b.trainer?.image || '/assets/images/trainers/rajesh_sharma.jpg'
 
       const matchedFee = fees.find((f) => f.categoryId === b.course?.category?.id)
-      const basePrice = matchedFee?.fees ? Number(matchedFee.fees) : 14999
-      const disc = matchedFee?.discount ? Number(matchedFee.discount) : 5000
-      const finalPrice = matchedFee?.finalTotal ? Number(matchedFee.finalTotal) : Math.max(0, basePrice - disc)
+      const isOffline = b.mode === 'OFFLINE'
+      const onlineBase = Number(matchedFee?.onlineFees ?? matchedFee?.fees ?? 14999)
+      const offlineBase = Number(matchedFee?.offlineFees ?? matchedFee?.fees ?? 14999)
+      const onlinePrice = Number(matchedFee?.onlineFinal ?? Math.round(onlineBase * 0.5))
+      const offlinePrice = Number(matchedFee?.offlineFinal ?? Math.round(offlineBase * 0.9))
+      const basePrice = isOffline ? offlineBase : onlineBase
+      const finalPrice = isOffline ? offlinePrice : onlinePrice
       const duration = b.course?.duration?.trim() || '8 Weeks'
 
       const slugCode = b.course?.category?.slug
@@ -334,6 +338,8 @@ export default async function CoursesPage() {
         duration,
         originalPrice: basePrice,
         discountedPrice: finalPrice,
+        onlinePrice,
+        offlinePrice,
         currency: 'INR',
         isFastFilling: left <= 8,
         isGuaranteed: true,
@@ -619,7 +625,7 @@ export default async function CoursesPage() {
               </span>
             </h2>
             <p style={{ fontSize:16, color:'#64748B', lineHeight:1.82, margin:0 }}>
-              Every course is designed by recruitment practitioners with 10+ years of industry experience. Pick the track that matches your career stage.
+              Every course is designed by recruitment practitioners with 25+ years of industry experience. Pick the track that matches your career stage.
             </p>
           </div>
 

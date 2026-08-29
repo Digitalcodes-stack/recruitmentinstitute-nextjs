@@ -23,6 +23,8 @@ export interface BatchItem {
   duration: string // e.g. '8 Weeks | Weekend'
   originalPrice: number
   discountedPrice: number
+  onlinePrice: number
+  offlinePrice: number
   currency?: string
   isFastFilling?: boolean
   isGuaranteed?: boolean
