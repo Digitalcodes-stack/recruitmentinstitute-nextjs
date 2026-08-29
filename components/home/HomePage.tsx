@@ -632,9 +632,6 @@ export default function HomePage({
                     <div className="service-card-img-wrap">
                       <img src={src} alt={s.title} className="service-card-img" />
                       <div className="service-card-img-accent" style={{ background: acc }} />
-                      <div className="service-card-num-badge" style={{ color: acc }}>
-                        {String(i + 1).padStart(2, '0')}
-                      </div>
                     </div>
 
                     <div className="service-card-body">
