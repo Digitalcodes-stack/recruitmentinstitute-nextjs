@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000" flood-opacity="0.12" />
+    </filter>
+  </defs>
+  <style>
+    .bg { fill: #ffffff; stroke: #cbd5e1; stroke-width: 6px; }
+    .frame { stroke: #0f172a; }
+    .accent { fill: #1d4ed8; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #ffffff; stroke: #94a3b8; stroke-width: 6px; }
+      .frame { stroke: #0f172a; }
+      .accent { fill: #1d4ed8; }
+    }
+  </style>
+  <rect class="bg" width="512" height="512" rx="100" filter="url(#shadow)" />
+  <g transform="translate(86, 86)">
+    <rect class="frame" x="0" y="0" width="340" height="340" fill="#ffffff" stroke-width="32" rx="4" />
+    <path d="M 120 70 L 120 130 C 120 130, 220 50, 220 130 C 220 200, 140 210, 140 210 L 220 300" fill="none" class="frame" stroke-width="28" stroke-linecap="square" />
+    <circle cx="120" cy="150" r="32" class="accent" />
+    <path d="M 112 195 L 128 195 L 134 265 L 120 290 L 106 265 Z" class="accent" />
+  </g>
+</svg>
