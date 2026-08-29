@@ -252,12 +252,13 @@ export default async function CoursesPage() {
   const now = new Date()
   const sessionWindowEnd = new Date(now.getTime() + 14 * 86_400_000)
 
-  const [categories, courses, fees, reviews, testimonials, rawDbBatches, rawDbTrainers, rawSessions] = await Promise.all([
+  const [categories, courses, fees, reviews, testimonials, testimonialCount, rawDbBatches, rawDbTrainers, rawSessions] = await Promise.all([
     prisma.courseCategory.findMany({ orderBy: { id: 'asc' }, include: { courses: { orderBy: { id: 'asc' } }, fees: { orderBy: { id: 'asc' } } } }),
     prisma.course.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
     prisma.courseFee.findMany({ orderBy: { id: 'asc' }, include: { category: { include: { courses: true } } } }),
-    prisma.courseReview.findMany({ orderBy: { id: 'asc' }, include: { category: true } }),
+    prisma.courseReview.findMany({ orderBy: { id: 'asc' }, include: { category: true } }).catch(() => []),
     prisma.testimonial.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' }, take: 4 }),
+    prisma.testimonial.count({ where: { isActive: true } }).catch(() => 50),
     prisma.batch.findMany({
       where: { status: 'UPCOMING' },
       include: {
@@ -287,6 +288,8 @@ export default async function CoursesPage() {
       take: 6,
     }).catch(() => []),
   ])
+
+  const totalReviewsDisplay = (testimonialCount || 0) + (reviews?.length || 0) || 50
 
   // Map DB Batches with graceful fallback
   let formattedBatches: BatchItem[] = DEFAULT_BATCHES
@@ -545,7 +548,7 @@ export default async function CoursesPage() {
                     {[
                       { val:`${courses.length}`, lbl:'Courses', color:'#F87171' },
                       { val:`${categories.length}`, lbl:'Tracks', color:'#FCD34D' },
-                      { val:`${reviews.length}`, lbl:'Reviews', color:'#6EE7B7' },
+                      { val:`${totalReviewsDisplay}+`, lbl:'Reviews', color:'#6EE7B7' },
                       { val:'100%', lbl:'Practical', color:'#93C5FD' },
                     ].map(({ val, lbl, color }) => (
                       <div key={lbl} style={{ textAlign:'center' }}>
@@ -569,7 +572,7 @@ export default async function CoursesPage() {
             {[
               { icon:GraduationCap, value:'5,000+', label:'Students Trained',    color:'#DC2626', bg:'#FEF2F2', border:'#FECACA' },
               { icon:BookOpen,      value:`${allCards.length}`,  label:'Specialised Programs', color:'#0EA5E9', bg:'#F0F9FF', border:'#BAE6FD' },
-              { icon:Award,         value:`${reviews.length || '100'}+`, label:'Course Reviews',    color:'#D97706', bg:'#FFFBEB', border:'#FDE68A' },
+              { icon:Award,         value:`${totalReviewsDisplay}+`, label:'Course Reviews',    color:'#D97706', bg:'#FFFBEB', border:'#FDE68A' },
               { icon:TrendingUp,    value:'95%',   label:'Placement Rate',       color:'#059669', bg:'#F0FDF4', border:'#BBF7D0' },
             ].map(({ icon:Icon, value, label, color, bg, border }) => (
               <div key={label} style={{ background:'#fff', borderRadius:16, border:'1.5px solid #E2E8F0', padding:'26px 22px', boxShadow:'0 2px 14px rgba(15,23,42,.06)', display:'flex', flexDirection:'column', alignItems:'flex-start', transition:'transform .25s,box-shadow .25s' }}>
