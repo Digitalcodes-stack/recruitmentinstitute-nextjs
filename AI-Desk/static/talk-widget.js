@@ -28,9 +28,9 @@
 
   function injectStyles() {
     var css = "\
-.aidt-fab{position:fixed;right:22px;bottom:156px;z-index:99998;width:56px;height:56px;border-radius:50%;\
+.aidt-fab{position:fixed;right:22px;bottom:90px;z-index:99998;width:54px;height:54px;border-radius:50%;\
 background:linear-gradient(135deg,#4f3cc9,#4230b3);color:#fff;border:none;cursor:pointer;\
-box-shadow:0 6px 20px -4px rgba(28,26,40,.35);font-size:24px;display:flex;align-items:center;justify-content:center;\
+box-shadow:0 6px 20px -4px rgba(28,26,40,.35);font-size:22px;display:flex;align-items:center;justify-content:center;\
 transition:transform .15s ease;}\
 .aidt-fab:hover{transform:scale(1.08);box-shadow:0 8px 24px -2px rgba(79,60,201,.5);}\
 .aidt-backdrop{position:fixed;inset:0;background:rgba(19,16,25,.55);backdrop-filter:blur(2px);\
@@ -63,21 +63,27 @@ margin-top:14px;border:none;}\
 .aidt-btn-secondary{background:#f1f0f6;color:#1c1a28;border:1px solid #e4e2ed;margin-left:8px;}\
 @media(prefers-color-scheme:dark){.aidt-btn-secondary{background:#171320;color:#f1eef9;border-color:#2c2738;}}\
 ";
-    var style = document.createElement("style");
-    style.textContent = css;
-    document.head.appendChild(style);
+    var tag = document.createElement("style");
+    tag.textContent = css;
+    document.head.appendChild(tag);
   }
 
   function escapeHtml(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function escapeAttr(s) { return String(s || "").replace(/"/g, "&quot;"); }
 
   function talkAvatarHtml(exec) {
-    if (exec.avatar_url) return '<img src="' + exec.avatar_url + '" alt="" class="aidt-face" style="opacity:1" />';
+    if (exec && exec.avatar_url) {
+      return '<img src="' + escapeAttr(exec.avatar_url) + '" alt="' + escapeAttr(exec.name) + '" class="aidt-face" style="opacity:1" />';
+    }
     return (
       '<img src="' + BASE + '/avatars/woman-mouth-closed.png" alt="" class="aidt-face" id="aidtFaceClosed" style="opacity:1" />' +
       '<img src="' + BASE + '/avatars/woman-mouth-mid.png" alt="" class="aidt-face" id="aidtFaceMid" style="opacity:0" />' +
       '<img src="' + BASE + '/avatars/woman-mouth-open.png" alt="" class="aidt-face" id="aidtFaceOpen" style="opacity:0" />'
     );
   }
+
+  var CALL_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.24 1.01l-2.2 2.2z"/></svg>';
+  var END_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>';
 
   function openTalk(exec) {
     var backdrop = document.createElement("div");
@@ -92,9 +98,9 @@ margin-top:14px;border:none;}\
           '<label>Your name</label><input id="aidtCallerName" placeholder="Required" />' +
           '<label>Phone (optional)</label><input id="aidtCallerPhone" placeholder="+91..." />' +
         '</div>' +
-        '<p class="aidt-status" id="aidtStatus">Enter your name, then click Start and allow microphone access.</p>' +
+        '<p class="aidt-status" id="aidtStatus">Enter your name, then click Call and allow microphone access.</p>' +
         '<div class="aidt-meter"><div class="aidt-meter-fill" id="aidtMeterFill"></div></div>' +
-        '<button class="aidt-btn aidt-btn-primary" id="aidtToggle">Start</button>' +
+        '<button class="aidt-btn aidt-btn-primary" id="aidtToggle" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;">' + CALL_ICON + ' Call</button>' +
         '<button class="aidt-btn aidt-btn-secondary" id="aidtClose">Close</button>' +
       '</div>';
     document.body.appendChild(backdrop);
@@ -174,7 +180,7 @@ margin-top:14px;border:none;}\
         ws.onopen = function () { statusEl.textContent = "Live — speak naturally."; dotEl.classList.add("live"); };
 
         talkState = { ws: ws, audioCtx: audioCtx, micStream: micStream, processorNode: processorNode, playbackCtx: playbackCtx, micAnalyser: micAnalyser, playbackAnalyser: playbackAnalyser, animFrame: null };
-        toggleEl.textContent = "Stop";
+        toggleEl.innerHTML = END_ICON + ' End Call';
         toggleEl.classList.add("active");
         runAvatarAnimationLoop();
       })
@@ -235,7 +241,7 @@ margin-top:14px;border:none;}\
     talkState.playbackCtx.close();
     talkState = null;
     var toggleEl = document.getElementById("aidtToggle");
-    if (toggleEl) { toggleEl.textContent = "Start"; toggleEl.classList.remove("active"); }
+    if (toggleEl) { toggleEl.innerHTML = CALL_ICON + ' Call'; toggleEl.classList.remove("active"); }
     var dotEl = document.getElementById("aidtMicDot");
     if (dotEl) dotEl.classList.remove("live");
     var ring = document.getElementById("aidtRing");
@@ -276,9 +282,9 @@ margin-top:14px;border:none;}\
     injectStyles();
     var fab = document.createElement("button");
     fab.className = "aidt-fab";
-    fab.setAttribute("aria-label", "Talk to us");
-    fab.title = "Talk to us";
-    fab.textContent = "🎙️";
+    fab.setAttribute("aria-label", "Call Priya");
+    fab.title = "Call Priya";
+    fab.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.24 1.01l-2.2 2.2z"/></svg>';
     fab.onclick = function () {
       openTalk({ id: EXEC_ID, name: EXEC_NAME, avatar_url: EXEC_AVATAR });
     };
