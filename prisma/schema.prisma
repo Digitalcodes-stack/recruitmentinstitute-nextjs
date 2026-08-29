@@ -140,18 +140,25 @@ model Expert {
 }
 
 model CourseFee {
-  id          Int                 @id @default(autoincrement())
-  courseName  String              @map("course")
-  categoryId  Int                 @map("course_category_id")
-  fees        Decimal?            @db.Decimal(10, 2)
-  discount    Decimal?            @db.Decimal(10, 2)
-  total       Decimal?            @db.Decimal(10, 2)
-  feeTotal    Decimal?            @map("fee_total") @db.Decimal(10, 2)
-  subtotal    Decimal?            @db.Decimal(10, 2)
-  finalTotal  Decimal?            @map("final_total") @db.Decimal(10, 2)
-  couponCode  String?             @map("coupon_code")
-  category    CourseCategory      @relation(fields: [categoryId], references: [id])
-  feeAccounts StudentFeeAccount[]
+  id              Int                 @id @default(autoincrement())
+  courseName      String              @map("course")
+  categoryId      Int                 @map("course_category_id")
+  fees            Decimal?            @db.Decimal(10, 2)
+  discount        Decimal?            @db.Decimal(10, 2)
+  total           Decimal?            @db.Decimal(10, 2)
+  feeTotal        Decimal?            @map("fee_total") @db.Decimal(10, 2)
+  subtotal        Decimal?            @db.Decimal(10, 2)
+  finalTotal      Decimal?            @map("final_total") @db.Decimal(10, 2)
+  onlineFees      Decimal?            @map("online_fees") @db.Decimal(10, 2)
+  onlineDiscount  Decimal?            @map("online_discount") @db.Decimal(10, 2)
+  onlineFinal     Decimal?            @map("online_final") @db.Decimal(10, 2)
+  offlineFees     Decimal?            @map("offline_fees") @db.Decimal(10, 2)
+  offlineDiscount Decimal?            @map("offline_discount") @db.Decimal(10, 2)
+  offlineFinal    Decimal?            @map("offline_final") @db.Decimal(10, 2)
+  modeNotes       String?             @map("mode_notes")
+  couponCode      String?             @map("coupon_code")
+  category        CourseCategory      @relation(fields: [categoryId], references: [id])
+  feeAccounts     StudentFeeAccount[]
 
   @@map("fees")
 }

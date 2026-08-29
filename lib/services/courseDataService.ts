@@ -47,6 +47,21 @@ export interface DynamicCourseData {
     finalFee: number
     savingsPercent: number
     emiPerMonth: number
+    online: {
+      baseFee: number
+      discountPercent: number
+      discountAmount: number
+      finalFee: number
+      emiPerMonth: number
+    }
+    offline: {
+      baseFee: number
+      discountPercent: number
+      discountAmount: number
+      finalFee: number
+      emiPerMonth: number
+    }
+    modeNotes?: string | null
   }
   curriculum: DynamicCurriculumModule[]
   learningOutcomes: string[]
@@ -952,8 +967,53 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       else finalFee = Math.max(0, baseFee - discount)
     }
 
+    // Online pricing calculation (default 50% discount)
+    const onlineBase = dbFee?.onlineFees ? Number(dbFee.onlineFees) : baseFee
+    const onlineDiscountAmount = dbFee?.onlineDiscount != null
+      ? Number(dbFee.onlineDiscount)
+      : Math.round(onlineBase * 0.50)
+    const onlineFinalFee = dbFee?.onlineFinal != null
+      ? Number(dbFee.onlineFinal)
+      : Math.max(0, onlineBase - onlineDiscountAmount)
+    const onlineDiscountPercent = onlineBase > 0 ? Math.round((onlineDiscountAmount / onlineBase) * 100) : 50
+    const onlineEmi = Math.round(onlineFinalFee / 3)
+
+    // Offline pricing calculation (default 10% discount)
+    const offlineBase = dbFee?.offlineFees ? Number(dbFee.offlineFees) : baseFee
+    const offlineDiscountAmount = dbFee?.offlineDiscount != null
+      ? Number(dbFee.offlineDiscount)
+      : Math.round(offlineBase * 0.10)
+    const offlineFinalFee = dbFee?.offlineFinal != null
+      ? Number(dbFee.offlineFinal)
+      : Math.max(0, offlineBase - offlineDiscountAmount)
+    const offlineDiscountPercent = offlineBase > 0 ? Math.round((offlineDiscountAmount / offlineBase) * 100) : 10
+    const offlineEmi = Math.round(offlineFinalFee / 3)
+
     const savingsPercent = baseFee > 0 ? Math.round((discount / baseFee) * 100) : 0
     const emiPerMonth = Math.round(finalFee / 3)
+
+    const pricing = {
+      baseFee,
+      discount,
+      finalFee,
+      savingsPercent,
+      emiPerMonth,
+      online: {
+        baseFee: onlineBase,
+        discountPercent: onlineDiscountPercent,
+        discountAmount: onlineDiscountAmount,
+        finalFee: onlineFinalFee,
+        emiPerMonth: onlineEmi,
+      },
+      offline: {
+        baseFee: offlineBase,
+        discountPercent: offlineDiscountPercent,
+        discountAmount: offlineDiscountAmount,
+        finalFee: offlineFinalFee,
+        emiPerMonth: offlineEmi,
+      },
+      modeNotes: dbFee?.modeNotes || null,
+    }
 
     // 5. Resolve Curriculum
     let curriculum: DynamicCurriculumModule[] = config.defaultCurriculum
@@ -1030,13 +1090,7 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
       accentGlow: config.accentGlow,
       gradient: config.gradient,
       image: config.image,
-      pricing: {
-        baseFee,
-        discount,
-        finalFee,
-        savingsPercent,
-        emiPerMonth,
-      },
+      pricing,
       curriculum,
       learningOutcomes: config.defaultLearningOutcomes,
       whoShouldEnroll: config.defaultWhoShouldEnroll,
@@ -1082,6 +1136,21 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         finalFee: config.defaultFinal,
         savingsPercent: Math.round((config.defaultDiscount / config.defaultFees) * 100),
         emiPerMonth: Math.round(config.defaultFinal / 3),
+        online: {
+          baseFee: config.defaultFees,
+          discountPercent: 50,
+          discountAmount: Math.round(config.defaultFees * 0.50),
+          finalFee: Math.round(config.defaultFees * 0.50),
+          emiPerMonth: Math.round((config.defaultFees * 0.50) / 3),
+        },
+        offline: {
+          baseFee: config.defaultFees,
+          discountPercent: 10,
+          discountAmount: Math.round(config.defaultFees * 0.10),
+          finalFee: Math.round(config.defaultFees * 0.90),
+          emiPerMonth: Math.round((config.defaultFees * 0.90) / 3),
+        },
+        modeNotes: 'Pune Center Classroom Training & Online Live Batches Available',
       },
       curriculum: config.defaultCurriculum,
       learningOutcomes: config.defaultLearningOutcomes,

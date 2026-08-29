@@ -15,7 +15,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   const { id } = await params
   const body = await req.json()
-  const { courseName, categoryId, fees, discount, subtotal, feeTotal, finalTotal, couponCode } = body
+  const {
+    courseName, categoryId, fees, discount, subtotal, feeTotal, finalTotal, couponCode,
+    onlineFees, onlineDiscount, onlineFinal, offlineFees, offlineDiscount, offlineFinal, modeNotes,
+  } = body
 
   if (!courseName?.trim())
     return NextResponse.json({ success: false, message: 'Course name is required' }, { status: 400 })
@@ -32,6 +35,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       subtotal: toDecimal(subtotal),
       feeTotal: toDecimal(feeTotal),
       finalTotal: toDecimal(finalTotal),
+      onlineFees: toDecimal(onlineFees),
+      onlineDiscount: toDecimal(onlineDiscount),
+      onlineFinal: toDecimal(onlineFinal),
+      offlineFees: toDecimal(offlineFees),
+      offlineDiscount: toDecimal(offlineDiscount),
+      offlineFinal: toDecimal(offlineFinal),
+      modeNotes: modeNotes?.trim() || null,
       couponCode: couponCode?.trim() || null,
     },
     include: { category: true },

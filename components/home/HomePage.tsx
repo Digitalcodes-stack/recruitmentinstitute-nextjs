@@ -456,6 +456,12 @@ export default function HomePage({
                       ))}
                     </div>
 
+                    <div className="flex items-center justify-between text-[11px] font-bold py-2 px-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-4">
+                      <span className="text-sky-700 font-extrabold">Online: 50% OFF</span>
+                      <span className="text-slate-300">•</span>
+                      <span className="text-amber-800 font-extrabold">Classroom: 10% OFF</span>
+                    </div>
+
                     <Link
                       href={c.href}
                       className="course-card-cta group/btn"

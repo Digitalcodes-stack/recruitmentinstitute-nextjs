@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Send, Phone, CheckCircle2, Award, Users, Clock, Shield } from 'lucide-react'
+import { X, Send, Phone, CheckCircle2, Award, Users, Clock, Shield, Monitor, Building2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 interface EnquiryModalProps {
   isOpen: boolean
   onClose: () => void
+  defaultCourse?: string
+  defaultMode?: 'online' | 'offline'
 }
 
 const trustPoints = [
@@ -16,9 +18,22 @@ const trustPoints = [
   { icon: Clock,        text: 'Flexible weekend & weekday batches' },
 ]
 
-export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
+export default function EnquiryModal({ isOpen, onClose, defaultCourse, defaultMode = 'online' }: EnquiryModalProps) {
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState({ name: '', email: '', mobile: '', message: '' })
+  const [learningMode, setLearningMode] = useState<'online' | 'offline'>(defaultMode)
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    course: defaultCourse || '',
+    learningMode: defaultMode,
+    message: '',
+  })
+
+  useEffect(() => {
+    if (defaultMode) setLearningMode(defaultMode)
+    if (defaultCourse) setForm(prev => ({ ...prev, course: defaultCourse }))
+  }, [defaultMode, defaultCourse, isOpen])
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : ''
@@ -37,15 +52,19 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     e.preventDefault()
     setLoading(true)
     try {
+      const fullMessage = `[Mode: ${learningMode === 'online' ? 'Online Live (50% OFF)' : 'Offline Classroom (10% OFF)'}]${form.course ? ` [Course: ${form.course}]` : ''} ${form.message}`.trim()
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          message: fullMessage,
+        }),
       })
       const data = await res.json()
       if (data.success) {
         toast.success('Enquiry sent! Our counsellor will contact you shortly.')
-        setForm({ name: '', email: '', mobile: '', message: '' })
+        setForm({ name: '', email: '', mobile: '', course: '', learningMode: 'online', message: '' })
         onClose()
       } else {
         toast.error(data.message || 'Failed to send enquiry')
@@ -66,7 +85,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
     >
       <div className="enquiry-backdrop" onClick={onClose} />
 
-      <div className="enquiry-modal">
+      <div className="enquiry-modal" style={{ maxWidth: '820px' }}>
 
         {/* ── Left panel ── */}
         <div className="enquiry-left hidden md:flex">
@@ -79,7 +98,7 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
             <h2 className="enquiry-left-heading">Start Your HR Career Today</h2>
             <p className="enquiry-left-desc">
-              Talk to our expert counsellor for personalised guidance on course selection, batch timings, and fee structure.
+              Talk to our expert counsellor for personalised guidance on course selection, batch timings, and online/offline fee discounts.
             </p>
 
             <ul className="enquiry-trust-list">
@@ -118,7 +137,51 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
 
           <form onSubmit={handleSubmit} className="enquiry-form">
 
-            <div className="grid grid-cols-2 gap-4">
+            {/* Mode selection toggle */}
+            <div>
+              <label className="enquiry-label" style={{ marginBottom: 6 }}>
+                Select Preferred Learning Mode
+              </label>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setLearningMode('online')}
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                    learningMode === 'online'
+                      ? 'bg-sky-50 border-sky-400 text-sky-950 ring-2 ring-sky-300'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs">
+                    <Monitor className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Online Live</span>
+                  </div>
+                  <span className="text-[10px] font-extrabold text-sky-700 bg-sky-100/80 px-2 py-0.5 rounded-full mt-1">
+                    50% Discount Applied
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setLearningMode('offline')}
+                  className={`flex flex-col items-center justify-center p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                    learningMode === 'offline'
+                      ? 'bg-amber-50 border-amber-400 text-amber-950 ring-2 ring-amber-300'
+                      : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  <div className="flex items-center gap-1.5 font-bold text-xs">
+                    <Building2 className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Classroom</span>
+                  </div>
+                  <span className="text-[10px] font-extrabold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded-full mt-1">
+                    10% Discount • Pune
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="enquiry-label">
                   Full Name <span className="enquiry-required">*</span>
@@ -166,8 +229,8 @@ export default function EnquiryModal({ isOpen, onClose }: EnquiryModalProps) {
               <textarea
                 value={form.message}
                 onChange={e => setForm({ ...form, message: e.target.value })}
-                rows={3}
-                placeholder="Which course are you interested in? Any questions about batch timing, fees, or curriculum?"
+                rows={2}
+                placeholder="Questions about batch timing, discounts, or placement?"
                 className="enquiry-field"
                 style={{ resize: 'none' }}
               />

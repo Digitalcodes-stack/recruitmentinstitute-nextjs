@@ -24,6 +24,25 @@ export default function DynamicCourseLandingClient({ course }: Props) {
   const [openModule, setOpenModule] = useState<number | null>(0)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [enquiryOpen, setEnquiryOpen] = useState(false)
+  const [selectedMode, setSelectedMode] = useState<'online' | 'offline'>('online')
+
+  const onlinePricing = course.pricing?.online || {
+    baseFee: course.pricing?.baseFee || 10000,
+    discountPercent: 50,
+    discountAmount: Math.round((course.pricing?.baseFee || 10000) * 0.5),
+    finalFee: Math.round((course.pricing?.baseFee || 10000) * 0.5),
+    emiPerMonth: Math.round(((course.pricing?.baseFee || 10000) * 0.5) / 3),
+  }
+
+  const offlinePricing = course.pricing?.offline || {
+    baseFee: course.pricing?.baseFee || 10000,
+    discountPercent: 10,
+    discountAmount: Math.round((course.pricing?.baseFee || 10000) * 0.1),
+    finalFee: Math.round((course.pricing?.baseFee || 10000) * 0.9),
+    emiPerMonth: Math.round(((course.pricing?.baseFee || 10000) * 0.9) / 3),
+  }
+
+  const activePricing = selectedMode === 'online' ? onlinePricing : offlinePricing
 
   const toggleModule = (idx: number) => {
     setOpenModule(openModule === idx ? null : idx)
@@ -39,6 +58,8 @@ export default function DynamicCourseLandingClient({ course }: Props) {
       <EnquiryModal
         isOpen={enquiryOpen}
         onClose={() => setEnquiryOpen(false)}
+        defaultCourse={course.title}
+        defaultMode={selectedMode}
       />
 
       {/* ══════════════════════════════════════════════
@@ -110,67 +131,141 @@ export default function DynamicCourseLandingClient({ course }: Props) {
               </div>
             </div>
 
-            {/* Right Card / Pricing Highlight */}
+            {/* Right Card / Dual Pricing Highlight */}
             <div className="lg:col-span-5">
-              <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
+              <div className="bg-slate-900/95 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
                 <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-2xl opacity-10 pointer-events-none" style={{ background: course.accent }} />
 
-                <div className="flex items-center justify-between border-b border-slate-800 pb-5 mb-6">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
                   <div>
-                    <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">Tuition & Enrollment</span>
-                    <h3 className="text-xl font-bold text-white mt-1">Transparent Pricing</h3>
+                    <span className="text-xs uppercase font-bold text-slate-400 tracking-wider">Tuition & Pricing</span>
+                    <h3 className="text-xl font-bold text-white mt-0.5">Select Learning Mode</h3>
                   </div>
-                  {course.pricing.savingsPercent > 0 && (
-                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-extrabold px-3 py-1 rounded-full">
-                      Save {course.pricing.savingsPercent}%
+                  <span className={`text-xs font-extrabold px-3 py-1 rounded-full border ${
+                    selectedMode === 'online'
+                      ? 'bg-sky-500/20 text-sky-400 border-sky-500/30'
+                      : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                  }`}>
+                    {selectedMode === 'online' ? 'Save 50% Online' : 'Save 10% Offline'}
+                  </span>
+                </div>
+
+                {/* Mode Selector Switcher */}
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950/80 border border-slate-800 rounded-2xl mb-6">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMode('online')}
+                    className={`flex flex-col items-center justify-center py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
+                      selectedMode === 'online'
+                        ? 'bg-sky-600 text-white shadow-lg font-bold'
+                        : 'text-slate-400 hover:text-slate-200 font-semibold'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>Online Live</span>
+                    </div>
+                    <span className="text-[10px] font-black tracking-wider text-sky-200 mt-0.5">
+                      50% DISCOUNT
                     </span>
-                  )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMode('offline')}
+                    className={`flex flex-col items-center justify-center py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
+                      selectedMode === 'offline'
+                        ? 'bg-amber-600 text-white shadow-lg font-bold'
+                        : 'text-slate-400 hover:text-slate-200 font-semibold'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      <span>Classroom</span>
+                    </div>
+                    <span className="text-[10px] font-black tracking-wider text-amber-200 mt-0.5">
+                      10% DISCOUNT • PUNE
+                    </span>
+                  </button>
                 </div>
 
                 {/* Price Display */}
-                <div className="mb-6">
+                <div className="mb-5 bg-slate-950/50 border border-slate-800/80 rounded-2xl p-4">
                   <div className="flex items-baseline gap-3">
                     <span className="text-4xl md:text-5xl font-black text-white">
-                      ₹{course.pricing.finalFee.toLocaleString('en-IN')}
+                      ₹{activePricing.finalFee.toLocaleString('en-IN')}
                     </span>
-                    {course.pricing.discount > 0 && (
-                      <span className="text-lg text-slate-500 line-through font-semibold">
-                        ₹{course.pricing.baseFee.toLocaleString('en-IN')}
+                    {activePricing.discountAmount > 0 && (
+                      <span className="text-base md:text-lg text-slate-500 line-through font-semibold">
+                        ₹{activePricing.baseFee.toLocaleString('en-IN')}
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    EMI available starting from <strong>₹{course.pricing.emiPerMonth.toLocaleString('en-IN')}/month</strong> with 0% interest options.
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-800/50 px-2.5 py-0.5 rounded-md">
+                      <CheckCircle2 className="w-3 h-3" />
+                      You Save ₹{activePricing.discountAmount.toLocaleString('en-IN')} ({activePricing.discountPercent}% OFF)
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2">
+                    EMI options available from <strong>₹{activePricing.emiPerMonth.toLocaleString('en-IN')}/month</strong> (0% interest).
                   </p>
                 </div>
 
-                {/* Inclusions */}
-                <div className="space-y-3 border-t border-slate-800/80 pt-5 mb-8 text-sm text-slate-300">
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Live Instructor-Led Sessions + Lifetime LMS Access</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Verified QR-Coded Certificate of Completion</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>1-on-1 Resume Building & Placement Support</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span>Real-world Case Studies & Sourcing Projects</span>
-                  </div>
+                {/* Inclusions per mode */}
+                <div className="space-y-2.5 border-t border-slate-800/80 pt-4 mb-6 text-xs md:text-sm text-slate-300">
+                  {selectedMode === 'online' ? (
+                    <>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+                        <span>Live Interactive Zoom Batches + HD Recording LMS</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+                        <span>ISO-Accredited QR Verifiable Digital Certificate</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+                        <span>1-on-1 Online Placement & Resume Guidance</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
+                        <span>Full Digital Toolkit (Boolean queries, ATS templates)</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Pune Center Physical Classroom & Recruiter Lab</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Face-to-Face Daily Mentorship & Live Calling Practice</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>In-Person Mock Interviews & Corporate Placement Drive</span>
+                      </div>
+                      <div className="flex items-center gap-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
+                        <span>Printed Courseware + QR Verifiable Certificate</span>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 <button
                   type="button"
                   onClick={() => setEnquiryOpen(true)}
-                  className="w-full py-4 rounded-xl font-bold text-white text-center text-sm uppercase tracking-wider shadow-lg transition-transform hover:scale-[1.02] cursor-pointer"
-                  style={{ background: `linear-gradient(135deg, ${course.accent}, #2563eb)` }}
+                  className="w-full py-3.5 rounded-xl font-bold text-white text-center text-sm uppercase tracking-wider shadow-lg transition-transform hover:scale-[1.02] cursor-pointer"
+                  style={{
+                    background: selectedMode === 'online'
+                      ? 'linear-gradient(135deg, #0284c7, #2563eb)'
+                      : 'linear-gradient(135deg, #d97706, #b45309)',
+                  }}
                 >
-                  Apply for Admission
+                  Apply for {selectedMode === 'online' ? 'Online Batch (50% OFF)' : 'Classroom Batch (10% OFF)'}
                 </button>
               </div>
             </div>

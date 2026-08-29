@@ -392,6 +392,10 @@ export default async function CoursesPage() {
     const description = linkedCourse ? stripHtml(linkedCourse.description) : `${cat.name} – a professional recruitment training program at Recruitment Institute.`
 
     const duration = linkedCourse?.duration?.trim() || meta.duration || 'Flexible'
+    const matchedFee = fees.find((f) => f.categoryId === cat.id)
+    const basePrice = Number(matchedFee?.fees || matchedFee?.onlineFees || 10000)
+    const onlineFinal = Number(matchedFee?.onlineFinal || Math.round(basePrice * 0.5))
+    const offlineFinal = Number(matchedFee?.offlineFinal || Math.round(basePrice * 0.9))
 
     return {
       index,
@@ -404,6 +408,8 @@ export default async function CoursesPage() {
       rating: avgRating,
       reviewCount: catReviews.length,
       duration,
+      onlinePrice: onlineFinal,
+      offlinePrice: offlineFinal,
       meta,
     }
   })
@@ -717,6 +723,26 @@ export default async function CoursesPage() {
                             <span style={{ fontSize:12, fontWeight:600, color:'#334155', lineHeight:1.5 }}>{f}</span>
                           </div>
                         ))}
+                      </div>
+
+                      {/* Pricing pills */}
+                      <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: '10px 14px', marginBottom: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
+                            Online 50% OFF
+                          </span>
+                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
+                            ₹{card.onlinePrice.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
+                            Classroom 10% OFF
+                          </span>
+                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
+                            ₹{card.offlinePrice.toLocaleString('en-IN')}
+                          </span>
+                        </div>
                       </div>
 
                       {/* CTAs */}
