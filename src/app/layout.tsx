@@ -267,6 +267,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${poppins.variable} font-sans min-h-screen flex flex-col antialiased`} suppressHydrationWarning>
         {children}
         <Toaster position="top-right" />
+        {/* AI Desk Talk widget — floating voice-assistant button, served by the AI-Desk service via /desk/ */}
+        <script
+          src="/desk/admin/talk-widget.js"
+          data-exec-id="137b9c71-b8dc-45f2-9fe0-2d445b0c0a50"
+          data-exec-name="Priya"
+          async
+        />
       </body>
     </html>
   )

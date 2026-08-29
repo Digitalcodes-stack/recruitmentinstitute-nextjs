@@ -14,6 +14,22 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 31536000,
   },
 
+  async rewrites() {
+    // AI Desk voice assistant — dev-only bridge. In production /desk/* is
+    // proxied at the nginx layer (see docker/nginx.conf) so it can forward
+    // WebSocket upgrade headers; nginx intercepts that path before it ever
+    // reaches Next, so this rewrite is inert there. It exists so the Talk
+    // widget can be verified against `docker compose up` in AI-Desk/ without
+    // needing nginx running locally too.
+    if (process.env.NODE_ENV !== 'development') return []
+    return [
+      {
+        source: '/desk/:path*',
+        destination: 'http://localhost:8000/:path*',
+      },
+    ]
+  },
+
   async redirects() {
     return [
       { source: '/admin', destination: '/admin/dashboard', permanent: false },
@@ -102,7 +118,8 @@ const nextConfig: NextConfig = {
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // microphone=(self) — the AI Desk Talk widget (embedded site-wide) needs mic access via getUserMedia.
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(self), geolocation=()' },
           { key: 'X-DNS-Prefetch-Control', value: 'on' },
         ],
       },

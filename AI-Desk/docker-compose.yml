@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aidesk
+      POSTGRES_PASSWORD: aidesk
+      POSTGRES_DB: aidesk
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aidesk"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    env_file: .env
+    environment:
+      # Overrides .env's DATABASE_URL (host=localhost, for running the API directly on
+      # the host) — inside compose's network the db container is reachable as "db".
+      DATABASE_URL: postgresql+asyncpg://aidesk:aidesk@db:5432/aidesk
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - .:/app
+
+volumes:
+  pgdata:

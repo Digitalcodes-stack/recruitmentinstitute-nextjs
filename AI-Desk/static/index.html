@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CallMate Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Design tokens ---------- */
+  :root {
+    color-scheme: light dark;
+    --font-display: 'Manrope', system-ui, -apple-system, Segoe UI, sans-serif;
+    --font-body: 'Inter', system-ui, -apple-system, Segoe UI, sans-serif;
+
+    /* Light theme (default) — warm-indigo-biased neutrals, not pure gray */
+    --bg: #f6f5f9;
+    --surface: #ffffff;
+    --surface-sunken: #f1f0f6;
+    --border: #e4e2ed;
+    --border-strong: #d3d0e0;
+    --text: #1c1a28;
+    --text-muted: #67637a;
+    --text-faint: #9490a3;
+
+    --accent: #4f3cc9;
+    --accent-hover: #4230b3;
+    --accent-tint: #eeebfb;
+    --accent-contrast: #ffffff;
+
+    --success: #16a34a;
+    --success-tint: #e9f9ef;
+    --danger: #dc2626;
+    --danger-tint: #fdecec;
+    --warning: #b45309;
+    --warning-tint: #fdf3e3;
+
+    --shadow-sm: 0 1px 2px rgba(28, 26, 40, .06);
+    --shadow-md: 0 4px 12px -2px rgba(28, 26, 40, .10), 0 2px 4px -2px rgba(28, 26, 40, .06);
+    --shadow-lg: 0 12px 32px -8px rgba(28, 26, 40, .22);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131019;
+      --surface: #1c1826;
+      --surface-sunken: #171320;
+      --border: #2c2738;
+      --border-strong: #3b3549;
+      --text: #f1eef9;
+      --text-muted: #a9a4bd;
+      --text-faint: #78738c;
+
+      --accent: #9384f2;
+      --accent-hover: #a898f5;
+      --accent-tint: #2a2340;
+      --accent-contrast: #171320;
+
+      --success: #4ade80;
+      --success-tint: #10301f;
+      --danger: #f87171;
+      --danger-tint: #3a1717;
+      --warning: #fbbf24;
+      --warning-tint: #3a2a0d;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+      --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, .45), 0 2px 4px -2px rgba(0, 0, 0, .3);
+      --shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, .55);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131019;
+    --surface: #1c1826;
+    --surface-sunken: #171320;
+    --border: #2c2738;
+    --border-strong: #3b3549;
+    --text: #f1eef9;
+    --text-muted: #a9a4bd;
+    --text-faint: #78738c;
+
+    --accent: #9384f2;
+    --accent-hover: #a898f5;
+    --accent-tint: #2a2340;
+    --accent-contrast: #171320;
+
+    --success: #4ade80;
+    --success-tint: #10301f;
+    --danger: #f87171;
+    --danger-tint: #3a1717;
+    --warning: #fbbf24;
+    --warning-tint: #3a2a0d;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, .45), 0 2px 4px -2px rgba(0, 0, 0, .3);
+    --shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, .55);
+  }
+
+  /* ---------- Base ---------- */
+  * { box-sizing: border-box; }
+  html { text-size-adjust: 100%; }
+  body {
+    font-family: var(--font-body);
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; letter-spacing: -0.01em; }
+  ::selection { background: var(--accent-tint); color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- Header ---------- */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(8px);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; box-shadow: var(--shadow-sm);
+  }
+  header h1 { font-size: 16px; margin: 0; font-weight: 800; letter-spacing: -0.02em; }
+  header .tagline { font-size: 11px; color: var(--text-faint); font-weight: 500; margin-top: 1px; }
+  nav { display: flex; gap: 6px; align-items: center; }
+  nav button {
+    background: transparent; border: 1px solid transparent; color: var(--text-muted);
+    padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;
+    font-family: var(--font-body); transition: background .12s ease, color .12s ease;
+  }
+  nav button:hover { background: var(--surface-sunken); color: var(--text); }
+  nav button.active { background: var(--accent-tint); color: var(--accent); }
+  #logoutBtn { border: 1px solid var(--border-strong) !important; margin-left: 4px; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 1040px; margin: 28px auto 60px; padding: 0 20px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card h2 { font-size: 17px; margin: 0 0 4px; font-weight: 700; }
+  .card h3 { font-size: 13px; margin: 0 0 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); }
+
+  /* ---------- Forms ---------- */
+  label { display: block; font-size: 12.5px; font-weight: 600; color: var(--text-muted); margin: 14px 0 5px; }
+  input, textarea, select {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 8px;
+    font-size: 14px; font-family: inherit; background: var(--surface); color: var(--text);
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+  input::placeholder, textarea::placeholder { color: var(--text-faint); }
+  input:focus, textarea:focus, select:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-tint);
+  }
+  textarea { min-height: 74px; line-height: 1.5; resize: vertical; }
+
+  /* ---------- Buttons ---------- */
+  button { font-family: var(--font-body); }
+  button.primary {
+    background: var(--accent); color: var(--accent-contrast); border: none;
+    padding: 10px 18px; border-radius: 9px; cursor: pointer; font-size: 14px; font-weight: 700;
+    margin-top: 14px; box-shadow: var(--shadow-sm); transition: background .12s ease, transform .06s ease;
+  }
+  button.primary:hover { background: var(--accent-hover); }
+  button.primary:active { transform: translateY(1px); }
+  button.danger {
+    background: var(--danger-tint); color: var(--danger); border: 1px solid transparent;
+    padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 12.5px; font-weight: 600;
+  }
+  button.danger:hover { border-color: var(--danger); }
+  button.secondary {
+    background: var(--surface-sunken); color: var(--text); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 12.5px; font-weight: 600;
+  }
+  button.secondary:hover { border-color: var(--border-strong); }
+  button.talk {
+    background: var(--success-tint); color: var(--success); border: 1px solid transparent;
+    padding: 6px 12px; border-radius: 7px; cursor: pointer; font-size: 12.5px; font-weight: 700;
+  }
+  button.talk:hover { border-color: var(--success); }
+  button.talk.active { background: var(--danger-tint); color: var(--danger); }
+
+  /* ---------- Table ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th {
+    text-align: left; padding: 9px 10px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--text-faint); border-bottom: 1px solid var(--border);
+  }
+  td { text-align: left; padding: 11px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tbody tr:hover { background: var(--surface-sunken); }
+  tbody tr:last-child td { border-bottom: none; }
+  td:has(.avatar-img), td:has(.avatar-initials) { width: 44px; }
+
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .muted { color: var(--text-muted); font-size: 12.5px; }
+  pre {
+    white-space: pre-wrap; font-size: 12.5px; background: var(--surface-sunken); color: var(--text);
+    padding: 14px; border-radius: 10px; max-height: 420px; overflow: auto; border: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; background: var(--accent-tint); color: var(--accent);
+  }
+
+  /* ---------- Avatars ---------- */
+  .avatar-img, .avatar-initials {
+    width: 34px; height: 34px; border-radius: 50%; display: inline-flex;
+    align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
+  }
+  .avatar-img { object-fit: cover; }
+  .avatar-initials { color: #fff; font-size: 12px; font-weight: 800; font-family: var(--font-display); }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(19, 16, 25, .55); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center; z-index: 50;
+  }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 26px; width: 440px; max-width: 90vw; box-shadow: var(--shadow-lg);
+  }
+  .modal h2 { font-size: 17px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+
+  /* ---------- Talk modal: lip-sync avatar ---------- */
+  .talk-modal { text-align: center; }
+  .talk-avatar-wrap { position: relative; width: 96px; height: 96px; margin: 4px auto 14px; }
+  .talk-avatar-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 2px solid var(--accent-tint);
+    transform: scale(1); opacity: 0;
+    transition: opacity .2s ease;
+  }
+  .talk-avatar-ring.speaking {
+    opacity: 1;
+    animation: ring-pulse 900ms ease-out infinite;
+  }
+  @keyframes ring-pulse {
+    0% { transform: scale(.96); box-shadow: 0 0 0 0 var(--accent-tint); }
+    70% { transform: scale(1.14); box-shadow: 0 0 0 10px transparent; }
+    100% { transform: scale(1.18); opacity: 0; }
+  }
+  .talk-avatar {
+    position: absolute; inset: 8px; border-radius: 50%; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-md); transition: transform 70ms ease-out;
+    transform-origin: center;
+  }
+  .talk-avatar .avatar-img, .talk-avatar .avatar-initials { width: 100%; height: 100%; font-size: 28px; box-shadow: none; }
+  .talk-name { justify-content: center; text-align: center; }
+
+  /* Three pixel-aligned mouth-state frames stacked and crossfaded for lip-sync (see talkAvatarHtml). */
+  .face-frame {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    transition: opacity 70ms linear;
+  }
+
+  /* ---------- Talk modal: mic level meter under the toggle ---------- */
+  .mic-meter { height: 4px; border-radius: 3px; background: var(--surface-sunken); margin: 14px 0 2px; overflow: hidden; }
+  .mic-meter-fill { height: 100%; width: 0%; background: var(--success); transition: width 60ms linear; }
+  .mic-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; background: var(--border-strong); }
+  .mic-dot.live { background: var(--success); box-shadow: 0 0 0 3px var(--success-tint); animation: pulse 1.2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+  #chatLog { max-height: 260px; overflow-y: auto; font-size: 13px; margin: 12px 0; }
+  #chatLog .line { margin-bottom: 6px; }
+  #chatLog .caller { color: var(--text); }
+  #chatLog .assistant { color: var(--accent); }
+
+  /* ---------- Conversation detail: chat-bubble transcript + extracted-data panel ---------- */
+  .back-link {
+    display: inline-flex; align-items: center; gap: 4px; margin-bottom: 16px; color: var(--text-muted);
+    text-decoration: none; font-size: 13px; font-weight: 600; cursor: pointer; transition: color .12s ease;
+  }
+  .back-link:hover { color: var(--accent); }
+  .convo-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .convo-header dl { display: grid; grid-template-columns: auto auto; gap: 4px 14px; font-size: 13px; margin: 10px 0 0; }
+  .convo-header dt { color: var(--text-faint); }
+  .convo-header dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .transcript-bubbles { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+  .bubble-row { display: flex; }
+  .bubble-row.assistant { justify-content: flex-start; }
+  .bubble-row.caller { justify-content: flex-end; }
+  .bubble { max-width: 70%; padding: 11px 15px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+  .bubble-row.assistant .bubble { background: var(--accent-tint); color: var(--text); border-bottom-left-radius: 5px; }
+  .bubble-row.caller .bubble { background: var(--accent); color: var(--accent-contrast); border-bottom-right-radius: 5px; }
+  .bubble-label { font-size: 10.5px; font-weight: 800; opacity: .6; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .05em; }
+  .extract-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+  .extract-item { background: var(--surface-sunken); border: 1px solid var(--border); border-radius: 10px; padding: 11px 13px; }
+  .extract-item .k { font-size: 10.5px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; font-weight: 700; }
+  .extract-item .v { font-size: 14px; font-weight: 600; word-break: break-word; }
+
+  /* ---------- Executive cards ---------- */
+  .exec-grid { display: flex; flex-direction: column; gap: 12px; }
+  .exec-card {
+    display: flex; align-items: center; gap: 16px; padding: 16px 18px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: var(--shadow-sm); transition: box-shadow .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .exec-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-strong); transform: translateY(-1px); }
+  .exec-card .avatar-img, .exec-card .avatar-initials { width: 46px; height: 46px; font-size: 15px; flex-shrink: 0; }
+  .exec-card .exec-info { flex: 1; min-width: 0; }
+  .exec-card .exec-name { font-family: var(--font-display); font-weight: 700; font-size: 15px; margin: 0 0 1px; }
+  .exec-card .exec-role { color: var(--text-muted); font-size: 13px; font-weight: 500; }
+  .exec-card .exec-company { color: var(--text-faint); font-size: 12px; margin-top: 1px; }
+  .exec-card .exec-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; }
+  .dropdown { position: relative; display: inline-block; }
+  .dropdown-menu {
+    display: none; position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 130px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 9px; box-shadow: var(--shadow-md);
+    padding: 4px; flex-direction: column; gap: 2px;
+  }
+  .dropdown-menu.open { display: flex; }
+  .dropdown-menu button {
+    background: none; border: none; text-align: left; padding: 7px 10px; border-radius: 6px;
+    font-size: 12.5px; font-weight: 600; color: var(--text); cursor: pointer;
+  }
+  .dropdown-menu button:hover { background: var(--surface-sunken); }
+  .convo-card-main { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; cursor: pointer; }
+  .convo-card .exec-role { font-size: 12.5px; }
+  .convo-meta { text-align: right; flex-shrink: 0; }
+  .convo-time { font-size: 12.5px; color: var(--text-muted); font-weight: 600; }
+  .convo-duration { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .convo-detail-avatar { width: 44px; height: 44px; font-size: 15px; flex-shrink: 0; }
+  .icon-btn { padding: 6px 9px !important; font-size: 14px !important; line-height: 1; }
+
+  /* ---------- Empty state ---------- */
+  .empty-state { text-align: center; padding: 44px 20px; color: var(--text-muted); }
+  .empty-state .icon {
+    width: 56px; height: 56px; margin: 0 auto 14px; border-radius: 16px; background: var(--accent-tint);
+    display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .empty-state .title { font-family: var(--font-display); font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 4px; }
+  .empty-state .hint { font-size: 13px; }
+
+  /* ---------- Section dividers (form) ---------- */
+  .form-section { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); }
+  .form-section:first-child { margin-top: 4px; padding-top: 0; border-top: none; }
+  .form-section-title {
+    font-family: var(--font-display); font-size: 12px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--accent); margin-bottom: 2px;
+  }
+  .form-section-hint { font-size: 12px; color: var(--text-faint); margin-bottom: 4px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .form-grid > * { min-width: 0; }
+  .form-grid .span-2 { grid-column: 1 / -1; }
+  @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- Avatar preview (form) ---------- */
+  .avatar-preview-row { display: flex; align-items: center; gap: 14px; }
+  .avatar-preview-row input { flex: 1; }
+  .avatar-preview-box {
+    width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; overflow: hidden;
+    display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm);
+    background: var(--surface-sunken); border: 1px solid var(--border);
+  }
+  .avatar-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- Form footer ---------- */
+  .form-footer {
+    display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px;
+    padding-top: 18px; border-top: 1px solid var(--border);
+  }
+  .form-footer button.primary { margin-top: 0; }
+
+  /* ---------- Loading spinner ---------- */
+  .spinner {
+    display: inline-block; width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.4); border-top-color: currentColor;
+    animation: spin .7s linear infinite; vertical-align: -2px; margin-right: 7px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Toasts ---------- */
+  #toastHost { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+  .toast {
+    display: flex; align-items: center; gap: 9px; padding: 12px 16px; border-radius: 10px;
+    font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow-lg); color: #fff;
+    animation: toast-in .18s ease-out;
+  }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--danger); }
+  @keyframes toast-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="brand-mark">🎙️</div>
+    <div>
+      <h1>CallMate</h1>
+      <div class="tagline">AI Desk — your voice, on every call.</div>
+    </div>
+  </div>
+  <nav id="nav"></nav>
+</header>
+<main id="app"></main>
+<div id="toastHost"></div>
+
+<script>
+function showToast(message, type = "success") {
+  const host = document.getElementById("toastHost");
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = (type === "success" ? "✓ " : "⚠ ") + message;
+  host.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+// Small reusable "enter an email address, then run onSend(email)" modal —
+// used for both "email a conversation" and "email a JD" so there's one
+// prompt UI instead of duplicating it per feature.
+function promptForEmail(title, defaultValue, onSend) {
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.innerHTML = `
+    <div class="modal">
+      <h2>${escapeHtml(title)}</h2>
+      <label>Send to email</label>
+      <input id="promptEmailInput" type="email" placeholder="name@example.com" value="${escapeAttr(defaultValue || "")}" />
+      <div class="form-footer">
+        <button class="secondary" id="promptEmailCancel">Cancel</button>
+        <button class="primary" id="promptEmailSend">Send</button>
+      </div>
+    </div>`;
+  document.body.appendChild(backdrop);
+  const close = () => backdrop.remove();
+  backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+  document.getElementById("promptEmailCancel").onclick = close;
+  document.getElementById("promptEmailSend").onclick = async () => {
+    const email = document.getElementById("promptEmailInput").value.trim();
+    if (!email) return;
+    const btn = document.getElementById("promptEmailSend");
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span>Sending…`;
+    try {
+      await onSend(email);
+      showToast(`Sent to ${email}`);
+      close();
+    } catch (e) {
+      showToast(e.message, "error");
+      btn.disabled = false;
+      btn.textContent = "Send";
+    }
+  };
+}
+
+// Opens WhatsApp (web or app) with a phone number and message pre-filled —
+// the user still clicks Send themselves inside WhatsApp. No Business API,
+// no credentials, works immediately.
+function openWhatsApp(phone, message) {
+  const digits = (phone || "").replace(/[^\d+]/g, "").replace(/^\+/, "");
+  if (!digits) { showToast("No phone number on file for this contact", "error"); return; }
+  window.open(`https://wa.me/${digits}?text=${encodeURIComponent(message)}`, "_blank");
+}
+
+const API = "";
+let token = localStorage.getItem("aidesk_token") || "";
+let currentView = token ? "executives" : "login";
+
+const views = ["login", "executives", "conversations"];
+function setNav() {
+  const nav = document.getElementById("nav");
+  if (!token) { nav.innerHTML = ""; return; }
+  nav.innerHTML = views.filter(v => v !== "login").map(v =>
+    `<button data-view="${v}" class="${v === currentView ? "active" : ""}">${v}</button>`
+  ).join("") + `<button id="logoutBtn">Logout</button>`;
+  nav.querySelectorAll("button[data-view]").forEach(b => b.onclick = () => render(b.dataset.view));
+  document.getElementById("logoutBtn").onclick = () => { localStorage.removeItem("aidesk_token"); token = ""; render("login"); };
+}
+
+async function api(path, opts = {}) {
+  const headers = opts.headers || {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (opts.body && !(opts.body instanceof FormData)) headers["Content-Type"] = "application/json";
+  const res = await fetch(API + path, { ...opts, headers });
+  if (!res.ok) { const err = await res.text(); throw new Error(err); }
+  if (res.status === 204) return null;
+  return res.json();
+}
+
+function render(view) {
+  currentView = view;
+  setNav();
+  const app = document.getElementById("app");
+  if (view === "login") return renderLogin(app);
+  if (view === "executives") return renderExecutives(app);
+  if (view === "conversations") return renderConversations(app);
+  if (view === "conversation-detail") return renderConversationDetail(app, window._detailConvoId);
+}
+
+// ---------------- LOGIN ----------------
+function renderLogin(app) {
+  app.innerHTML = `
+    <div class="card" style="max-width:380px;margin:60px auto;">
+      <h2>Login</h2>
+      <label>Email</label><input id="email" type="email" value="rupali@digitalaiml.com" />
+      <label>Password</label><input id="password" type="password" value="ChangeMe123!" />
+      <button class="primary" id="loginBtn">Login</button>
+      <p class="muted" id="err"></p>
+      <hr/>
+      <p class="muted">No account? <a href="#" id="showRegister">Register</a></p>
+    </div>`;
+  document.getElementById("loginBtn").onclick = async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    try {
+      const form = new URLSearchParams({ username: email, password });
+      const res = await fetch(API + "/api/auth/login", { method: "POST", body: form });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      token = data.access_token;
+      localStorage.setItem("aidesk_token", token);
+      render("executives");
+    } catch (e) { document.getElementById("err").textContent = "Login failed: " + e.message; }
+  };
+  document.getElementById("showRegister").onclick = (e) => { e.preventDefault(); renderRegister(app); };
+}
+
+function renderRegister(app) {
+  app.innerHTML = `
+    <div class="card" style="max-width:380px;margin:60px auto;">
+      <h2>Register</h2>
+      <label>Full name</label><input id="full_name" />
+      <label>Email</label><input id="email" type="email" />
+      <label>Password</label><input id="password" type="password" />
+      <button class="primary" id="regBtn">Create account</button>
+      <p class="muted" id="err"></p>
+    </div>`;
+  document.getElementById("regBtn").onclick = async () => {
+    try {
+      await api("/api/auth/register", { method: "POST", body: JSON.stringify({
+        full_name: document.getElementById("full_name").value,
+        email: document.getElementById("email").value,
+        password: document.getElementById("password").value,
+      })});
+      render("login");
+    } catch (e) { document.getElementById("err").textContent = e.message; }
+  };
+}
+
+// ---------------- EXECUTIVES ----------------
+async function renderExecutives(app) {
+  app.innerHTML = `<div class="card"><h2>Virtual Executives</h2><div id="list">Loading…</div></div>
+    <div class="card"><h2 id="formTitle">Create New Virtual Executive</h2><div id="form"></div></div>`;
+  const list = document.getElementById("list");
+  try {
+    const execs = await api("/api/executives");
+    window._execsById = Object.fromEntries(execs.map(e => [e.id, e]));
+    list.innerHTML = execs.length ? `<div class="exec-grid">${execs.map(e => `
+      <div class="exec-card">
+        ${avatarHtml(e)}
+        <div class="exec-info">
+          <div class="exec-name">${escapeHtml(e.name)}</div>
+          <div class="exec-role">${escapeHtml(e.role)}</div>
+          <div class="exec-company">${escapeHtml(e.company)}</div>
+        </div>
+        <div class="exec-actions">
+          <button class="talk" onclick="openTalk('${e.id}', ${JSON.stringify(e.name).replace(/"/g, '&quot;')})">🎙️ Talk</button>
+          <button class="secondary" onclick="editExec('${e.id}')">Edit</button>
+          <button class="secondary" onclick="previewPrompt('${e.id}')">Prompt</button>
+          <button class="secondary" onclick="copyExec('${e.id}')">Copy</button>
+          <div class="dropdown">
+            <button class="secondary" onclick="toggleJdMenu(event, '${e.id}')">Send JD ▾</button>
+            <div class="dropdown-menu" id="jdMenu-${e.id}">
+              <button onclick="sendJdViaEmail('${e.id}')">✉ Email</button>
+              <button onclick="sendJdViaWhatsApp('${e.id}')">💬 WhatsApp</button>
+            </div>
+          </div>
+          <button class="danger" onclick="deleteExec('${e.id}')">Delete</button>
+        </div>
+      </div>`).join("")}</div>`
+      : `<div class="empty-state">
+          <div class="icon">🎙️</div>
+          <div class="title">No virtual executives yet</div>
+          <div class="hint">Create your first one below — give them a name, a role, and a voice.</div>
+        </div>`;
+  } catch (e) { list.innerHTML = `<p class="muted">Error: ${e.message}</p>`; }
+
+  renderExecutiveForm(null);
+}
+
+// One shared line-per-item encoding used across textareas that hold a list of
+// simple objects (FAQs, offerings, slots) — "field1 | field2 | field3" per
+// line. Lazy but legible, and needs no drag-and-drop list builder UI.
+function encodeFaqs(faqs) { return (faqs || []).map(f => `${f.question} | ${f.answer}`).join("\n"); }
+function decodeFaqs(text) {
+  return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+    const [question, ...rest] = line.split("|");
+    return { question: (question || "").trim(), answer: rest.join("|").trim() };
+  });
+}
+function encodeProducts(items) { return (items || []).map(p => `${p.title || p.name || ""} | ${p.description || ""}`).join("\n"); }
+function decodeProducts(text) {
+  return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+    const [title, ...rest] = line.split("|");
+    return { title: (title || "").trim(), description: rest.join("|").trim() };
+  });
+}
+
+// Detailed per-role JD content (salary/responsibilities/requirements) — the
+// title|description textarea above is too cramped for multi-line content,
+// so this is a second, block-structured textarea:
+//   ### Backend Engineer
+//   Salary: 12-18 LPA
+//   Responsibilities:
+//   - Design REST APIs
+//   - Own database schema
+//   Requirements:
+//   - 3+ years Python
+// One block per role, matched back to the corresponding title|description
+// row by title (case-insensitive). Roles with no block here just keep the
+// short description as their JD content — this is additive, not required.
+function encodeRoleDetails(items) {
+  return (items || [])
+    .filter(p => p.salary_range || p.responsibilities || p.requirements)
+    .map(p => {
+      const lines = [`### ${p.title || p.name || ""}`];
+      if (p.salary_range) lines.push(`Salary: ${p.salary_range}`);
+      if (p.responsibilities) {
+        lines.push("Responsibilities:");
+        lines.push(...p.responsibilities.split("\n").filter(Boolean).map(l => `- ${l.replace(/^-\s*/, "")}`));
+      }
+      if (p.requirements) {
+        lines.push("Requirements:");
+        lines.push(...p.requirements.split("\n").filter(Boolean).map(l => `- ${l.replace(/^-\s*/, "")}`));
+      }
+      return lines.join("\n");
+    }).join("\n\n");
+}
+function decodeRoleDetails(text) {
+  const details = {}; // title (lowercased) -> { salary_range, responsibilities, requirements }
+  let current = null, section = null;
+  for (const rawLine of text.split("\n")) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (line.startsWith("### ")) {
+      current = { salary_range: "", responsibilities: [], requirements: [] };
+      details[line.slice(4).trim().toLowerCase()] = current;
+      section = null;
+    } else if (current && /^salary:/i.test(line)) {
+      current.salary_range = line.replace(/^salary:/i, "").trim();
+    } else if (current && /^responsibilities:/i.test(line)) {
+      section = "responsibilities";
+    } else if (current && /^requirements:/i.test(line)) {
+      section = "requirements";
+    } else if (current && section) {
+      current[section].push(line.replace(/^-\s*/, ""));
+    }
+  }
+  const merged = {};
+  for (const [title, d] of Object.entries(details)) {
+    merged[title] = {
+      salary_range: d.salary_range,
+      responsibilities: d.responsibilities.join("\n"),
+      requirements: d.requirements.join("\n"),
+    };
+  }
+  return merged;
+}
+// Merges the simple title|description rows with the matching detail block (by title, case-insensitive).
+function mergeRoleDetails(simpleRoles, detailsByTitle) {
+  return simpleRoles.map(role => {
+    const detail = detailsByTitle[(role.title || "").toLowerCase()];
+    return detail ? { ...role, ...detail } : role;
+  });
+}
+function encodeSlots(slots) { return (slots || []).map(s => `${s.label} | ${s.date} | ${s.start_time} | ${s.end_time}`).join("\n"); }
+function decodeSlots(text) {
+  return text.split("\n").map(l => l.trim()).filter(Boolean).map(line => {
+    const parts = line.split("|").map(s => s.trim());
+    return { label: parts[0] || "", date: parts[1] || "", start_time: parts[2] || "", end_time: parts[3] || "", is_booked: false };
+  });
+}
+
+// Renders the Create/Edit form. Pass an existing executive object to edit it
+// in place (PATCH), or null to create a new one (POST) with sample defaults.
+function renderExecutiveForm(exec) {
+  const isEdit = !!exec;
+  document.getElementById("formTitle").textContent = isEdit ? `Edit ${exec.name}` : "Create New Virtual Executive";
+  const v = (field, fallback) => isEdit ? (exec[field] ?? "") : fallback;
+  const lines = (arr, fallback) => isEdit ? (arr || []).join("\n") : fallback;
+  const avatarUrlValue = v("avatar_url", "");
+
+  document.getElementById("form").innerHTML = `
+    <div class="form-section">
+      <div class="form-section-title">Basic Information</div>
+      <div class="form-grid">
+        <div><label>Name*</label><input id="f_name" value="${escapeAttr(v("name", "Rupali Patil"))}" /></div>
+        <div><label>Role*</label><input id="f_role" value="${escapeAttr(v("role", "Recruitment Coordinator"))}" /></div>
+        <div><label>Company*</label><input id="f_company" value="${escapeAttr(v("company", "DigitalAIML"))}" /></div>
+        <div><label>Address</label><input id="f_address" value="${escapeAttr(v("address", "Pune, Maharashtra, India"))}" /></div>
+      </div>
+      <label>Avatar URL <span class="form-section-hint" style="display:inline;text-transform:none;letter-spacing:0;">(optional — blank uses an auto-generated initials avatar)</span></label>
+      <div class="avatar-preview-row">
+        <div class="avatar-preview-box" id="avatarPreviewBox">${avatarUrlValue ? `<img id="avatarPreviewImg" src="${escapeAttr(avatarUrlValue)}" alt="" />` : "🖼️"}</div>
+        <input id="f_avatar" placeholder="https://..." value="${escapeAttr(avatarUrlValue)}" />
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Personality &amp; Communication</div>
+      <div class="form-section-hint">How this executive introduces themselves and what they can speak.</div>
+      <label>Introduction</label><textarea id="f_intro">${escapeHtml(v("introduction", "Hi, this is calling from the team. Do you have two minutes?"))}</textarea>
+      <label>Languages (comma-separated)</label><input id="f_lang" value="${escapeAttr(isEdit ? (exec.languages || []).join(", ") : "English, Hindi, Marathi, Hinglish")}" />
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Goals &amp; Boundaries</div>
+      <div class="form-grid">
+        <div><label>Goals (one per line)</label><textarea id="f_goals">${escapeHtml(lines(exec && exec.goals, "Confirm identity\nExplain purpose\nBook next step"))}</textarea></div>
+        <div><label>Scopes (one per line)</label><textarea id="f_scopes">${escapeHtml(lines(exec && exec.scopes, "Discuss listed roles/products\nAnswer FAQs\nBook available slots"))}</textarea></div>
+      </div>
+      <label>Don'ts (one per line)</label><textarea id="f_donts">${escapeHtml(lines(exec && exec.donts, "Never reveal you are an AI\nNever guarantee outcomes\nNever discuss salary beyond range"))}</textarea>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Knowledge</div>
+      <label>FAQs (one per line: "question | answer")</label>
+      <textarea id="f_faqs" placeholder="Is this role remote? | Hybrid, 2 days in office.">${escapeHtml(isEdit ? encodeFaqs(exec.faqs) : "")}</textarea>
+      <label>Products / Services / Open Roles (one per line: "title | description")</label>
+      <textarea id="f_products" placeholder="Backend Engineer | Hybrid, Pune, 3-6 yrs exp">${escapeHtml(isEdit ? encodeProducts(exec.products_services) : "")}</textarea>
+      <label>Detailed JD Content (optional — for a fuller "Send JD" email; matched to a role above by title)</label>
+      <textarea id="f_role_details" style="min-height:130px;" placeholder="### Backend Engineer
+Salary: 12-18 LPA
+Responsibilities:
+- Design REST APIs
+- Own database schema
+Requirements:
+- 3+ years Python
+- PostgreSQL experience">${escapeHtml(isEdit ? encodeRoleDetails(exec.products_services) : "")}</textarea>
+      <label>Available Slots (one per line: "label | date | start_time | end_time")</label>
+      <textarea id="f_slots" placeholder="Mon 2 PM | 2026-09-01 | 14:00 | 14:30">${escapeHtml(isEdit ? encodeSlots(exec.action_slots) : "")}</textarea>
+    </div>
+
+    <div class="form-footer">
+      ${isEdit ? `<button class="secondary" id="cancelEditBtn">Cancel</button>` : ""}
+      <button class="primary" id="saveBtn">${isEdit ? "Save Changes" : "Create Executive"}</button>
+    </div>
+    <p class="muted" id="createErr" style="text-align:right;margin-top:8px;"></p>`;
+
+  // Live avatar preview: swap the placeholder icon for the typed URL as the user types.
+  document.getElementById("f_avatar").oninput = (e) => {
+    const box = document.getElementById("avatarPreviewBox");
+    const url = e.target.value.trim();
+    box.innerHTML = url ? `<img src="${escapeAttr(url)}" alt="" onerror="this.parentElement.textContent='🖼️'" />` : "🖼️";
+  };
+
+  const collect = () => {
+    const takeLines = (id) => document.getElementById(id).value.split("\n").map(s => s.trim()).filter(Boolean);
+    return {
+      name: document.getElementById("f_name").value,
+      role: document.getElementById("f_role").value,
+      company: document.getElementById("f_company").value,
+      address: document.getElementById("f_address").value,
+      avatar_url: document.getElementById("f_avatar").value || null,
+      introduction: document.getElementById("f_intro").value,
+      languages: document.getElementById("f_lang").value.split(",").map(s => s.trim()).filter(Boolean),
+      goals: takeLines("f_goals"), scopes: takeLines("f_scopes"), donts: takeLines("f_donts"),
+      faqs: decodeFaqs(document.getElementById("f_faqs").value),
+      products_services: mergeRoleDetails(
+        decodeProducts(document.getElementById("f_products").value),
+        decodeRoleDetails(document.getElementById("f_role_details").value)
+      ),
+      action_slots: decodeSlots(document.getElementById("f_slots").value),
+    };
+  };
+
+  document.getElementById("saveBtn").onclick = async () => {
+    const btn = document.getElementById("saveBtn");
+    const errEl = document.getElementById("createErr");
+    errEl.textContent = "";
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span>${isEdit ? "Saving…" : "Creating…"}`;
+    try {
+      if (isEdit) {
+        await api(`/api/executives/${exec.id}`, { method: "PATCH", body: JSON.stringify(collect()) });
+        showToast(`${exec.name} updated`);
+      } else {
+        const created = await api("/api/executives", { method: "POST", body: JSON.stringify(collect()) });
+        showToast(`${created.name} created`);
+      }
+      render("executives");
+    } catch (e) {
+      errEl.textContent = e.message;
+      showToast("Something went wrong — see error below", "error");
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    }
+  };
+  if (isEdit) {
+    document.getElementById("cancelEditBtn").onclick = () => renderExecutiveForm(null);
+  }
+}
+
+window.editExec = (id) => {
+  const exec = window._execsById[id];
+  renderExecutiveForm(exec);
+  document.getElementById("formTitle").scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+function escapeAttr(s) {
+  return String(s ?? "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+}
+
+// Avatar: use avatar_url if the profile has one, otherwise a deterministic initials circle (no image needed).
+// Used for small list/table contexts (executive cards, conversation cards) — an illustrated
+// face reads as a muddy blob at 34-46px, initials read cleanly at any size.
+function avatarHtml(exec) {
+  if (exec.avatar_url) {
+    return `<img src="${exec.avatar_url}" alt="${exec.name}" class="avatar-img" />`;
+  }
+  const initials = exec.name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("");
+  const hue = Math.abs([...exec.name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)) % 360;
+  return `<span class="avatar-initials" style="background:hsl(${hue},55%,45%)">${initials}</span>`;
+}
+
+// Default Talk-modal avatar for executives without an avatar_url: a licensed
+// illustrated woman (DiceBear "Avataaars" style — free for commercial use,
+// no attribution required per avataaars.com; not a real person, so no
+// consent/likeness issue for an AI persona). Three PNGs (closed/mid/open
+// mouth, otherwise pixel-identical) are bundled locally in static/avatars/
+// and crossfaded by runAvatarAnimationLoop() to animate lip-sync — swapping
+// static frames, not a live generation call, so no network dependency once
+// loaded and no per-use cost.
+function talkAvatarHtml(exec) {
+  if (exec.avatar_url) {
+    return `<img src="${exec.avatar_url}" alt="${exec.name}" class="avatar-img" />`;
+  }
+  return `
+    <img src="/admin/avatars/woman-mouth-closed.png" alt="${escapeAttr(exec.name)}" class="face-frame" id="faceClosed" style="opacity:1" />
+    <img src="/admin/avatars/woman-mouth-mid.png" alt="" class="face-frame" id="faceMid" style="opacity:0" />
+    <img src="/admin/avatars/woman-mouth-open.png" alt="" class="face-frame" id="faceOpen" style="opacity:0" />`;
+}
+
+window.previewPrompt = async (id) => {
+  const { system_prompt } = await api(`/api/executives/${id}/prompt-preview`);
+  const w = window.open("", "_blank");
+  w.document.write(`<pre style="white-space:pre-wrap;font-family:monospace;padding:20px;">${system_prompt.replace(/</g, "&lt;")}</pre>`);
+};
+window.copyExec = async (id) => {
+  try {
+    const copy = await api(`/api/executives/${id}/copy`, { method: "POST" });
+    showToast(`Duplicated as "${copy.name}"`);
+    render("executives");
+  } catch (e) { showToast(e.message, "error"); }
+};
+window.deleteExec = async (id) => {
+  const exec = window._execsById[id];
+  if (!confirm(`Delete ${exec ? exec.name : "this executive"}? This can't be undone.`)) return;
+  try {
+    await api(`/api/executives/${id}`, { method: "DELETE" });
+    showToast(`${exec ? exec.name : "Executive"} deleted`);
+    render("executives");
+  } catch (e) { showToast(e.message, "error"); }
+};
+
+// Only one JD dropdown open at a time; close others and clicks outside.
+window.toggleJdMenu = (event, execId) => {
+  event.stopPropagation();
+  const menu = document.getElementById(`jdMenu-${execId}`);
+  const isOpen = menu.classList.contains("open");
+  document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+  if (!isOpen) menu.classList.add("open");
+};
+document.addEventListener("click", () => {
+  document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+});
+
+window.sendJdViaEmail = async (execId) => {
+  document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+  const exec = window._execsById[execId];
+  promptForEmail(`Email JD — ${exec ? exec.name : ""}`, "", (email) =>
+    api(`/api/executives/${execId}/send-jd-email`, { method: "POST", body: JSON.stringify({ to_email: email }) })
+  );
+};
+
+window.sendJdViaWhatsApp = async (execId) => {
+  document.querySelectorAll(".dropdown-menu.open").forEach(m => m.classList.remove("open"));
+  try {
+    const { text } = await api(`/api/executives/${execId}/jd-text`);
+    const phone = prompt("Send to WhatsApp number (with country code):", "+91");
+    if (!phone) return;
+    openWhatsApp(phone, text);
+  } catch (e) { showToast(e.message, "error"); }
+};
+
+// ---------------- VOICE CHAT (browser mic <-> Gemini Live, via our WS bridge) ----------------
+const GEMINI_SAMPLE_RATE = 16000; // must match app/services/gemini_bridge.py BROWSER_IN_RATE
+let talkState = null; // { ws, audioCtx, micStream, processorNode, playbackCtx, micAnalyser, playbackAnalyser, animFrame }
+
+window.openTalk = (execId, execName) => {
+  const exec = (window._execsById && window._execsById[execId]) || { name: execName };
+  const backdrop = document.createElement("div");
+  backdrop.className = "modal-backdrop";
+  backdrop.id = "talkModal";
+  backdrop.innerHTML = `
+    <div class="modal talk-modal">
+      <div class="talk-avatar-wrap">
+        <div class="talk-avatar-ring" id="talkAvatarRing"></div>
+        <div class="talk-avatar" id="talkAvatar">${talkAvatarHtml(exec)}</div>
+      </div>
+      <h2 class="talk-name"><span class="mic-dot" id="micDot"></span> ${escapeHtml(exec.name)}</h2>
+      <div id="callerForm">
+        <label>Your name</label><input id="caller_name" placeholder="Required" />
+        <label>Phone (optional)</label><input id="caller_phone" placeholder="+91..." />
+        <label>Email (optional)</label><input id="caller_email" type="email" />
+      </div>
+      <p class="muted" id="talkStatus">Enter your name, then click Start and allow microphone access.</p>
+      <div class="mic-meter"><div class="mic-meter-fill" id="micMeterFill"></div></div>
+      <div id="chatLog"></div>
+      <button class="primary" id="talkToggle">Start</button>
+      <button class="secondary" id="talkClose" style="margin-left:8px;">Close</button>
+    </div>`;
+  document.body.appendChild(backdrop);
+  document.getElementById("talkClose").onclick = closeTalk;
+  document.getElementById("talkToggle").onclick = () => {
+    if (talkState) { stopTalk(); return; }
+    const name = document.getElementById("caller_name").value.trim();
+    if (!name) { document.getElementById("talkStatus").textContent = "Please enter your name first."; return; }
+    const phone = document.getElementById("caller_phone").value.trim();
+    const email = document.getElementById("caller_email").value.trim();
+    document.getElementById("callerForm").style.display = "none";
+    startTalk(execId, name, phone, email);
+  };
+};
+
+function closeTalk() {
+  if (talkState) stopTalk();
+  const el = document.getElementById("talkModal");
+  if (el) el.remove();
+}
+
+async function startTalk(execId, callerName, callerPhone, callerEmail) {
+  const statusEl = document.getElementById("talkStatus");
+  const dotEl = document.getElementById("micDot");
+  const toggleEl = document.getElementById("talkToggle");
+  try {
+    const micStream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: GEMINI_SAMPLE_RATE } });
+    const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
+    const params = new URLSearchParams({ caller_name: callerName });
+    if (callerPhone) params.set("caller_phone", callerPhone);
+    if (callerEmail) params.set("caller_email", callerEmail);
+    const ws = new WebSocket(`${wsProtocol}//${location.host}/ws/voice-chat/${execId}?${params}`);
+    ws.binaryType = "arraybuffer";
+
+    // Mic capture: downsample/convert to 16-bit PCM at GEMINI_SAMPLE_RATE, send as binary frames.
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(micStream);
+    const processorNode = audioCtx.createScriptProcessor(4096, 1, 1);
+    processorNode.onaudioprocess = (e) => {
+      if (ws.readyState !== WebSocket.OPEN) return;
+      const input = e.inputBuffer.getChannelData(0);
+      const pcm16 = floatTo16BitPCM(resampleTo(input, audioCtx.sampleRate, GEMINI_SAMPLE_RATE));
+      ws.send(pcm16);
+    };
+    // Analyser on the mic path drives the level meter — tapped before the
+    // silent gain node so it sees real input, not the muted output.
+    const micAnalyser = audioCtx.createAnalyser();
+    micAnalyser.fftSize = 256;
+    source.connect(micAnalyser);
+
+    // ScriptProcessorNode only fires onaudioprocess once connected into the
+    // graph toward destination — route through a silent gain node so the
+    // graph stays alive without echoing the raw mic back to the speakers.
+    source.connect(processorNode);
+    const silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+    processorNode.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+
+    // Playback: Gemini sends raw 24kHz PCM16 binary frames back — queue and play them.
+    const playbackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+    let playCursor = playbackCtx.currentTime;
+
+    // Analyser on the playback path is what actually drives the avatar's
+    // "speaking" animation — real amplitude of what's playing right now,
+    // not a guess from text length or a canned animation loop.
+    const playbackAnalyser = playbackCtx.createAnalyser();
+    playbackAnalyser.fftSize = 256;
+    playbackAnalyser.connect(playbackCtx.destination);
+
+    ws.onmessage = (event) => {
+      if (typeof event.data === "string") {
+        // JSON control/transcript messages could be added later; ignore for now.
+        return;
+      }
+      const pcm16 = new Int16Array(event.data);
+      const float32 = new Float32Array(pcm16.length);
+      for (let i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;
+      const buffer = playbackCtx.createBuffer(1, float32.length, 24000);
+      buffer.copyToChannel(float32, 0);
+      const src = playbackCtx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(playbackAnalyser);
+      const startAt = Math.max(playCursor, playbackCtx.currentTime);
+      src.start(startAt);
+      playCursor = startAt + buffer.duration;
+    };
+
+    ws.onerror = () => { statusEl.textContent = "Connection error."; };
+    ws.onclose = () => { statusEl.textContent = "Call ended."; dotEl.classList.remove("live"); };
+    ws.onopen = () => { statusEl.textContent = "Live — speak naturally."; dotEl.classList.add("live"); };
+
+    talkState = { ws, audioCtx, micStream, processorNode, playbackCtx, micAnalyser, playbackAnalyser, animFrame: null };
+    toggleEl.textContent = "Stop";
+    toggleEl.classList.add("active");
+    runAvatarAnimationLoop();
+  } catch (e) {
+    statusEl.textContent = "Mic access failed: " + e.message;
+  }
+}
+
+// Reads live amplitude off the mic and playback analysers each frame and
+// updates the mic level bar + the avatar's "speaking" pulse/bounce.
+// playCursor-based silence detection isn't used here — reading the analyser
+// directly is simpler and reacts within one frame either direction.
+function runAvatarAnimationLoop() {
+  const micData = new Uint8Array(talkState.micAnalyser.frequencyBinCount);
+  const playbackData = new Uint8Array(talkState.playbackAnalyser.frequencyBinCount);
+
+  const tick = () => {
+    if (!talkState) return; // stopTalk() ran mid-loop
+
+    talkState.micAnalyser.getByteTimeDomainData(micData);
+    const micLevel = rmsLevel(micData);
+    const meterFill = document.getElementById("micMeterFill");
+    if (meterFill) meterFill.style.width = `${Math.min(100, micLevel * 300)}%`;
+
+    talkState.playbackAnalyser.getByteTimeDomainData(playbackData);
+    const speakLevel = rmsLevel(playbackData);
+    const speaking = speakLevel > 0.02;
+    const ring = document.getElementById("talkAvatarRing");
+    const avatar = document.getElementById("talkAvatar");
+    if (ring) ring.classList.toggle("speaking", speaking);
+    if (avatar) avatar.style.transform = speaking ? `scale(${1 + Math.min(speakLevel, 0.3) * 0.5})` : "scale(1)";
+    setFaceFrame(speaking ? Math.min(speakLevel, 0.3) / 0.3 : 0);
+
+    talkState.animFrame = requestAnimationFrame(tick);
+  };
+  talkState.animFrame = requestAnimationFrame(tick);
+}
+
+// Crossfades the three stacked mouth-state PNGs (see talkAvatarHtml) based on
+// openness (0 = silent/closed, ~0.5 = mid, 1 = loudest/open). No-op when the
+// avatar is a photo (avatar_url set) — those frame elements don't exist then.
+function setFaceFrame(openness) {
+  const closed = document.getElementById("faceClosed");
+  if (!closed) return;
+  const mid = document.getElementById("faceMid");
+  const open = document.getElementById("faceOpen");
+  // Each frame's opacity ramps in/out over an adjacent third of the range,
+  // so exactly one is fully visible at the extremes and it blends smoothly
+  // through the middle rather than hard-cutting between three states.
+  closed.style.opacity = String(Math.max(0, 1 - openness * 3));
+  mid.style.opacity = String(Math.max(0, 1 - Math.abs(openness - 0.5) * 3));
+  open.style.opacity = String(Math.max(0, (openness - 0.66) * 3));
+}
+
+// Root-mean-square of centered (0-255 -> -1..1) time-domain samples — a
+// cheap, standard "how loud is this frame" measure for animating off.
+function rmsLevel(byteData) {
+  let sumSquares = 0;
+  for (let i = 0; i < byteData.length; i++) {
+    const centered = (byteData[i] - 128) / 128;
+    sumSquares += centered * centered;
+  }
+  return Math.sqrt(sumSquares / byteData.length);
+}
+
+function stopTalk() {
+  if (!talkState) return;
+  if (talkState.animFrame) cancelAnimationFrame(talkState.animFrame);
+  talkState.ws.close();
+  talkState.processorNode.disconnect();
+  talkState.micStream.getTracks().forEach(t => t.stop());
+  talkState.audioCtx.close();
+  talkState.playbackCtx.close();
+  talkState = null;
+  const toggleEl = document.getElementById("talkToggle");
+  if (toggleEl) { toggleEl.textContent = "Start"; toggleEl.classList.remove("active"); }
+  const dotEl = document.getElementById("micDot");
+  if (dotEl) dotEl.classList.remove("live");
+  const ring = document.getElementById("talkAvatarRing");
+  if (ring) ring.classList.remove("speaking");
+  const avatar = document.getElementById("talkAvatar");
+  if (avatar) avatar.style.transform = "scale(1)";
+  const meterFill = document.getElementById("micMeterFill");
+  if (meterFill) meterFill.style.width = "0%";
+  setFaceFrame(0);
+}
+
+// Simple linear-interpolation resampler — good enough for speech, avoids pulling in a DSP library client-side.
+function resampleTo(float32, fromRate, toRate) {
+  if (fromRate === toRate) return float32;
+  const ratio = fromRate / toRate;
+  const newLength = Math.round(float32.length / ratio);
+  const result = new Float32Array(newLength);
+  for (let i = 0; i < newLength; i++) {
+    const srcIndex = i * ratio;
+    const i0 = Math.floor(srcIndex);
+    const i1 = Math.min(i0 + 1, float32.length - 1);
+    const frac = srcIndex - i0;
+    result[i] = float32[i0] * (1 - frac) + float32[i1] * frac;
+  }
+  return result;
+}
+
+function floatTo16BitPCM(float32) {
+  const buffer = new ArrayBuffer(float32.length * 2);
+  const view = new DataView(buffer);
+  for (let i = 0; i < float32.length; i++) {
+    const s = Math.max(-1, Math.min(1, float32[i]));
+    view.setInt16(i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+  }
+  return buffer;
+}
+
+// ---------------- CONVERSATIONS (history of who talked to which executive) ----------------
+async function renderConversations(app) {
+  app.innerHTML = `<div class="card"><h2>Conversations</h2><p class="muted" style="margin-top:2px;">Every voice chat, with who called and what was said.</p><div id="list" style="margin-top:16px;">Loading…</div></div>`;
+  const list = document.getElementById("list");
+  try {
+    const convos = await api("/api/conversations");
+    list.innerHTML = convos.length ? `<div class="exec-grid">${convos.map(c => `
+      <div class="exec-card convo-card">
+        <div class="convo-card-main" onclick="viewConversation('${c.id}')">
+          ${callerAvatarHtml(c.caller_name)}
+          <div class="exec-info">
+            <div class="exec-name">${escapeHtml(c.caller_name)}</div>
+            <div class="exec-role">${contactLine(c)}</div>
+          </div>
+        </div>
+        <div class="convo-meta">
+          <div class="convo-time">${relativeTime(c.started_at)}</div>
+          <div class="convo-duration">${durationText(c.started_at, c.ended_at)}</div>
+        </div>
+        <button class="danger icon-btn" title="Delete conversation" onclick="event.stopPropagation(); deleteConversation('${c.id}')">🗑</button>
+      </div>`).join("")}</div>`
+      : `<div class="empty-state">
+          <div class="icon">💬</div>
+          <div class="title">No conversations yet</div>
+          <div class="hint">Talk to an executive and it'll show up here with the full transcript.</div>
+        </div>`;
+  } catch (e) { list.innerHTML = `<p class="muted">Error: ${e.message}</p>`; }
+}
+
+window.deleteConversation = async (id) => {
+  if (!confirm("Delete this conversation? This can't be undone.")) return;
+  try {
+    await api(`/api/conversations/${id}`, { method: "DELETE" });
+    showToast("Conversation deleted");
+    render("conversations");
+  } catch (e) { showToast(e.message, "error"); }
+};
+
+// Same deterministic-hue initials treatment as executive avatars, for a caller's name.
+function callerAvatarHtml(name) {
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("") || "?";
+  const hue = Math.abs([...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 0)) % 360;
+  return `<span class="avatar-initials" style="background:hsl(${hue},55%,45%)">${initials}</span>`;
+}
+
+function contactLine(c) {
+  const parts = [c.caller_phone, c.caller_email].filter(Boolean).map(escapeHtml);
+  return parts.length ? parts.join(" · ") : `<span class="muted">No contact info</span>`;
+}
+
+// "3h ago" / "2d ago" style relative label, with the exact timestamp as a title tooltip.
+function relativeTime(iso) {
+  const then = new Date(iso), now = new Date();
+  const mins = Math.round((now - then) / 60000);
+  let label;
+  if (mins < 1) label = "just now";
+  else if (mins < 60) label = `${mins}m ago`;
+  else if (mins < 60 * 24) label = `${Math.round(mins / 60)}h ago`;
+  else label = `${Math.round(mins / (60 * 24))}d ago`;
+  return `<span title="${then.toLocaleString()}">${label}</span>`;
+}
+
+window.viewConversation = (id) => { window._detailConvoId = id; render("conversation-detail"); };
+
+function durationText(startedAt, endedAt) {
+  if (!endedAt) return "in progress";
+  const secs = Math.round((new Date(endedAt) - new Date(startedAt)) / 1000);
+  if (secs < 60) return `${secs}s`;
+  return `${Math.floor(secs / 60)}m ${secs % 60}s`;
+}
+
+// Human-friendly labels for the extracted-data keys instead of raw snake_case.
+function prettyKey(key) {
+  return key.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+}
+
+async function renderConversationDetail(app, id) {
+  app.innerHTML = `<div class="card"><a class="back-link" onclick="render('conversations')">&larr; Back to Conversations</a><div id="detail">Loading…</div></div>`;
+  const detail = document.getElementById("detail");
+  try {
+    const c = await api(`/api/conversations/${id}`);
+
+    const bubbles = c.transcript.length
+      ? c.transcript.map(t => `
+          <div class="bubble-row ${t.role}">
+            <div class="bubble">
+              <div class="bubble-label">${t.role === "assistant" ? "Executive" : "Caller"}</div>
+              ${escapeHtml(t.text)}
+            </div>
+          </div>`).join("")
+      : `<p class="muted">No transcript captured for this conversation.</p>`;
+
+    const extractEntries = Object.entries(c.extracted_data || {}).filter(([k, v]) => v !== null && v !== "");
+    const extractGrid = extractEntries.length
+      ? extractEntries.map(([k, v]) => `
+          <div class="extract-item">
+            <div class="k">${prettyKey(k)}</div>
+            <div class="v">${escapeHtml(String(v))}</div>
+          </div>`).join("")
+      : `<p class="muted">No structured data extracted for this conversation.</p>`;
+
+    const disposition = c.extracted_data && c.extracted_data.disposition;
+
+    detail.innerHTML = `
+      <div class="convo-header">
+        <div class="row" style="align-items:flex-start;gap:14px;">
+          ${callerAvatarHtml(c.caller_name).replace('avatar-initials', 'avatar-initials convo-detail-avatar')}
+          <div>
+            <h2 style="margin:0 0 2px;">${escapeHtml(c.caller_name)}</h2>
+            <dl>
+              <dt>Phone</dt><dd>${c.caller_phone ? escapeHtml(c.caller_phone) : "—"}</dd>
+              <dt>Email</dt><dd>${c.caller_email ? escapeHtml(c.caller_email) : "—"}</dd>
+              <dt>Started</dt><dd>${new Date(c.started_at).toLocaleString()}</dd>
+              <dt>Duration</dt><dd>${durationText(c.started_at, c.ended_at)}</dd>
+            </dl>
+          </div>
+        </div>
+        <div class="row" style="gap:8px;">
+          ${disposition ? `<span class="badge">${escapeHtml(prettyKey(String(disposition)))}</span>` : ""}
+          <button class="secondary" onclick="sendConversationEmail('${c.id}', ${JSON.stringify(c.caller_email || "").replace(/"/g, "&quot;")})">✉ Email</button>
+          <button class="secondary" onclick="openWhatsApp(${JSON.stringify(c.caller_phone || "").replace(/"/g, "&quot;")}, ${JSON.stringify(conversationWhatsAppText(c)).replace(/"/g, "&quot;")})">💬 WhatsApp</button>
+          <button class="danger" onclick="deleteConversationAndReturn('${c.id}')">🗑 Delete</button>
+        </div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Transcript</div>
+        <div class="transcript-bubbles">${bubbles}</div>
+      </div>
+      <div class="form-section">
+        <div class="form-section-title">Extracted Data</div>
+        <div class="extract-grid">${extractGrid}</div>
+      </div>`;
+  } catch (e) {
+    detail.innerHTML = `<p class="muted">Error: ${e.message}</p>`;
+  }
+}
+
+function conversationWhatsAppText(c) {
+  const lines = [`Conversation with ${c.caller_name}`, `Started: ${new Date(c.started_at).toLocaleString()}`, ""];
+  if (c.transcript && c.transcript.length) {
+    lines.push("--- Transcript ---");
+    c.transcript.forEach(t => lines.push(`${t.role === "assistant" ? "Executive" : "Caller"}: ${t.text}`));
+  }
+  return lines.join("\n");
+}
+
+window.sendConversationEmail = (id, defaultEmail) => {
+  promptForEmail("Email this conversation", defaultEmail, (email) =>
+    api(`/api/conversations/${id}/send-email`, { method: "POST", body: JSON.stringify({ to_email: email }) })
+  );
+};
+
+window.deleteConversationAndReturn = async (id) => {
+  if (!confirm("Delete this conversation? This can't be undone.")) return;
+  try {
+    await api(`/api/conversations/${id}`, { method: "DELETE" });
+    showToast("Conversation deleted");
+    render("conversations");
+  } catch (e) { showToast(e.message, "error"); }
+};
+
+function escapeHtml(s) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+render(currentView);
+</script>
+</body>
+</html>

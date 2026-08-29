@@ -1,0 +1,144 @@
+================================================================================
+CallMate (AI Desk) — Daily Detail Report
+Date: Thursday, 28 August 2026
+Generated: 2026-08-28, end of day
+================================================================================
+
+1. SYSTEM STATUS
+--------------------------------------------------------------------------------
+App:               CallMate — "AI Desk, your voice on every call"
+Backend:           FastAPI (Python 3.12+), running at http://127.0.0.1:8000
+Database:          PostgreSQL, local instance, reachable and healthy
+Voice AI:          Gemini Live (gemini-3.1-flash-live-preview)
+Health check:      /health -> {"status":"healthy"}   [confirmed live]
+Root endpoint:     /       -> {"app":"CallMate","status":"ok"}  [confirmed live]
+Server errors today (server.log ERROR count): 0
+Self-check suites: 6/6 passing
+  - test_prompt_builder
+  - test_json_extract
+  - test_gemini_bridge
+  - test_slot_booking
+  - test_jd_formatter
+  - test_conversation_formatter
+
+--------------------------------------------------------------------------------
+2. VIRTUAL EXECUTIVES (2 active)
+--------------------------------------------------------------------------------
+1) Rupali Patil — Recruitment Coordinator, DigitalAIML
+   - Open roles configured: 1 (Backend Engineer — full detailed JD: salary
+     range, 6 responsibilities, 6 requirements)
+   - FAQs: 0
+   - Interview slots configured: 0 (all currently defined slots were consumed
+     by bookings during testing today — see Section 4)
+   - Languages: English, Hindi, Marathi, Hinglish
+
+2) Rupali Patil — Astrology & Numerology Coordinator, AstroWorld
+   - Open offerings: 2 (Numerology Consultation, Full Kundli + Numerology
+     Reading)
+   - FAQs: 7 (numerology basics, Life Path Number, pricing, format, etc.)
+   - Interview/consultation slots configured: 4
+
+--------------------------------------------------------------------------------
+3. TODAY'S CALL ACTIVITY — 16 conversations (100% of all data in the system;
+   the product launched and has only been used today)
+--------------------------------------------------------------------------------
+By caller:
+   Parnika Patil   — 8 conversations
+   Rupali Patil    — 5 conversations
+   Neel Patil      — 3 conversations
+   bhagyashree     — 1 conversation
+
+By disposition (extracted automatically by Gemini after each call):
+   slot_booked          — 4 conversations  (interview/consultation confirmed)
+   interested           — 3 conversations
+   callback_requested   — 3 conversations
+   undetermined         — 2 conversations
+   (no disposition — very short/test calls, <5 sec, 0 transcript entries) — 4
+
+Slots successfully booked today (auto-detected and marked unavailable):
+   - Monday, 3:00 PM       (Rupali Patil - Recruitment)
+   - Tomorrow, 2:00 PM     (Rupali Patil - Recruitment)
+   - Monday, 3:00 PM       (Neel Patil - Astrology)
+   - Thursday, 2:00 PM     (bhagyashree - Astrology)
+   - Wednesday, 11:00 AM   (Parnika Patil - Recruitment, marked "interested",
+                             slot referenced but not confirmed as booked)
+
+Call duration range: 1 second (accidental/aborted connects) to 274 seconds
+                      (~4.5 min — bhagyashree's astrology consultation call)
+Longest real conversations (by transcript depth):
+   1. bhagyashree    — 34 transcript turns, 274 sec, slot_booked
+   2. Rupali Patil   — 36 transcript turns, 187 sec, slot_booked
+   3. Rupali Patil   — 33 transcript turns, 175 sec, interested
+   4. Neel Patil     — 24 transcript turns, 169 sec, slot_booked
+   5. Parnika Patil  — 24 transcript turns, 154 sec, interested (slot noted)
+
+--------------------------------------------------------------------------------
+4. FEATURES BUILT / FIXED TODAY
+--------------------------------------------------------------------------------
+Core voice system:
+   - Browser-based voice chat (Gemini Live), replacing the original
+     Twilio-phone-call design (removed by request — no telephony provider)
+   - Illustrated professional-woman avatar (DiceBear Avataaars, licensed,
+     no real-person consent issue) with real lip-sync: 3 mouth-state PNGs
+     crossfaded live off actual playback audio amplitude
+   - Fixed: she now greets the caller FIRST (was previously silent until the
+     caller spoke first — root cause: no turn-trigger sent after setup)
+   - Fixed: she no longer stalls after a caller answers a yes/no question
+     (root cause: conversation flow only branched on the negative answer)
+   - Tuned: slower, calmer pacing + longer silence-detection window (was
+     talking too fast / interrupting)
+
+Data & automation:
+   - Conversation history: full transcript + Gemini-extracted structured
+     data (disposition, interest level, slot booked, notes) saved per call
+   - Automatic slot-booking: when a caller books a slot, it's matched
+     against the executive's available slots (by weekday + time, not just
+     literal date strings) and marked unavailable for the next caller
+   - Automatic admin email copy: every conversation auto-emails its full
+     transcript to ADMIN_EMAIL (patilrupalib@gmail.com) — no button needed
+   - Automatic JD email to candidates: when disposition is "interested" or
+     "slot_booked" AND the caller gave an email, that executive's JD is
+     auto-emailed to them
+   - Detailed JD support: roles can now carry salary range, responsibilities,
+     and requirements (not just a one-line description) — real JD content,
+     not a summary
+   - Real Gmail SMTP wired in and verified (port 465/SSL) — multiple real
+     emails confirmed delivered today
+
+Admin panel (CallMate Admin):
+   - Full redesign: card-based layout, dark/light theme support, toasts,
+     empty states, section-divided forms, live avatar preview
+   - Executive Edit form (previously create-only)
+   - Conversations tab: card list, detail view with chat bubbles, Delete,
+     Email, WhatsApp (wa.me deep link) actions
+   - Send JD dropdown per executive (Email + WhatsApp)
+   - Rebranded from "AI Desk" to "CallMate" today (tagline: "AI Desk — your
+     voice, on every call.")
+
+--------------------------------------------------------------------------------
+5. KNOWN LIMITATIONS (intentional, documented in README)
+--------------------------------------------------------------------------------
+   - WhatsApp sending is manual (wa.me deep link) — no Business API, no
+     fire-and-forget automation
+   - Caller identity is self-reported/unverified (no OTP step)
+   - Auto-JD "interested" gate is a fixed constant, not configurable per
+     executive
+   - Email sending is synchronous/inline — no retry queue if SMTP is slow
+   - No dedicated JD field structure beyond title/description/salary/
+     responsibilities/requirements — free text, not enforced schema
+
+--------------------------------------------------------------------------------
+6. RECOMMENDED NEXT STEPS (not yet built)
+--------------------------------------------------------------------------------
+   1. Rotate Gemini API key and Gmail App Password (both were shared in
+      chat during setup — good hygiene to cycle them now that everything
+      is confirmed working)
+   2. Conversation search/filter — 16 conversations already; will get
+      unwieldy without it
+   3. Aggregate stats dashboard (calls today, interest rate, slots filled)
+      — the data already exists, just needs a summary view
+   4. Bulk conversation actions (multi-select delete/export)
+
+================================================================================
+End of report.
+================================================================================
