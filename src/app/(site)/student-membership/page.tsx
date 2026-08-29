@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
+import { getSiteStats } from '@/lib/site-stats'
 import {
   ArrowRight,
   Award,
@@ -215,7 +216,7 @@ const officialCoursePlans = [
 ]
 
 export default async function StudentMembershipPage() {
-  const [activeMembers, testimonials, knowledgeCount] = await Promise.all([
+  const [activeMembers, testimonials, knowledgeCount, siteStats] = await Promise.all([
     prisma.subscriber.count({ where: { isActive: true } }),
     prisma.testimonial.findMany({
       where: { isActive: true },
@@ -223,6 +224,7 @@ export default async function StudentMembershipPage() {
       take: 3,
     }),
     prisma.knowledgeItem.count(),
+    getSiteStats(),
   ])
 
   const benefits = defaultBenefits.map((b, index) => ({
@@ -509,21 +511,19 @@ export default async function StudentMembershipPage() {
       <section style={{ background: '#F8FAFC', paddingTop: 64, paddingBottom: 0 }}>
         <div className="container">
           <div className="sm-trust-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14 }}>
-            {[
-              { icon: Users,      val: '5,000+', lbl: 'Active Members',       color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
-              { icon: Award,      val: '10+ Yrs', lbl: 'Industry Experience',  color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
-              { icon: TrendingUp, val: '95%',    lbl: 'Placement Success',     color: '#059669', bg: '#F0FDF4', border: '#BBF7D0' },
-              { icon: BadgeCheck, val: '200+',   lbl: 'Hiring Partners',       color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
-            ].map(({ icon: Icon, val, lbl, color, bg, border }) => (
-              <div key={lbl} style={{ background: '#fff', borderRadius: 16, border: '1.5px solid #E2E8F0', padding: '24px 20px', boxShadow: '0 2px 14px rgba(15,23,42,.05)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 11, background: bg, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
-                  <Icon style={{ width: 20, height: 20, color }} />
+            {siteStats.map((item, idx) => {
+              const Icon = item.icon === 'users' ? Users : item.icon === 'book' ? BookOpen : item.icon === 'award' ? Award : item.icon === 'trending' ? TrendingUp : Award
+              return (
+                <div key={idx} style={{ background: '#fff', borderRadius: 16, border: '1.5px solid #E2E8F0', padding: '24px 20px', boxShadow: '0 2px 14px rgba(15,23,42,.05)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 11, background: item.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                    <Icon style={{ width: 20, height: 20, color: item.iconColor }} />
+                  </div>
+                  <p style={{ fontSize: 'clamp(24px,2.2vw,34px)', fontWeight: 900, color: item.iconColor, margin: 0, letterSpacing: '-.03em', lineHeight: 1, whiteSpace: 'nowrap' }}>{item.value}</p>
+                  <div style={{ width: 22, height: 2, borderRadius: 2, background: item.iconColor, opacity: .28, margin: '8px 0' }} />
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.11em', margin: 0, lineHeight: 1.5 }}>{item.label}</p>
                 </div>
-                <p style={{ fontSize: 'clamp(24px,2.2vw,34px)', fontWeight: 900, color, margin: 0, letterSpacing: '-.03em', lineHeight: 1, whiteSpace: 'nowrap' }}>{val}</p>
-                <div style={{ width: 22, height: 2, borderRadius: 2, background: color, opacity: .28, margin: '8px 0' }} />
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '.11em', margin: 0, lineHeight: 1.5 }}>{lbl}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>

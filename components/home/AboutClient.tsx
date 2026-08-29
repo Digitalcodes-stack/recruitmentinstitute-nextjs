@@ -24,6 +24,8 @@ import {
 } from 'lucide-react'
 
 
+import type { SiteStatItem } from '@/lib/site-stats-constants'
+
 interface TestimonialItem {
   id: number
   author: string | null
@@ -36,6 +38,7 @@ interface TestimonialItem {
 interface Props {
   sections: AboutSection[]
   testimonials?: TestimonialItem[]
+  stats?: SiteStatItem[]
 }
 
 const fallbackSections: AboutSection[] = [
@@ -50,11 +53,11 @@ const fallbackSections: AboutSection[] = [
   },
 ]
 
-const stats = [
-  { value: '5,000+', label: 'Professionals Trained', icon: Users, color: '#1E40AF', bg: '#EFF6FF' },
-  { value: '10+ Yrs', label: 'Industry Experience', icon: Award, color: '#7C3AED', bg: '#F5F3FF' },
-  { value: '95%', label: 'Placement Support', icon: BadgeCheck, color: '#059669', bg: '#F0FDF4' },
-  { value: '4', label: 'Specialized Programs', icon: BookOpenCheck, color: '#EA580C', bg: '#FFF7ED' },
+const defaultAboutStats: SiteStatItem[] = [
+  { value: '5,000+', label: 'Professionals Trained', icon: 'users', iconColor: '#1E40AF', iconBg: '#EFF6FF' },
+  { value: '10+ Yrs', label: 'Industry Expertise', icon: 'award', iconColor: '#7C3AED', iconBg: '#F5F3FF' },
+  { value: '95%', label: 'Placement Success', icon: 'trending', iconColor: '#059669', iconBg: '#F0FDF4' },
+  { value: '6', label: 'Programs Available', icon: 'book', iconColor: '#EA580C', iconBg: '#FFF7ED' },
 ]
 
 const pillars = [
@@ -118,8 +121,21 @@ function cleanText(value?: string | null) {
     .trim()
 }
 
-export default function AboutClient({ sections, testimonials = [] }: Props) {
+function renderAboutStatIcon(icon: string) {
+  switch (icon) {
+    case 'users': return <Users style={{ width: '22px', height: '22px' }} />
+    case 'book': return <BookOpenCheck style={{ width: '22px', height: '22px' }} />
+    case 'award': return <Award style={{ width: '22px', height: '22px' }} />
+    case 'trending': return <TrendingUp style={{ width: '22px', height: '22px' }} />
+    case 'graduation': return <GraduationCap style={{ width: '22px', height: '22px' }} />
+    case 'shield': return <BadgeCheck style={{ width: '22px', height: '22px' }} />
+    default: return <Award style={{ width: '22px', height: '22px' }} />
+  }
+}
+
+export default function AboutClient({ sections, testimonials = [], stats }: Props) {
   const displaySections = sections.length > 0 ? sections : fallbackSections
+  const displayStats = stats && stats.length > 0 ? stats : defaultAboutStats
 
   return (
     <>
@@ -254,7 +270,7 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
           </div>
 
           <div className={styles.statsGrid}>
-            {stats.map((item) => (
+            {displayStats.map((item) => (
               <div
                 key={item.label}
                 style={{
@@ -270,23 +286,21 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
                   transition: 'all 0.3s ease',
                   minWidth: 0,
                 }}
-
-
               >
                 {/* icon box */}
                 <div style={{
                   width: '52px', height: '52px', borderRadius: '14px', flexShrink: 0,
-                  background: item.bg, color: item.color, marginBottom: '24px',
+                  background: item.iconBg, color: item.iconColor, marginBottom: '24px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <item.icon style={{ width: '22px', height: '22px' }} />
+                  {renderAboutStatIcon(item.icon)}
                 </div>
 
                 {/* number */}
                 <p style={{
                   fontSize: 'clamp(36px, 3.5vw, 48px)',
                   fontWeight: 800,
-                  color: item.color,
+                  color: item.iconColor,
                   lineHeight: 1,
                   letterSpacing: '-0.03em',
                   margin: 0,
@@ -298,14 +312,14 @@ export default function AboutClient({ sections, testimonials = [] }: Props) {
                 {/* divider */}
                 <div style={{
                   width: '36px', height: '3px', borderRadius: '2px',
-                  background: item.color, opacity: 0.25, margin: '14px 0',
+                  background: item.iconColor, opacity: 0.25, margin: '14px 0',
                 }} />
 
                 {/* label */}
                 <p style={{
                   fontSize: '13px', fontWeight: 700, color: '#64748B',
                   textTransform: 'uppercase', letterSpacing: '0.1em',
-                  lineHeight: 1.4, margin: 0,
+                  lineHeight: 1.5, margin: 0,
                 }}>
                   {item.label}
                 </p>

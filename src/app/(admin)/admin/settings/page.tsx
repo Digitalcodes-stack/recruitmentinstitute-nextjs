@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import AdminLayout from '@/components/admin/AdminLayout'
 import { ShieldCheck, LockKeyhole, BellRing, Paintbrush, Users2, Laptop, Wifi, ArrowUpRight } from 'lucide-react'
 import GoogleIntegrationPanel from '@/components/admin/GoogleIntegrationPanel'
+import SiteStatsSettingsPanel from '@/components/admin/SiteStatsSettingsPanel'
+import { getSiteStats } from '@/lib/site-stats'
 
 const C = {
   white:      '#ffffff',
@@ -29,7 +31,11 @@ export default async function AdminSettingsPage() {
     { title: 'System Preferences', desc: 'Tweak platform defaults and admin behavior.', icon: Laptop, bg: '#f0f9ff', color: '#0284c7' },
   ]
 
-  const [totalSessions, syncedSessions, pendingSessions, failedSessions, pendingJobs, processingJobs, failedJobs, completedJobs, recentFailedJobs] =
+  const [
+    totalSessions, syncedSessions, pendingSessions, failedSessions,
+    pendingJobs, processingJobs, failedJobs, completedJobs, recentFailedJobs,
+    totalStudents, totalCourses, siteStats
+  ] =
     await Promise.all([
       prisma.session.count(),
       prisma.session.count({ where: { calendarSyncStatus: 'SYNCED' } }),
@@ -45,7 +51,17 @@ export default async function AdminSettingsPage() {
         take: 5,
         select: { id: true, attempts: true, error: true, runAfter: true, updatedAt: true, payload: true },
       }),
+      prisma.student.count(),
+      prisma.course.count(),
+      getSiteStats(),
     ])
+
+  const autoSuggestions = {
+    professionalsTrained: `${(5000 + totalStudents).toLocaleString('en-IN')}+`,
+    programsAvailable: `${totalCourses || 6}`,
+    industryExpertise: '10+ Yrs',
+    placementSuccess: '95%',
+  }
 
   const recentJobs = await prisma.jobQueue.findMany({
     orderBy: { updatedAt: 'desc' },
@@ -219,6 +235,11 @@ export default async function AdminSettingsPage() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* ── Global Site Statistics ───────────────────────── */}
+        <div>
+          <SiteStatsSettingsPanel initialStats={siteStats} autoSuggestions={autoSuggestions} />
         </div>
 
         {/* ── Google Meet Automation ───────────────────────── */}

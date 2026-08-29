@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import HomePage from '@/components/home/HomePage'
 import { prisma } from '@/lib/prisma'
+import { getSiteStats } from '@/lib/site-stats'
 
 function stripHtml(input: string) {
   return input
@@ -31,7 +32,7 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 export default async function Page() {
-  const [categories, testimonials, totalCourses, totalStudents, services, experts, clients] = await Promise.all([
+  const [categories, testimonials, totalCourses, totalStudents, services, experts, clients, siteStats] = await Promise.all([
     prisma.courseCategory.findMany({
       orderBy: { id: 'asc' },
       include: {
@@ -60,6 +61,7 @@ export default async function Page() {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
       select: { id: true, name: true, logo: true, website: true },
     }),
+    getSiteStats(),
   ])
 
   const SLUG_ORDER = [
@@ -198,5 +200,5 @@ export default async function Page() {
 
   const clientData = clients.map(c => ({ id: c.id, name: c.name, logo: c.logo, website: c.website || '' }))
 
-  return <HomePage courses={courses} stats={stats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
+  return <HomePage courses={courses} stats={siteStats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
 }

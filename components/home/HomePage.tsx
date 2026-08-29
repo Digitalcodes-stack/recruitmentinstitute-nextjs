@@ -95,59 +95,71 @@ const defaultCourses = [
   },
 ]
 
-const defaultStats = [
-  { icon: 'users',   value: '5,000+',  label: 'Professionals Trained', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
-  { icon: 'book',    value: '6',       label: 'Programs Available',     iconBg: '#F5F3FF', iconColor: '#7C3AED' },
-  { icon: 'award',   value: '10+ Yrs', label: 'Industry Expertise',     iconBg: '#FFFBEB', iconColor: '#D97706' },
-  { icon: 'trending',value: '95%',     label: 'Placement Success',      iconBg: '#F0FDF4', iconColor: '#16A34A' },
-]
+import type { SiteStatItem } from '@/lib/site-stats-constants'
+import { DEFAULT_SITE_STATS } from '@/lib/site-stats-constants'
+
+const defaultStats: SiteStatItem[] = DEFAULT_SITE_STATS
+
+function renderStatIcon(icon: string, cls = "w-6 h-6 sm:w-7 sm:h-7") {
+  switch (icon) {
+    case 'users': return <Users className={cls} />
+    case 'book': return <BookOpen className={cls} />
+    case 'award': return <Award className={cls} />
+    case 'trending': return <TrendingUp className={cls} />
+    case 'graduation': return <GraduationCap className={cls} />
+    case 'star': return <Star className={cls} />
+    case 'shield': return <BadgeCheck className={cls} />
+    case 'clock': return <Clock className={cls} />
+    default: return <Award className={cls} />
+  }
+}
 
 const whyUs = [
-  { icon: <BadgeCheck className="w-6 h-6" />, title: 'Expert Instructors',       desc: 'Learn from active industry recruiters and HR professionals with real corporate experience.',        iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
-  { icon: <Layers     className="w-6 h-6" />, title: 'Comprehensive Syllabus',   desc: 'Every module maps to real-world workflows — no placeholders, no outdated theory.',                  iconBg: '#F5F3FF', iconColor: '#7C3AED' },
-  { icon: <PlayCircle className="w-6 h-6" />, title: '100% Practical Focus',     desc: 'Work with live ATS platforms, boolean search strings, and real-world recruitment cases.',            iconBg: '#F0FDF4', iconColor: '#16A34A' },
-  { icon: <GraduationCap className="w-6 h-6" />, title: 'Placement Assistance',  desc: 'Receive mock interview coaching, resume reviews, and partner company referrals.',                   iconBg: '#FFFBEB', iconColor: '#D97706' },
-  { icon: <Clock      className="w-6 h-6" />, title: 'Flexible Batches',         desc: 'Weekday and weekend batches designed for working professionals and students alike.',                  iconBg: '#FFF1F2', iconColor: '#E11D48' },
-  { icon: <Award      className="w-6 h-6" />, title: 'Industry Certificate',     desc: 'Earn a recognised certification that demonstrates your HR and recruitment expertise.',               iconBg: '#F0FDF4', iconColor: '#059669' },
+  { icon: <BadgeCheck className="w-6 h-6" />, title: 'Expert Instructors', desc: 'Learn from active industry recruiters and HR professionals with real corporate experience.', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
+  { icon: <Layers className="w-6 h-6" />, title: 'Comprehensive Syllabus', desc: 'Every module maps to real-world workflows — no placeholders, no outdated theory.', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+  { icon: <PlayCircle className="w-6 h-6" />, title: '100% Practical Focus', desc: 'Work with live ATS platforms, boolean search strings, and real-world recruitment cases.', iconBg: '#F0FDF4', iconColor: '#16A34A' },
+  { icon: <GraduationCap className="w-6 h-6" />, title: 'Placement Assistance', desc: 'Receive mock interview coaching, resume reviews, and partner company referrals.', iconBg: '#FFFBEB', iconColor: '#D97706' },
+  { icon: <Clock className="w-6 h-6" />, title: 'Flexible Batches', desc: 'Weekday and weekend batches designed for working professionals and students alike.', iconBg: '#FFF1F2', iconColor: '#E11D48' },
+  { icon: <Award className="w-6 h-6" />, title: 'Industry Certificate', desc: 'Earn a recognised certification that demonstrates your HR and recruitment expertise.', iconBg: '#F0FDF4', iconColor: '#059669' },
 ]
 
 const process = [
-  { n: '01', title: 'Choose Your Course',      desc: 'Browse our programs and select the one that best fits your career goals and experience level.' },
-  { n: '02', title: 'Enroll & Register',       desc: 'Fill out the enquiry form or WhatsApp us. Our counsellors will guide you through admissions.' },
-  { n: '03', title: 'Learn & Practice',        desc: 'Attend live sessions, complete hands-on projects, and practice on real ATS tools and job portals.' },
-  { n: '04', title: 'Get Certified & Placed',  desc: 'Earn your certificate, build your HR resume, and get placement assistance through our network.' },
+  { n: '01', title: 'Choose Your Course', desc: 'Browse our programs and select the one that best fits your career goals and experience level.' },
+  { n: '02', title: 'Enroll & Register', desc: 'Fill out the enquiry form or WhatsApp us. Our counsellors will guide you through admissions.' },
+  { n: '03', title: 'Learn & Practice', desc: 'Attend live sessions, complete hands-on projects, and practice on real ATS tools and job portals.' },
+  { n: '04', title: 'Get Certified & Placed', desc: 'Earn your certificate, build your HR resume, and get placement assistance through our network.' },
 ]
 
 const defaultTestimonials = [
-  { name: 'Poonam Pol',      role: 'HR Executive',            company: 'Tech Startup, Pune',      initial: 'P', grad: 'from-red-500 to-rose-600',      text: 'The End-to-End Recruitment Training completely transformed my career. The practical approach — boolean searching, ATS exposure — helped me land an HR Specialist role in less than 2 months.' },
-  { name: 'Rahul Sharma',    role: 'Recruitment Consultant',  company: 'Independent Agency',       initial: 'R', grad: 'from-blue-500 to-blue-700',     text: 'Outstanding curriculum! The HR Entrepreneurship program gave me a clear roadmap to start my own agency. The client billing and business development guidance was worth every rupee.' },
-  { name: 'Priya Desai',     role: 'HR Talent Partner',       company: 'MNC, Bangalore',           initial: 'P', grad: 'from-emerald-500 to-teal-600',  text: 'The corporate upskilling program helped standardise our entire talent acquisition workflow. Our average cost-to-hire decreased significantly while retention metrics improved.' },
-  { name: 'Amit Kulkarni',   role: 'Senior Recruiter',        company: 'IT Firm, Pune',            initial: 'A', grad: 'from-purple-500 to-purple-700',  text: 'I switched from sales to HR after completing the Beginners program. The trainers were incredibly patient and the practical exercises gave me the confidence to start my HR career.' },
+  { name: 'Poonam Pol', role: 'HR Executive', company: 'Tech Startup, Pune', initial: 'P', grad: 'from-red-500 to-rose-600', text: 'The End-to-End Recruitment Training completely transformed my career. The practical approach — boolean searching, ATS exposure — helped me land an HR Specialist role in less than 2 months.' },
+  { name: 'Rahul Sharma', role: 'Recruitment Consultant', company: 'Independent Agency', initial: 'R', grad: 'from-blue-500 to-blue-700', text: 'Outstanding curriculum! The HR Entrepreneurship program gave me a clear roadmap to start my own agency. The client billing and business development guidance was worth every rupee.' },
+  { name: 'Priya Desai', role: 'HR Talent Partner', company: 'MNC, Bangalore', initial: 'P', grad: 'from-emerald-500 to-teal-600', text: 'The corporate upskilling program helped standardise our entire talent acquisition workflow. Our average cost-to-hire decreased significantly while retention metrics improved.' },
+  { name: 'Amit Kulkarni', role: 'Senior Recruiter', company: 'IT Firm, Pune', initial: 'A', grad: 'from-purple-500 to-purple-700', text: 'I switched from sales to HR after completing the Beginners program. The trainers were incredibly patient and the practical exercises gave me the confidence to start my HR career.' },
 ]
 
 /* ─── Types ─────────────────────────────────────────────────── */
 
 interface ServiceItem { id: number; title: string; description: string; image: string; slug: string }
-interface ExpertItem  { id: number; name: string; profession: string; image: string; category: string }
-interface ClientItem  { id: number; name: string; logo: string; website: string }
+interface ExpertItem { id: number; name: string; profession: string; image: string; category: string }
+interface ClientItem { id: number; name: string; logo: string; website: string }
 
 interface HomePageProps {
-  courses?:      typeof defaultCourses
-  stats?:        typeof defaultStats
+  courses?: typeof defaultCourses
+  stats?: typeof defaultStats
   testimonials?: typeof defaultTestimonials
-  services?:     ServiceItem[]
-  experts?:      ExpertItem[]
-  clients?:      ClientItem[]
+  services?: ServiceItem[]
+  experts?: ExpertItem[]
+  clients?: ClientItem[]
 }
 
 /* ─── Accent palette per course card ──────────────────────── */
 const ACCENTS = [
-  { glow: 'rgba(14,165,233,0.18)',  light: '#EFF6FF', border: '#BAE6FD', solid: '#0284C7', grad: 'linear-gradient(135deg,#0284C7,#0369A1)',  num: '01' },
-  { glow: 'rgba(220,38,38,0.18)',   light: '#FEF2F2', border: '#FECACA', solid: '#DC2626', grad: 'linear-gradient(135deg,#B91C1C,#DC2626)',  num: '02' },
-  { glow: 'rgba(124,58,237,0.18)',  light: '#F5F3FF', border: '#DDD6FE', solid: '#7C3AED', grad: 'linear-gradient(135deg,#6D28D9,#7C3AED)', num: '03' },
-  { glow: 'rgba(217,119,6,0.18)',   light: '#FFFBEB', border: '#FDE68A', solid: '#D97706', grad: 'linear-gradient(135deg,#D97706,#B45309)', num: '04' },
-  { glow: 'rgba(5,150,105,0.18)',   light: '#F0FDF4', border: '#BBF7D0', solid: '#059669', grad: 'linear-gradient(135deg,#047857,#059669)',  num: '05' },
-  { glow: 'rgba(79,70,229,0.18)',   light: '#EEF2FF', border: '#C7D2FE', solid: '#4F46E5', grad: 'linear-gradient(135deg,#4F46E5,#4338CA)', num: '06' },
+  { glow: 'rgba(14,165,233,0.18)', light: '#EFF6FF', border: '#BAE6FD', solid: '#0284C7', grad: 'linear-gradient(135deg,#0284C7,#0369A1)', num: '01' },
+  { glow: 'rgba(220,38,38,0.18)', light: '#FEF2F2', border: '#FECACA', solid: '#DC2626', grad: 'linear-gradient(135deg,#B91C1C,#DC2626)', num: '02' },
+  { glow: 'rgba(124,58,237,0.18)', light: '#F5F3FF', border: '#DDD6FE', solid: '#7C3AED', grad: 'linear-gradient(135deg,#6D28D9,#7C3AED)', num: '03' },
+  { glow: 'rgba(217,119,6,0.18)', light: '#FFFBEB', border: '#FDE68A', solid: '#D97706', grad: 'linear-gradient(135deg,#D97706,#B45309)', num: '04' },
+  { glow: 'rgba(5,150,105,0.18)', light: '#F0FDF4', border: '#BBF7D0', solid: '#059669', grad: 'linear-gradient(135deg,#047857,#059669)', num: '05' },
+  { glow: 'rgba(79,70,229,0.18)', light: '#EEF2FF', border: '#C7D2FE', solid: '#4F46E5', grad: 'linear-gradient(135deg,#4F46E5,#4338CA)', num: '06' },
 ]
 
 /* ─── Testimonial colour palette ───────────────────────────── */
@@ -177,12 +189,12 @@ export default function HomePage({
   experts: expertData,
   clients: clientData,
 }: HomePageProps) {
-  const courses      = courseData?.length      ? courseData      : defaultCourses
-  const stats        = statData?.length        ? statData        : defaultStats
+  const courses = courseData?.length ? courseData : defaultCourses
+  const stats = statData?.length ? statData : defaultStats
   const testimonials = testimonialData?.length ? testimonialData : defaultTestimonials
-  const services     = serviceData  ?? []
-  const experts      = expertData   ?? []
-  const clients      = clientData   ?? []
+  const services = serviceData ?? []
+  const experts = expertData ?? []
+  const clients = clientData ?? []
   const [enquiryOpen, setEnquiryOpen] = useState(false)
 
   return (
@@ -219,9 +231,9 @@ export default function HomePage({
 
               <div className="hero-chips">
                 {[
-                  { label: '5,000+ Graduates',     cls: 'hero-chip hero-chip--blue'   },
-                  { label: '95% Placement Rate',    cls: 'hero-chip hero-chip--green'  },
-                  { label: 'Industry Certificate',  cls: 'hero-chip hero-chip--purple' },
+                  { label: `${stats[0]?.value || '5,000+'} Graduates`, cls: 'hero-chip hero-chip--blue' },
+                  { label: `${stats[3]?.value || '95%'} Placement Rate`, cls: 'hero-chip hero-chip--green' },
+                  { label: 'Industry Certificate', cls: 'hero-chip hero-chip--purple' },
                   { label: 'Live + Online Batches', cls: 'hero-chip hero-chip--orange' },
                 ].map((chip) => (
                   <span key={chip.label} className={chip.cls}>
@@ -252,7 +264,7 @@ export default function HomePage({
                   <div className="hero-stars">
                     {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
                   </div>
-                  <p className="hero-social-text">Trusted by <strong style={{ color: '#0F172A' }}>5,000+</strong> HR professionals</p>
+                  <p className="hero-social-text">Trusted by <strong style={{ color: '#0F172A' }}>{stats[0]?.value || '5,000+'}</strong> HR professionals</p>
                 </div>
               </div>
             </div>
@@ -270,7 +282,7 @@ export default function HomePage({
                     <GraduationCap style={{ width: 22, height: 22, color: 'white' }} />
                   </div>
                   <div>
-                    <p className="hero-img-badge-num">5,000+</p>
+                    <p className="hero-img-badge-num">{stats[0]?.value || '5,000+'}</p>
                     <p className="hero-img-badge-sub">Graduates Placed</p>
                   </div>
                 </div>
@@ -285,8 +297,8 @@ export default function HomePage({
               </div>
 
               <div className="hero-float-placement">
-                <p className="hero-float-placement-num">95%</p>
-                <p className="hero-float-placement-sub">Placement Success</p>
+                <p className="hero-float-placement-num">{stats[3]?.value || '95%'}</p>
+                <p className="hero-float-placement-sub">Placement Support Success</p>
                 <div className="hero-float-placement-bar-track">
                   <div className="hero-float-placement-bar-fill" />
                 </div>
@@ -302,15 +314,10 @@ export default function HomePage({
 
           {/* TRUST BAR */}
           <div className="hero-trust-bar">
-            {[
-              { icon: <Users     className="w-5 h-5" />, value: '5,000+',    label: 'Professionals Trained', color: '#1E40AF', bg: '#EFF6FF' },
-              { icon: <Award     className="w-5 h-5" />, value: '10+ Years', label: 'Industry Experience',   color: '#7C3AED', bg: '#F5F3FF' },
-              { icon: <BookOpen  className="w-5 h-5" />, value: '4 Programs',label: 'Expert Courses',        color: '#0284C7', bg: '#F0F9FF' },
-              { icon: <TrendingUp className="w-5 h-5" />,value: '95%',       label: 'Placement Rate',        color: '#059669', bg: '#F0FDF4' },
-            ].map((item, i, arr) => (
+            {stats.map((item, i, arr) => (
               <div key={i} className={`hero-trust-item${i < arr.length - 1 ? ' hero-trust-item--bordered' : ''}`}>
-                <div className="hero-trust-icon" style={{ background: item.bg, color: item.color }}>
-                  {item.icon}
+                <div className="hero-trust-icon" style={{ background: item.iconBg, color: item.iconColor }}>
+                  {renderStatIcon(item.icon, "w-5 h-5")}
                 </div>
                 <div>
                   <p className="hero-trust-value">{item.value}</p>
@@ -355,10 +362,7 @@ export default function HomePage({
             {stats.map((s, i) => (
               <div key={i} className={`stats-bar-item group${i < 3 ? ' stats-bar-item--bordered' : ''}`}>
                 <div className="stats-bar-icon" style={{ background: s.iconBg, color: s.iconColor }}>
-                  {s.icon === 'users'   && <Users     className="w-7 h-7" />}
-                  {s.icon === 'book'    && <BookOpen  className="w-7 h-7" />}
-                  {s.icon === 'award'   && <Award     className="w-7 h-7" />}
-                  {s.icon === 'trending'&& <TrendingUp className="w-7 h-7" />}
+                  {renderStatIcon(s.icon, "w-7 h-7")}
                 </div>
                 <div className="text-center sm:text-left">
                   <div className="stats-bar-value">{s.value}</div>
@@ -470,8 +474,8 @@ export default function HomePage({
             <div className="courses-trust-items">
               {[
                 { icon: <GraduationCap className="w-4 h-4" />, text: '5,000+ Graduates' },
-                { icon: <BadgeCheck    className="w-4 h-4" />, text: 'Industry Certificate' },
-                { icon: <PlayCircle   className="w-4 h-4" />, text: 'Live Online Sessions' },
+                { icon: <BadgeCheck className="w-4 h-4" />, text: 'Industry Certificate' },
+                { icon: <PlayCircle className="w-4 h-4" />, text: 'Live Online Sessions' },
               ].map(({ icon, text }) => (
                 <div key={text} className="courses-trust-item">
                   <span className="courses-trust-icon">{icon}</span>
@@ -540,7 +544,7 @@ export default function HomePage({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {[['5,000+','Students Trained'],['95%','Placement Rate'],['10+ Yrs','Of Excellence'],['4','Expert Courses']].map(([v, l]) => (
+                  {[['5,000+', 'Students Trained'], ['95%', 'Placement Rate'], ['10+ Yrs', 'Of Excellence'], ['4', 'Expert Courses']].map(([v, l]) => (
                     <div key={l} className="why-promo-stat">
                       <div className="why-promo-stat-value">{v}</div>
                       <div className="why-promo-stat-label">{l}</div>
@@ -610,8 +614,8 @@ export default function HomePage({
 
             <div className="services-grid">
               {services.map((s, i) => {
-                const accents  = ['#1D4ED8','#7C3AED','#059669','#DC2626','#D97706','#0891B2']
-                const lightBgs = ['#EFF6FF','#F5F3FF','#F0FDF4','#FEF2F2','#FFFBEB','#ECFEFF']
+                const accents = ['#1D4ED8', '#7C3AED', '#059669', '#DC2626', '#D97706', '#0891B2']
+                const lightBgs = ['#EFF6FF', '#F5F3FF', '#F0FDF4', '#FEF2F2', '#FFFBEB', '#ECFEFF']
                 const fallbackImgs = [
                   '/assets/images/banner/home9.jpg',
                   '/assets/images/about/tab2.jpg',
@@ -649,7 +653,7 @@ export default function HomePage({
                         <span className="service-card-footer-label" style={{ color: acc }}>Learn More</span>
                         <div className="service-card-arrow" style={{ background: lbg, border: `1.5px solid ${acc}30` }}>
                           <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                            <path d="M2 6h8M6 2l4 4-4 4" stroke={acc} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M2 6h8M6 2l4 4-4 4" stroke={acc} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                         </div>
                       </Link>
@@ -673,7 +677,7 @@ export default function HomePage({
             </div>
             <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {experts.map((e, i) => {
-                const ecolors = ['#2563EB','#7C3AED','#059669','#D97706','#DB2777','#0284C7','#DC2626','#0891B2']
+                const ecolors = ['#2563EB', '#7C3AED', '#059669', '#D97706', '#DB2777', '#0284C7', '#DC2626', '#0891B2']
                 const ec = ecolors[i % ecolors.length]
                 const initials = e.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
                 return (
@@ -805,7 +809,7 @@ export default function HomePage({
           </div>
 
           <div className="flex flex-wrap justify-center gap-8">
-            {['100% Practical Training','Industry Certificate','Placement Support','Expert Mentors'].map((t) => (
+            {['100% Practical Training', 'Industry Certificate', 'Placement Support', 'Expert Mentors'].map((t) => (
               <span key={t} className="cta-banner-feature">
                 <CheckCircle2 className="cta-banner-feature-icon w-4 h-4 shrink-0" />
                 {t}

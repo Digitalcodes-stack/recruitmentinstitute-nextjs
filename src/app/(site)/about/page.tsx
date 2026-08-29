@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { prisma } from '@/lib/prisma'
 import AboutClient from '@/components/home/AboutClient'
+import { getSiteStats } from '@/lib/site-stats'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
@@ -70,9 +71,10 @@ async function getAboutSections() {
 }
 
 export default async function AboutPage() {
-  const [sections, testimonials] = await Promise.all([
+  const [sections, testimonials, stats] = await Promise.all([
     getAboutSections(),
     prisma.testimonial.findMany({ where: { isActive: true }, orderBy: { createdAt: 'desc' }, take: 4 }),
+    getSiteStats(),
   ])
   const testimonialData = testimonials.map(t => ({
     id: t.id,
@@ -85,7 +87,7 @@ export default async function AboutPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
-      <AboutClient sections={sections} testimonials={testimonialData} />
+      <AboutClient sections={sections} testimonials={testimonialData} stats={stats} />
     </>
   )
 }
