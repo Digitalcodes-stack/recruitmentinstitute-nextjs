@@ -5,25 +5,33 @@ export type { SiteStatItem }
 export { DEFAULT_SITE_STATS }
 
 /**
- * Fetch dynamic site stats from SiteSettings (managed by Admin),
- * falling back to standardized defaults if not configured yet.
+ * Fetch dynamic site stats from site_settings table.
+ * Uses direct SQL query so it never breaks regardless of Prisma Client in-memory state.
  */
 export async function getSiteStats(): Promise<SiteStatItem[]> {
   try {
-    const settings = await prisma.siteSettings.findFirst({
-      where: { id: 1 },
-      select: { statsJson: true },
-    })
+    const rows = await prisma.$queryRawUnsafe<Array<{ stats_json: any }>>(
+      'SELECT stats_json FROM site_settings WHERE id = 1 LIMIT 1'
+    )
 
-    if (settings?.statsJson && Array.isArray(settings.statsJson) && settings.statsJson.length > 0) {
-      const parsed = settings.statsJson as unknown as SiteStatItem[]
-      return parsed.map((item, idx) => ({
-        icon: item.icon || DEFAULT_SITE_STATS[idx]?.icon || 'award',
-        value: item.value || DEFAULT_SITE_STATS[idx]?.value || '',
-        label: item.label || DEFAULT_SITE_STATS[idx]?.label || '',
-        iconBg: item.iconBg || DEFAULT_SITE_STATS[idx]?.iconBg || '#EFF6FF',
-        iconColor: item.iconColor || DEFAULT_SITE_STATS[idx]?.iconColor || '#1D4ED8',
-      }))
+    if (rows && rows.length > 0 && rows[0]?.stats_json) {
+      let stats = rows[0].stats_json
+      if (typeof stats === 'string') {
+        try {
+          stats = JSON.parse(stats)
+        } catch {
+          stats = null
+        }
+      }
+      if (Array.isArray(stats) && stats.length > 0) {
+        return stats.map((item, idx) => ({
+          icon: String(item?.icon || DEFAULT_SITE_STATS[idx]?.icon || 'award'),
+          value: String(item?.value || DEFAULT_SITE_STATS[idx]?.value || ''),
+          label: String(item?.label || DEFAULT_SITE_STATS[idx]?.label || ''),
+          iconBg: String(item?.iconBg || DEFAULT_SITE_STATS[idx]?.iconBg || '#EFF6FF'),
+          iconColor: String(item?.iconColor || DEFAULT_SITE_STATS[idx]?.iconColor || '#1D4ED8'),
+        }))
+      }
     }
   } catch (error) {
     console.error('Error fetching dynamic site stats:', error)
@@ -33,18 +41,15 @@ export async function getSiteStats(): Promise<SiteStatItem[]> {
 }
 
 /**
- * Update dynamic site stats in SiteSettings
+ * Update dynamic site stats in SiteSettings table
  */
 export async function updateSiteStats(stats: SiteStatItem[]) {
-  return prisma.siteSettings.upsert({
-    where: { id: 1 },
-    update: {
-      statsJson: stats as any,
-    },
-    create: {
-      id: 1,
-      siteName: 'Recruitment Institute',
-      statsJson: stats as any,
-    },
-  })
+  const jsonStr = JSON.stringify(stats)
+  return prisma.$executeRawUnsafe(
+    `INSERT INTO site_settings (id, site_name, stats_json, updated_at)
+     VALUES (1, 'Recruitment Institute', $1::jsonb, NOW())
+     ON CONFLICT (id)
+     DO UPDATE SET stats_json = $1::jsonb, updated_at = NOW()`,
+    jsonStr
+  )
 }
