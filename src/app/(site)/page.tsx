@@ -80,7 +80,7 @@ export default async function Page() {
       badgeCls: 'bg-sky-600 text-white',
       bar: 'from-sky-500 to-sky-700',
       image: '/assets/images/about/tab1.jpg',
-      highlights: ['Naukri Resdex & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
+      highlights: ['Job Portal & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
     },
     'for-professionals': {
       href: '/professional-recruitment-specialist',

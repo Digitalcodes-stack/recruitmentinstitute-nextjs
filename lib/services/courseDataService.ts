@@ -96,7 +96,7 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
     route: '/recruitment-career-starter',
     aliases: ['recruitment-career-starter', 'hr-courses-for-beginners', 'certification_tag'],
     defaultTitle: 'Recruitment Career Starter',
-    defaultShortDescription: 'Become Job-Ready for Your First Recruitment Job in 4 Weeks. Master candidate sourcing, Boolean search, Naukri Resdex, structured screening calls, and interview coordination.',
+    defaultShortDescription: 'Become Job-Ready for Your First Recruitment Job in 4 Weeks. Master candidate sourcing, Boolean search, Job Portal sourcing, structured screening calls, and interview coordination.',
     defaultOverview: 'The Recruitment Career Starter program is specifically engineered for fresh graduates, career switchers, and non-HR professionals seeking a fast, practical pathway into corporate talent acquisition. Over 4 intensive weeks, you will learn the core foundations of recruitment lifecycles, resume parsing, candidate calling, interview coordination, and portal sourcing with dedicated placement support.',
     defaultDuration: '4 Weeks',
     defaultDurationShort: '4 Wk',
@@ -138,15 +138,15 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
         title: 'Candidate Sourcing, Portals & Boolean Search',
         duration: 'Week 2',
         accent: '#2563EB',
-        description: 'Hands-on candidate discovery across Naukri, LinkedIn, and Boolean/X-Ray search engines.',
+        description: 'Hands-on candidate discovery across Job Portals, LinkedIn, and Boolean/X-Ray search engines.',
         learningObjectives: [
           'Master Boolean search operators (AND, OR, NOT, Quotes, Parentheses).',
-          'Navigate Naukri Resdex filters, keyword targeting, and candidate search.',
+          'Navigate Job Portal filters, keyword targeting, and candidate search.',
           'Build talent search queries on LinkedIn and Google X-Ray.',
         ],
         details: [
           'Boolean search operators and nested search strings',
-          'Naukri Resdex search filters, active candidate targeting, and keywords',
+          'Job Portal search filters, active candidate targeting, and keywords',
           'LinkedIn talent search: Title filters, locations, and Boolean strings',
           'Building custom candidate pipelines and talent databases',
         ],
@@ -194,7 +194,7 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
     defaultLearningOutcomes: [
       'Master the complete end-to-end recruitment lifecycle and corporate hiring processes.',
       'Construct advanced Boolean and Google X-Ray search strings to source qualified candidates.',
-      'Navigate professional recruitment job portals including Naukri Resdex and LinkedIn.',
+      'Navigate professional recruitment job portals including top Job Portals and LinkedIn.',
       'Conduct confident telephone screening interviews and assess candidate CTC and notice period.',
       'Manage interview coordination, candidate prep, and hiring manager communications.',
       'Receive an ATS-optimized recruiter resume and portfolio to secure your first HR role.',
@@ -205,7 +205,7 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
       { role: 'Entry-Level HR Associates', desc: 'Junior HR coordinators seeking structured practical recruitment training.' },
     ],
     defaultToolsCovered: [
-      { category: 'Job Portals', tools: ['Naukri Resdex', 'LinkedIn', 'Indeed', 'Foundit'] },
+      { category: 'Job Portals', tools: ['Job Portals', 'LinkedIn', 'Indeed', 'Foundit'] },
       { category: 'Search Engines', tools: ['Google X-Ray', 'Boolean Search Builders'] },
       { category: 'Productivity', tools: ['MS Excel', 'Google Sheets', 'Canva'] },
     ],
@@ -225,7 +225,7 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
     ],
     defaultLmsStructure: [
       { week: 'Week 1', title: 'Recruitment Fundamentals', desc: 'Full lifecycle overview, JD analysis, and candidate persona creation.' },
-      { week: 'Week 2', title: 'Candidate Sourcing & Boolean', desc: 'Naukri, LinkedIn, Boolean search, and talent pool construction.' },
+      { week: 'Week 2', title: 'Candidate Sourcing & Boolean', desc: 'Job Portals, LinkedIn, Boolean search, and talent pool construction.' },
       { week: 'Week 3', title: 'Screening & Coordination', desc: 'Candidate calling, salary screening, notice period, and panel scheduling.' },
       { week: 'Week 4', title: 'Capstone & Placement Prep', desc: 'Live mandate execution, ATS resume drafting, and interview simulations.' },
     ],
@@ -346,7 +346,7 @@ export const CANONICAL_COURSE_CONFIGS: Record<string, {
     ],
     defaultToolsCovered: [
       { category: 'Applicant Tracking Systems', tools: ['Zoho Recruit', 'Greenhouse', 'Ceipal', 'Freshteam'] },
-      { category: 'Sourcing & Search', tools: ['LinkedIn Recruiter', 'Naukri Resdex', 'GitHub', 'Google X-Ray'] },
+      { category: 'Sourcing & Search', tools: ['LinkedIn Recruiter', 'Job Portals', 'GitHub', 'Google X-Ray'] },
       { category: 'AI & Analytics', tools: ['ChatGPT for TA', 'MS Excel Advanced MIS', 'Google Looker Studio'] },
     ],
     defaultCertificationDetails: {

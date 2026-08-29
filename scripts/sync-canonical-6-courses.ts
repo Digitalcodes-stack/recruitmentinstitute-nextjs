@@ -70,7 +70,7 @@ export const CANONICAL_6_COURSES: CanonicalCourseDef[] = [
         description: 'Hands-on candidate discovery across Naukri, LinkedIn, and Boolean/X-Ray search engines.',
         topics: [
           'Boolean search operators (AND, OR, NOT, Quotations, Parentheses)',
-          'Naukri Resdex search filters, active candidate targeting, and keywords',
+          'Job Portal search filters, active candidate targeting, and keywords',
           'LinkedIn talent search: Title filters, locations, and Boolean strings',
           'Building custom candidate pipelines and talent databases',
         ],

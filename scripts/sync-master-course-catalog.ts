@@ -61,7 +61,7 @@ const MASTER_COURSES_DATA = [
       },
       {
         title: 'Module 2: Candidate Sourcing, Boolean Search & Social Platforms',
-        description: 'Boolean search strings, Google X-Ray, LinkedIn Recruiter, Naukri Resdex, and passive sourcing.',
+        description: 'Boolean search strings, Google X-Ray, LinkedIn Recruiter, Job Portals, and passive sourcing.',
         chapters: [
           {
             title: 'Advanced Sourcing & Portal Search',
@@ -197,7 +197,7 @@ const MASTER_COURSES_DATA = [
             title: 'JD Analysis & Portal Search',
             topics: [
               'Reading and analyzing Job Descriptions (JDs)',
-              'Navigating job boards: Naukri Resdex basics, filters, and keyword fields',
+              'Navigating job boards: Job Portal basics, filters, and keyword fields',
               'Basic LinkedIn searching: Utilizing search filters, titles, and location tags',
               'Building structured Google Sheet candidate trackers',
             ],

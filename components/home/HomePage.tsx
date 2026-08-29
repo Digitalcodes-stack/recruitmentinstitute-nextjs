@@ -22,11 +22,11 @@ const defaultCourses = [
     badgeCls: 'bg-sky-600 text-white',
     level: 'For Freshers',
     duration: '4 Weeks',
-    desc: 'Become job-ready for your first recruitment job in 4 weeks. Master candidate sourcing, Boolean search, Naukri Resdex, and screening calls.',
+    desc: 'Become job-ready for your first recruitment job in 4 weeks. Master candidate sourcing, Boolean search, Job Portal sourcing, and screening calls.',
     href: '/recruitment-career-starter',
     image: '/assets/images/about/tab1.jpg',
     bar: 'from-sky-500 to-sky-700',
-    highlights: ['Naukri Resdex & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
+    highlights: ['Job Portal & Sourcing', 'Candidate Calling Drills', 'Placement & Resume Support'],
   },
   {
     id: 2,

@@ -45,7 +45,7 @@ const FUTURE_BATCHES_DATA: FutureBatchBlueprint[] = [
     sessions: [
       { title: 'Orientation & Recruitment Lifecycle Fundamentals', dateOffsetDays: 0, startHour: 10, durationHours: 3 },
       { title: 'Job Description Breakdown & Intake Alignment', dateOffsetDays: 1, startHour: 10, durationHours: 3 },
-      { title: 'Boolean Logic & Naukri Resdex Practical Lab', dateOffsetDays: 7, startHour: 10, durationHours: 3 },
+      { title: 'Boolean Logic & Job Portal Practical Lab', dateOffsetDays: 7, startHour: 10, durationHours: 3 },
       { title: 'LinkedIn Talent Sourcing & X-Ray Operators', dateOffsetDays: 8, startHour: 10, durationHours: 3 },
       { title: 'Candidate Screening Calls & Salary Benchmarking', dateOffsetDays: 14, startHour: 10, durationHours: 3 },
       { title: 'Interview Coordination & Feedback Management', dateOffsetDays: 15, startHour: 10, durationHours: 3 },
@@ -64,7 +64,7 @@ const FUTURE_BATCHES_DATA: FutureBatchBlueprint[] = [
     status: BatchStatus.UPCOMING,
     sessions: [
       { title: 'Talent Acquisition Frameworks & JD Analysis', dateOffsetDays: 0, startHour: 19, durationHours: 1.5 },
-      { title: 'Naukri Resdex Filters & Active Candidate Search', dateOffsetDays: 1, startHour: 19, durationHours: 1.5 },
+      { title: 'Job Portal Filters & Active Candidate Search', dateOffsetDays: 1, startHour: 19, durationHours: 1.5 },
       { title: 'LinkedIn Recruiter & Boolean String Building', dateOffsetDays: 2, startHour: 19, durationHours: 1.5 },
       { title: 'Candidate Calling Pitch & Objection Handling', dateOffsetDays: 7, startHour: 19, durationHours: 1.5 },
       { title: 'Mock Interview Simulations & Capstone Submission', dateOffsetDays: 14, startHour: 19, durationHours: 1.5 },
