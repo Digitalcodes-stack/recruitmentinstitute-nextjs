@@ -552,10 +552,18 @@ export default function HomePage({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {[['5,000+', 'Students Trained'], ['95%', 'Placement Rate'], ['10+ Yrs', 'Of Excellence'], ['4', 'Expert Courses']].map(([v, l]) => (
-                    <div key={l} className="why-promo-stat">
-                      <div className="why-promo-stat-value">{v}</div>
-                      <div className="why-promo-stat-label">{l}</div>
+                  {(stats && stats.length > 0
+                    ? stats
+                    : [
+                        { value: '5,000+', label: 'Students Trained' },
+                        { value: '95%', label: 'Placement Rate' },
+                        { value: '25+ Yrs', label: 'Of Excellence' },
+                        { value: `${courses.length || 6}`, label: 'Expert Courses' },
+                      ]
+                  ).map((s, idx) => (
+                    <div key={idx} className="why-promo-stat">
+                      <div className="why-promo-stat-value">{s.value}</div>
+                      <div className="why-promo-stat-label">{s.label}</div>
                     </div>
                   ))}
                 </div>
