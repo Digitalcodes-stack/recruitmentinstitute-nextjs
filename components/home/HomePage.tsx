@@ -329,7 +329,7 @@ export default function HomePage({
         </div>
       </section>
 
-      {/* ══ CLIENT MARQUEE ════════════════════════════════════ */}
+      {/* ══ CLIENT MARQUEE ════════════════════════════════════
       {clients.length > 0 && (
         <section className="marquee-section">
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -354,8 +354,9 @@ export default function HomePage({
           </div>
         </section>
       )}
+      */}
 
-      {/* ══ STATS BAR ═════════════════════════════════════════ */}
+      {/* ══ STATS BAR ═════════════════════════════════════════
       <section className="stats-bar-section">
         <div className="container">
           <div className="grid grid-cols-2 lg:grid-cols-4">
@@ -373,6 +374,7 @@ export default function HomePage({
           </div>
         </div>
       </section>
+      */}
 
       {/* ══ COURSES ═══════════════════════════════════════════ */}
       <section className="courses-section">
@@ -388,7 +390,7 @@ export default function HomePage({
               </div>
               <h2 className="courses-heading">
                 Choose Your Course With{' '}
-                <span className="courses-heading-accent">India&apos;s No.1 Institute</span>
+                <span className="courses-heading-accent">India&apos;s No.1 Recruitment Institute</span>
               </h2>
               <p className="courses-sub">
                 Practical, industry-ready programs designed for every career stage — from freshers to corporate leaders.
