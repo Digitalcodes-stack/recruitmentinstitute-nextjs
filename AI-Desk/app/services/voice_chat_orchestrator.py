@@ -44,6 +44,7 @@ async def handle_voice_chat(
     caller_name: str,
     caller_phone: str | None,
     caller_email: str | None,
+    agent_name: str | None = None,
 ):
     """Entry point for the /ws/voice-chat/{executive_id} WebSocket route."""
     await websocket.accept()
@@ -57,10 +58,11 @@ async def handle_voice_chat(
             logger.error("Voice chat opened for unknown executive_id=%s", executive_id)
             await websocket.close(code=4004, reason="Executive not found")
             return
-        system_prompt = build_system_prompt(executive)
+        effective_name = agent_name or executive.name
+        system_prompt = build_system_prompt(executive, agent_name=effective_name)
 
     started_at = datetime.now(timezone.utc)
-    session = VoiceChatSession(websocket, system_prompt)
+    session = VoiceChatSession(websocket, system_prompt, agent_name=effective_name, company=executive.company)
     transcript: list[dict] = []
     extraction: dict = {}
     try:

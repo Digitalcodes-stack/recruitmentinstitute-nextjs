@@ -271,8 +271,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* AI Desk Talk widget — floating voice-assistant button, served by the AI-Desk service via /desk/ */}
         <script
           src="/desk/admin/talk-widget.js"
-          data-exec-id="137b9c71-b8dc-45f2-9fe0-2d445b0c0a50"
+          data-exec-id="aa76d1ef-ae97-4c64-9e1b-426555239b8d"
           data-exec-name="Priya"
+          data-api-base="http://localhost:8000"
           async
         />
       </body>

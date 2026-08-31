@@ -98,7 +98,7 @@ export default function Footer() {
                 <span className="footer-icon-box mt-0.5">
                   <MapPin className="w-3.5 h-3.5 footer-icon-blue" />
                 </span>
-                Pune, Maharashtra, India | Global Online Training Worldwide
+                Pune, Maharashtra, India | Online Training Worldwide
               </div>
             </div>
           </div>

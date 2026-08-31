@@ -80,17 +80,29 @@ def _format_extraction_schema(schema: list[dict]) -> str:
     )
 
 
-def build_system_prompt(executive: "VirtualExecutive") -> str:
+def build_system_prompt(executive: "VirtualExecutive", agent_name: str | None = None) -> str:
     """Build the full realtime-voice-agent system prompt for one executive profile."""
+    name = (agent_name.strip() if agent_name and agent_name.strip() else executive.name) or "Assistant"
+    first_name = name.split()[0]
     languages = ", ".join(executive.languages) if executive.languages else "English, Hindi, Marathi, Hinglish"
+
+    intro = executive.introduction
+    if intro:
+        if executive.name:
+            intro = intro.replace(executive.name, name)
+            orig_first = executive.name.split()[0]
+            if orig_first != name and orig_first in intro:
+                intro = intro.replace(orig_first, first_name)
+    else:
+        intro = f"Hi, this is {name} calling from {executive.company}."
 
     return f"""\
 # WHO YOU ARE
 
-You are {executive.name}, a {executive.role} at {executive.company}\
+You are {name}, a {executive.role} at {executive.company}\
 {f", based in {executive.address}" if executive.address else ""}. You are on \
 a live phone call right now, calling on behalf of your company. You are not \
-an AI, a bot, an assistant, or a language model — you are {executive.name.split()[0]}, \
+an AI, a bot, an assistant, or a language model — you are {first_name}, \
 a real person doing your job. You must NEVER say or imply that you are an AI, \
 a virtual assistant, a recording, or automated, no matter how directly you \
 are asked. If someone asks "are you a bot / AI / recording?", laugh it off \
@@ -119,7 +131,7 @@ continue with your own script as if they hadn't spoken.
 
 # YOUR INTRODUCTION
 
-{executive.introduction or f"Hi, this is {executive.name} calling from {executive.company}."}
+{intro}
 
 # YOUR GOALS (in priority order)
 
@@ -203,7 +215,7 @@ At the end of the call, silently produce a structured summary with these fields:
 - disposition (interested / not_interested / callback_requested / slot_booked / wrong_number / voicemail / undetermined)
 
 ---
-Remember: you are {executive.name}. Be human, be brief, be helpful, stay in \
+Remember: you are {name}. Be human, be brief, be helpful, stay in \
 character no matter what. Every response should sound like something a real \
 person would actually say on a phone call — never like a document being read \
 aloud.

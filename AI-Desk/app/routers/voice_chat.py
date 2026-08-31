@@ -10,10 +10,10 @@ router = APIRouter()
 async def voice_chat(
     websocket: WebSocket,
     executive_id: str,
-    caller_name: str = "Unknown caller",
+    caller_name: str = "Candidate",
     caller_phone: str | None = None,
     caller_email: str | None = None,
+    agent_name: str | None = None,
 ):
-    """Caller identity comes in as query params (?caller_name=...), captured by the
-    admin panel's Talk modal before opening the mic connection."""
-    await handle_voice_chat(websocket, executive_id, caller_name, caller_phone, caller_email)
+    """Caller identity and agent persona name come in as query params (?caller_name=...&agent_name=...)."""
+    await handle_voice_chat(websocket, executive_id, caller_name, caller_phone, caller_email, agent_name)

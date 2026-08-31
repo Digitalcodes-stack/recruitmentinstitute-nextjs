@@ -17,10 +17,33 @@ const nextConfig: NextConfig = {
   async rewrites() {
     const fastApiUrl = process.env.FASTAPI_SERVICE_URL || 'http://localhost:8000'
     return [
+      // Direct Admin & Database Viewer rewrites
+      {
+        source: '/desk/admin',
+        destination: `${fastApiUrl}/admin/`,
+      },
+      {
+        source: '/desk/admin/:path*',
+        destination: `${fastApiUrl}/admin/:path*`,
+      },
+      {
+        source: '/desk/database',
+        destination: `${fastApiUrl}/database`,
+      },
+      {
+        source: '/desk/docs',
+        destination: `${fastApiUrl}/docs`,
+      },
+      {
+        source: '/desk/openapi.json',
+        destination: `${fastApiUrl}/openapi.json`,
+      },
+      // WebSocket voice-chat
       {
         source: '/desk/ws/:path*',
         destination: `${fastApiUrl}/ws/:path*`,
       },
+      // REST API
       {
         source: '/desk/api/:path*',
         destination: `${fastApiUrl}/api/:path*`,

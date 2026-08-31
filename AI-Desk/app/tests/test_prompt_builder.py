@@ -59,8 +59,26 @@ def test_booked_slots_excluded():
     assert "All slots currently booked" in prompt
 
 
+def test_agent_name_override():
+    exe = SimpleNamespace(
+        name="Rupali Patil", role="Senior Career Counsellor", company="Recruitment Institute",
+        address="Pune", introduction="Hi, this is Rupali calling from Recruitment Institute.",
+        goals=["Help candidate"], scopes=["Discuss courses"],
+        donts=["Never break character"], languages=["English", "Hindi"],
+        speech_style="Friendly and helpful.", products_services=[],
+        faqs=[], action_slots=[], business_hours={}, timezone="Asia/Kolkata",
+        extraction_schema=[],
+    )
+    prompt = build_system_prompt(exe, agent_name="Priya")
+    assert "You are Priya" in prompt
+    assert "Hi, this is Priya calling from Recruitment Institute." in prompt
+    assert "Remember: you are Priya." in prompt
+    assert "Rupali" not in prompt
+
+
 if __name__ == "__main__":
     test_full_profile()
     test_empty_profile_does_not_crash()
     test_booked_slots_excluded()
+    test_agent_name_override()
     print("OK: all prompt_builder self-checks passed")

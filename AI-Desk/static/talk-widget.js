@@ -13,15 +13,19 @@
   var EXEC_NAME = CUR_SCRIPT.getAttribute("data-exec-name") || "Assistant";
   var EXEC_AVATAR = CUR_SCRIPT.getAttribute("data-exec-avatar") || "";
 
-  // Base path this script was loaded from (e.g. "/desk/admin") — avatars live
-  // under this same prefix. The API/WS routes are mounted at the FastAPI
-  // app root (not under /admin), so PREFIX strips the "/admin" static-mount
-  // segment too, leaving just the proxy prefix (e.g. "/desk", or "" if the
-  // service is at the domain root) to build /ws/voice-chat/... against.
-  var SCRIPT_URL = new URL(CUR_SCRIPT.src, location.href);
-  var BASE = SCRIPT_URL.pathname.replace(/\/[^/]*$/, ""); // strip "/talk-widget.js" -> ".../admin"
-  var PREFIX = BASE.replace(/\/admin$/, ""); // strip "/admin" -> proxy prefix
-  var ORIGIN = SCRIPT_URL.origin;
+  // Optional: explicit backend base URL to bypass Next.js proxy (for dev).
+  // e.g. data-api-base="http://localhost:8000"
+  // If omitted, falls back to page origin + /desk prefix.
+  var API_BASE = (CUR_SCRIPT.getAttribute("data-api-base") || "").replace(/\/$/, "");
+
+  // Rotating female counsellor names shown on the FAB label each call
+  var FEMALE_NAMES = ["Priya", "Anjali", "Sneha", "Meera", "Divya", "Riya", "Pooja", "Nisha"];
+  var nameIndex = 0;
+  function nextCallerName() {
+    var n = FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
+    nameIndex++;
+    return n;
+  }
 
   var GEMINI_SAMPLE_RATE = 16000;
   var talkState = null;
@@ -94,26 +98,18 @@ margin-top:14px;border:none;}\
         '<div class="aidt-avatar-wrap"><div class="aidt-avatar-ring" id="aidtRing"></div>' +
           '<div class="aidt-avatar" id="aidtAvatar">' + talkAvatarHtml(exec) + '</div></div>' +
         '<h2><span class="aidt-mic-dot" id="aidtMicDot"></span> ' + escapeHtml(exec.name) + '</h2>' +
-        '<div id="aidtCallerForm">' +
-          '<label>Your name</label><input id="aidtCallerName" placeholder="Required" />' +
-          '<label>Phone (optional)</label><input id="aidtCallerPhone" placeholder="+91..." />' +
-        '</div>' +
-        '<p class="aidt-status" id="aidtStatus">Enter your name, then click Call and allow microphone access.</p>' +
+        '<p class="aidt-status" id="aidtStatus">Connecting&hellip; please allow microphone access.</p>' +
         '<div class="aidt-meter"><div class="aidt-meter-fill" id="aidtMeterFill"></div></div>' +
-        '<button class="aidt-btn aidt-btn-primary" id="aidtToggle" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;">' + CALL_ICON + ' Call</button>' +
+        '<button class="aidt-btn aidt-btn-primary active" id="aidtToggle" style="display:inline-flex;align-items:center;justify-content:center;gap:7px;">' + END_ICON + ' End Call</button>' +
         '<button class="aidt-btn aidt-btn-secondary" id="aidtClose">Close</button>' +
       '</div>';
     document.body.appendChild(backdrop);
     backdrop.addEventListener("click", function (e) { if (e.target === backdrop) closeTalk(); });
     document.getElementById("aidtClose").onclick = closeTalk;
-    document.getElementById("aidtToggle").onclick = function () {
-      if (talkState) { stopTalk(); return; }
-      var name = document.getElementById("aidtCallerName").value.trim();
-      if (!name) { document.getElementById("aidtStatus").textContent = "Please enter your name first."; return; }
-      var phone = document.getElementById("aidtCallerPhone").value.trim();
-      document.getElementById("aidtCallerForm").style.display = "none";
-      startTalk(exec.id, name, phone);
-    };
+    document.getElementById("aidtToggle").onclick = function () { stopTalk(); };
+
+    // Start the call immediately with the counsellor's name
+    startTalk(exec.id, "Candidate", "", exec.name);
   }
 
   function closeTalk() {
@@ -122,17 +118,20 @@ margin-top:14px;border:none;}\
     if (el) el.remove();
   }
 
-  function startTalk(execId, callerName, callerPhone) {
+  function startTalk(execId, callerName, callerPhone, agentName) {
     var statusEl = document.getElementById("aidtStatus");
     var dotEl = document.getElementById("aidtMicDot");
     var toggleEl = document.getElementById("aidtToggle");
     navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: GEMINI_SAMPLE_RATE } })
       .then(function (micStream) {
-        var wsProtocol = ORIGIN.indexOf("https:") === 0 ? "wss:" : "ws:";
-        var wsHost = ORIGIN.replace(/^https?:/, "");
-        var params = new URLSearchParams({ caller_name: callerName });
+        // Build WebSocket URL: use API_BASE directly (e.g. http://localhost:8000)
+        // so the connection goes straight to FastAPI, not through Next.js proxy.
+        var wsBase = API_BASE || (location.origin + "/desk");
+        var wsUrl = wsBase.replace(/^https:/, "wss:").replace(/^http:/, "ws:") + "/ws/voice-chat/" + execId;
+        var params = new URLSearchParams({ caller_name: callerName || "Candidate" });
         if (callerPhone) params.set("caller_phone", callerPhone);
-        var ws = new WebSocket(wsProtocol + wsHost + PREFIX + "/ws/voice-chat/" + execId + "?" + params);
+        if (agentName) params.set("agent_name", agentName);
+        var ws = new WebSocket(wsUrl + "?" + params);
         ws.binaryType = "arraybuffer";
 
         var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -282,11 +281,20 @@ margin-top:14px;border:none;}\
     injectStyles();
     var fab = document.createElement("button");
     fab.className = "aidt-fab";
-    fab.setAttribute("aria-label", "Call Priya");
-    fab.title = "Call Priya";
+    var activeCounsellor = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[0];
+    var firstLabel = "Call " + activeCounsellor;
+    fab.setAttribute("aria-label", firstLabel);
+    fab.title = firstLabel;
     fab.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.24 1.01l-2.2 2.2z"/></svg>';
     fab.onclick = function () {
-      openTalk({ id: EXEC_ID, name: EXEC_NAME, avatar_url: EXEC_AVATAR });
+      if (document.getElementById("aidtModal")) return; // already open
+      var counsellor = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
+      nameIndex++;
+      var nextName = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
+      var nextLabel = "Call " + nextName;
+      fab.setAttribute("aria-label", nextLabel);
+      fab.title = nextLabel;
+      openTalk({ id: EXEC_ID, name: counsellor, avatar_url: EXEC_AVATAR });
     };
     document.body.appendChild(fab);
   }

@@ -56,7 +56,7 @@ GEMINI_OUT_RATE = 24000  # Hz, PCM16, returned by Gemini Live output — sent to
 class VoiceChatSession:
     """One live browser voice conversation: owns the browser WS and the Gemini Live WS for its duration."""
 
-    def __init__(self, browser_ws: WebSocket, system_prompt: str):
+    def __init__(self, browser_ws: WebSocket, system_prompt: str, **kwargs):
         self.browser_ws = browser_ws
         self.system_prompt = system_prompt
         self.transcript: list[dict] = []  # [{"role": "assistant"|"caller", "text": str}]
