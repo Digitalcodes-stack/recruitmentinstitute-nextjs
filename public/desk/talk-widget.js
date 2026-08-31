@@ -154,6 +154,11 @@ margin-top:14px;border:none;}\
         silentGain.connect(audioCtx.destination);
 
         var playbackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+        // Browsers create AudioContexts suspended until a user gesture resumes them.
+        // getUserMedia() above satisfies the gesture requirement for audioCtx, but this
+        // second context is created later inside the same handler and needs its own
+        // resume() call — otherwise playback is silently dropped (no error, no sound).
+        if (playbackCtx.state === "suspended") playbackCtx.resume();
         var playCursor = playbackCtx.currentTime;
         var playbackAnalyser = playbackCtx.createAnalyser();
         playbackAnalyser.fftSize = 256;
@@ -161,6 +166,7 @@ margin-top:14px;border:none;}\
 
         ws.onmessage = function (event) {
           if (typeof event.data === "string") return;
+          if (playbackCtx.state === "suspended") playbackCtx.resume(); // guard against re-suspension (e.g. tab backgrounded)
           var pcm16 = new Int16Array(event.data);
           var float32 = new Float32Array(pcm16.length);
           for (var i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;
