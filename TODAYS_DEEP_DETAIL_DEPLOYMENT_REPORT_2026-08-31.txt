@@ -1,0 +1,175 @@
+================================================================================
+ RECRUITMENT INSTITUTE — COMPREHENSIVE PRODUCTION & DEPLOYMENT REPORT
+ Date: 2026-08-31
+ Environment: Google Cloud Run (asia-south1), Google Cloud SQL & Cloud Build
+ Production Domain: https://recruitmentinstitute.in
+ Live Web Service URL: https://recruitmentinstitute-web-396924250862.asia-south1.run.app
+ Live AI Desk Service URL: https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app
+ Fast API LMS URL: https://recruitmentinstitute-api-396924250862.asia-south1.run.app
+================================================================================
+
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Today, an end-to-end AI Desk Voice Assistant system ("Priya"), browser database 
+viewer, audio playback fixes, reverse proxy rewrites, and full dual-container 
+Cloud Build pipelines were successfully developed, containerized, synchronized 
+with Git, and deployed to Google Cloud Run production in Mumbai (asia-south1).
+
+Key Accomplishments:
+  • AI Voice Assistant ("Priya") AudioContext playback fix: Resumed suspended 
+    AudioContext on call start, completely resolving silent audio in browsers.
+  • AI Desk Architecture: Configured Recruitment Institute Priya persona with 
+    Gemini 3.1 Flash Live Preview, interactive voice chat, and browser database 
+    viewer (/desk/database).
+  • Admin & Lead Automation: Automatic call conversation capture, transcript 
+    extraction, candidate categorization, and automatic email dispatch to 
+    sesasiba.es@gmail.com (CC: patilrupalib@gmail.com).
+  • Next.js Reverse Proxy Integration: Added comprehensive rewrites in next.config.ts 
+    and layout script routing /desk/admin, /desk/database, /desk/ws, /desk/api 
+    to the independent AI-Desk microservice.
+  • Cloud Build & Cloud Run Rollout: Built Docker images and deployed revisions for 
+    both recruitmentinstitute-aidesk and recruitmentinstitute-web with 100% traffic.
+  • Git Repository Sync: Committed and pushed all today's source code, dockerfiles, 
+    and configuration files to GitHub (Digitalcodes-stack/recruitmentinstitute-nextjs).
+
+================================================================================
+2. DETAILED BREAKDOWN OF TODAY'S TASKS & IMPLEMENTATIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+TASK 1: AI VOICE ASSISTANT ("PRIYA") AUDIOCONTEXT SILENCE FIX
+--------------------------------------------------------------------------------
+• Problem:
+  - When users clicked the "Call" button to initiate a voice conversation with 
+    Priya, the WebSocket connected and received audio chunks from Gemini Live, 
+    but the browser's Web Audio API AudioContext was suspended due to autoplay 
+    policies, causing silent calls.
+
+• Solution Implemented:
+  - In public/desk/admin/talk-widget.js:
+    1. Ensured AudioContext initialization immediately on the user's click event.
+    2. Added explicit `audioCtx.resume()` verification inside the connection flow.
+    3. Queued and played incoming PCM audio chunks smoothly with animated avatar 
+       mouth frames synchronized to speech volume levels.
+  - Verified audio speech plays crisply through laptop/mobile speakers upon clicking 
+    [📞 Call].
+
+--------------------------------------------------------------------------------
+TASK 2: AI DESK PERSONA & BROWSER DATABASE VIEWER
+--------------------------------------------------------------------------------
+• Implementation:
+  1. Persona Prompting:
+     - Configured Priya as the Senior Admissions & Academic Counselor at Recruitment 
+       Institute Pune (+91-7385204165).
+     - Trained on all 6 specialized training programs:
+       • End-to-End Recruitment Training
+       • HR Courses for Beginners
+       • HR Entrepreneurship Program
+       • HR Corporate Training Course
+       • Professional Recruitment Specialist
+       • Recruitment Business Accelerator
+  2. Database Viewer & Admin Portal:
+     - Integrated secure web-based database table inspector at /desk/database.
+     - Live call monitoring, audio playback, candidate status, and transcript logs 
+       available at /desk/admin/.
+  3. Automatic Email Dispatch:
+     - Configured ADMIN_EMAIL=sesasiba.es@gmail.com and EMAIL_CC=patilrupalib@gmail.com.
+     - Upon call completion, AI Desk summarizes candidate requirements and emails 
+       the transcript immediately.
+
+--------------------------------------------------------------------------------
+TASK 3: NEXT.JS REVERSE PROXY & WIDGET INCLUSION
+--------------------------------------------------------------------------------
+• Implementation:
+  1. Updated next.config.ts:
+     - Configured dynamic `AIDESK_SERVICE_URL` routing for:
+       • /desk/admin -> ${aiDeskUrl}/admin/
+       • /desk/admin/:path* -> ${aiDeskUrl}/admin/:path*
+       • /desk/database -> ${aiDeskUrl}/database
+       • /desk/docs -> ${aiDeskUrl}/docs
+       • /desk/openapi.json -> ${aiDeskUrl}/openapi.json
+       • /desk/ws/:path* -> ${aiDeskUrl}/ws/:path*
+       • /desk/api/:path* -> ${aiDeskUrl}/api/:path*
+  2. Updated src/app/layout.tsx:
+     - Script tag pointing to /desk/admin/talk-widget.js with executive ID and name.
+     - Removed hardcoded local endpoints in production to allow seamless proxying.
+
+--------------------------------------------------------------------------------
+TASK 4: GOOGLE CLOUD BUILD & CLOUD RUN PRODUCTION DEPLOYMENT
+--------------------------------------------------------------------------------
+• Implementation:
+  1. AI Desk Microservice:
+     - Configured AI-Desk/Dockerfile and cloudbuild-aidesk.yaml.
+     - Submitted Cloud Build task:
+       `gcloud builds submit --config=cloudbuild-aidesk.yaml .`
+       Generated image: `gcr.io/recruitmentinstitute-501106/recruitmentinstitute-aidesk:latest`
+     - Deployed new service `recruitmentinstitute-aidesk` to Cloud Run (asia-south1):
+       Revision: `recruitmentinstitute-aidesk-00001-pfq`
+       Service URL: `https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app`
+       Attached Secrets: AIDESK_DATABASE_URL, AIDESK_JWT_SECRET, GEMINI_API_KEY, SMTP_PASSWORD.
+
+  2. Next.js Web Frontend:
+     - Submitted Cloud Build task:
+       `gcloud builds submit --config=cloudbuild.yaml .`
+       Generated image: `gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest`
+     - Deployed updated revision to Cloud Run (asia-south1):
+       Revision: `recruitmentinstitute-web-00052-5jv`
+       Service URL: `https://recruitmentinstitute-web-396924250862.asia-south1.run.app`
+       Custom Domain: `https://recruitmentinstitute.in`
+       Injected Environment Variables:
+         AIDESK_SERVICE_URL=https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app
+         FASTAPI_SERVICE_URL=https://recruitmentinstitute-api-mgtpwwbuua-el.a.run.app
+         ADMIN_EMAIL=sesasiba.es@gmail.com
+         EMAIL_CC=sesasiba.es@gmail.com;patilrupalib@gmail.com
+
+================================================================================
+3. GIT COMMITS DEPLOYED TODAY
+================================================================================
+Repository: https://github.com/Digitalcodes-stack/recruitmentinstitute-nextjs.git
+Branch: main (Clean, up to date with origin/main)
+
+• commit 64bc2b9:
+  feat(ai-desk): configure Recruitment Institute Priya persona, browser database viewer, and voice chat
+• commit 9b5fe1d:
+  fix(voice-widget): resume playback AudioContext to fix silent voice calls
+• commit af88dfb:
+  chore(deploy): configure cloudbuild and rewrites for AI Desk and Next.js
+
+================================================================================
+4. PRODUCTION ENVIRONMENT SPECIFICATIONS & STATUS
+================================================================================
+• Google Cloud Project ID: recruitmentinstitute-501106
+• Region: asia-south1 (Mumbai)
+
+Services Overview:
+  1. recruitmentinstitute-web:
+     - URL: https://recruitmentinstitute-web-396924250862.asia-south1.run.app
+     - Custom Domain: https://recruitmentinstitute.in
+     - Active Revision: recruitmentinstitute-web-00052-5jv (100% traffic)
+     - Status: Running & Healthy (HTTP 200 OK)
+
+  2. recruitmentinstitute-aidesk:
+     - URL: https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app
+     - Active Revision: recruitmentinstitute-aidesk-00001-pfq (100% traffic)
+     - Status: Running & Healthy (HTTP 200 OK)
+
+  3. recruitmentinstitute-api:
+     - URL: https://recruitmentinstitute-api-396924250862.asia-south1.run.app
+     - Status: Running & Healthy (HTTP 200 OK)
+
+================================================================================
+5. VERIFICATION CHECKLIST
+================================================================================
+[x] https://recruitmentinstitute.in
+    - Floating [📞 Call Priya] button present at bottom-right above WhatsApp.
+    - Click Call -> Modal opens -> audio connects with two-way voice.
+[x] https://recruitmentinstitute.in/desk/admin/
+    - AI Desk administration panel with call recordings and conversation summaries.
+[x] https://recruitmentinstitute.in/desk/database
+    - Interactive database viewer for real-time table inspection.
+[x] Admin Email Routing
+    - sesasiba.es@gmail.com and patilrupalib@gmail.com receive end-of-call lead reports.
+
+================================================================================
+END OF REPORT — RECRUITMENT INSTITUTE DEPLOYMENT 2026-08-31
+================================================================================
