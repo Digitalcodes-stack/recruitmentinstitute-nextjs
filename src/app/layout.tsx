@@ -273,7 +273,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="/desk/admin/talk-widget.js"
           data-exec-id="aa76d1ef-ae97-4c64-9e1b-426555239b8d"
           data-exec-name="Priya"
-          data-api-base="http://localhost:8000"
+          // No data-api-base in production — the widget falls back to
+          // location.origin + "/desk", which Next.js rewrites to the AI-Desk
+          // service (see next.config.ts AIDESK_SERVICE_URL). Only override
+          // for local dev, where the browser can't resolve Docker/Cloud
+          // service names via the rewrite.
+          {...(process.env.NODE_ENV !== 'production' ? { 'data-api-base': 'http://localhost:8000' } : {})}
           async
         />
       </body>

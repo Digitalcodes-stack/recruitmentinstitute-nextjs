@@ -15,38 +15,40 @@ const nextConfig: NextConfig = {
   },
 
   async rewrites() {
-    const fastApiUrl = process.env.FASTAPI_SERVICE_URL || 'http://localhost:8000'
+    // AI-Desk (Priya voice chat / admin panel) — separate service from
+    // FASTAPI_SERVICE_URL, which is the unrelated ML/NLP backend.
+    const aiDeskUrl = process.env.AIDESK_SERVICE_URL || 'http://localhost:8000'
     return [
       // Direct Admin & Database Viewer rewrites
       {
         source: '/desk/admin',
-        destination: `${fastApiUrl}/admin/`,
+        destination: `${aiDeskUrl}/admin/`,
       },
       {
         source: '/desk/admin/:path*',
-        destination: `${fastApiUrl}/admin/:path*`,
+        destination: `${aiDeskUrl}/admin/:path*`,
       },
       {
         source: '/desk/database',
-        destination: `${fastApiUrl}/database`,
+        destination: `${aiDeskUrl}/database`,
       },
       {
         source: '/desk/docs',
-        destination: `${fastApiUrl}/docs`,
+        destination: `${aiDeskUrl}/docs`,
       },
       {
         source: '/desk/openapi.json',
-        destination: `${fastApiUrl}/openapi.json`,
+        destination: `${aiDeskUrl}/openapi.json`,
       },
       // WebSocket voice-chat
       {
         source: '/desk/ws/:path*',
-        destination: `${fastApiUrl}/ws/:path*`,
+        destination: `${aiDeskUrl}/ws/:path*`,
       },
       // REST API
       {
         source: '/desk/api/:path*',
-        destination: `${fastApiUrl}/api/:path*`,
+        destination: `${aiDeskUrl}/api/:path*`,
       },
     ]
   },

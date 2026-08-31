@@ -1,0 +1,11 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'AI-Desk/Dockerfile'
+      - '-t'
+      - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-aidesk:latest'
+      - 'AI-Desk'
+images:
+  - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-aidesk:latest'

@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+*.egg-info/
+.pytest_cache/
+.git/
+.claude/
+*.log
+CallMate_Daily_Report_*.txt
+LOGIN_CREDENTIALS.txt
