@@ -36,9 +36,17 @@ class Settings(BaseSettings):
     SMTP_USER: str = ""
     SMTP_PASS: str = ""
     EMAIL_FROM: str = ""  # defaults to SMTP_USER if unset
-    EMAIL_FROM_NAME: str = "AI Desk"
-    EMAIL_CC: str = ""  # optional, comma-separated — CC'd on every outgoing email (e.g. an admin inbox)
-    ADMIN_EMAIL: str = ""  # informational; not auto-used unless you also set EMAIL_CC
+    EMAIL_FROM_NAME: str = "Recruitment Institute AI Desk"
+    EMAIL_CC: str = "sesasiba.es@gmail.com,patilrupalib@gmail.com"  # optional, comma-separated — CC'd on every outgoing email
+    ADMIN_EMAIL: str = "sesasiba.es@gmail.com"
+    ADMIN_PHONE: str = "+91 7385204165"
+    ADMIN_WHATSAPP: str = "917385204165"
+
+    # --- WhatsApp API / Webhook Integration ---
+    WHATSAPP_PHONE_NUMBER_ID: str = ""
+    WHATSAPP_ACCESS_TOKEN: str = ""
+    WHATSAPP_API_VERSION: str = "v20.0"
+    WHATSAPP_WEBHOOK_URL: str = ""
 
     # --- Logging ---
     LOG_LEVEL: str = "INFO"

@@ -29,6 +29,9 @@ import {
   X,
   Check,
   CalendarPlus,
+  Send,
+  Copy,
+  Share2,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -253,6 +256,125 @@ export default function AdminContactsClient({
 
   const bookedSlots = (voiceData.slots || []).filter((s) => s.is_booked)
   const availableSlots = (voiceData.slots || []).filter((s) => !s.is_booked)
+
+  const handleSendToAdminWhatsApp = (conv: VoiceConversation) => {
+    const caller = conv.caller_name || 'Candidate'
+    const phone = conv.caller_phone || 'Not provided'
+    const email = conv.caller_email || 'Not provided'
+    const disp = conv.extracted_data?.disposition || 'Recorded'
+    const slot = conv.extracted_data?.interview_slot_booked || 'None'
+    const notes = conv.extracted_data?.key_notes_for_office || 'None'
+
+    const cleanCandidatePhone = phone.replace(/\D/g, '')
+    const waDirect = cleanCandidatePhone
+      ? `https://wa.me/${cleanCandidatePhone.startsWith('91') ? cleanCandidatePhone : '91' + cleanCandidatePhone}`
+      : ''
+
+    const snippet = (conv.transcript || [])
+      .slice(-3)
+      .map((t) => `• *${t.role === 'assistant' ? 'Priya' : 'Candidate'}:* ${t.text.substring(0, 75)}`)
+      .join('\n')
+
+    const message = `🎓 *VOICE AI LEAD ALERT — Recruitment Institute*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Candidate:* ${caller}\n📞 *Phone:* ${phone}\n✉️ *Email:* ${email}\n🤖 *Counsellor:* Priya (Voice AI)\n🎯 *Interest:* ${disp.toUpperCase()}\n📅 *Booked Slot:* ${slot}\n📝 *Key Notes:* ${notes}\n\n${waDirect ? `💬 *Direct Candidate Chat:* ${waDirect}\n` : ''}🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts\n━━━━━━━━━━━━━━━━━━━━\n*Transcript Summary:*\n${snippet || '(Logged in system)'}`
+
+    window.open(`https://wa.me/917385204165?text=${encodeURIComponent(message)}`, '_blank')
+    toast.success('Forwarding lead summary to Admin WhatsApp (+91 7385204165)...')
+  }
+
+  const handleWhatsAppCandidate = (conv: VoiceConversation) => {
+    if (!conv.caller_phone) {
+      toast.error('No candidate phone number recorded on this call')
+      return
+    }
+    const digits = conv.caller_phone.replace(/\D/g, '')
+    const target = digits.startsWith('91') ? digits : '91' + digits
+    const message = `Hello ${conv.caller_name || 'there'}! This is regarding your recent voice enquiry with our Senior Career Counsellor Priya at *Recruitment Institute Pune*. How can we assist you today with our practical HR & Recruitment courses, syllabus, and demo class details?`
+    window.open(`https://wa.me/${target}?text=${encodeURIComponent(message)}`, '_blank')
+  }
+
+  const handleCopyLeadSummary = (conv: VoiceConversation) => {
+    const caller = conv.caller_name || 'Candidate'
+    const phone = conv.caller_phone || 'Not provided'
+    const email = conv.caller_email || 'Not provided'
+    const disp = conv.extracted_data?.disposition || 'Recorded'
+    const slot = conv.extracted_data?.interview_slot_booked || 'None'
+    const notes = conv.extracted_data?.key_notes_for_office || 'None'
+    const text = `RECRUITMENT INSTITUTE — VOICE AI LEAD REPORT\nCandidate: ${caller}\nPhone: ${phone}\nEmail: ${email}\nDisposition: ${disp}\nBooked Slot: ${slot}\nNotes: ${notes}\nAdmin Dashboard: https://recruitmentinstitute.in/admin/contacts`
+    navigator.clipboard.writeText(text)
+    toast.success('Lead report copied to clipboard!')
+  }
+
+  const getDispositionTheme = (dispRaw?: string, interestRaw?: string) => {
+    const d = (dispRaw || interestRaw || '').toLowerCase()
+    if (d.includes('booked') || d.includes('demo') || d.includes('scheduled')) {
+      return {
+        label: 'DEMO SCHEDULED',
+        badgeBg: 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+        badgeBorder: '#059669',
+        badgeText: '#ffffff',
+        cardBorder: '#86efac',
+        noteBg: '#f0fdf4',
+        noteBorder: '#bbf7d0',
+        noteAccent: '#16a34a',
+        noteText: '#14532d',
+        icon: CalendarCheck,
+      }
+    }
+    if (d.includes('interested') || d.includes('high')) {
+      return {
+        label: 'HIGH INTEREST',
+        badgeBg: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
+        badgeBorder: '#2563eb',
+        badgeText: '#ffffff',
+        cardBorder: '#bfdbfe',
+        noteBg: '#eff6ff',
+        noteBorder: '#bfdbfe',
+        noteAccent: '#2563eb',
+        noteText: '#1e3a8a',
+        icon: Sparkles,
+      }
+    }
+    if (d.includes('callback') || d.includes('call_back')) {
+      return {
+        label: 'CALLBACK REQUESTED',
+        badgeBg: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)',
+        badgeBorder: '#d97706',
+        badgeText: '#ffffff',
+        cardBorder: '#fde68a',
+        noteBg: '#fffbeb',
+        noteBorder: '#fde68a',
+        noteAccent: '#d97706',
+        noteText: '#78350f',
+        icon: PhoneCall,
+      }
+    }
+    if (d.includes('not_interested') || d.includes('wrong') || d.includes('drop')) {
+      return {
+        label: 'NOT INTERESTED',
+        badgeBg: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+        badgeBorder: '#dc2626',
+        badgeText: '#ffffff',
+        cardBorder: '#fecaca',
+        noteBg: '#fef2f2',
+        noteBorder: '#fecaca',
+        noteAccent: '#dc2626',
+        noteText: '#7f1d1d',
+        icon: AlertCircle,
+      }
+    }
+    return {
+      label: dispRaw ? dispRaw.toUpperCase() : 'GENERAL ENQUIRY',
+      badgeBg: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
+      badgeBorder: '#4f46e5',
+      badgeText: '#ffffff',
+      cardBorder: '#c7d2fe',
+      noteBg: '#f5f3ff',
+      noteBorder: '#ddd6fe',
+      noteAccent: '#6366f1',
+      noteText: '#312e81',
+      icon: Clock3,
+    }
+  }
 
   return (
     <div>
@@ -736,19 +858,16 @@ export default function AdminContactsClient({
               {filteredConversations.map((conv) => {
                 const isExpanded = expandedTranscripts[conv.id]
                 const disp = conv.extracted_data?.disposition || 'Undetermined'
-                const isInterested =
-                  disp.toLowerCase().includes('interested') ||
-                  disp.toLowerCase().includes('booked') ||
-                  conv.extracted_data?.interest_level === 'interested'
+                const theme = getDispositionTheme(disp, conv.extracted_data?.interest_level)
 
                 return (
                   <div
                     key={conv.id}
                     style={{
                       background: '#fff',
-                      border: '1px solid #e2e8f0',
+                      border: `1.5px solid ${theme.cardBorder}`,
                       borderRadius: 18,
-                      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
                       padding: '20px 24px',
                     }}
                   >
@@ -765,20 +884,20 @@ export default function AdminContactsClient({
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
                           <div
                             style={{
-                              width: 36,
-                              height: 36,
-                              borderRadius: 10,
-                              background: '#eef2ff',
-                              border: '1px solid #c7d2fe',
+                              width: 38,
+                              height: 38,
+                              borderRadius: 12,
+                              background: theme.noteBg,
+                              border: `1.5px solid ${theme.cardBorder}`,
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              color: '#4f46e5',
+                              color: theme.noteAccent,
                               fontWeight: 800,
                               fontSize: 14,
                             }}
                           >
-                            <PhoneCall style={{ width: 16, height: 16 }} />
+                            <PhoneCall style={{ width: 17, height: 17 }} />
                           </div>
                           <div>
                             <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>
@@ -808,8 +927,12 @@ export default function AdminContactsClient({
                                 gap: 5,
                                 fontSize: 12,
                                 color: '#2563eb',
-                                fontWeight: 600,
+                                fontWeight: 700,
                                 textDecoration: 'none',
+                                background: '#eff6ff',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                border: '1px solid #bfdbfe',
                               }}
                             >
                               <Phone style={{ width: 12, height: 12 }} />
@@ -826,6 +949,10 @@ export default function AdminContactsClient({
                                 fontSize: 12,
                                 color: '#475569',
                                 textDecoration: 'none',
+                                background: '#f8fafc',
+                                padding: '2px 8px',
+                                borderRadius: 6,
+                                border: '1px solid #e2e8f0',
                               }}
                             >
                               <Mail style={{ width: 12, height: 12 }} />
@@ -841,22 +968,19 @@ export default function AdminContactsClient({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: 6,
-                            padding: '4px 10px',
+                            padding: '4px 12px',
                             borderRadius: 100,
                             fontSize: 11,
-                            fontWeight: 700,
-                            background: isInterested ? '#f0fdf4' : '#f8fafc',
-                            color: isInterested ? '#15803d' : '#475569',
-                            border: `1px solid ${isInterested ? '#bbf7d0' : '#e2e8f0'}`,
+                            fontWeight: 900,
+                            background: theme.badgeBg,
+                            color: theme.badgeText,
+                            boxShadow: `0 2px 6px ${theme.noteAccent}33`,
                             marginBottom: 6,
+                            letterSpacing: '0.03em',
                           }}
                         >
-                          {isInterested ? (
-                            <CheckCircle2 style={{ width: 12, height: 12 }} />
-                          ) : (
-                            <Clock3 style={{ width: 12, height: 12 }} />
-                          )}
-                          {disp.toUpperCase()}
+                          <theme.icon style={{ width: 12, height: 12 }} />
+                          {theme.label}
                         </div>
                         <div
                           style={{
@@ -883,43 +1007,75 @@ export default function AdminContactsClient({
                       </div>
                     </div>
 
-                    {/* Key Notes / Extraction Card */}
-                    {(conv.extracted_data?.key_notes_for_office ||
-                      conv.extracted_data?.interview_slot_booked ||
-                      conv.extracted_data?.preferred_course) && (
-                      <div
-                        style={{
-                          background: '#f8fafc',
-                          border: '1px solid #edf2f7',
-                          borderRadius: 12,
-                          padding: '12px 16px',
-                          marginTop: 14,
-                          fontSize: 13,
-                          lineHeight: 1.6,
-                          color: '#334155',
-                        }}
-                      >
+                    {/* Color-Coded Key Notes / Admissions Extraction Card */}
+                    <div
+                      style={{
+                        background: theme.noteBg,
+                        border: `1px solid ${theme.noteBorder}`,
+                        borderLeft: `4px solid ${theme.noteAccent}`,
+                        borderRadius: 14,
+                        padding: '14px 18px',
+                        marginTop: 14,
+                        fontSize: 13,
+                        lineHeight: 1.6,
+                        color: theme.noteText,
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.noteAccent }}>
+                          📌 Admissions Notes & AI Extraction
+                        </span>
                         {conv.extracted_data?.interview_slot_booked && (
-                          <div style={{ marginBottom: 6, color: '#15803d', fontWeight: 700 }}>
-                            📅 Booked Slot: {conv.extracted_data.interview_slot_booked}
+                          <span style={{ fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: '#10b981', color: '#fff' }}>
+                            📅 Demo Slot Locked
+                          </span>
+                        )}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {conv.extracted_data?.interview_slot_booked && (
+                          <div style={{ color: '#047857', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                            <span>📅 Booked Slot:</span>
+                            <span style={{ background: '#dcfce7', padding: '2px 8px', borderRadius: 6, border: '1px solid #86efac' }}>
+                              {conv.extracted_data.interview_slot_booked}
+                            </span>
                           </div>
                         )}
+
                         {conv.extracted_data?.preferred_course && (
-                          <div style={{ marginBottom: 6, color: '#1e40af', fontWeight: 600 }}>
-                            🎓 Course of Interest: {conv.extracted_data.preferred_course}
+                          <div style={{ color: '#1e40af', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                            <span>🎓 Course Interest:</span>
+                            <span style={{ background: '#dbeafe', padding: '2px 8px', borderRadius: 6, border: '1px solid #93c5fd' }}>
+                              {conv.extracted_data.preferred_course}
+                            </span>
                           </div>
                         )}
-                        {conv.extracted_data?.key_notes_for_office && (
-                          <div>
-                            <strong>Admissions Note:</strong>{' '}
-                            {conv.extracted_data.key_notes_for_office}
+
+                        {conv.extracted_data?.key_notes_for_office ? (
+                          <div style={{ marginTop: 2, background: 'rgba(255,255,255,0.7)', padding: '8px 12px', borderRadius: 8, border: `1px solid ${theme.noteBorder}` }}>
+                            <strong style={{ color: theme.noteAccent }}>Counsellor Summary:</strong>{' '}
+                            <span>{conv.extracted_data.key_notes_for_office}</span>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: 12, opacity: 0.85, fontStyle: 'italic' }}>
+                            Live spoken consultation recorded with Priya. Review candidate response and verbatim dialogue transcript below.
                           </div>
                         )}
                       </div>
-                    )}
+                    </div>
 
-                    {/* Toggle Transcript */}
-                    <div style={{ marginTop: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {/* Action Toolbar & Toggle Transcript */}
+                    <div
+                      style={{
+                        marginTop: 14,
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        flexWrap: 'wrap',
+                        gap: 10,
+                      }}
+                    >
                       <button
                         onClick={() => toggleTranscript(conv.id)}
                         style={{
@@ -939,6 +1095,74 @@ export default function AdminContactsClient({
                         {isExpanded ? 'Hide Conversation Transcript' : `View Full Transcript (${conv.transcript?.length || 0} turns)`}
                         {isExpanded ? <ChevronUp style={{ width: 13, height: 13 }} /> : <ChevronDown style={{ width: 13, height: 13 }} />}
                       </button>
+
+                      {/* 1-Click WhatsApp & Share Actions */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        {conv.caller_phone && (
+                          <button
+                            onClick={() => handleWhatsAppCandidate(conv)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 5,
+                              padding: '5px 10px',
+                              borderRadius: 8,
+                              fontSize: 11.5,
+                              fontWeight: 700,
+                              background: '#ecfdf5',
+                              color: '#059669',
+                              border: '1px solid #a7f3d0',
+                              cursor: 'pointer',
+                              textDecoration: 'none',
+                            }}
+                            title="Chat with Candidate on WhatsApp"
+                          >
+                            <MessageSquare style={{ width: 12, height: 12 }} />
+                            <span>WhatsApp Candidate</span>
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => handleSendToAdminWhatsApp(conv)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            padding: '5px 10px',
+                            borderRadius: 8,
+                            fontSize: 11.5,
+                            fontWeight: 700,
+                            background: '#eff6ff',
+                            color: '#2563eb',
+                            border: '1px solid #bfdbfe',
+                            cursor: 'pointer',
+                          }}
+                          title="Forward conversation summary to Admin WhatsApp (+91 7385204165)"
+                        >
+                          <Send style={{ width: 12, height: 12 }} />
+                          <span>Forward to Admin WhatsApp (+91 7385204165)</span>
+                        </button>
+
+                        <button
+                          onClick={() => handleCopyLeadSummary(conv)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            padding: '5px 8px',
+                            borderRadius: 8,
+                            fontSize: 11,
+                            fontWeight: 600,
+                            background: '#f8fafc',
+                            color: '#64748b',
+                            border: '1px solid #e2e8f0',
+                            cursor: 'pointer',
+                          }}
+                          title="Copy text summary"
+                        >
+                          <Copy style={{ width: 12, height: 12 }} />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Spoken Dialog Transcript */}
@@ -1848,16 +2072,42 @@ export default function AdminContactsClient({
                   <div
                     style={{
                       background: '#f8fafc',
-                      border: '1px solid #f1f5f9',
+                      border: '1px solid #e2e8f0',
+                      borderLeft: '4px solid #2563eb',
                       borderRadius: 12,
                       padding: '14px 18px',
                       fontSize: 13,
                       lineHeight: 1.7,
-                      color: '#475569',
+                      color: '#1e293b',
                     }}
                   >
-                    {contact.message}
+                    <p style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{contact.message}</p>
                   </div>
+                  {contact.mobile && (
+                    <div style={{ marginTop: 10, display: 'flex', justifyContent: 'flex-end' }}>
+                      <a
+                        href={`https://wa.me/${contact.mobile.replace(/\D/g, '').startsWith('91') ? contact.mobile.replace(/\D/g, '') : '91' + contact.mobile.replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${contact.name}! Thank you for contacting Recruitment Institute. How can we assist you with our programs?`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          padding: '5px 12px',
+                          borderRadius: 8,
+                          fontSize: 11.5,
+                          fontWeight: 700,
+                          background: '#ecfdf5',
+                          color: '#059669',
+                          border: '1px solid #a7f3d0',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        <MessageSquare style={{ width: 12, height: 12 }} />
+                        <span>Reply on WhatsApp</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

@@ -13,8 +13,9 @@ from fastapi import WebSocket
 from app.config import settings
 from app.database import AsyncSessionLocal
 from app.models import Conversation, VirtualExecutive
-from app.services.conversation_formatter import format_conversation_email
+from app.services.conversation_formatter import format_conversation_email, format_conversation_whatsapp
 from app.services.email_service import EmailNotConfigured, send_email
+from app.services.whatsapp_service import send_whatsapp_admin_alert
 from app.services.gemini_bridge import VoiceChatSession
 from app.services.jd_formatter import format_jd_text
 from app.services.prompt_builder import build_system_prompt
@@ -142,21 +143,33 @@ async def handle_voice_chat(
         )
 
         _send_admin_copy(conversation)
+        _send_admin_whatsapp(conversation)
         if executive:
             _maybe_send_jd_to_caller(conversation, executive, extraction)
 
 
 def _send_admin_copy(conversation: Conversation) -> None:
     """Auto-emails every conversation's transcript + extracted data to ADMIN_EMAIL. Best-effort — never blocks or breaks the save."""
-    if not settings.ADMIN_EMAIL:
-        return
+    admin_email = getattr(settings, "ADMIN_EMAIL", "sesasiba.es@gmail.com") or "sesasiba.es@gmail.com"
     try:
         subject, body = format_conversation_email(conversation)
-        send_email(settings.ADMIN_EMAIL, subject, body)
+        send_email(admin_email, subject, body)
+        logger.info("Admin copy email dispatched successfully to %s for conversation %s", admin_email, conversation.id)
     except EmailNotConfigured:
         logger.warning("ADMIN_EMAIL is set but SMTP is not configured — skipping admin copy")
     except Exception:
         logger.exception("Failed to send admin copy for conversation %s", conversation.id)
+
+
+def _send_admin_whatsapp(conversation: Conversation) -> None:
+    """Dispatches real-time WhatsApp alert with full lead details & transcript summary to Admin (+91 7385204165)."""
+    admin_whatsapp = getattr(settings, "ADMIN_WHATSAPP", "917385204165") or "917385204165"
+    try:
+        message_text = format_conversation_whatsapp(conversation)
+        send_whatsapp_admin_alert(message_text, recipient_phone=admin_whatsapp)
+        logger.info("Admin WhatsApp alert sent to %s for conversation %s", admin_whatsapp, conversation.id)
+    except Exception:
+        logger.exception("Failed to send admin WhatsApp alert for conversation %s", conversation.id)
 
 
 def _maybe_send_jd_to_caller(conversation: Conversation, executive: VirtualExecutive, extraction: dict) -> None:

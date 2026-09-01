@@ -802,15 +802,56 @@ export default function AdminLayout({ children, title }: { children: React.React
         <main
           style={{
             flex: 1,
-            padding: '32px 32px 64px',
+            padding: '32px 32px 48px',
             maxWidth: 1600,
             width: '100%',
             margin: '0 auto',
-            overflowY: 'auto',
           }}
         >
           {children}
         </main>
+
+        {/* ── Admin Footer ────────────────────────────────────────────── */}
+        <footer
+          style={{
+            padding: '16px 32px',
+            borderTop: '1px solid #e2e8f0',
+            background: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: 12,
+            color: '#64748b',
+            flexWrap: 'wrap',
+            gap: 12,
+            marginTop: 'auto',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontWeight: 800, color: '#0f172a' }}>Recruitment Institute</span>
+            <span>•</span>
+            <span>Enterprise Admin Portal v2.6</span>
+            <span>•</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#16a34a', fontWeight: 600 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
+              All Systems Operational
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            <Link href="/admin/brochures" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
+              Brochures Hub
+            </Link>
+            <Link href="/admin/contacts" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
+              Leads & Contacts
+            </Link>
+            <Link href="/admin/settings" style={{ color: '#64748b', textDecoration: 'none', fontWeight: 600 }}>
+              Settings
+            </Link>
+            <Link href="/" target="_blank" style={{ color: '#2563eb', fontWeight: 700, textDecoration: 'none' }}>
+              Public Site ↗
+            </Link>
+          </div>
+        </footer>
       </div>
 
       {/* ── Mobile Navigation Drawer ───────────────────────────────── */}
