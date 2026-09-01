@@ -15,7 +15,7 @@ export interface CourseBrochure {
   placementRate: string
   originalFee: number
   discountedFee: number
-  emiOption: string
+  emiOption?: string
   description: string
   keyHighlights: string[]
   whoShouldAttend: string[]
@@ -51,15 +51,14 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     badge: 'FLAGSHIP PROGRAM',
     level: 'All Levels',
     duration: '6 to 8 Weeks',
-    batchHours: '40+ Hours Live + 60+ Hours Practical Projects',
+    batchHours: '32 Hours Live (4 Hrs/Week) + Practical Projects',
     mode: 'Live Interactive Online & Classroom Pune',
     rating: 4.96,
     reviewsCount: 384,
     studentsTrained: 3200,
-    placementRate: '100% Placement Support',
+    placementRate: '95% Placement Support',
     originalFee: 24999,
     discountedFee: 14999,
-    emiOption: 'EMI starting @ ₹1,999/month',
     description:
       'Transform into an industry-ready Talent Acquisition Specialist. Master live Boolean search strings, LinkedIn Recruiter mastery, Naukri/Monster portals, enterprise ATS software, headhunting, screening, offer rollouts, salary negotiations, and closing complex mandates across IT, Non-IT, BFSI, and Healthcare sectors.',
     keyHighlights: [
@@ -178,7 +177,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     upcomingBatches: [
       { type: 'Weekday Evening Batch', timing: '7:30 PM - 8:30 PM (Mon-Fri)', days: 'Monday to Friday', seatsLeft: 4, status: 'Fast Filling' },
       { type: 'Weekend Fast-Track Batch', timing: '11:00 AM - 1:00 PM (Sat-Sun)', days: 'Saturday & Sunday', seatsLeft: 6, status: 'Open' },
-      { type: 'Pune Classroom Batch', timing: '10:30 AM - 12:30 PM (Sat-Sun)', days: 'FC Road, Pune Campus', seatsLeft: 2, status: 'Few Seats' },
+      { type: 'Pune Classroom Batch', timing: '10:30 AM - 12:30 PM (Sat-Sun)', days: 'Saturday & Sunday', seatsLeft: 2, status: 'Few Seats' },
     ],
     faqs: [
       {
@@ -204,15 +203,14 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     badge: 'BEST FOR FRESHERS',
     level: 'Beginner',
     duration: '6 Weeks',
-    batchHours: '36 Hours Live Sessions + HR Template Kit',
+    batchHours: '24 Hours Live Sessions (4 Hrs/Week) + HR Toolkit',
     mode: 'Live Online & Pune Classroom',
     rating: 4.94,
     reviewsCount: 290,
     studentsTrained: 2400,
-    placementRate: '100% Placement Support',
+    placementRate: '95% Placement Support',
     originalFee: 19999,
     discountedFee: 11999,
-    emiOption: 'EMI starting @ ₹1,499/month',
     description:
       'The definitive launchpad for aspiring HR professionals. Master end-to-end HR Generalist responsibilities including talent acquisition basics, onboarding, employee engagement, payroll calculations, PF/ESIC statutory compliance, leave & attendance management, and performance appraisals.',
     keyHighlights: [
@@ -237,7 +235,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 1,
         title: 'Core HR Lifecycle & Corporate Policy Frameworks',
-        duration: 'Week 1 (6 Hours)',
+        duration: 'Week 1 (4 Hours)',
         objective: 'Understand human resource architecture and employee lifecycle stages from hire to retire.',
         topics: [
           'Evolution of HR: From Personnel Management to Strategic Business Partner (HRBP)',
@@ -249,7 +247,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 2,
         title: 'Recruitment & Selection Basics for Generalists',
-        duration: 'Week 2 (6 Hours)',
+        duration: 'Week 2 (4 Hours)',
         objective: 'Learn rapid candidate sourcing, screening, and interview scheduling.',
         topics: [
           'Writing clear Job Descriptions & Job Specifications',
@@ -261,7 +259,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 3,
         title: 'Joining, Documentation & Seamless Onboarding',
-        duration: 'Week 3 (6 Hours)',
+        duration: 'Week 3 (4 Hours)',
         objective: 'Deliver an immaculate day-one employee onboarding experience.',
         topics: [
           'Pre-joining document verification and background check (BGV) workflows',
@@ -273,7 +271,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 4,
         title: 'Payroll Management & CTC Structuring in Excel',
-        duration: 'Week 4 (6 Hours)',
+        duration: 'Week 4 (4 Hours)',
         objective: 'Calculate error-free monthly payroll, taxes, and CTC structures.',
         topics: [
           'Gross Salary vs Basic vs HRA vs Special Allowances vs Net In-Hand Salary',
@@ -286,7 +284,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 5,
         title: 'Statutory Compliances: PF, ESIC, Gratuity & Labor Laws',
-        duration: 'Week 5 (6 Hours)',
+        duration: 'Week 5 (4 Hours)',
         objective: 'Master India statutory compliance rules and prevent legal non-compliance.',
         topics: [
           'Provident Fund (EPF/EPS) rules, employer/employee contribution rates & UAN filing',
@@ -299,7 +297,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 6,
         title: 'PMS, Employee Engagement & Exit Management',
-        duration: 'Week 6 (6 Hours)',
+        duration: 'Week 6 (4 Hours)',
         objective: 'Handle appraisals, grievances, full & final settlements, and exit interviews.',
         topics: [
           'Performance Management Systems: OKRs, KPIs, 360-Degree Feedback & Bell Curves',
@@ -342,7 +340,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     badge: 'BUSINESS ACCELERATOR',
     level: 'Advanced',
     duration: '8 Weeks',
-    batchHours: '48 Hours Live Mentorship + 1-on-1 Business Coaching',
+    batchHours: '32 Hours Live Mentorship (4 Hrs/Week) + 1-on-1 Business Coaching',
     mode: 'Live Mentorship & 1-on-1 Advisory',
     rating: 4.98,
     reviewsCount: 180,
@@ -350,7 +348,6 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     placementRate: 'Business Setup Guarantee',
     originalFee: 39999,
     discountedFee: 24999,
-    emiOption: 'EMI starting @ ₹3,499/month',
     description:
       'A complete step-by-step master blueprint for aspiring founders and senior recruiters to start, register, client-acquire, and scale a 6-to-7 figure recruitment consultancy or staffing agency in India and international markets.',
     keyHighlights: [
@@ -376,72 +373,70 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 1,
         title: 'Business Architecture, Legal Setup & Niche Selection',
-        duration: 'Week 1-2 (12 Hours)',
+        duration: 'Week 1-2 (8 Hours)',
         objective: 'Establish your company structure, branding, and profitable niche specialization.',
         topics: [
-          'Selecting High-Margin Niches: Tech/IT, BFSI, Healthcare, Executive Search or Blue-Collar',
-          'Entity Registration: Pvt Ltd vs LLP vs Sole Proprietorship, GST & MSME setup',
-          'Consultancy Branding: Name, Logo, Corporate Deck, Website & Email Infrastructure',
+          'Proprietorship vs LLP vs Pvt Ltd registration, GST, MSME & bank accounts',
+          'Choosing your high-margin recruitment niche (IT, Non-IT, BFSI, CXO, Healthcare)',
+          'Agency branding, domain, professional email, LinkedIn company page & portfolio website',
         ],
-        practicalOutcome: 'Define your core niche, value proposition, and client-facing corporate deck.',
+        practicalOutcome: 'Finalize your consultancy brand identity, niche positioning, and legal checklist.',
       },
       {
         moduleNumber: 2,
-        title: 'B2B Client Acquisition & Lead Generation Systems',
-        duration: 'Week 3-4 (12 Hours)',
-        objective: 'Sign your first 3 paying corporate hiring clients in 60 days.',
+        title: 'B2B Client Acquisition & Commercial Contracts',
+        duration: 'Week 3-4 (8 Hours)',
+        objective: 'Sign your first 3 corporate clients with high-margin recruitment fees.',
         topics: [
-          'Identifying Hiring Companies & Decision Makers (CHROs, VPs of HR, TA Heads, Founders)',
-          'High-Converting Cold Email & LinkedIn Outbound Campaigns that book discovery calls',
-          'Conducting the Client Pitch Call: Handling Objections, Emphasizing Speed & Quality',
-          'Vendor Empanelment (VMS) documentation and master service agreements',
+          'Finding HR Heads, CXOs & Hiring Managers via LinkedIn Sales Navigator & Apollo',
+          'Crafting high-conversion cold outreach email campaigns & telephone pitch scripts',
+          'Drafting Recruitment Service Level Agreements (SLAs), replacement clauses & payment terms',
         ],
-        practicalOutcome: 'Launch an outbound campaign targeting 100 verified TA heads and secure client meetings.',
+        practicalOutcome: 'Send 20 personalized B2B outreach messages and generate 3 client discovery calls.',
       },
       {
         moduleNumber: 3,
-        title: 'Commercial Terms, Contracts & Invoicing Frameworks',
-        duration: 'Week 5-6 (12 Hours)',
-        objective: 'Protect your revenue with bulletproof contracts and clear payment cycles.',
+        title: 'Agency Delivery Operations & Portal Infrastructure',
+        duration: 'Week 5-6 (8 Hours)',
+        objective: 'Setup recruiter pipelines, ATS workflows, and candidate delivery engines.',
         topics: [
-          'Commercial Fee Structures: Contingency (8.33%–12.5%), Retained Search (15%–25%)',
-          'Replacement Guarantee clauses, exclusivity terms, and anti-poaching clauses',
-          'Invoicing triggers (Date of Joining), credit periods (30-45 days), and payment follow-ups',
+          'Setting up Zoho Recruit or agency ATS for candidate tracking and client submissions',
+          'Cost-effective portal access strategies and Boolean sourcing for client mandates',
+          'Quality screening rubrics to maintain a 3:1 interview-to-selection ratio',
         ],
-        practicalOutcome: 'Customize a signed Master Service Agreement (MSA) template for client onboarding.',
+        practicalOutcome: 'Configure an agency ATS workspace and submit 5 screened profiles for a live client JD.',
       },
       {
         moduleNumber: 4,
-        title: 'Scaling Operations, Recruiter Hiring & Tech Stack',
-        duration: 'Week 7-8 (12 Hours)',
-        objective: 'Automate sourcing, hire junior recruiters, and build a recurring revenue business.',
+        title: 'Scaling, Team Building & International Expansion',
+        duration: 'Week 7-8 (8 Hours)',
+        objective: 'Hire commission-based recruiters and expand into US/UK/Middle-East remote hiring.',
         topics: [
-          'Recruiter Incentive & Commission structures that drive high placement volume',
-          'Implementing Multi-Tenant Agency ATS software and shared database systems',
-          'International Recruitment: Sourcing for UAE, UK, US, and Singapore mandates',
+          'Hiring freelance/remote recruiters on revenue-share or incentive models',
+          'Invoicing, GST compliance, TDS deductions & international payments (Wise/Stripe)',
+          'Transitioning from 8.33% contingent search to retained leadership mandates',
         ],
-        practicalOutcome: 'Create your 12-month business financial model and recruiter commission playbook.',
+        practicalOutcome: 'Build an agency financial forecasting model and commission structure.',
       },
     ],
     placementBenefits: [
-      '1-on-1 Mentorship Sessions with Successful Consultancy Founders',
-      'Exclusive Client Referral Network & Sub-Contracting Opportunities',
-      'Ready Legal Kit: MSAs, NDA Templates, Vendor Empanelment Forms & Invoices',
-      'Direct Guidance on Portal Licensing & Agency Discounted Tool Access',
+      '1-on-1 Business Coaching & Consultancy Launch Mentorship',
+      'Ready Legal Kit: Client Agreements, Non-Disclosure Agreements, Rate Cards & SLA Templates',
+      'Direct client lead sharing from Recruitment Institute Corporate Network',
     ],
-    certificationTitle: 'Executive Certified HR Entrepreneur & Staffing Specialist',
-    certificationDescription: 'Prestigious accreditation for certified recruitment business founders.',
+    certificationTitle: 'Certified HR Business Founder & Agency Principal (CHBF)',
+    certificationDescription: 'Premier business accreditation awarded to graduates who launch a verified agency.',
     upcomingBatches: [
-      { type: 'Executive Weekend Mastermind', timing: '4:00 PM - 7:00 PM (Sat-Sun)', days: 'Saturday & Sunday', seatsLeft: 3, status: 'Fast Filling' },
+      { type: 'Founder Mentorship Batch', timing: '7:00 PM - 9:00 PM (Sat-Sun)', days: 'Saturday & Sunday', seatsLeft: 3, status: 'Fast Filling' },
     ],
     faqs: [
       {
-        question: 'How much capital do I need to start a recruitment agency?',
-        answer: 'Recruitment is a zero-inventory business. You can start with basic infrastructure (laptop, internet, portal access) and minimal capital.',
+        question: 'How much capital do I need to start a recruitment consultancy?',
+        answer: 'Recruitment is a service business that can be started from home with minimal capital (₹15,000 - ₹25,000 for company registration, website, and basic tools).',
       },
       {
-        question: 'Will I receive legal contracts and client agreement templates?',
-        answer: 'Yes, you will receive fully customized legal client agreements (MSAs), fee schedules, and vendor forms vetted by corporate legal experts.',
+        question: 'Will I get client contracts and legal templates?',
+        answer: 'Yes, you receive our complete legal package including client contracts, SLAs, rate cards, and proposal presentations.',
       },
     ],
   },
@@ -534,15 +529,14 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     badge: 'EXECUTIVE SPECIALIZATION',
     level: 'Advanced',
     duration: '4 Weeks',
-    batchHours: '24 Hours Intensive Weekend Masterclass',
+    batchHours: '16 Hours Intensive Masterclass (4 Hrs/Week)',
     mode: 'Live Online Masterclass',
     rating: 4.97,
     reviewsCount: 160,
     studentsTrained: 890,
-    placementRate: 'Senior Level Placement Network',
+    placementRate: '95% Placement Support',
     originalFee: 21999,
     discountedFee: 13999,
-    emiOption: 'EMI starting @ ₹1,799/month',
     description:
       'An elite masterclass for recruiters looking to specialize in high-billing Executive Search, Leadership Mandates, and Niche Tech Hiring (AI/ML, Cloud Architecture, DevOps, Cybersecurity, Blockchain, and VP/Director-level roles).',
     keyHighlights: [
@@ -565,7 +559,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 1,
         title: 'Deconstructing Tech Architecture for Recruiters',
-        duration: 'Week 1 (6 Hours)',
+        duration: 'Week 1-2 (8 Hours)',
         objective: 'Talk with senior engineers and architects with 100% technical fluency.',
         topics: ['Programming Languages, Frameworks, DBs, and Cloud Tech Ecosystems', 'Evaluating tech seniority vs buzzwords'],
         practicalOutcome: 'Screen live tech resumes and identify genuine hands-on technical depth.',
@@ -573,7 +567,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         moduleNumber: 2,
         title: 'Executive Headhunting & Confidential Mandates',
-        duration: 'Week 2 (6 Hours)',
+        duration: 'Week 3-4 (8 Hours)',
         objective: 'Engage senior VP, Director, and C-Suite candidates confidentially.',
         topics: ['Organizational Chart Mapping', 'Cold calling passive leadership candidates', 'Maintaining discreet confidentiality'],
         practicalOutcome: 'Create a full competitive talent map for a VP of Engineering position.',
@@ -604,22 +598,21 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
     badge: 'JOB READY TRACK',
     level: 'All Levels',
     duration: '6 Weeks',
-    batchHours: '36 Hours Live Sessions + Live Hiring Mandates',
+    batchHours: '24 Hours Live Sessions (4 Hrs/Week) + Live Hiring Mandates',
     mode: 'Live Online & Pune Classroom',
     rating: 4.93,
     reviewsCount: 220,
     studentsTrained: 1750,
-    placementRate: '100% Placement Support',
+    placementRate: '95% Placement Support',
     originalFee: 18999,
     discountedFee: 11499,
-    emiOption: 'EMI starting @ ₹1,499/month',
     description:
       'Fast-track your entry into corporate recruiting. Learn core candidate sourcing, screening frameworks, portal operations, and interview scheduling with guaranteed placement assistance.',
     keyHighlights: [
       'Fast-track practical training designed specifically for immediate job placement',
       'Live portal practice on Naukri and LinkedIn',
       'Interview preparation and mock tests with real HR recruiters',
-      '100% placement support with corporate referrals',
+      '95% placement support with corporate referrals',
     ],
     whoShouldAttend: [
       'Fresh graduates looking for immediate corporate HR jobs',

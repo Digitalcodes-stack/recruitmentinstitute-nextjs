@@ -87,12 +87,12 @@ export async function POST(req: NextRequest) {
                   <tr>
                     <td width="33%" style="padding:4px 0;"><strong>⏳ Duration:</strong> ${brochure.duration}</td>
                     <td width="33%" style="padding:4px 0;"><strong>🎓 Rating:</strong> ⭐ ${brochure.rating}/5.0</td>
-                    <td width="33%" style="padding:4px 0;"><strong>🎯 Support:</strong> 100% Placement</td>
+                    <td width="33%" style="padding:4px 0;"><strong>🎯 Support:</strong> 95% Placement Support</td>
                   </tr>
                   <tr>
                     <td width="33%" style="padding:4px 0;"><strong>📍 Mode:</strong> Online & Pune</td>
                     <td width="33%" style="padding:4px 0;"><strong>💳 Tuition:</strong> ₹${brochure.discountedFee.toLocaleString('en-IN')} <span style="text-decoration:line-through;color:#94a3b8;font-size:11px;">₹${brochure.originalFee.toLocaleString('en-IN')}</span></td>
-                    <td width="33%" style="padding:4px 0;"><strong>⚡ EMI:</strong> From ₹1,499/mo</td>
+                    <td width="33%" style="padding:4px 0;"><strong>⚡ Certification:</strong> ISO Accredited</td>
                   </tr>
                 </table>
               </div>
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
               <div style="border-top:1px solid #e2e8f0;padding-top:20px;margin-top:20px;font-size:12px;color:#64748b;line-height:1.6;">
                 <p style="margin:0 0 4px 0;"><strong>Need immediate assistance or personalized batch timings?</strong></p>
                 <p style="margin:0 0 4px 0;">📞 Helpline / WhatsApp: +91-7385204165 | ✉️ support@recruitmentinstitute.in</p>
-                <p style="margin:0;">🏢 Campus: FC Road, Shivajinagar, Pune, Maharashtra 411005</p>
+                <p style="margin:0;">🏢 Campus: Recruitment Institute Pune, Maharashtra 411005</p>
               </div>
 
             </td>
@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
           <!-- SUBFOOTER -->
           <tr>
             <td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:16px 32px;text-align:center;font-size:11px;color:#94a3b8;">
-              © ${new Date().getFullYear()} Recruitment Institute Pune. All rights reserved. • ISO 9001:2015 Certified Academy.
+              © 2026 Recruitment Institute Pune. All rights reserved. • ISO 9001:2015 Certified Academy.
             </td>
           </tr>
 

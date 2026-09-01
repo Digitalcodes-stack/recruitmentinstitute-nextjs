@@ -193,7 +193,7 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
             </div>
             <div className="p-3 border-l border-white/10 print:border-slate-200">
               <div className="text-xs text-indigo-200 print:text-slate-500 font-semibold mb-1">🎯 Career Placement</div>
-              <div className="text-lg sm:text-xl font-black text-emerald-400 print:text-emerald-700">100% Support</div>
+              <div className="text-lg sm:text-xl font-black text-emerald-400 print:text-emerald-700">95% Placement Support</div>
               <div className="text-[11px] text-slate-300 print:text-slate-500">150+ Hiring Partners</div>
             </div>
             <div className="p-3 border-l border-white/10 print:border-slate-200">
@@ -250,29 +250,6 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
                   {idx + 1}
                 </div>
                 <div className="text-sm font-medium text-indigo-50 print:text-slate-800 leading-relaxed">{item}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* 3. TOOLS & SOFTWARE MASTERY */}
-        <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
-          <div className="flex items-center gap-2.5 mb-3 text-indigo-600 font-bold text-xs uppercase tracking-wider">
-            <Briefcase className="w-4 h-4" />
-            <span>Practical Stack</span>
-          </div>
-
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Industry Tools & Software Mastered</h2>
-          <p className="text-slate-600 text-sm mb-6">
-            Get hands-on live operational training on the exact recruitment and HR tools used by Fortune 500 corporations.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-            {brochure.toolsCovered.map((tool, idx) => (
-              <div key={idx} className="flex flex-col items-center text-center p-3.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-indigo-300 transition-colors">
-                <div className="text-2xl mb-2">{tool.icon}</div>
-                <div className="font-bold text-xs text-slate-900 mb-1">{tool.name}</div>
-                <div className="text-[10px] text-slate-500 font-medium">{tool.category}</div>
               </div>
             ))}
           </div>
@@ -354,14 +331,14 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
           </div>
         </section>
 
-        {/* 5. 100% PLACEMENT SUPPORT & MOCK INTERVIEWS */}
+        {/* 5. 95% PLACEMENT SUPPORT & MOCK INTERVIEWS */}
         <section className="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-sm print:bg-none print:border print:border-slate-300 print:text-black">
           <div className="flex items-center gap-2.5 mb-3 text-emerald-300 font-bold text-xs uppercase tracking-wider">
             <GraduationCap className="w-4 h-4" />
             <span>Placement Ecosystem</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">100% Dedicated Career & Placement Support</h2>
+          <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">95% Dedicated Career & Placement Support</h2>
           <p className="text-emerald-100/90 text-sm max-w-3xl mb-6 font-normal">
             We don’t just train you — we prepare your resume, conduct rigorous mock interviews with senior HR leaders, and schedule direct interview rounds with our 150+ corporate hiring partners.
           </p>
@@ -430,7 +407,6 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
                 ₹{brochure.discountedFee.toLocaleString('en-IN')}{' '}
                 <span className="text-sm line-through text-slate-400 font-medium">₹{brochure.originalFee.toLocaleString('en-IN')}</span>
               </div>
-              <div className="text-[11px] font-bold text-emerald-700">{brochure.emiOption}</div>
             </div>
           </div>
 
@@ -514,39 +490,14 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
           </div>
         </section>
 
-        {/* 9. EXPLORE OTHER PROGRAMS */}
-        <section className="print:hidden">
-          <h3 className="text-lg font-bold text-slate-900 mb-4">Explore Other Certification Programs</h3>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {allBrochures
-              .filter((b) => b.slug !== brochure.slug)
-              .slice(0, 3)
-              .map((other) => (
-                <Link
-                  key={other.slug}
-                  href={`/brochures/${other.slug}`}
-                  className="p-4 rounded-xl bg-white border border-slate-200 hover:border-indigo-400 hover:shadow-md transition-all group"
-                >
-                  <span className="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-50 px-2 py-0.5 rounded">
-                    {other.badge}
-                  </span>
-                  <div className="font-bold text-sm text-slate-900 group-hover:text-indigo-600 mt-2 mb-1">
-                    {other.title}
-                  </div>
-                  <div className="text-xs text-slate-500 font-medium">⏱️ {other.duration} • 🎯 100% Placement</div>
-                </Link>
-              ))}
-          </div>
-        </section>
-
       </main>
 
       {/* ================= OFFICIAL FOOTER ================= */}
       <footer className="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
           <div className="font-extrabold text-white text-base">Recruitment Institute Pune</div>
-          <p>FC Road, Shivajinagar, Pune, Maharashtra 411005 • Helpline: +91-7385204165 • support@recruitmentinstitute.in</p>
-          <p className="text-slate-500 text-[11px]">© {new Date().getFullYear()} Recruitment Institute. All rights reserved. • ISO 9001:2015 Certified Academy.</p>
+          <p>Maharashtra 411005 • Helpline: +91-7385204165 • support@recruitmentinstitute.in</p>
+          <p className="text-slate-500 text-[11px]">© 2026 Recruitment Institute. All rights reserved. • ISO 9001:2015 Certified Academy.</p>
         </div>
       </footer>
 

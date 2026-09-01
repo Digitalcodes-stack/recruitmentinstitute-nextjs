@@ -7,4 +7,9 @@ services/fastapi-backend/.venv/**
 services/fastapi-backend/**/__pycache__/**
 services/fastapi-backend/*.db
 services/fastapi-backend/*.png
+AI-Desk/.venv/**
+AI-Desk/**/__pycache__/**
+AI-Desk/*.db
+AI-Desk/*.log
 *.log
+

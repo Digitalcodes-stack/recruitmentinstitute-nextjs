@@ -239,7 +239,7 @@ export default function AdminBrochuresClient({ brochures }: Props) {
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400 font-semibold">Placement</div>
-                  <div className="font-bold text-emerald-700">100% Support</div>
+                  <div className="font-bold text-emerald-700">95% Placement Support</div>
                 </div>
               </div>
 
