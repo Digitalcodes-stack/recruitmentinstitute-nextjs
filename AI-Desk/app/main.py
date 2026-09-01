@@ -207,6 +207,76 @@ async def get_public_voice_leads():
     }
 
 
+@app.post("/api/public/voice-leads/slots/toggle", tags=["leads"])
+async def toggle_slot_booking(data: dict):
+    """Allows Superadmin to toggle slot booking status (e.g. release a booked slot or manually book a slot)."""
+    slot_index = data.get("slot_index")
+    is_booked = bool(data.get("is_booked", False))
+    candidate_name = data.get("booked_by_name") or ""
+    candidate_phone = data.get("booked_by_phone") or ""
+    candidate_email = data.get("booked_by_email") or ""
+
+    async with AsyncSessionLocal() as db:
+        execs = (await db.scalars(select(VirtualExecutive))).all()
+        if not execs:
+            return JSONResponse({"error": "No executive found"}, status_code=404)
+        priya = execs[0]
+        slots = list(priya.action_slots or [])
+        if slot_index is None or slot_index < 0 or slot_index >= len(slots):
+            return JSONResponse({"error": "Invalid slot index"}, status_code=400)
+
+        target = dict(slots[slot_index])
+        target["is_booked"] = is_booked
+        if is_booked:
+            target["booked_by_name"] = candidate_name or "Manually Booked by Admin"
+            target["booked_by_phone"] = candidate_phone
+            target["booked_by_email"] = candidate_email
+            target["booked_at"] = datetime.now(timezone.utc).isoformat()
+        else:
+            target["booked_by_name"] = None
+            target["booked_by_phone"] = None
+            target["booked_by_email"] = None
+            target["booked_at"] = None
+
+        slots[slot_index] = target
+        priya.action_slots = slots
+        await db.commit()
+
+    return {"success": True, "slots": slots}
+
+
+@app.post("/api/public/voice-leads/slots/add", tags=["leads"])
+async def add_new_slot(data: dict):
+    """Allows Superadmin to create a new demo/counselling slot for Priya to offer."""
+    label = data.get("label", "").strip()
+    date_str = data.get("date", "").strip()
+    start_time = data.get("start_time", "").strip()
+    end_time = data.get("end_time", "").strip()
+
+    if not label or not start_time:
+        return JSONResponse({"error": "Label and start_time are required"}, status_code=400)
+
+    new_slot = {
+        "label": label,
+        "date": date_str or datetime.now().strftime("%Y-%m-%d"),
+        "start_time": start_time,
+        "end_time": end_time or start_time,
+        "is_booked": False,
+    }
+
+    async with AsyncSessionLocal() as db:
+        execs = (await db.scalars(select(VirtualExecutive))).all()
+        if not execs:
+            return JSONResponse({"error": "No executive found"}, status_code=404)
+        priya = execs[0]
+        slots = list(priya.action_slots or [])
+        slots.append(new_slot)
+        priya.action_slots = slots
+        await db.commit()
+
+    return {"success": True, "slots": slots}
+
+
 @app.get("/health", tags=["health"])
 async def health():
     return {"status": "healthy"}

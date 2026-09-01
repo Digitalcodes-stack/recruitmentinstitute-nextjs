@@ -104,20 +104,33 @@ async def handle_voice_chat(
             executive = await db.get(VirtualExecutive, uuid.UUID(executive_id))
 
             # If the model reported a booked slot, mark the matching slot on
-            # the executive's profile as booked so it isn't offered to the
+            # the executive's profile as booked with candidate details so it isn't offered to the
             # next caller.
-            slot_text = extraction.get("interview_slot_booked") if isinstance(extraction, dict) else None
+            slot_text = None
+            if isinstance(extraction, dict):
+                slot_text = extraction.get("interview_slot_booked") or extraction.get("slot") or extraction.get("booked_slot")
+
             if slot_text and executive:
-                match = find_matching_slot(executive.action_slots, slot_text)
+                match = find_matching_slot(executive.action_slots, str(slot_text))
                 if match:
-                    updated_slots = [
-                        {**s, "is_booked": True} if s is match else s
-                        for s in executive.action_slots
-                    ]
+                    updated_slots = []
+                    for s in (executive.action_slots or []):
+                        if s is match or (s.get("label") == match.get("label") and s.get("date") == match.get("date")):
+                            updated_slots.append({
+                                **s,
+                                "is_booked": True,
+                                "booked_by_name": final_name,
+                                "booked_by_phone": final_phone or "",
+                                "booked_by_email": final_email or "",
+                                "booked_at": datetime.now(timezone.utc).isoformat(),
+                                "conversation_id": str(conversation.id),
+                            })
+                        else:
+                            updated_slots.append(s)
                     executive.action_slots = updated_slots
                     logger.info(
-                        "Marked slot booked for executive_id=%s: %s (matched from %r)",
-                        executive_id, match.get("label"), slot_text,
+                        "Marked slot booked for executive_id=%s: %s (caller=%s, matched from %r)",
+                        executive_id, match.get("label"), final_name, slot_text,
                     )
 
             await db.commit()

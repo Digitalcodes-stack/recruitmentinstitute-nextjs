@@ -23,7 +23,14 @@ import {
   RefreshCw,
   ExternalLink,
   ShieldCheck,
+  Lock,
+  Unlock,
+  Plus,
+  X,
+  Check,
+  CalendarPlus,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface ContactSubmission {
   id: number
@@ -70,6 +77,9 @@ interface ActionSlot {
   is_booked?: boolean
   booked_by_name?: string
   booked_by_phone?: string
+  booked_by_email?: string
+  booked_at?: string
+  conversation_id?: string
 }
 
 interface VoiceLeadsData {
@@ -91,6 +101,23 @@ export default function AdminContactsClient({
 }) {
   const [activeTab, setActiveTab] = useState<'voice' | 'slots' | 'inbox'>('voice')
   const [searchQuery, setSearchQuery] = useState('')
+  const [slotFilter, setSlotFilter] = useState<'all' | 'booked' | 'available'>('all')
+  const [updatingSlotIndex, setUpdatingSlotIndex] = useState<number | null>(null)
+  
+  // New Slot Modal
+  const [newSlotModalOpen, setNewSlotModalOpen] = useState(false)
+  const [newSlotLabel, setNewSlotLabel] = useState('')
+  const [newSlotDate, setNewSlotDate] = useState(new Date().toISOString().split('T')[0])
+  const [newSlotStart, setNewSlotStart] = useState('16:00')
+  const [newSlotEnd, setNewSlotEnd] = useState('16:45')
+  const [addingSlot, setAddingSlot] = useState(false)
+
+  // Manual Book Modal
+  const [manualBookIndex, setManualBookIndex] = useState<number | null>(null)
+  const [manualName, setManualName] = useState('')
+  const [manualPhone, setManualPhone] = useState('')
+  const [manualEmail, setManualEmail] = useState('')
+
   const [voiceData, setVoiceData] = useState<VoiceLeadsData>({
     executive: null,
     slots: [],
@@ -124,6 +151,82 @@ export default function AdminContactsClient({
       ...prev,
       [id]: !prev[id],
     }))
+  }
+
+  // Toggle or Release Slot
+  const toggleSlotStatus = async (
+    slotIndex: number,
+    isBooked: boolean,
+    name = '',
+    phone = '',
+    email = ''
+  ) => {
+    setUpdatingSlotIndex(slotIndex)
+    try {
+      const res = await fetch('/api/admin/voice-leads/slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slot_index: slotIndex,
+          is_booked: isBooked,
+          booked_by_name: name,
+          booked_by_phone: phone,
+          booked_by_email: email,
+        }),
+      })
+      const json = await res.json()
+      if (res.ok && json.success) {
+        toast.success(
+          isBooked
+            ? 'Slot successfully marked as BOOKED (Protected from duplicate AI assignment)'
+            : 'Slot RELEASED and marked AVAILABLE for Priya to offer'
+        )
+        fetchVoiceLeads()
+        setManualBookIndex(null)
+      } else {
+        throw new Error(json.error || 'Failed to update slot')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update slot')
+    } finally {
+      setUpdatingSlotIndex(null)
+    }
+  }
+
+  // Add new demo slot
+  const handleAddNewSlot = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newSlotLabel || !newSlotStart) {
+      toast.error('Please enter slot label and start time')
+      return
+    }
+    setAddingSlot(true)
+    try {
+      const res = await fetch('/api/admin/voice-leads/slots', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'add',
+          label: newSlotLabel,
+          date: newSlotDate,
+          start_time: newSlotStart,
+          end_time: newSlotEnd,
+        }),
+      })
+      const json = await res.json()
+      if (res.ok && json.success) {
+        toast.success('New demo & counselling slot added successfully!')
+        setNewSlotModalOpen(false)
+        setNewSlotLabel('')
+        fetchVoiceLeads()
+      } else {
+        throw new Error(json.error || 'Failed to add slot')
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to add slot')
+    } finally {
+      setAddingSlot(false)
+    }
   }
 
   // Filtering
@@ -917,98 +1020,701 @@ export default function AdminContactsClient({
       )}
 
       {/* ─────────────────────────────────────────────────────────────
-          TAB 2: BOOKED & AVAILABLE SLOTS
+          TAB 2: BOOKED & AVAILABLE SLOTS (DUPLICATE PROTECTED)
       ───────────────────────────────────────────────────────────── */}
       {activeTab === 'slots' && (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Slots Toolbar */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 12,
+              flexWrap: 'wrap',
+              background: '#fff',
+              padding: '12px 18px',
+              borderRadius: 14,
+              border: '1px solid #e8ecf0',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b' }}>Filter Slots:</span>
+              <button
+                onClick={() => setSlotFilter('all')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: 100,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: slotFilter === 'all' ? '#1e293b' : '#f1f5f9',
+                  color: slotFilter === 'all' ? '#fff' : '#475569',
+                }}
+              >
+                All Slots ({(voiceData.slots || []).length})
+              </button>
+              <button
+                onClick={() => setSlotFilter('booked')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: 100,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: slotFilter === 'booked' ? '#dc2626' : '#fee2e2',
+                  color: slotFilter === 'booked' ? '#fff' : '#991b1b',
+                }}
+              >
+                🔴 Booked Slots ({bookedSlots.length})
+              </button>
+              <button
+                onClick={() => setSlotFilter('available')}
+                style={{
+                  padding: '5px 12px',
+                  borderRadius: 100,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: slotFilter === 'available' ? '#16a34a' : '#dcfce7',
+                  color: slotFilter === 'available' ? '#fff' : '#15803d',
+                }}
+              >
+                🟢 Available Slots ({availableSlots.length})
+              </button>
+            </div>
+
+            <button
+              onClick={() => setNewSlotModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#4f46e5',
+                color: '#fff',
+                padding: '7px 14px',
+                borderRadius: 10,
+                fontSize: 12,
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 5px rgba(79,70,229,0.25)',
+              }}
+            >
+              <Plus style={{ width: 14, height: 14 }} />
+              Add Demo Slot
+            </button>
+          </div>
+
+          {/* Slots Cards Grid */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
               gap: 16,
             }}
           >
-            {(voiceData.slots || []).map((slot, index) => {
-              const isBooked = slot.is_booked
-              return (
-                <div
-                  key={index}
-                  style={{
-                    background: '#fff',
-                    border: `1px solid ${isBooked ? '#fecaca' : '#bbf7d0'}`,
-                    borderRadius: 16,
-                    padding: '18px 20px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-                    position: 'relative',
-                  }}
-                >
+            {(voiceData.slots || [])
+              .map((slot, index) => ({ slot, index }))
+              .filter(({ slot }) => {
+                if (slotFilter === 'booked') return slot.is_booked
+                if (slotFilter === 'available') return !slot.is_booked
+                return true
+              })
+              .map(({ slot, index }) => {
+                const isBooked = !!slot.is_booked
+                const isUpdating = updatingSlotIndex === index
+
+                return (
                   <div
+                    key={index}
                     style={{
+                      background: '#fff',
+                      border: `1.5px solid ${isBooked ? '#f87171' : '#86efac'}`,
+                      borderRadius: 18,
+                      padding: '20px',
+                      boxShadow: isBooked
+                        ? '0 4px 12px rgba(239, 68, 68, 0.08)'
+                        : '0 4px 12px rgba(34, 197, 94, 0.06)',
                       display: 'flex',
-                      alignItems: 'center',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
-                      marginBottom: 12,
+                      position: 'relative',
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: 11,
-                        fontWeight: 800,
-                        padding: '3px 10px',
-                        borderRadius: 100,
-                        background: isBooked ? '#fee2e2' : '#dcfce7',
-                        color: isBooked ? '#b91c1c' : '#15803d',
-                        border: `1px solid ${isBooked ? '#f87171' : '#86efac'}`,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 4,
-                      }}
-                    >
-                      {isBooked ? <AlertCircle style={{ width: 12, height: 12 }} /> : <CheckCircle2 style={{ width: 12, height: 12 }} />}
-                      {isBooked ? 'BOOKED' : 'AVAILABLE'}
-                    </span>
-                    <span style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>
-                      {slot.date}
-                    </span>
-                  </div>
+                    <div>
+                      {/* Top Badges */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: 12,
+                          gap: 8,
+                        }}
+                      >
+                        <span
+                          style={{
+                            fontSize: 11,
+                            fontWeight: 900,
+                            padding: '4px 12px',
+                            borderRadius: 100,
+                            background: isBooked ? '#dc2626' : '#16a34a',
+                            color: '#fff',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            letterSpacing: '0.04em',
+                            boxShadow: isBooked
+                              ? '0 2px 6px rgba(220, 38, 38, 0.25)'
+                              : '0 2px 6px rgba(22, 163, 74, 0.25)',
+                          }}
+                        >
+                          {isBooked ? (
+                            <Lock style={{ width: 12, height: 12 }} />
+                          ) : (
+                            <CheckCircle2 style={{ width: 12, height: 12 }} />
+                          )}
+                          {isBooked ? 'BOOKED (RESERVED)' : 'AVAILABLE (OPEN)'}
+                        </span>
 
-                  <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: '0 0 6px' }}>
-                    {slot.label}
-                  </h3>
+                        <span style={{ fontSize: 12, color: '#64748b', fontWeight: 700 }}>
+                          📅 {slot.date}
+                        </span>
+                      </div>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      fontSize: 13,
-                      color: '#475569',
-                      marginTop: 8,
-                    }}
-                  >
-                    <Clock3 style={{ width: 13, height: 13, color: '#64748b' }} />
-                    {slot.start_time} - {slot.end_time} IST
-                  </div>
+                      {/* Title & Time */}
+                      <h3
+                        style={{
+                          fontSize: 16,
+                          fontWeight: 800,
+                          color: '#0f172a',
+                          margin: '0 0 6px',
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        {slot.label}
+                      </h3>
 
-                  {isBooked && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 6,
+                          fontSize: 13,
+                          color: '#334155',
+                          fontWeight: 600,
+                          marginBottom: 12,
+                        }}
+                      >
+                        <Clock3 style={{ width: 14, height: 14, color: '#64748b' }} />
+                        {slot.start_time} – {slot.end_time} IST
+                      </div>
+
+                      {/* Duplicate Protection / AI Status Alert */}
+                      {isBooked ? (
+                        <div
+                          style={{
+                            background: '#fef2f2',
+                            border: '1px solid #fecaca',
+                            borderRadius: 12,
+                            padding: '12px 14px',
+                            marginBottom: 14,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              fontSize: 11,
+                              fontWeight: 800,
+                              color: '#b91c1c',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                              marginBottom: 6,
+                            }}
+                          >
+                            <ShieldCheck style={{ width: 13, height: 13 }} />
+                            DUPLICATE PROTECTION ACTIVE
+                          </div>
+                          <p style={{ fontSize: 11, color: '#7f1d1d', margin: '0 0 8px', lineHeight: 1.4 }}>
+                            Priya will <strong>NOT</strong> offer or assign this slot to any other caller.
+                          </p>
+
+                          <div
+                            style={{
+                              borderTop: '1px dashed #fca5a5',
+                              paddingTop: 8,
+                              fontSize: 12,
+                              color: '#1e293b',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 3,
+                            }}
+                          >
+                            <div>
+                              <strong>Candidate:</strong>{' '}
+                              <span style={{ fontWeight: 700, color: '#991b1b' }}>
+                                {slot.booked_by_name || 'Candidate from Voice Call'}
+                              </span>
+                            </div>
+                            {slot.booked_by_phone && (
+                              <div>
+                                <strong>Phone:</strong>{' '}
+                                <a
+                                  href={`tel:${slot.booked_by_phone}`}
+                                  style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}
+                                >
+                                  {slot.booked_by_phone}
+                                </a>
+                              </div>
+                            )}
+                            {slot.booked_by_email && (
+                              <div>
+                                <strong>Email:</strong>{' '}
+                                <a
+                                  href={`mailto:${slot.booked_by_email}`}
+                                  style={{ color: '#475569', textDecoration: 'none' }}
+                                >
+                                  {slot.booked_by_email}
+                                </a>
+                              </div>
+                            )}
+                            {slot.booked_at && (
+                              <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>
+                                <strong>Reserved:</strong>{' '}
+                                {new Date(slot.booked_at).toLocaleString('en-IN', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            background: '#f0fdf4',
+                            border: '1px solid #bbf7d0',
+                            borderRadius: 12,
+                            padding: '10px 14px',
+                            marginBottom: 14,
+                            fontSize: 12,
+                            color: '#166534',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontWeight: 700 }}>
+                            <Sparkles style={{ width: 13, height: 13, color: '#15803d' }} />
+                            Open for Priya AI Voice Assistant
+                          </div>
+                          <div style={{ fontSize: 11, color: '#15803d', marginTop: 3 }}>
+                            Priya is actively offering this slot to candidates during live phone calls.
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bottom Action Buttons */}
                     <div
                       style={{
-                        marginTop: 12,
-                        padding: '8px 12px',
-                        background: '#fef2f2',
-                        borderRadius: 8,
-                        fontSize: 12,
-                        color: '#991b1b',
+                        borderTop: '1px solid #f1f5f9',
+                        paddingTop: 12,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 8,
                       }}
                     >
-                      <strong>Booked Candidate:</strong> {slot.booked_by_name || 'Candidate'}
-                      {slot.booked_by_phone ? ` (${slot.booked_by_phone})` : ''}
+                      {isBooked ? (
+                        <button
+                          onClick={() => toggleSlotStatus(index, false)}
+                          disabled={isUpdating}
+                          style={{
+                            width: '100%',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            background: '#f1f5f9',
+                            border: '1px solid #cbd5e1',
+                            color: '#334155',
+                            padding: '8px 12px',
+                            borderRadius: 10,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          <Unlock style={{ width: 13, height: 13, color: '#16a34a' }} />
+                          {isUpdating ? 'Updating...' : 'Release Slot (Make Available for Priya)'}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setManualBookIndex(index)
+                            setManualName('')
+                            setManualPhone('')
+                            setManualEmail('')
+                          }}
+                          disabled={isUpdating}
+                          style={{
+                            width: '100%',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 6,
+                            background: '#f8fafc',
+                            border: '1px solid #e2e8f0',
+                            color: '#0f172a',
+                            padding: '8px 12px',
+                            borderRadius: 10,
+                            fontSize: 12,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          <Lock style={{ width: 13, height: 13, color: '#dc2626' }} />
+                          Reserve / Mark Booked Manually
+                        </button>
+                      )}
                     </div>
-                  )}
-                </div>
-              )
-            })}
+                  </div>
+                )
+              })}
           </div>
+
+          {/* Manual Book Modal */}
+          {manualBookIndex !== null && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 60,
+                background: 'rgba(15, 23, 42, 0.6)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  background: '#fff',
+                  borderRadius: 20,
+                  maxWidth: 440,
+                  width: '100%',
+                  overflow: 'hidden',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+                  border: '1px solid #e2e8f0',
+                }}
+              >
+                <div
+                  style={{
+                    background: '#1e293b',
+                    color: '#fff',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <Lock style={{ width: 16, height: 16, color: '#f87171' }} />
+                    <strong style={{ fontSize: 14 }}>Manually Reserve Slot</strong>
+                  </div>
+                  <button
+                    onClick={() => setManualBookIndex(null)}
+                    style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                  >
+                    <X style={{ width: 18, height: 18 }} />
+                  </button>
+                </div>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    toggleSlotStatus(manualBookIndex, true, manualName, manualPhone, manualEmail)
+                  }}
+                  style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}
+                >
+                  <p style={{ fontSize: 12, color: '#64748b', margin: 0 }}>
+                    Marking this slot as booked prevents Priya AI Voice Assistant from offering it to any other callers.
+                  </p>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                      Candidate Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Rahul Patil"
+                      value={manualName}
+                      onChange={(e) => setManualName(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: '1px solid #cbd5e1',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                      Phone / WhatsApp Number
+                    </label>
+                    <input
+                      type="tel"
+                      placeholder="e.g. +91 9823456789"
+                      value={manualPhone}
+                      onChange={(e) => setManualPhone(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: '1px solid #cbd5e1',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. candidate@gmail.com"
+                      value={manualEmail}
+                      onChange={(e) => setManualEmail(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: '1px solid #cbd5e1',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setManualBookIndex(null)}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: 10,
+                        background: '#f1f5f9',
+                        border: '1px solid #cbd5e1',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      style={{
+                        padding: '8px 18px',
+                        borderRadius: 10,
+                        background: '#dc2626',
+                        color: '#fff',
+                        border: 'none',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Confirm Booking & Lock Slot
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Add New Slot Modal */}
+          {newSlotModalOpen && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 60,
+                background: 'rgba(15, 23, 42, 0.6)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  background: '#fff',
+                  borderRadius: 20,
+                  maxWidth: 460,
+                  width: '100%',
+                  overflow: 'hidden',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+                  border: '1px solid #e2e8f0',
+                }}
+              >
+                <div
+                  style={{
+                    background: '#4f46e5',
+                    color: '#fff',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <CalendarPlus style={{ width: 16, height: 16 }} />
+                    <strong style={{ fontSize: 14 }}>Create New Demo Slot</strong>
+                  </div>
+                  <button
+                    onClick={() => setNewSlotModalOpen(false)}
+                    style={{ background: 'transparent', border: 'none', color: '#e0e7ff', cursor: 'pointer' }}
+                  >
+                    <X style={{ width: 18, height: 18 }} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleAddNewSlot} style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                      Slot Label / Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Tomorrow at 4:00 PM (Live Demo)"
+                      value={newSlotLabel}
+                      onChange={(e) => setNewSlotLabel(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: '1px solid #cbd5e1',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                      Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={newSlotDate}
+                      onChange={(e) => setNewSlotDate(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        fontSize: 13,
+                        borderRadius: 10,
+                        border: '1px solid #cbd5e1',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                        Start Time *
+                      </label>
+                      <input
+                        type="time"
+                        required
+                        value={newSlotStart}
+                        onChange={(e) => setNewSlotStart(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          fontSize: 13,
+                          borderRadius: 10,
+                          border: '1px solid #cbd5e1',
+                          outline: 'none',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                        End Time
+                      </label>
+                      <input
+                        type="time"
+                        value={newSlotEnd}
+                        onChange={(e) => setNewSlotEnd(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          fontSize: 13,
+                          borderRadius: 10,
+                          border: '1px solid #cbd5e1',
+                          outline: 'none',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => setNewSlotModalOpen(false)}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: 10,
+                        background: '#f1f5f9',
+                        border: '1px solid #cbd5e1',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={addingSlot}
+                      style={{
+                        padding: '8px 18px',
+                        borderRadius: 10,
+                        background: '#4f46e5',
+                        color: '#fff',
+                        border: 'none',
+                        fontSize: 12,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {addingSlot ? 'Creating...' : 'Create & Enable Slot'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

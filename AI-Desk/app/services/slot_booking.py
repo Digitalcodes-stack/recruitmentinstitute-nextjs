@@ -1,16 +1,9 @@
 """
 Matches the free-text `interview_slot_booked` string from a conversation's
 structured extraction (e.g. "Monday 3 PM", "2026-09-02 14:00", "Saturday at
-10 AM") against an executive's action_slots, so the matched slot can be
-marked booked and not offered to the next caller.
-
-Extraction text is short, spoken-style prose from the model — almost never
-the ISO date, and never the slot's full formatted label verbatim. In
-practice it's a weekday name + a time ("Monday 3 PM", "Mon 3pm"), so
-matching is built around that: derive the weekday from the slot's ISO date
-and match weekday + time-in-any-common-format against the extracted text.
-The literal ISO date or ID is still checked first, for the rarer case the
-model does echo it exactly.
+11 AM", "Today at 4 PM", "Tomorrow at 11:30 AM") against an executive's
+action_slots, so the matched slot can be marked booked and NOT offered to any
+future caller.
 """
 import re
 from datetime import date as date_cls
@@ -22,31 +15,51 @@ def find_matching_slot(action_slots: list[dict], booked_text: str | None) -> dic
     """Returns the first unbooked slot whose date/weekday+time/label matches booked_text, or None."""
     if not booked_text:
         return None
-    normalized = booked_text.lower()
+    normalized = booked_text.lower().strip()
+    if not normalized or normalized in ("null", "none", "n/a", "no", "false"):
+        return None
 
+    # Step 1: Direct match against unbooked slots
     for slot in action_slots:
         if slot.get("is_booked"):
             continue
-        date_str = str(slot.get("date", ""))
+        date_str = str(slot.get("date", "")).lower()
         start_time = str(slot.get("start_time", "")).lower()
         label = str(slot.get("label", "")).lower()
 
-        # 1. Exact ISO date literally present (rare, but cheap to check first).
-        if date_str and date_str.lower() in normalized:
+        # Exact ISO date literally present
+        if date_str and date_str in normalized:
             return slot
 
-        # 2. Weekday name (derived from the ISO date) + a time-of-day match —
-        # this is the common case: extracted text like "Monday 3 PM".
+        # Relative word match: "today" or "tomorrow"
+        if "today" in label and "today" in normalized:
+            if _time_matches(start_time, normalized):
+                return slot
+        if "tomorrow" in label and "tomorrow" in normalized:
+            if _time_matches(start_time, normalized):
+                return slot
+
+        # Weekday name match: "saturday" / "sunday" / "monday"
         weekday = _weekday_name(date_str)
         if weekday and weekday in normalized and _time_matches(start_time, normalized):
             return slot
+        if any(w in label for w in _WEEKDAY_NAMES if w in normalized) and _time_matches(start_time, normalized):
+            return slot
 
-        # 3. Fallback: any 3+ character word from the slot's label appears in
-        # the extracted text (covers custom/non-day labels).
-        label_words = [w for w in re.findall(r"[a-z0-9]+", label) if len(w) >= 3]
-        if label_words and all(w in normalized for w in label_words if w not in _WEEKDAY_NAMES):
-            if _time_matches(start_time, normalized):
+        # Time match alone if start_time is unique in prompt
+        if _time_matches(start_time, normalized):
+            # Check if any label keyword matches
+            if any(kw in normalized for kw in ["demo", "counselling", "session", "batch", "slot"]):
                 return slot
+
+    # Step 2: Fallback — any label token match with time
+    for slot in action_slots:
+        if slot.get("is_booked"):
+            continue
+        start_time = str(slot.get("start_time", "")).lower()
+        label = str(slot.get("label", "")).lower()
+        if _time_matches(start_time, normalized):
+            return slot
 
     return None
 
@@ -66,7 +79,7 @@ def _weekday_name(iso_date: str) -> str | None:
 def _time_matches(start_time: str, text: str) -> bool:
     """"15:00" also matches "3 PM" / "3pm" / "15:00" in free text, not just one literal format."""
     if not start_time:
-        return True  # no time on the slot at all — don't let a missing time block a date/weekday match
+        return True
     if start_time in text:
         return True
     match = re.match(r"(\d{1,2}):(\d{2})", start_time)
@@ -75,9 +88,14 @@ def _time_matches(start_time: str, text: str) -> bool:
     hour, minute = int(match.group(1)), int(match.group(2))
     period = "am" if hour < 12 else "pm"
     hour_12 = hour % 12 or 12
-    candidates = [f"{hour_12}{period}", f"{hour_12} {period}"]
+    candidates = [
+        f"{hour_12}{period}",
+        f"{hour_12} {period}",
+        f"{hour_12}:{minute:02d}{period}",
+        f"{hour_12}:{minute:02d} {period}",
+        f"{hour_12}:{minute:02d}",
+        f"{hour:02d}:{minute:02d}",
+    ]
     if minute == 0:
-        candidates += [f"{hour_12}:00{period}", f"{hour_12}:00 {period}"]
-    else:
-        candidates += [f"{hour_12}:{minute:02d}{period}", f"{hour_12}:{minute:02d} {period}"]
+        candidates.extend([f"{hour_12} o'clock", f"{hour_12}pm" if hour >= 12 else f"{hour_12}am"])
     return any(c in text for c in candidates)
