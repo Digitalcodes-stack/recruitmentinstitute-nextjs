@@ -70,12 +70,27 @@ async def handle_voice_chat(
     except Exception:
         logger.exception("Voice chat bridge failed for executive_id=%s", executive_id)
     finally:
+        extracted_name = ""
+        extracted_phone = ""
+        extracted_email = ""
+        if isinstance(extraction, dict):
+            extracted_name = (extraction.get("candidate_name") or extraction.get("caller_name") or extraction.get("name") or "").strip()
+            extracted_phone = (extraction.get("candidate_phone") or extraction.get("best_callback_number") or extraction.get("phone") or extraction.get("caller_phone") or "").strip()
+            extracted_email = (extraction.get("candidate_email") or extraction.get("email") or extraction.get("caller_email") or "").strip()
+
+        final_name = caller_name
+        if not final_name or final_name in ("Candidate", "Caller", "Visitor", "User", ""):
+            final_name = extracted_name if extracted_name else "Candidate"
+
+        final_phone = caller_phone or (extracted_phone if extracted_phone else None)
+        final_email = caller_email or (extracted_email if extracted_email else None)
+
         async with AsyncSessionLocal() as db:
             conversation = Conversation(
                 executive_id=uuid.UUID(executive_id),
-                caller_name=caller_name,
-                caller_phone=caller_phone or None,
-                caller_email=caller_email or None,
+                caller_name=final_name,
+                caller_phone=final_phone,
+                caller_email=final_email,
                 transcript=transcript,
                 extracted_data=extraction,
                 started_at=started_at,
