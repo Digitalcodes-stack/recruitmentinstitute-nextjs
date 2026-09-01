@@ -26,7 +26,7 @@ def send_email(to_address: str, subject: str, body: str) -> None:
         raise EmailNotConfigured("SMTP_USER/SMTP_PASS are not configured in .env")
 
     from_address = settings.EMAIL_FROM or settings.SMTP_USER
-    cc_addresses = [a.strip() for a in settings.EMAIL_CC.split(",") if a.strip()]
+    cc_addresses = [a.strip() for a in settings.EMAIL_CC.replace(";", ",").split(",") if a.strip()]
 
     message = EmailMessage()
     message["Subject"] = subject

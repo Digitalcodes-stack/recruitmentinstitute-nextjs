@@ -166,6 +166,43 @@ async def root():
     return {"app": settings.APP_NAME, "status": "ok", "admin_panel": "/admin/", "database_viewer": "/database"}
 
 
+@app.get("/api/public/voice-leads", tags=["leads"])
+async def get_public_voice_leads():
+    """Provides consolidated AI Desk conversation transcripts, summaries, and slots to the main admin hub."""
+    async with AsyncSessionLocal() as db:
+        execs = (await db.scalars(select(VirtualExecutive))).all()
+        convs = (await db.scalars(select(Conversation).order_by(Conversation.started_at.desc()).limit(150))).all()
+
+    priya = execs[0] if execs else None
+    slots = priya.action_slots if priya and priya.action_slots else []
+
+    return {
+        "executive": {
+            "id": str(priya.id) if priya else None,
+            "name": priya.name if priya else "Priya",
+            "role": priya.role if priya else "Senior Career Counsellor",
+            "company": priya.company if priya else "Recruitment Institute",
+            "phone": "+91-7385204165",
+        } if priya else None,
+        "slots": slots,
+        "conversations": [
+            {
+                "id": str(c.id),
+                "executive_id": str(c.executive_id),
+                "caller_name": c.caller_name or "Candidate",
+                "caller_phone": c.caller_phone or "",
+                "caller_email": c.caller_email or "",
+                "started_at": c.started_at.isoformat() if c.started_at else None,
+                "ended_at": c.ended_at.isoformat() if c.ended_at else None,
+                "duration_seconds": c.duration_seconds or 0,
+                "extracted_data": c.extracted_data or {},
+                "transcript": c.transcript or [],
+            }
+            for c in convs
+        ],
+    }
+
+
 @app.get("/health", tags=["health"])
 async def health():
     return {"status": "healthy"}

@@ -9,7 +9,7 @@ import {
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
   MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
   Presentation, Layers3, ClipboardList, ListChecks, CalendarDays, Plus,
-  ShieldCheck, ArrowUpRight, Sparkles,
+  ShieldCheck, ArrowUpRight, Sparkles, PhoneCall,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -74,8 +74,8 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Inbox & Operations',
     items: [
-      { label: 'Contact Submissions', href: '/admin/contacts',      icon: MessageSquare },
-      { label: 'Notifications',       href: '/admin/notifications', icon: Bell },
+      { label: 'Contact & Voice Leads', href: '/admin/contacts', icon: PhoneCall, badge: 'Priya' },
+      { label: 'Notifications', href: '/admin/notifications', icon: Bell },
     ],
   },
   {
