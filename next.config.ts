@@ -16,12 +16,17 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     // AI-Desk (Priya voice chat / admin panel) — separate service from
-    // FASTAPI_SERVICE_URL, which is the unrelated ML/NLP backend.
-    const aiDeskUrl = process.env.AIDESK_SERVICE_URL || 'http://localhost:8000'
+    const aiDeskUrl =
+      process.env.AIDESK_SERVICE_URL ||
+      'https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app'
     return [
       // Direct Admin & Database Viewer rewrites
       {
         source: '/desk/admin',
+        destination: `${aiDeskUrl}/admin/`,
+      },
+      {
+        source: '/desk/admin/',
         destination: `${aiDeskUrl}/admin/`,
       },
       {
@@ -40,15 +45,15 @@ const nextConfig: NextConfig = {
         source: '/desk/openapi.json',
         destination: `${aiDeskUrl}/openapi.json`,
       },
-      // WebSocket voice-chat
-      {
-        source: '/desk/ws/:path*',
-        destination: `${aiDeskUrl}/ws/:path*`,
-      },
       // REST API
       {
         source: '/desk/api/:path*',
         destination: `${aiDeskUrl}/api/:path*`,
+      },
+      // Static assets
+      {
+        source: '/desk/static/:path*',
+        destination: `${aiDeskUrl}/static/:path*`,
       },
     ]
   },

@@ -466,7 +466,10 @@ function openWhatsApp(phone, message) {
   window.open(`https://wa.me/${digits}?text=${encodeURIComponent(message)}`, "_blank");
 }
 
-const API = "";
+const isDeskPath = location.pathname.startsWith("/desk");
+const isProdHost = location.hostname === "recruitmentinstitute.in" || location.hostname === "www.recruitmentinstitute.in";
+const defaultCloudRunBase = "https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app";
+const API = isProdHost ? defaultCloudRunBase : (isDeskPath ? "/desk" : "");
 let token = localStorage.getItem("aidesk_token") || "";
 let currentView = token ? "executives" : "login";
 
