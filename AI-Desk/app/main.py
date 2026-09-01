@@ -23,14 +23,19 @@ app = FastAPI(
 # The admin panel is served same-origin (from /admin on this same app), so no
 # cross-origin CORS is needed for normal use — kept permissive only in DEBUG
 # for local tooling (curl, alternate dev ports, etc.).
-if settings.DEBUG:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://recruitmentinstitute.in",
+        "https://www.recruitmentinstitute.in",
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "*",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 import json
 from fastapi.responses import HTMLResponse, RedirectResponse

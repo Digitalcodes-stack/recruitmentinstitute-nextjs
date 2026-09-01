@@ -124,9 +124,11 @@ margin-top:14px;border:none;}\
     var toggleEl = document.getElementById("aidtToggle");
     navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: GEMINI_SAMPLE_RATE } })
       .then(function (micStream) {
-        // Build WebSocket URL: use API_BASE directly (e.g. http://localhost:8000)
+        // Build WebSocket URL: use API_BASE directly (e.g. Cloud Run or http://localhost:8000)
         // so the connection goes straight to FastAPI, not through Next.js proxy.
-        var wsBase = API_BASE || (location.origin + "/desk");
+        var defaultCloudRunBase = "https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app";
+        var isProdHost = typeof location !== "undefined" && (location.hostname === "recruitmentinstitute.in" || location.hostname === "www.recruitmentinstitute.in");
+        var wsBase = API_BASE || (isProdHost ? defaultCloudRunBase : (location.origin + "/desk"));
         var wsUrl = wsBase.replace(/^https:/, "wss:").replace(/^http:/, "ws:") + "/ws/voice-chat/" + execId;
         var params = new URLSearchParams({ caller_name: callerName || "Candidate" });
         if (callerPhone) params.set("caller_phone", callerPhone);
