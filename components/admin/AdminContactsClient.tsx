@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   Mail,
   Phone,
@@ -228,6 +229,26 @@ export default function AdminContactsClient({
             />
             Refresh AI Calls
           </button>
+          <Link
+            href="/admin/brochures"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
+              color: '#1d4ed8',
+              padding: '8px 14px',
+              borderRadius: 10,
+              fontSize: 12,
+              fontWeight: 700,
+              textDecoration: 'none',
+              boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+            }}
+          >
+            <Sparkles style={{ width: 13, height: 13, color: '#2563eb' }} />
+            Course Brochures Hub
+          </Link>
           <a
             href="/desk/admin/"
             target="_blank"

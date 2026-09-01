@@ -56,11 +56,12 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Content & LMS',
     items: [
-      { label: 'Courses',        href: '/admin/courses',   icon: BookOpen },
-      { label: 'FAQs',           href: '/admin/faqs',      icon: HelpCircle },
-      { label: 'Knowledge Base', href: '/admin/knowledge', icon: Lightbulb },
-      { label: 'Q & A',          href: '/admin/questions', icon: MessageCircleQuestion },
-      { label: 'Blog Posts',     href: '/admin/blog',      icon: FileText },
+      { label: 'Courses',          href: '/admin/courses',   icon: BookOpen },
+      { label: 'Course Brochures', href: '/admin/brochures', icon: Sparkles, badge: 'New' },
+      { label: 'FAQs',             href: '/admin/faqs',      icon: HelpCircle },
+      { label: 'Knowledge Base',   href: '/admin/knowledge', icon: Lightbulb },
+      { label: 'Q & A',            href: '/admin/questions', icon: MessageCircleQuestion },
+      { label: 'Blog Posts',       href: '/admin/blog',      icon: FileText },
     ],
   },
   {
