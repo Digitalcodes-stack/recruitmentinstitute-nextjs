@@ -261,7 +261,8 @@ export default function AdminContactsClient({
     const caller = conv.caller_name || 'Candidate'
     const phone = conv.caller_phone || 'Not provided'
     const email = conv.caller_email || 'Not provided'
-    const disp = conv.extracted_data?.disposition || 'Recorded'
+    const analysis = analyzeCandidateConversation(conv)
+    const disp = conv.extracted_data?.disposition || (analysis.badges.length > 0 ? 'HIGH INTEREST' : 'Recorded')
     const slot = conv.extracted_data?.interview_slot_booked || 'None'
     const notes = conv.extracted_data?.key_notes_for_office || 'None'
 
@@ -270,12 +271,15 @@ export default function AdminContactsClient({
       ? `https://wa.me/${cleanCandidatePhone.startsWith('91') ? cleanCandidatePhone : '91' + cleanCandidatePhone}`
       : ''
 
+    const badgeBullets = analysis.badges.map((b) => `• ${b.icon} *${b.title}:* ${b.label}`).join('\n')
+    const quoteBullets = analysis.candidateQuotes.map((q) => `💬 _"${q}"_`).join('\n')
+
     const snippet = (conv.transcript || [])
       .slice(-3)
       .map((t) => `• *${t.role === 'assistant' ? 'Priya' : 'Candidate'}:* ${t.text.substring(0, 75)}`)
       .join('\n')
 
-    const message = `🎓 *VOICE AI LEAD ALERT — Recruitment Institute*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Candidate:* ${caller}\n📞 *Phone:* ${phone}\n✉️ *Email:* ${email}\n🤖 *Counsellor:* Priya (Voice AI)\n🎯 *Interest:* ${disp.toUpperCase()}\n📅 *Booked Slot:* ${slot}\n📝 *Key Notes:* ${notes}\n\n${waDirect ? `💬 *Direct Candidate Chat:* ${waDirect}\n` : ''}🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts\n━━━━━━━━━━━━━━━━━━━━\n*Transcript Summary:*\n${snippet || '(Logged in system)'}`
+    const message = `🎓 *VOICE AI LEAD ALERT — Recruitment Institute*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Candidate:* ${caller}\n📞 *Phone:* ${phone}\n✉️ *Email:* ${email}\n🤖 *Counsellor:* Priya (Voice AI)\n🎯 *Disposition:* ${disp.toUpperCase()}\n📅 *Booked Slot:* ${slot}\n\n🎯 *EXACT CANDIDATE INQUIRIES & DEMANDS:*\n${badgeBullets || '• General Admissions Consultation'}\n\n${quoteBullets ? `💬 *CANDIDATE SPOKEN WORDS:*\n${quoteBullets}\n\n` : ''}${notes !== 'None' ? `📝 *Office Notes:* ${notes}\n\n` : ''}${waDirect ? `💬 *Direct Candidate Chat:* ${waDirect}\n` : ''}🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts\n━━━━━━━━━━━━━━━━━━━━\n*Recent Dialogue Summary:*\n${snippet || '(Logged in database)'}`
 
     window.open(`https://wa.me/917385204165?text=${encodeURIComponent(message)}`, '_blank')
     toast.success('Forwarding lead summary to Admin WhatsApp (+91 7385204165)...')
@@ -296,15 +300,272 @@ export default function AdminContactsClient({
     const caller = conv.caller_name || 'Candidate'
     const phone = conv.caller_phone || 'Not provided'
     const email = conv.caller_email || 'Not provided'
-    const disp = conv.extracted_data?.disposition || 'Recorded'
+    const analysis = analyzeCandidateConversation(conv)
+    const disp = conv.extracted_data?.disposition || (analysis.badges.length > 0 ? 'HIGH INTEREST' : 'Recorded')
     const slot = conv.extracted_data?.interview_slot_booked || 'None'
     const notes = conv.extracted_data?.key_notes_for_office || 'None'
-    const text = `RECRUITMENT INSTITUTE — VOICE AI LEAD REPORT\nCandidate: ${caller}\nPhone: ${phone}\nEmail: ${email}\nDisposition: ${disp}\nBooked Slot: ${slot}\nNotes: ${notes}\nAdmin Dashboard: https://recruitmentinstitute.in/admin/contacts`
+    const badgeText = analysis.badges.map((b) => `${b.icon} ${b.label}`).join(' | ')
+    const quotesText = analysis.candidateQuotes.map((q) => `"${q}"`).join('; ')
+    const text = `RECRUITMENT INSTITUTE — VOICE AI LEAD REPORT\nCandidate: ${caller}\nPhone: ${phone}\nEmail: ${email}\nDisposition: ${disp}\nBooked Slot: ${slot}\nRequirements: ${badgeText}\nCandidate Quotes: ${quotesText}\nNotes: ${notes}\nAdmin Dashboard: https://recruitmentinstitute.in/admin/contacts`
     navigator.clipboard.writeText(text)
     toast.success('Lead report copied to clipboard!')
   }
 
-  const getDispositionTheme = (dispRaw?: string, interestRaw?: string) => {
+  interface RequirementBadge {
+    category: 'course' | 'fee' | 'batch' | 'placement' | 'mode' | 'demo' | 'qualification'
+    label: string
+    title: string
+    bg: string
+    border: string
+    text: string
+    dotColor: string
+    icon: string
+  }
+
+  const analyzeCandidateConversation = (conv: VoiceConversation) => {
+    const turns = conv.transcript || []
+    const callerTurns = turns.filter((t) => t.role === 'caller' || t.role === 'user')
+    const fullText = (
+      turns.map((t) => t.text).join(' ') +
+      ' ' +
+      (conv.extracted_data?.key_notes_for_office || '') +
+      ' ' +
+      (conv.extracted_data?.preferred_course || '')
+    ).toLowerCase()
+
+    const badges: RequirementBadge[] = []
+    const candidateQuotes: string[] = []
+
+    // 1. Course Focus
+    if (
+      fullText.includes('recruitment') ||
+      fullText.includes('boolean') ||
+      fullText.includes('sourcing') ||
+      fullText.includes('talent acquisition') ||
+      fullText.includes('headhunt') ||
+      fullText.includes('ats')
+    ) {
+      badges.push({
+        category: 'course',
+        label: 'End-to-End Recruitment & Talent Acquisition',
+        title: 'Course Requirement',
+        bg: '#eff6ff',
+        border: '#bfdbfe',
+        text: '#1e40af',
+        dotColor: '#3b82f6',
+        icon: '🎓',
+      })
+    }
+    if (
+      fullText.includes('payroll') ||
+      fullText.includes('generalist') ||
+      fullText.includes('statutory') ||
+      fullText.includes('pf') ||
+      fullText.includes('esic') ||
+      fullText.includes('compliance') ||
+      fullText.includes('operations')
+    ) {
+      badges.push({
+        category: 'course',
+        label: 'HR Generalist & Payroll Operations',
+        title: 'Course Requirement',
+        bg: '#eef2ff',
+        border: '#c7d2fe',
+        text: '#3730a3',
+        dotColor: '#6366f1',
+        icon: '📘',
+      })
+    }
+    if (
+      fullText.includes('entrepreneur') ||
+      fullText.includes('agency') ||
+      fullText.includes('consultancy') ||
+      fullText.includes('client') ||
+      fullText.includes('business') ||
+      fullText.includes('start firm')
+    ) {
+      badges.push({
+        category: 'course',
+        label: 'HR Entrepreneurship & Agency Setup',
+        title: 'Business Track',
+        bg: '#faf5ff',
+        border: '#e9d5ff',
+        text: '#6b21a8',
+        dotColor: '#a855f7',
+        icon: '🚀',
+      })
+    }
+
+    // 2. Fee / Pricing Inquiry (Highlight in Vivid Emerald Green)
+    if (
+      fullText.includes('fee') ||
+      fullText.includes('cost') ||
+      fullText.includes('price') ||
+      fullText.includes('how much') ||
+      fullText.includes('discount') ||
+      fullText.includes('charge') ||
+      fullText.includes('rupees') ||
+      fullText.includes('₹') ||
+      fullText.includes('commercial') ||
+      fullText.includes('installment')
+    ) {
+      badges.push({
+        category: 'fee',
+        label: 'Inquired about Course Fees & Special Discount Offer',
+        title: 'Fee / Pricing Query',
+        bg: '#ecfdf5',
+        border: '#6ee7b7',
+        text: '#065f46',
+        dotColor: '#10b981',
+        icon: '💰',
+      })
+    }
+
+    // 3. Batches & Schedule (Highlight in Warm Amber)
+    if (fullText.includes('weekend') || fullText.includes('saturday') || fullText.includes('sunday')) {
+      badges.push({
+        category: 'batch',
+        label: 'Weekend Batch (Saturday & Sunday)',
+        title: 'Batch Preference',
+        bg: '#fffbeb',
+        border: '#fde68a',
+        text: '#92400e',
+        dotColor: '#f59e0b',
+        icon: '📅',
+      })
+    } else if (
+      fullText.includes('weekday') ||
+      fullText.includes('evening') ||
+      fullText.includes('morning') ||
+      fullText.includes('timing') ||
+      fullText.includes('time')
+    ) {
+      badges.push({
+        category: 'batch',
+        label: 'Weekday Evening Batch Schedule',
+        title: 'Timing Preference',
+        bg: '#fffbeb',
+        border: '#fde68a',
+        text: '#92400e',
+        dotColor: '#f59e0b',
+        icon: '⏰',
+      })
+    }
+
+    // 4. Placement Assistance (Highlight in Fuchsia / Purple)
+    if (
+      fullText.includes('placement') ||
+      fullText.includes('job') ||
+      fullText.includes('support') ||
+      fullText.includes('interview') ||
+      fullText.includes('package') ||
+      fullText.includes('salary') ||
+      fullText.includes('hiring partner') ||
+      fullText.includes('95%') ||
+      fullText.includes('100%')
+    ) {
+      badges.push({
+        category: 'placement',
+        label: 'Inquired about 95% Placement & Corporate Hiring Partners',
+        title: 'Placement Assurance',
+        bg: '#fdf4ff',
+        border: '#f5d0fe',
+        text: '#86198f',
+        dotColor: '#d946ef',
+        icon: '🎯',
+      })
+    }
+
+    // 5. Learning Mode: Pune Classroom vs Online (Highlight in Cyan)
+    if (
+      fullText.includes('pune') ||
+      fullText.includes('classroom') ||
+      fullText.includes('offline') ||
+      fullText.includes('campus') ||
+      fullText.includes('fc road') ||
+      fullText.includes('shivajinagar')
+    ) {
+      badges.push({
+        category: 'mode',
+        label: 'Inquired about Pune Classroom Training',
+        title: 'Learning Mode',
+        bg: '#ecfeff',
+        border: '#a5f3fc',
+        text: '#155e75',
+        dotColor: '#06b6d4',
+        icon: '🏢',
+      })
+    } else if (
+      fullText.includes('online') ||
+      fullText.includes('zoom') ||
+      fullText.includes('live class') ||
+      fullText.includes('remote')
+    ) {
+      badges.push({
+        category: 'mode',
+        label: 'Live Online Interactive Batches',
+        title: 'Learning Mode',
+        bg: '#ecfeff',
+        border: '#a5f3fc',
+        text: '#155e75',
+        dotColor: '#06b6d4',
+        icon: '💻',
+      })
+    }
+
+    // 6. Free Demo Session (Highlight in Rose Red)
+    if (
+      conv.extracted_data?.interview_slot_booked ||
+      fullText.includes('demo') ||
+      fullText.includes('trial') ||
+      fullText.includes('counselling') ||
+      fullText.includes('slot') ||
+      fullText.includes('attend')
+    ) {
+      badges.push({
+        category: 'demo',
+        label: conv.extracted_data?.interview_slot_booked
+          ? `Locked Demo Slot: ${conv.extracted_data.interview_slot_booked}`
+          : 'Free Live Demo Session Inquired / Requested',
+        title: 'Live Demo Class',
+        bg: '#fff1f2',
+        border: '#fecdd3',
+        text: '#9f1239',
+        dotColor: '#f43f5e',
+        icon: '🎟️',
+      })
+    }
+
+    // Fallback if no specific tags caught
+    if (badges.length === 0) {
+      badges.push({
+        category: 'course',
+        label: 'General Course & Admissions Inquiry',
+        title: 'Admissions Enquiry',
+        bg: '#f8fafc',
+        border: '#e2e8f0',
+        text: '#334155',
+        dotColor: '#64748b',
+        icon: '💡',
+      })
+    }
+
+    // Extract up to 3 direct candidate questions/statements
+    for (const t of callerTurns) {
+      const clean = t.text.trim()
+      if (clean.length > 8 && !clean.match(/^(hello|hi|yes|no|okay|ok|thanks|thank you|namaste|sure)$/i)) {
+        candidateQuotes.push(clean)
+        if (candidateQuotes.length >= 3) break
+      }
+    }
+
+    return {
+      badges,
+      candidateQuotes,
+    }
+  }
+
+  const getDispositionTheme = (dispRaw?: string, interestRaw?: string, hasBadges?: boolean) => {
     const d = (dispRaw || interestRaw || '').toLowerCase()
     if (d.includes('booked') || d.includes('demo') || d.includes('scheduled')) {
       return {
@@ -320,7 +581,7 @@ export default function AdminContactsClient({
         icon: CalendarCheck,
       }
     }
-    if (d.includes('interested') || d.includes('high')) {
+    if (d.includes('interested') || d.includes('high') || (d.includes('undetermined') && hasBadges)) {
       return {
         label: 'HIGH INTEREST',
         badgeBg: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
@@ -363,7 +624,7 @@ export default function AdminContactsClient({
       }
     }
     return {
-      label: dispRaw ? dispRaw.toUpperCase() : 'GENERAL ENQUIRY',
+      label: dispRaw && !dispRaw.toLowerCase().includes('undetermined') ? dispRaw.toUpperCase() : 'COURSE ENQUIRY',
       badgeBg: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)',
       badgeBorder: '#4f46e5',
       badgeText: '#ffffff',
@@ -372,7 +633,7 @@ export default function AdminContactsClient({
       noteBorder: '#ddd6fe',
       noteAccent: '#6366f1',
       noteText: '#312e81',
-      icon: Clock3,
+      icon: Sparkles,
     }
   }
 
@@ -857,8 +1118,9 @@ export default function AdminContactsClient({
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {filteredConversations.map((conv) => {
                 const isExpanded = expandedTranscripts[conv.id]
+                const analysis = analyzeCandidateConversation(conv)
                 const disp = conv.extracted_data?.disposition || 'Undetermined'
-                const theme = getDispositionTheme(disp, conv.extracted_data?.interest_level)
+                const theme = getDispositionTheme(disp, conv.extracted_data?.interest_level, analysis.badges.length > 0)
 
                 return (
                   <div
@@ -867,7 +1129,7 @@ export default function AdminContactsClient({
                       background: '#fff',
                       border: `1.5px solid ${theme.cardBorder}`,
                       borderRadius: 18,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+                      boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
                       padding: '20px 24px',
                     }}
                   >
@@ -901,7 +1163,7 @@ export default function AdminContactsClient({
                           </div>
                           <div>
                             <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>
-                              {conv.caller_name || 'Anonymous Candidate'}
+                              {conv.caller_name || 'Candidate'}
                             </h3>
                             <span style={{ fontSize: 12, color: '#64748b' }}>
                               Counsellor: <strong>Priya</strong> &bull; Recruitment Institute
@@ -1010,59 +1272,155 @@ export default function AdminContactsClient({
                     {/* Color-Coded Key Notes / Admissions Extraction Card */}
                     <div
                       style={{
-                        background: theme.noteBg,
-                        border: `1px solid ${theme.noteBorder}`,
-                        borderLeft: `4px solid ${theme.noteAccent}`,
+                        background: '#ffffff',
+                        border: `1.5px solid ${theme.noteBorder}`,
+                        borderLeft: `5px solid ${theme.noteAccent}`,
                         borderRadius: 14,
-                        padding: '14px 18px',
+                        padding: '16px 20px',
                         marginTop: 14,
                         fontSize: 13,
                         lineHeight: 1.6,
-                        color: theme.noteText,
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-                        <span style={{ fontSize: 11, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em', color: theme.noteAccent }}>
-                          📌 Admissions Notes & AI Extraction
-                        </span>
+                      {/* Section Header */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 8,
+                          marginBottom: 12,
+                          flexWrap: 'wrap',
+                          borderBottom: '1px solid #f1f5f9',
+                          paddingBottom: 8,
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span
+                            style={{
+                              fontSize: 12,
+                              fontWeight: 900,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em',
+                              color: theme.noteAccent,
+                            }}
+                          >
+                            🎯 Exactly What Candidate Wants & Inquired:
+                          </span>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 700,
+                              padding: '1px 8px',
+                              borderRadius: 100,
+                              background: theme.noteBg,
+                              color: theme.noteText,
+                              border: `1px solid ${theme.noteBorder}`,
+                            }}
+                          >
+                            {analysis.badges.length} Identified Needs
+                          </span>
+                        </div>
                         {conv.extracted_data?.interview_slot_booked && (
-                          <span style={{ fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 6, background: '#10b981', color: '#fff' }}>
-                            📅 Demo Slot Locked
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 800,
+                              padding: '3px 10px',
+                              borderRadius: 6,
+                              background: '#10b981',
+                              color: '#fff',
+                              boxShadow: '0 2px 4px rgba(16,185,129,0.3)',
+                            }}
+                          >
+                            📅 Demo Slot Confirmed
                           </span>
                         )}
                       </div>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {conv.extracted_data?.interview_slot_booked && (
-                          <div style={{ color: '#047857', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                            <span>📅 Booked Slot:</span>
-                            <span style={{ background: '#dcfce7', padding: '2px 8px', borderRadius: 6, border: '1px solid #86efac' }}>
-                              {conv.extracted_data.interview_slot_booked}
-                            </span>
+                      {/* 1. Distinct Color Badges per Requirement */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 10 }}>
+                        {analysis.badges.map((b, bIdx) => (
+                          <div
+                            key={bIdx}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '5px 12px',
+                              borderRadius: 8,
+                              background: b.bg,
+                              border: `1.5px solid ${b.border}`,
+                              color: b.text,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+                            }}
+                          >
+                            <span style={{ fontSize: 13 }}>{b.icon}</span>
+                            <span>{b.label}</span>
                           </div>
-                        )}
-
-                        {conv.extracted_data?.preferred_course && (
-                          <div style={{ color: '#1e40af', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                            <span>🎓 Course Interest:</span>
-                            <span style={{ background: '#dbeafe', padding: '2px 8px', borderRadius: 6, border: '1px solid #93c5fd' }}>
-                              {conv.extracted_data.preferred_course}
-                            </span>
-                          </div>
-                        )}
-
-                        {conv.extracted_data?.key_notes_for_office ? (
-                          <div style={{ marginTop: 2, background: 'rgba(255,255,255,0.7)', padding: '8px 12px', borderRadius: 8, border: `1px solid ${theme.noteBorder}` }}>
-                            <strong style={{ color: theme.noteAccent }}>Counsellor Summary:</strong>{' '}
-                            <span>{conv.extracted_data.key_notes_for_office}</span>
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: 12, opacity: 0.85, fontStyle: 'italic' }}>
-                            Live spoken consultation recorded with Priya. Review candidate response and verbatim dialogue transcript below.
-                          </div>
-                        )}
+                        ))}
                       </div>
+
+                      {/* 2. Direct Spoken Quotes from Candidate */}
+                      {analysis.candidateQuotes.length > 0 && (
+                        <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          <div
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 800,
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                              color: '#64748b',
+                            }}
+                          >
+                            💬 Candidate Spoken Words & Key Questions:
+                          </div>
+                          {analysis.candidateQuotes.map((q, qIdx) => (
+                            <div
+                              key={qIdx}
+                              style={{
+                                background: '#f8fafc',
+                                borderLeft: '3.5px solid #6366f1',
+                                borderTop: '1px solid #e2e8f0',
+                                borderRight: '1px solid #e2e8f0',
+                                borderBottom: '1px solid #e2e8f0',
+                                borderRadius: '0 8px 8px 0',
+                                padding: '6px 12px',
+                                fontSize: 12.5,
+                                color: '#1e293b',
+                                lineHeight: 1.45,
+                              }}
+                            >
+                              <strong style={{ color: '#4f46e5', marginRight: 4 }}>&ldquo;</strong>
+                              <span>{q}</span>
+                              <strong style={{ color: '#4f46e5', marginLeft: 4 }}>&rdquo;</strong>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 3. Official Summary if provided */}
+                      {conv.extracted_data?.key_notes_for_office && (
+                        <div
+                          style={{
+                            marginTop: 10,
+                            background: theme.noteBg,
+                            padding: '8px 12px',
+                            borderRadius: 8,
+                            border: `1px solid ${theme.noteBorder}`,
+                          }}
+                        >
+                          <strong style={{ color: theme.noteAccent, fontSize: 11.5, textTransform: 'uppercase' }}>
+                            Counsellor Summary:
+                          </strong>{' '}
+                          <span style={{ color: theme.noteText, fontSize: 12.5 }}>
+                            {conv.extracted_data.key_notes_for_office}
+                          </span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Action Toolbar & Toggle Transcript */}

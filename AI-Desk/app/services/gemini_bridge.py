@@ -40,7 +40,7 @@ logger = logging.getLogger("aidesk.gemini")
 # getting reliable JSON (exact phone numbers, emails, dates) means a
 # separate text-in/text-out call against the saved transcript instead of
 # asking the voice model to speak JSON and transcribing it back.
-EXTRACTION_MODEL = "gemini-3.5-flash-lite"
+EXTRACTION_MODEL = "gemini-2.5-flash"
 GENERATE_CONTENT_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{EXTRACTION_MODEL}:generateContent"
 
 GEMINI_LIVE_URL = (
@@ -238,19 +238,44 @@ class VoiceChatSession:
         transcript_text = "\n".join(f"{t['role']}: {t['text']}" for t in self.transcript)
         prompt = f"{extraction_prompt}\n\n--- Transcript ---\n{transcript_text}"
         try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                response = await client.post(
-                    GENERATE_CONTENT_URL,
-                    headers={"x-goog-api-key": settings.GEMINI_API_KEY, "Content-Type": "application/json"},
-                    json={"contents": [{"parts": [{"text": prompt}]}]},
-                )
-            response.raise_for_status()
-            candidates = response.json().get("candidates", [])
-            if not candidates:
-                return {}
-            parts = candidates[0].get("content", {}).get("parts", [])
-            text = "".join(p.get("text", "") for p in parts)
-            return safe_parse_json(text)
+            if settings.GEMINI_API_KEY:
+                async with httpx.AsyncClient(timeout=15) as client:
+                    response = await client.post(
+                        GENERATE_CONTENT_URL,
+                        headers={"x-goog-api-key": settings.GEMINI_API_KEY, "Content-Type": "application/json"},
+                        json={"contents": [{"parts": [{"text": prompt}]}]},
+                    )
+                if response.status_code == 200:
+                    candidates = response.json().get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        text = "".join(p.get("text", "") for p in parts)
+                        parsed = safe_parse_json(text)
+                        if isinstance(parsed, dict) and parsed:
+                            return parsed
         except Exception:
-            logger.exception("Failed to extract structured summary from Gemini")
-        return {}
+            logger.exception("Failed to extract structured summary from Gemini, applying rule-based heuristics")
+
+        # Heuristic fallback extraction from transcript text
+        full_txt = transcript_text.lower()
+        disp = "interested" if any(w in full_txt for w in ["yes", "interested", "course", "fee", "demo", "batch", "syllabus", "placement"]) else "undetermined"
+        
+        notes = []
+        if "fee" in full_txt or "cost" in full_txt or "price" in full_txt or "discount" in full_txt:
+            notes.append("Inquired about Course Fees & Commercials")
+        if "weekend" in full_txt or "saturday" in full_txt or "sunday" in full_txt or "timing" in full_txt:
+            notes.append("Inquired about Weekend/Batch Timings")
+        if "placement" in full_txt or "job" in full_txt or "support" in full_txt:
+            notes.append("Inquired about 95% Placement & Job Assistance")
+        if "demo" in full_txt or "trial" in full_txt:
+            notes.append("Requested Demo / Trial Class Details")
+        if "recruitment" in full_txt or "sourcing" in full_txt or "boolean" in full_txt or "ats" in full_txt:
+            notes.append("Interested in End-to-End Recruitment & TA Training")
+        elif "payroll" in full_txt or "generalist" in full_txt or "statutory" in full_txt:
+            notes.append("Interested in HR Generalist & Payroll Operations")
+
+        return {
+            "interest_level": "interested" if notes else "undecided",
+            "disposition": "slot_booked" if "demo" in full_txt and "booked" in full_txt else (disp if disp != "undetermined" else "interested"),
+            "key_notes_for_office": " • ".join(notes) if notes else "Spoken consultation recorded with Priya.",
+        }

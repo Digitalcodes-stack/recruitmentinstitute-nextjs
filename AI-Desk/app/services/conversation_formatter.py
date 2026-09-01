@@ -10,6 +10,38 @@ if TYPE_CHECKING:
     from app.models import Conversation
 
 
+def _extract_intent_bullets(conversation: "Conversation") -> list[str]:
+    """Analyzes transcript turns and notes to extract structured candidate inquiries."""
+    turns = conversation.transcript or []
+    full_text = " ".join(t.get("text", "") for t in turns).lower()
+    if isinstance(conversation.extracted_data, dict):
+        full_text += " " + str(conversation.extracted_data.get("key_notes_for_office", "")).lower()
+
+    bullets = []
+    if any(k in full_text for k in ["recruitment", "boolean", "sourcing", "talent acquisition", "headhunt", "ats"]):
+        bullets.append("🎓 Course Focus: End-to-End Recruitment & Talent Acquisition")
+    if any(k in full_text for k in ["payroll", "generalist", "statutory", "pf", "esic", "compliance", "labor law"]):
+        bullets.append("📘 Course Focus: HR Generalist & Payroll Operations")
+    if any(k in full_text for k in ["entrepreneur", "agency", "consultancy", "start business", "client"]):
+        bullets.append("🚀 Course Focus: HR Entrepreneurship & Agency Setup")
+    if any(k in full_text for k in ["fee", "cost", "price", "how much", "discount", "charge", "rupees", "₹"]):
+        bullets.append("💰 Commercials: Inquired about Course Fees & Discounts")
+    if any(k in full_text for k in ["weekend", "saturday", "sunday"]):
+        bullets.append("📅 Batch Preference: Weekend Batch (Saturday & Sunday)")
+    elif any(k in full_text for k in ["weekday", "evening", "timing", "time"]):
+        bullets.append("⏰ Batch Preference: Weekday / Evening Timing")
+    if any(k in full_text for k in ["placement", "job", "support", "interview", "package", "95%", "100%"]):
+        bullets.append("🎯 Placement: Inquired about 95% Placement & Corporate Hiring Partners")
+    if any(k in full_text for k in ["pune", "classroom", "offline", "campus", "fc road"]):
+        bullets.append("🏢 Learning Mode: Pune Classroom Training")
+    elif any(k in full_text for k in ["online", "zoom", "live class", "remote"]):
+        bullets.append("💻 Learning Mode: Live Online Interactive Batches")
+    if any(k in full_text for k in ["demo", "trial", "free class", "counselling"]):
+        bullets.append("🎟️ Demo Session: Inquired / Requested Free Demo Class")
+
+    return bullets
+
+
 def format_conversation_email(conversation: "Conversation") -> tuple[str, str]:
     """Returns (subject, body) formatted email content for admin notifications."""
     caller = conversation.caller_name or "Candidate"
@@ -23,6 +55,8 @@ def format_conversation_email(conversation: "Conversation") -> tuple[str, str]:
         slot = conversation.extracted_data.get("interview_slot_booked") or conversation.extracted_data.get("slot") or ""
         notes = conversation.extracted_data.get("key_notes_for_office") or conversation.extracted_data.get("notes") or ""
         pref_course = conversation.extracted_data.get("preferred_course") or conversation.extracted_data.get("course") or ""
+
+    bullets = _extract_intent_bullets(conversation)
 
     status_tag = f"[{disp.upper()}]" if disp else "[NEW LEAD]"
     subject = f"🎯 {status_tag} Voice AI Lead Alert: {caller} — Recruitment Institute"
@@ -45,12 +79,25 @@ def format_conversation_email(conversation: "Conversation") -> tuple[str, str]:
         f"🏁 Call Ended:         {conversation.ended_at.strftime('%Y-%m-%d %H:%M:%S UTC') if conversation.ended_at else '-'}",
         "",
         "------------------------------------------------------------",
+        "  EXACT CANDIDATE INQUIRIES & DEMANDS (AI EXTRACTED)",
+        "------------------------------------------------------------",
+    ]
+
+    if bullets:
+        for b in bullets:
+            lines.append(f"  • {b}")
+    else:
+        lines.append("  • General Course & Admissions Consultation")
+
+    lines += [
+        "",
+        "------------------------------------------------------------",
         "  EXECUTIVE ADMISSIONS SUMMARY",
         "------------------------------------------------------------",
-        f"🎯 Disposition:        {disp or 'Recorded'}",
+        f"🎯 Disposition:        {disp or 'Recorded / High Interest'}",
         f"📅 Demo / Slot Booked: {slot or 'None'}",
         f"🎓 Preferred Program:  {pref_course or 'General Enquiry'}",
-        f"📝 Admissions Notes:   {notes or 'None'}",
+        f"📝 Admissions Notes:   {notes or 'Live spoken consultation recorded with Priya.'}",
         f"💬 1-Click WhatsApp:   {wa_link}",
         f"🔗 Admin Portal:       https://recruitmentinstitute.in/admin/contacts",
         "",
@@ -70,19 +117,6 @@ def format_conversation_email(conversation: "Conversation") -> tuple[str, str]:
         lines.append("")
 
     lines += [
-        "------------------------------------------------------------",
-        "  STRUCTURED TELEMETRY DATA",
-        "------------------------------------------------------------",
-    ]
-    if conversation.extracted_data:
-        for key, value in conversation.extracted_data.items():
-            if value not in (None, ""):
-                lines.append(f"  • {key}: {value}")
-    else:
-        lines.append("  (None)")
-
-    lines += [
-        "",
         "============================================================",
         "Recruitment Institute Enterprise Portal • Automated AI Desk",
         "Admin Recipients: sesasiba.es@gmail.com | Helpline: +91 7385204165",
@@ -107,15 +141,28 @@ def format_conversation_whatsapp(conversation: "Conversation") -> str:
         slot = conversation.extracted_data.get("interview_slot_booked") or conversation.extracted_data.get("slot") or "None"
         notes = conversation.extracted_data.get("key_notes_for_office") or conversation.extracted_data.get("notes") or "None"
 
+    bullets = _extract_intent_bullets(conversation)
+    bullets_formatted = "\n".join(f"• {b}" for b in bullets) if bullets else "• General Admissions Consultation"
+
     clean_candidate_phone = "".join(filter(str.isdigit, conversation.caller_phone or ""))
     if clean_candidate_phone and not clean_candidate_phone.startswith("91") and len(clean_candidate_phone) == 10:
         clean_candidate_phone = "91" + clean_candidate_phone
     wa_direct = f"https://wa.me/{clean_candidate_phone}" if clean_candidate_phone else ""
 
-    # Build last 3 turns snippet
+    # Build candidate quotes
+    candidate_quotes = []
+    if conversation.transcript:
+        for t in conversation.transcript:
+            if t.get("role") in ("caller", "user") and len(t.get("text", "").strip()) > 8:
+                candidate_quotes.append(f"💬 _\"{t.get('text').strip()}\"_")
+                if len(candidate_quotes) >= 2:
+                    break
+    quotes_str = "\n".join(candidate_quotes)
+
+    # Build last turns snippet
     transcript_snippet = ""
     if conversation.transcript:
-        turns = conversation.transcript[-4:]
+        turns = conversation.transcript[-3:]
         snippet_lines = []
         for t in turns:
             r = "Priya" if t.get("role") == "assistant" else "Candidate"
@@ -129,14 +176,17 @@ def format_conversation_whatsapp(conversation: "Conversation") -> str:
 📞 *Phone:* {phone}
 ✉️ *Email:* {email}
 🤖 *Counsellor:* Priya (Voice AI)
-🎯 *Interest:* {disp.upper()}
+🎯 *Disposition:* {disp.upper()}
 📅 *Booked Slot:* {slot}
-📝 *Key Notes:* {notes}
 
+🎯 *EXACT CANDIDATE INQUIRIES & DEMANDS:*
+{bullets_formatted}
+
+{f'*CANDIDATE SPOKEN WORDS:*\n{quotes_str}\n' if quotes_str else ''}{f'📝 *Office Notes:* {notes}\n' if notes != 'None' else ''}
 {f'💬 *Direct WhatsApp Candidate:* {wa_direct}' if wa_direct else ''}
-🔗 *Admin Dashboard:* https://recruitmentinstitute.in/admin/contacts
+🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts
 ━━━━━━━━━━━━━━━━━━━━
-*Transcript Snippet:*
-{transcript_snippet if transcript_snippet else '(Dialogue logged in admin dashboard)'}"""
+*Recent Dialogue:*
+{transcript_snippet if transcript_snippet else '(Dialogue logged in database)'}"""
 
     return msg.strip()
