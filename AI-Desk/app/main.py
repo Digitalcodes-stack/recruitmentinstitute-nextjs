@@ -176,6 +176,24 @@ async def get_public_voice_leads():
     priya = execs[0] if execs else None
     slots = priya.action_slots if priya and priya.action_slots else []
 
+    formatted_convs = []
+    for c in convs:
+        dur = 0
+        if c.started_at and c.ended_at:
+            dur = max(0, int((c.ended_at - c.started_at).total_seconds()))
+        formatted_convs.append({
+            "id": str(c.id),
+            "executive_id": str(c.executive_id),
+            "caller_name": c.caller_name or "Candidate",
+            "caller_phone": c.caller_phone or "",
+            "caller_email": c.caller_email or "",
+            "started_at": c.started_at.isoformat() if c.started_at else None,
+            "ended_at": c.ended_at.isoformat() if c.ended_at else None,
+            "duration_seconds": dur,
+            "extracted_data": c.extracted_data or {},
+            "transcript": c.transcript or [],
+        })
+
     return {
         "executive": {
             "id": str(priya.id) if priya else None,
@@ -185,21 +203,7 @@ async def get_public_voice_leads():
             "phone": "+91-7385204165",
         } if priya else None,
         "slots": slots,
-        "conversations": [
-            {
-                "id": str(c.id),
-                "executive_id": str(c.executive_id),
-                "caller_name": c.caller_name or "Candidate",
-                "caller_phone": c.caller_phone or "",
-                "caller_email": c.caller_email or "",
-                "started_at": c.started_at.isoformat() if c.started_at else None,
-                "ended_at": c.ended_at.isoformat() if c.ended_at else None,
-                "duration_seconds": c.duration_seconds or 0,
-                "extracted_data": c.extracted_data or {},
-                "transcript": c.transcript or [],
-            }
-            for c in convs
-        ],
+        "conversations": formatted_convs,
     }
 
 
