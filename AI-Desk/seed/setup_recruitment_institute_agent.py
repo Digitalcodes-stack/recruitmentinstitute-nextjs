@@ -150,13 +150,14 @@ async def setup_agent():
                 "answer": "Our official helpline is +91-7385204165 and our support email is support@recruitmentinstitute.in.",
             },
         ]
-        priya.action_slots = [
-            {"label": "Today at 4:00 PM (Live Demo)", "date": "2026-08-31", "start_time": "16:00", "end_time": "16:45", "is_booked": False},
-            {"label": "Tomorrow at 11:30 AM (Counselling Slot)", "date": "2026-09-01", "start_time": "11:30", "end_time": "12:15", "is_booked": False},
-            {"label": "Tomorrow at 5:00 PM (Live Demo)", "date": "2026-09-01", "start_time": "17:00", "end_time": "17:45", "is_booked": False},
-            {"label": "This Saturday at 11:00 AM (Weekend Batch Demo)", "date": "2026-09-05", "start_time": "11:00", "end_time": "12:00", "is_booked": False},
-            {"label": "This Sunday at 4:00 PM (Career Guidance Session)", "date": "2026-09-06", "start_time": "16:00", "end_time": "17:00", "is_booked": False},
-        ]
+        if not priya.action_slots or len(priya.action_slots) == 0:
+            priya.action_slots = [
+                {"label": "Today at 4:00 PM (Live Demo)", "date": "2026-09-01", "start_time": "16:00", "end_time": "16:45", "is_booked": False},
+                {"label": "Tomorrow at 11:30 AM (Counselling Slot)", "date": "2026-09-02", "start_time": "11:30", "end_time": "12:15", "is_booked": False},
+                {"label": "Tomorrow at 5:00 PM (Live Demo)", "date": "2026-09-02", "start_time": "17:00", "end_time": "17:45", "is_booked": False},
+                {"label": "This Saturday at 11:00 AM (Weekend Batch Demo)", "date": "2026-09-05", "start_time": "11:00", "end_time": "12:00", "is_booked": False},
+                {"label": "This Sunday at 4:00 PM (Career Guidance Session)", "date": "2026-09-06", "start_time": "16:00", "end_time": "17:00", "is_booked": False},
+            ]
         priya.business_hours = {
             "mon": {"start": "09:00", "end": "19:00"},
             "tue": {"start": "09:00", "end": "19:00"},
