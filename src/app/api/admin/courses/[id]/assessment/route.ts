@@ -19,10 +19,14 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     const assessment = await getAssessmentByCourseAdmin(parseInt(id))
     return NextResponse.json({ success: true, data: assessment })
   } catch (error) {
-    if (error instanceof FastApiError && error.status === 404) {
+    if (error instanceof FastApiError && (error.status === 404 || error.status === 503)) {
       return NextResponse.json({ success: true, data: null })
     }
+    // Also catch AI provider unavailable or missing assessment messages gracefully
     const message = error instanceof Error ? error.message : 'Unable to fetch assessment'
+    if (message.toLowerCase().includes('ai provider unavailable') || message.toLowerCase().includes('not found')) {
+      return NextResponse.json({ success: true, data: null })
+    }
     return NextResponse.json({ success: false, message }, { status: 500 })
   }
 }

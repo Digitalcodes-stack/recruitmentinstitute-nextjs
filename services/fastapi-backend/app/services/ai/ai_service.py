@@ -1,4 +1,5 @@
 import logging
+import re
 from functools import lru_cache
 
 import httpx
@@ -25,9 +26,9 @@ def _build_mock() -> AIProvider:
     return MockProvider()
 
 
-def _build_gemini() -> AIProvider:
-    from app.services.ai.providers.gemini_provider import GeminiProvider
-    return GeminiProvider()
+def _build_openai() -> AIProvider:
+    from app.services.ai.providers.openai_provider import OpenAIProvider
+    return OpenAIProvider()
 
 
 def _build_claude() -> AIProvider:
@@ -35,13 +36,19 @@ def _build_claude() -> AIProvider:
     return ClaudeProvider()
 
 
+def _build_gemini() -> AIProvider:
+    from app.services.ai.providers.gemini_provider import GeminiProvider
+    return GeminiProvider()
+
+
 _PROVIDER_FACTORIES = {
     "local": _build_local,
     "local_llm": _build_local,
     "local_ai": _build_local_ai,
     "mock": _build_mock,
-    "gemini": _build_gemini,
+    "openai": _build_openai,
     "claude": _build_claude,
+    "gemini": _build_gemini,
 }
 
 
@@ -71,7 +78,7 @@ def get_reliable_ai_provider() -> AIProvider:
     primary = get_ai_provider()
     primary_cls = type(primary)
     
-    fallback_names = [n.strip() for n in (settings.ai_provider_fallback_order or "").split(",") if n.strip()]
+    fallback_names = [n.strip() for n in re.split(r"[,;:]", settings.ai_provider_fallback_order or "") if n.strip()]
     fallbacks: list[AIProvider] = []
     seen_classes = {primary_cls}
 

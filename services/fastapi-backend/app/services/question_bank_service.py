@@ -76,14 +76,21 @@ class QuestionBankService:
                 return existing
 
         context_text = await self._build_course_context(course_id)
-        return await self.assessment_service.generate_assessment(
-            course_id=course_id,
-            name=_RUNTIME_ASSESSMENT_NAME,
-            topics=[],
-            types=["mcq"],
-            count=_RUNTIME_QUESTION_COUNT,
-            context_text=context_text,
-        )
+        try:
+            return await self.assessment_service.generate_assessment(
+                course_id=course_id,
+                name=_RUNTIME_ASSESSMENT_NAME,
+                topics=[],
+                types=["mcq"],
+                count=_RUNTIME_QUESTION_COUNT,
+                context_text=context_text,
+            )
+        except Exception as exc:
+            import logging
+            logging.getLogger(__name__).warning("Assessment auto-generation failed for course %s: %s", course_id, exc)
+            if existing:
+                return existing
+            raise ServiceError("No assessment found for this course", 404) from exc
 
     async def _build_course_context(self, course_id: int) -> str:
         if self.embedding_repo is None:

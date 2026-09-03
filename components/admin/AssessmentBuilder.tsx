@@ -49,11 +49,17 @@ export default function AssessmentBuilder({ courseId }: { courseId: number }) {
   })
 
   async function loadAssessment() {
-    const data = await api(`/api/admin/courses/${courseId}/assessment`, 'GET')
-    setAssessment(data)
-    if (data) {
-      const q = await api(`/api/admin/assessment/${data.id}/questions`, 'GET')
-      setQuestions(q)
+    try {
+      setError('')
+      const data = await api(`/api/admin/courses/${courseId}/assessment`, 'GET')
+      setAssessment(data)
+      if (data) {
+        const q = await api(`/api/admin/assessment/${data.id}/questions`, 'GET')
+        setQuestions(q)
+      }
+    } catch (err) {
+      console.warn('Could not fetch assessment:', err)
+      setAssessment(null)
     }
   }
 
