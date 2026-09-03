@@ -1,0 +1,158 @@
+DAILY DEVELOPMENT REPORT
+Project: recruitmentinstitute-nextjs
+Date: 2026-09-01 (Tuesday)
+Branch: main
+Author: Digitalcodes-stack
+
+============================================================
+SUMMARY
+============================================================
+Commits today: 11
+Files changed (net, first→last commit): 31
+Lines added: 5,247   Lines removed: 390
+
+Work spanned three areas: the AI voice desk (AI-Desk/, Python),
+the admin dashboard (components/admin/, TSX), and the public
+course brochure system (lib/data, src/app/(site)/brochures).
+
+============================================================
+TIMELINE (oldest → newest)
+============================================================
+
+1. 11:34  9c56d06  fix(voice-assistant): seed Priya persona in Cloud SQL
+          and route WebSocket directly to Cloud Run AI-Desk
+          Files: AI-Desk/Dockerfile, AI-Desk/app/main.py,
+                 talk-widget.js (x3 copies), src/app/layout.tsx
+          +35/-24 across 6 files
+          Fixed the voice widget connecting to the wrong backend by
+          pointing the WebSocket straight at Cloud Run instead of a
+          relay, and made sure the "Priya" agent persona is seeded
+          into Cloud SQL on boot.
+
+2. 12:11  da056f1  feat(admin): add integrated AI voice conversations,
+          transcripts, and demo slots tab to contact submissions dashboard
+          Files: AI-Desk/app/main.py, email_service.py,
+                 AdminContactsClient.tsx (+1142 lines), AdminLayout.tsx,
+                 contacts/page.tsx, api/admin/voice-leads/route.ts (new)
+          +1228/-83 across 6 files
+          Biggest feature commit of the day. Added a new admin tab
+          showing live AI voice call transcripts and booked demo
+          slots alongside contact form submissions, backed by a new
+          voice-leads API route.
+
+3. 12:23  c7e1fda  fix(desk): resolve 500 internal server error on
+          /desk/admin route and configure dynamic API base
+          Files: AI-Desk/static/index.html, next.config.ts,
+                 public/desk/admin/index.html, public/desk/index.html
+          +24/-10 across 4 files
+          Admin desk route was crashing; fixed by making the API base
+          URL configurable/dynamic instead of hardcoded.
+
+4. 12:46  ce2053f  fix(leads): calculate duration safely in
+          get_public_voice_leads API
+          Files: AI-Desk/app/main.py
+          +19/-15
+          Guarded call-duration calculation against bad/missing
+          timestamps so the public leads endpoint stops erroring out.
+
+5. 12:58  b2541cf  feat(ai-agent): mandate asking for name, email and
+          phone at beginning of call
+          Files: prompt_builder.py, voice_chat_orchestrator.py,
+                 seed/setup_recruitment_institute_agent.py
+          +190/-185 across 3 files
+          Reworked the AI agent's opening script so Priya always
+          collects name/email/phone before proceeding — needed for
+          lead capture quality.
+
+6. 13:17  6194eae  feat(brochures): add interactive course brochures,
+          PDF/print view, candidate email dispatch API, and admin
+          brochure management hub
+          Files: AdminBrochuresClient.tsx (new, 431 lines),
+                 CourseBrochureViewerClient.tsx (new, 555 lines),
+                 lib/data/course-brochures.ts (new, 667 lines),
+                 brochures/[slug]/page.tsx (new),
+                 api/admin/brochures/send-email/route.ts (new, 195 lines)
+          +1931/-5 across 8 files
+          Second-biggest feature: a full brochure system — public
+          viewer with print/PDF support, per-course data, an admin
+          hub to manage brochures, and an email dispatch API to send
+          brochures to candidates.
+
+7. 13:33  c936b9a  feat(slots): implement robust duplicate protection
+          for Priya AI slots, display booked candidate info, and add
+          admin slot release/reserve tools
+          Files: AI-Desk/app/main.py, prompt_builder.py,
+                 slot_booking.py, voice_chat_orchestrator.py,
+                 AdminContactsClient.tsx (+832 lines),
+                 api/admin/voice-leads/slots/route.ts (new)
+          +951/-106 across 6 files
+          Prevented double-booking of demo slots, surfaced who has
+          each slot booked in the admin UI, and gave admins manual
+          release/reserve controls.
+
+8. 13:44  be4d199  fix: preserve slot bookings across container restarts
+          Files: AI-Desk/seed/setup_recruitment_institute_agent.py
+          +8/-7
+          Slot bookings were being wiped whenever the AI-Desk
+          container restarted; fixed the seed script to not clobber
+          existing bookings.
+
+9. 15:46  9536689  feat(admin): highlight notes in color, add admin
+          email and whatsapp auto-dispatch on conversation end, and
+          wrap brochures in admin layout
+          Files: config.py, conversation_formatter.py (+140),
+                 voice_chat_orchestrator.py, whatsapp_service.py (new,
+                 91 lines), AdminContactsClient.tsx (+360),
+                 AdminLayout.tsx, admin/brochures/page.tsx
+          +605/-81 across 7 files
+          Added automatic email + WhatsApp notification to admins
+          when a voice conversation ends, color-coded call notes for
+          readability, and moved the brochures admin page under the
+          shared admin layout.
+
+10. 16:05  3fe925b  feat(brochures): remove EMI, remove tools mastered
+          and explore programs, update to 95% placement support,
+          align hours to weeks, update weekend batch to Saturday &
+          Sunday, and update footer
+          Files: .gcloudignore (new), setup_recruitment_institute_agent.py,
+                 AdminBrochuresClient.tsx, CourseBrochureViewerClient.tsx,
+                 lib/data/course-brochures.ts, brochures/send-email/route.ts
+          +72/-123 across 6 files
+          Content/copy cleanup pass on brochures: dropped EMI and
+          "tools mastered"/"explore programs" sections, bumped the
+          placement-support stat to 95%, switched course durations
+          from hours to weeks, and set the weekend batch to Sat/Sun.
+
+11. 16:24  295465c  feat(admin): highlight exact candidate requirements,
+          course focus, fees, batch schedules, and quotes in vibrant
+          distinct colors for voice leads
+          Files: conversation_formatter.py, gemini_bridge.py,
+                 AdminContactsClient.tsx (+456)
+          +520/-87 across 3 files
+          Improved the AI's conversation summaries to pull out and
+          color-highlight key facts (requirements, course focus, fees,
+          batch schedule, direct quotes) in the admin transcript view.
+
+============================================================
+MOST-TOUCHED FILES TODAY
+============================================================
+components/admin/AdminContactsClient.tsx   ~3,161 lines added (6 commits)
+lib/data/course-brochures.ts               new file + rewrite (2 commits)
+AI-Desk/app/main.py                        touched in 5 commits
+AI-Desk/seed/setup_recruitment_institute_agent.py   touched in 3 commits
+AI-Desk/app/services/voice_chat_orchestrator.py     touched in 4 commits
+
+============================================================
+THEMES
+============================================================
+- Voice AI reliability: WebSocket routing, persona seeding, slot
+  duplicate protection, booking persistence across restarts, safe
+  duration math.
+- Admin visibility: new voice-leads/transcripts/slots tab, colored
+  highlighting of key call facts, admin email+WhatsApp alerts.
+- Brochures: shipped a brand-new feature end to end, then did a
+  same-day content revision pass based on feedback.
+
+============================================================
+END OF REPORT
+============================================================

@@ -9,7 +9,7 @@ import {
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
   MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
   Presentation, Layers3, ClipboardList, ListChecks, CalendarDays, Plus,
-  ShieldCheck, ArrowUpRight, Sparkles, PhoneCall,
+  ShieldCheck, ArrowUpRight, Sparkles, PhoneCall, UserPlus,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -572,6 +572,18 @@ export default function AdminLayout({ children, title }: { children: React.React
                   >
                     <Layers3 style={{ width: 14, height: 14, color: '#2563eb' }} />
                     <span>Create New Batch</span>
+                  </Link>
+                  <Link
+                    href="/admin/students"
+                    onClick={() => setQuickActionOpen(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px',
+                      borderRadius: 6, fontSize: 12.5, fontWeight: 600, color: '#334155', textDecoration: 'none',
+                    }}
+                    className="quick-menu-item"
+                  >
+                    <UserPlus style={{ width: 14, height: 14, color: '#16a34a' }} />
+                    <span>Add New Student</span>
                   </Link>
                   <Link
                     href="/admin/courses/new"

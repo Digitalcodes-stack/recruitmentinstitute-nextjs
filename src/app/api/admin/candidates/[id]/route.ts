@@ -16,6 +16,32 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     data: { acceptSignin: body.acceptSignin },
   })
 
+  // When candidate is approved (acceptSignin: 1), sync to Student table so they can be enrolled in batches
+  if (body.acceptSignin === 1) {
+    const email = candidate.email.trim().toLowerCase()
+    await prisma.student.upsert({
+      where: { email },
+      update: {
+        name: candidate.name,
+        contact: candidate.mobile || candidate.phone || undefined,
+        isActive: true,
+      },
+      create: {
+        name: candidate.name,
+        email,
+        password: candidate.password,
+        contact: candidate.mobile || candidate.phone || null,
+        isActive: true,
+      },
+    })
+  } else if (body.acceptSignin === 0) {
+    const email = candidate.email.trim().toLowerCase()
+    await prisma.student.updateMany({
+      where: { email },
+      data: { isActive: false },
+    })
+  }
+
   return NextResponse.json({ success: true, data: candidate })
 }
 

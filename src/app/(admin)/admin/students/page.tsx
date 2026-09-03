@@ -4,10 +4,14 @@ import { prisma } from '@/lib/prisma'
 import AdminLayout from '@/components/admin/AdminLayout'
 import StudentAdminDirectory from '@/components/admin/StudentAdminDirectory'
 import { GraduationCap, Users, UserCheck, Clock3, Plus } from 'lucide-react'
+import { syncApprovedCandidatesToStudents } from '@/lib/sync-users'
 
 export default async function AdminStudentsPage() {
   const session = await getAdminSession()
   if (!session || session.type !== 'admin') redirect('/admin/login')
+
+  // Auto-sync any approved candidates to students roster
+  await syncApprovedCandidatesToStudents()
 
   const students = await prisma.student.findMany({
     include: {

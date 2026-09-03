@@ -21,6 +21,9 @@ import {
   X,
   MessageCircle,
   FileText,
+  Plus,
+  UserPlus,
+  Loader2,
 } from 'lucide-react'
 
 interface StudentRecord {
@@ -62,6 +65,56 @@ export default function StudentAdminDirectory({
   const [search, setSearch] = useState('')
   const [filterTab, setFilterTab] = useState<'all' | 'active' | 'inactive'>('all')
   const [selectedStudent, setSelectedStudent] = useState<StudentRecord | null>(null)
+
+  // Add Student Modal State
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [submittingAdd, setSubmittingAdd] = useState(false)
+  const [addForm, setAddForm] = useState({
+    name: '',
+    email: '',
+    contact: '',
+    password: '',
+  })
+
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!addForm.name.trim() || !addForm.email.trim()) {
+      toast.error('Name and email are required')
+      return
+    }
+
+    setSubmittingAdd(true)
+    try {
+      const res = await fetch('/api/admin/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(addForm),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast.success('Student added successfully!')
+        const createdStudent: StudentRecord = {
+          id: data.data.id,
+          name: data.data.name,
+          email: data.data.email,
+          contact: data.data.contact,
+          isActive: data.data.isActive,
+          createdAt: data.data.createdAt || new Date().toISOString(),
+          enrollments: [],
+          assignmentSubmissions: [],
+        }
+        setStudents((prev) => [createdStudent, ...prev])
+        setShowAddModal(false)
+        setAddForm({ name: '', email: '', contact: '', password: '' })
+      } else {
+        toast.error(data.message || 'Failed to add student')
+      }
+    } catch {
+      toast.error('Network error adding student')
+    } finally {
+      setSubmittingAdd(false)
+    }
+  }
 
   const toggleStatus = async (id: number, isActive: boolean) => {
     try {
@@ -150,34 +203,58 @@ export default function StudentAdminDirectory({
           ))}
         </div>
 
-        {/* Search input */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            background: '#f8fafc',
-            border: '1px solid #e2e8f0',
-            borderRadius: 8,
-            padding: '0 12px',
-            height: 36,
-            minWidth: 280,
-          }}
-        >
-          <Search style={{ width: 14, height: 14, color: '#94a3b8' }} />
-          <input
-            placeholder="Search by student name, email, course, batch..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          {/* Search input */}
+          <div
             style={{
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              fontSize: 12.5,
-              color: '#0f172a',
-              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#f8fafc',
+              border: '1px solid #e2e8f0',
+              borderRadius: 8,
+              padding: '0 12px',
+              height: 36,
+              minWidth: 260,
             }}
-          />
+          >
+            <Search style={{ width: 14, height: 14, color: '#94a3b8' }} />
+            <input
+              placeholder="Search by student name, email, course, batch..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                fontSize: 12.5,
+                color: '#0f172a',
+                width: '100%',
+              }}
+            />
+          </div>
+
+          {/* Add Student Button */}
+          <button
+            onClick={() => setShowAddModal(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '8px 14px',
+              borderRadius: 8,
+              fontSize: 12.5,
+              fontWeight: 700,
+              background: '#2563eb',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(37, 99, 235, 0.3)',
+            }}
+          >
+            <Plus style={{ width: 14, height: 14 }} />
+            <span>Add Student</span>
+          </button>
         </div>
       </div>
 
@@ -688,6 +765,217 @@ export default function StudentAdminDirectory({
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+      {/* Add New Student Modal Dialog */}
+      {showAddModal && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.45)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            style={{
+              width: '100%',
+              maxWidth: 460,
+              background: '#ffffff',
+              borderRadius: 16,
+              boxShadow: '0 20px 40px rgba(0,0,0,0.18)',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              style={{
+                padding: '18px 24px',
+                borderBottom: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: '#f8fafc',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 8,
+                    background: '#eff6ff',
+                    color: '#2563eb',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <UserPlus style={{ width: 16, height: 16 }} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Add New Student
+                  </h3>
+                  <p style={{ fontSize: 11.5, color: '#64748b', margin: 0 }}>
+                    Create a direct student record with active LMS access
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{
+                  background: '#ffffff',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  width: 30,
+                  height: 30,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <X style={{ width: 14, height: 14, color: '#64748b' }} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddStudent} style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Full Name <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Nikhat Parveen Hanagal"
+                  value={addForm.name}
+                  onChange={(e) => setAddForm((f) => ({ ...f, name: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    border: '1px solid #cbd5e1',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Email Address <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="e.g. nikhatgdg@gmail.com"
+                  value={addForm.email}
+                  onChange={(e) => setAddForm((f) => ({ ...f, email: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    border: '1px solid #cbd5e1',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Contact / Phone Number
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. +91 9876543210"
+                  value={addForm.contact}
+                  onChange={(e) => setAddForm((f) => ({ ...f, contact: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    border: '1px solid #cbd5e1',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Initial Password (Optional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Leave blank for default (RI@Student2026)"
+                  value={addForm.password}
+                  onChange={(e) => setAddForm((f) => ({ ...f, password: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    border: '1px solid #cbd5e1',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '10px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    border: '1px solid #cbd5e1',
+                    background: '#ffffff',
+                    color: '#64748b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingAdd}
+                  style={{
+                    flex: 1.5,
+                    padding: '10px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: submittingAdd ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  {submittingAdd ? <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" /> : <Plus style={{ width: 14, height: 14 }} />}
+                  {submittingAdd ? 'Adding...' : 'Create Student'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
