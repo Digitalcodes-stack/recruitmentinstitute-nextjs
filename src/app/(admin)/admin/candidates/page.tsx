@@ -14,6 +14,7 @@ type CandidateRow = {
   createdAt: Date
   city: string | null
   gender: string | null
+  address?: string | null
 }
 
 export default async function AdminCandidatesPage() {
@@ -25,7 +26,7 @@ export default async function AdminCandidatesPage() {
     take: 100,
     select: {
       id: true, name: true, email: true, mobile: true, courseSelect: true,
-      acceptSignin: true, createdAt: true, city: true, gender: true, phone: true,
+      acceptSignin: true, createdAt: true, city: true, gender: true, phone: true, address: true,
     },
   })
 

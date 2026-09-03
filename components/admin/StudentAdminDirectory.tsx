@@ -24,6 +24,9 @@ import {
   Plus,
   UserPlus,
   Loader2,
+  Pencil,
+  Lock,
+  Check,
 } from 'lucide-react'
 
 interface StudentRecord {
@@ -137,6 +140,89 @@ export default function StudentAdminDirectory({
       }
     } catch {
       toast.error('Network error updating student')
+    }
+  }
+
+  const [editingStudent, setEditingStudent] = useState<StudentRecord | null>(null)
+  const [editForm, setEditForm] = useState({
+    name: '',
+    email: '',
+    contact: '',
+    isActive: true,
+    password: '',
+  })
+  const [savingEdit, setSavingEdit] = useState(false)
+
+  const handleOpenEdit = (s: StudentRecord) => {
+    setEditingStudent(s)
+    setEditForm({
+      name: s.name,
+      email: s.email,
+      contact: s.contact || '',
+      isActive: s.isActive,
+      password: '',
+    })
+  }
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingStudent) return
+    if (!editForm.name.trim() || !editForm.email.trim()) {
+      toast.error('Name and email are required')
+      return
+    }
+
+    setSavingEdit(true)
+    try {
+      const res = await fetch('/api/admin/students', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingStudent.id,
+          name: editForm.name.trim(),
+          email: editForm.email.trim().toLowerCase(),
+          contact: editForm.contact.trim() || null,
+          isActive: editForm.isActive,
+          password: editForm.password ? editForm.password.trim() : undefined,
+        }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast.success('Student profile updated successfully!')
+        setStudents((prev) =>
+          prev.map((s) =>
+            s.id === editingStudent.id
+              ? {
+                  ...s,
+                  name: editForm.name.trim(),
+                  email: editForm.email.trim().toLowerCase(),
+                  contact: editForm.contact.trim() || null,
+                  isActive: editForm.isActive,
+                }
+              : s
+          )
+        )
+        if (selectedStudent && selectedStudent.id === editingStudent.id) {
+          setSelectedStudent((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  name: editForm.name.trim(),
+                  email: editForm.email.trim().toLowerCase(),
+                  contact: editForm.contact.trim() || null,
+                  isActive: editForm.isActive,
+                }
+              : null
+          )
+        }
+        setEditingStudent(null)
+      } else {
+        toast.error(data.message || 'Failed to update student')
+      }
+    } catch {
+      toast.error('Network error saving student changes')
+    } finally {
+      setSavingEdit(false)
     }
   }
 
@@ -273,7 +359,7 @@ export default function StudentAdminDirectory({
               background: '#f8fafc',
               borderBottom: '1px solid #f1f5f9',
               display: 'grid',
-              gridTemplateColumns: '1.8fr 1.6fr 1.1fr 1fr 90px 110px',
+              gridTemplateColumns: '1.7fr 1.5fr 1fr 1fr 85px 145px',
               fontSize: 10,
               fontWeight: 800,
               textTransform: 'uppercase',
@@ -322,7 +408,7 @@ export default function StudentAdminDirectory({
                 key={s.id}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1.8fr 1.6fr 1.1fr 1fr 90px 110px',
+                  gridTemplateColumns: '1.7fr 1.5fr 1fr 1fr 85px 145px',
                   alignItems: 'center',
                   padding: '14px 24px',
                   borderBottom: idx < filteredStudents.length - 1 ? '1px solid #f8fafc' : 'none',
@@ -478,17 +564,37 @@ export default function StudentAdminDirectory({
                   </button>
                 </div>
 
-                {/* Actions: View Profile Drawer */}
-                <div style={{ textAlign: 'right' }}>
+                {/* Actions: Edit + View Details */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6 }}>
                   <button
+                    type="button"
+                    onClick={() => handleOpenEdit(s)}
+                    title="Edit Student Profile"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 28,
+                      height: 28,
+                      borderRadius: 7,
+                      color: '#475569',
+                      background: '#f1f5f9',
+                      border: '1px solid #cbd5e1',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Pencil style={{ width: 12, height: 12 }} />
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setSelectedStudent(s)}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
-                      padding: '6px 12px',
-                      borderRadius: 8,
-                      fontSize: 11.5,
+                      padding: '5px 10px',
+                      borderRadius: 7,
+                      fontSize: 11,
                       fontWeight: 700,
                       color: '#1e40af',
                       background: '#eff6ff',
@@ -496,7 +602,7 @@ export default function StudentAdminDirectory({
                       cursor: 'pointer',
                     }}
                   >
-                    View Details
+                    Details
                   </button>
                 </div>
               </div>
@@ -569,22 +675,44 @@ export default function StudentAdminDirectory({
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedStudent(null)}
-                style={{
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: 8,
-                  width: 32,
-                  height: 32,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-              >
-                <X style={{ width: 16, height: 16, color: '#64748b' }} />
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button
+                  type="button"
+                  onClick={() => handleOpenEdit(selectedStudent)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '6px 12px',
+                    borderRadius: 8,
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <Pencil style={{ width: 12, height: 12 }} />
+                  Edit Profile
+                </button>
+                <button
+                  onClick={() => setSelectedStudent(null)}
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: 8,
+                    width: 32,
+                    height: 32,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <X style={{ width: 16, height: 16, color: '#64748b' }} />
+                </button>
+              </div>
             </div>
 
             {/* Drawer Body */}
@@ -973,6 +1101,268 @@ export default function StudentAdminDirectory({
                 >
                   {submittingAdd ? <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" /> : <Plus style={{ width: 14, height: 14 }} />}
                   {submittingAdd ? 'Adding...' : 'Create Student'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Student Modal */}
+      {editingStudent && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.6)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 10000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => {
+            if (!savingEdit) setEditingStudent(null)
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: 16,
+              width: '100%',
+              maxWidth: 480,
+              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2)',
+              border: '1px solid #e2e8f0',
+              overflow: 'hidden',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              style={{
+                padding: '18px 24px',
+                borderBottom: '1px solid #f1f5f9',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: '#f8fafc',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 10,
+                    background: '#eff6ff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#2563eb',
+                  }}
+                >
+                  <Pencil style={{ width: 18, height: 18 }} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0f172a', margin: 0 }}>
+                    Edit Student Profile
+                  </h3>
+                  <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0 0' }}>
+                    Student #{editingStudent.id} • Updates sync to candidate profile
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingStudent(null)}
+                disabled={savingEdit}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: 4,
+                  display: 'flex',
+                }}
+              >
+                <X style={{ width: 18, height: 18 }} />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSaveEdit} style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>
+                  Full Name <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  required
+                  placeholder="Student Full Name"
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 13.5,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>
+                  Email Address <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  required
+                  placeholder="student@example.com"
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 13.5,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>
+                  Contact / Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={editForm.contact}
+                  onChange={(e) => setEditForm({ ...editForm, contact: e.target.value })}
+                  placeholder="e.g. 9876543210"
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px',
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 13.5,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Status Switch */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '12px 14px',
+                  borderRadius: 10,
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: 12.5, fontWeight: 700, color: '#1e293b', display: 'block' }}>Account Status</span>
+                  <span style={{ fontSize: 11.5, color: '#64748b' }}>
+                    {editForm.isActive ? 'Active (can sign in to portal)' : 'Inactive (sign in disabled)'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditForm({ ...editForm, isActive: !editForm.isActive })}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: 20,
+                    fontSize: 12,
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: editForm.isActive ? '#dcfce7' : '#f1f5f9',
+                    color: editForm.isActive ? '#15803d' : '#64748b',
+                  }}
+                >
+                  {editForm.isActive ? 'Active' : 'Inactive'}
+                </button>
+              </div>
+
+              {/* Reset Password */}
+              <div
+                style={{
+                  padding: '14px',
+                  borderRadius: 10,
+                  background: '#f8fafc',
+                  border: '1px solid #e2e8f0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Lock style={{ width: 13, height: 13, color: '#64748b' }} />
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#334155' }}>Reset Password (Optional)</span>
+                </div>
+                <input
+                  type="password"
+                  value={editForm.password}
+                  onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
+                  placeholder="Leave blank to keep existing password"
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    border: '1px solid #cbd5e1',
+                    fontSize: 13,
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              {/* Actions */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 6 }}>
+                <button
+                  type="button"
+                  onClick={() => setEditingStudent(null)}
+                  disabled={savingEdit}
+                  style={{
+                    flex: 1,
+                    padding: '10px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    border: '1px solid #cbd5e1',
+                    background: '#ffffff',
+                    color: '#64748b',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  style={{
+                    flex: 1.5,
+                    padding: '10px 16px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: savingEdit ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  {savingEdit ? <Loader2 style={{ width: 14, height: 14 }} className="animate-spin" /> : <Check style={{ width: 14, height: 14 }} />}
+                  {savingEdit ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>

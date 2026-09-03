@@ -3,10 +3,11 @@ import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain, Phone, MapPin } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 import BatchCountdown from '@/components/shared/BatchCountdown'
+import UserProfileClient from '@/components/site/UserProfileClient'
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -69,6 +70,43 @@ export default async function ProfilePage() {
     .map((e) => e.batch)
     .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > new Date())
     .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0]
+
+  let userDetails: { phone?: string | null; city?: string | null; gender?: string | null; address?: string | null } = {}
+  if (session.type === 'student') {
+    const [s, c] = await Promise.all([
+      prisma.student.findUnique({
+        where: { id: session.userId },
+        select: { contact: true },
+      }),
+      prisma.candidate.findFirst({
+        where: { email: session.email },
+        select: { mobile: true, phone: true, city: true, gender: true, address: true, streetAddress: true },
+      }),
+    ])
+    userDetails = {
+      phone: s?.contact || c?.phone || c?.mobile || null,
+      city: c?.city || null,
+      gender: c?.gender || null,
+      address: c?.address || c?.streetAddress || null,
+    }
+  } else if (session.type === 'candidate') {
+    const c = await prisma.candidate.findUnique({
+      where: { id: session.userId },
+      select: { mobile: true, phone: true, city: true, gender: true, address: true, streetAddress: true },
+    })
+    userDetails = {
+      phone: c?.phone || c?.mobile || null,
+      city: c?.city || null,
+      gender: c?.gender || null,
+      address: c?.address || c?.streetAddress || null,
+    }
+  } else if (session.type === 'membership') {
+    const m = await prisma.membership.findUnique({
+      where: { id: session.userId },
+      select: { contact: true },
+    })
+    userDetails = { phone: m?.contact || null }
+  }
 
   const initials = session.name
     .split(' ')
@@ -164,6 +202,8 @@ export default async function ProfilePage() {
                 {[
                   { icon: User,     label: 'Full Name',    value: session.name  },
                   { icon: Mail,     label: 'Email',        value: session.email, small: true },
+                  ...(userDetails.phone ? [{ icon: Phone, label: 'Phone', value: userDetails.phone }] : []),
+                  ...(userDetails.city ? [{ icon: MapPin, label: 'City', value: userDetails.city }] : []),
                   { icon: Briefcase,label: 'Account Type', value: accountLabel  },
                 ].map(({ icon: Icon, label, value, small }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 12, background: '#F8FAFC', border: '1px solid #F1F5F9' }}>
@@ -176,10 +216,24 @@ export default async function ProfilePage() {
                 ))}
               </div>
 
+              {/* Edit Profile Trigger Modal */}
+              <UserProfileClient
+                initialProfile={{
+                  id: session.userId,
+                  name: session.name,
+                  email: session.email,
+                  type: session.type,
+                  phone: userDetails.phone,
+                  city: userDetails.city,
+                  gender: userDetails.gender,
+                  address: userDetails.address,
+                }}
+              />
+
               {/* Sign out */}
               <Link
                 href="/api/auth/candidate/logout"
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 20, padding: '11px', borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, padding: '11px', borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
               >
                 <LogOut style={{ width: 14, height: 14 }} />
                 Sign Out

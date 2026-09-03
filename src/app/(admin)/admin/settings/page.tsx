@@ -5,6 +5,7 @@ import AdminLayout from '@/components/admin/AdminLayout'
 import { ShieldCheck, LockKeyhole, BellRing, Paintbrush, Users2, Laptop, Wifi, ArrowUpRight } from 'lucide-react'
 import GoogleIntegrationPanel from '@/components/admin/GoogleIntegrationPanel'
 import SiteStatsSettingsPanel from '@/components/admin/SiteStatsSettingsPanel'
+import AdminProfileSettingsPanel from '@/components/admin/AdminProfileSettingsPanel'
 import { getSiteStats } from '@/lib/site-stats'
 
 const C = {
@@ -34,7 +35,7 @@ export default async function AdminSettingsPage() {
   const [
     totalSessions, syncedSessions, pendingSessions, failedSessions,
     pendingJobs, processingJobs, failedJobs, completedJobs, recentFailedJobs,
-    totalStudents, totalCourses, siteStats
+    totalStudents, totalCourses, siteStats, currentAdmin
   ] =
     await Promise.all([
       prisma.session.count(),
@@ -54,6 +55,10 @@ export default async function AdminSettingsPage() {
       prisma.student.count(),
       prisma.course.count(),
       getSiteStats(),
+      prisma.adminUser.findUnique({
+        where: { id: session.userId },
+        select: { id: true, name: true, email: true, contact: true, role: true },
+      }),
     ])
 
   const autoSuggestions = {
@@ -236,6 +241,21 @@ export default async function AdminSettingsPage() {
             ))}
           </div>
         </div>
+
+        {/* ── Administrator Profile & Account ─────────────── */}
+        {currentAdmin && (
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+              <p style={{
+                fontSize: 11, fontWeight: 800, letterSpacing: '0.2em',
+                textTransform: 'uppercase', color: C.textSoft,
+              }}>
+                Administrator Account & Profile
+              </p>
+            </div>
+            <AdminProfileSettingsPanel admin={currentAdmin} />
+          </div>
+        )}
 
         {/* ── Global Site Statistics ───────────────────────── */}
         <div>

@@ -54,9 +54,91 @@ export async function PATCH(req: NextRequest) {
   if (!session || session.type !== 'admin') {
     return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 })
   }
-  const { id, isActive } = await req.json()
-  const student = await prisma.student.update({ where: { id: Number(id) }, data: { isActive: Boolean(isActive) } })
-  return NextResponse.json({ success: true, data: student })
+
+  try {
+    const body = await req.json()
+    const { id, name, email, contact, isActive, password } = body
+
+    if (!id) {
+      return NextResponse.json({ success: false, message: 'Student ID is required' }, { status: 400 })
+    }
+
+    const currentStudent = await prisma.student.findUnique({ where: { id: Number(id) } })
+    if (!currentStudent) {
+      return NextResponse.json({ success: false, message: 'Student not found' }, { status: 404 })
+    }
+
+    const updateData: any = {}
+
+    if (name !== undefined) {
+      if (!name.trim()) return NextResponse.json({ success: false, message: 'Name cannot be empty' }, { status: 400 })
+      updateData.name = name.trim()
+    }
+
+    if (email !== undefined) {
+      const cleanEmail = email.trim().toLowerCase()
+      if (!cleanEmail.includes('@')) {
+        return NextResponse.json({ success: false, message: 'Valid email is required' }, { status: 400 })
+      }
+      if (cleanEmail !== currentStudent.email.toLowerCase()) {
+        const existing = await prisma.student.findUnique({ where: { email: cleanEmail } })
+        if (existing && existing.id !== Number(id)) {
+          return NextResponse.json({ success: false, message: 'A student with this email already exists' }, { status: 409 })
+        }
+      }
+      updateData.email = cleanEmail
+    }
+
+    if (contact !== undefined) {
+      updateData.contact = contact ? contact.trim() : null
+    }
+
+    if (isActive !== undefined) {
+      updateData.isActive = Boolean(isActive)
+    }
+
+    let hashedPassword: string | undefined = undefined
+    if (password && password.trim().length > 0) {
+      if (password.trim().length < 6) {
+        return NextResponse.json({ success: false, message: 'Password must be at least 6 characters' }, { status: 400 })
+      }
+      hashedPassword = await hashPassword(password.trim())
+      updateData.password = hashedPassword
+    }
+
+    const updatedStudent = await prisma.student.update({
+      where: { id: Number(id) },
+      data: updateData,
+    })
+
+    // Keep candidate_login synchronized if the student has a linked candidate profile
+    const oldEmail = currentStudent.email.toLowerCase()
+    const newEmail = updateData.email || oldEmail
+    const linkedCandidate = await prisma.candidate.findFirst({
+      where: { OR: [{ email: oldEmail }, { email: newEmail }] },
+    })
+
+    if (linkedCandidate) {
+      const candidateUpdate: any = {}
+      if (updateData.name) candidateUpdate.name = updateData.name
+      if (updateData.email) candidateUpdate.email = updateData.email
+      if (updateData.contact !== undefined) {
+        candidateUpdate.mobile = updateData.contact
+        candidateUpdate.phone = updateData.contact
+      }
+      if (hashedPassword) candidateUpdate.password = hashedPassword
+
+      await prisma.candidate.update({
+        where: { id: linkedCandidate.id },
+        data: candidateUpdate,
+      })
+    }
+
+    return NextResponse.json({ success: true, data: updatedStudent, message: 'Student updated successfully' })
+  } catch (error) {
+    console.error('Update student error:', error)
+    return NextResponse.json({ success: false, message: 'Failed to update student' }, { status: 500 })
+  }
 }
 
 export async function POST(req: NextRequest) {
