@@ -391,10 +391,62 @@ export default async function CoursesPage() {
   }
 
   // Map DB Trainers — only show real DB trainers, no static fallbacks
+  // Map DB Trainers — with distinct rich profiles, quotes, and bios
   let formattedTrainers: TrainerItem[] = []
   if (rawDbTrainers && rawDbTrainers.length > 0) {
     formattedTrainers = rawDbTrainers.map((t, idx) => {
       const lower = t.name.toLowerCase()
+      const isBrahmita = lower.includes('brahmita')
+      const isShesha = lower.includes('shesha') || lower.includes('shhiv') || lower.includes('mohanty')
+
+      if (isBrahmita) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'HR & Soft Skills Specialist',
+          experienceYears: 15,
+          specializationTags: ['HR Operations', 'Soft Skills Mastery', 'Behavioral Interviewing', 'Statutory Compliance'],
+          bio: t.bio || 'Senior HR strategist and soft-skills mentor with 15+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
+          longBio: 'With 15+ years of extensive corporate HR and leadership coaching experience, Brahmita specializes in end-to-end HR operations, behavioral interviewing techniques, stakeholder communication, and candidate engagement. She has coached 1,200+ recruiters and HR professionals across India, helping them master the psychological and interpersonal dynamics required to excel in modern corporate talent acquisition.',
+          image: t.image || '/assets/images/trainers/brahmita_mam.jpg',
+          companyEx: 'Ex-Corporate HR Lead & Master Behavioral Coach',
+          rating: 4.95,
+          reviewsCount: 128,
+          studentsMentored: 1200,
+          coursesTaught: ['HR Corporate Training Course', 'HR Courses for Beginners', 'End-to-End Recruitment Training'],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: 'Mastering empathy, structured interviewing, and candidate psychology turns fresh recruiters into boardroom-ready talent partners.',
+          certifications: ['SHRM Certified Professional (SHRM-CP)', 'Certified Behavioral Interviewer', 'Master Corporate Soft Skills Coach'],
+        }
+      }
+
+      if (isShesha) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'AI Transformation & Recruitment Specialist',
+          experienceYears: 16,
+          specializationTags: ['AI in Recruitment', 'Boolean Sourcing Mastery', 'Talent Intelligence', 'ATS Pipeline Automation'],
+          bio: t.bio || 'AI recruitment architect and executive talent intelligence strategist with 16+ years engineering high-velocity sourcing pipelines, automated candidate discovery, and tech recruiting frameworks for global enterprises.',
+          longBio: 'Shesha is an industry-recognized talent acquisition strategist and AI recruitment pioneer. With 16+ years designing enterprise hiring infrastructure and tech talent pipelines for leading tech organizations, he trains recruiters to leverage generative AI, deep Boolean search architectures, and predictive analytics to automate sourcing workflows, slash time-to-fill, and out-perform agency competition.',
+          image: t.image || '/assets/images/trainers/shesha_sir.jpg',
+          companyEx: 'Ex-Enterprise TA Architect & AI Talent Strategist',
+          rating: 4.98,
+          reviewsCount: 142,
+          studentsMentored: 1350,
+          coursesTaught: ['AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist'],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: "AI won't replace recruiters, but recruiters who master AI workflows, deep Boolean logic, and talent architecture will replace those who don't.",
+          certifications: ['Certified Talent Sourcing Architect (CTSA)', 'Generative AI for Talent Acquisition Specialist', 'Advanced Boolean & Open-Web Search Certified'],
+        }
+      }
+
       const isFemale =
         lower.includes('priya') ||
         lower.includes('priti') ||
@@ -421,8 +473,8 @@ export default async function CoursesPage() {
         modes: ['Online', 'Offline', 'Hybrid'],
         featured: true,
         quote: isFemale
-          ? 'A solid foundation in statutory compliance and structured interviewing transforms freshers into boardroom-ready talent partners.'
-          : 'Recruiting is understanding business architecture and candidate psychology.',
+          ? 'Structured interviewing and talent operations build long-term organisational excellence.'
+          : 'Great recruiters connect business goals with human potential to build world-class teams.',
         certifications: ['SHRM Certified Professional', 'Certified Staffing Professional'],
       }
     })
