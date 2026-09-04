@@ -16,7 +16,7 @@ async function syncAllSessionPdfs() {
 
   for (const s of sessions) {
     try {
-      await ensureSessionSyllabusPdf(s.id)
+      await ensureSessionSyllabusPdf(s.id, true)
       successCount++
       if (successCount % 10 === 0 || successCount === sessions.length) {
         console.log(`Progress: ${successCount}/${sessions.length} generated.`)

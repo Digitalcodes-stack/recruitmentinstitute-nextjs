@@ -1,8 +1,8 @@
 /**
  * sessionSyllabusPdfGenerator.ts
- * Premium, executive-grade Session Syllabus & Teaching Notes PDF generator
- * designed for Recruitment Institute. Follows McKinsey / Coursera enterprise training
- * visual standards with clean typography, strong visual hierarchy, and vector graphics.
+ * World-Class Session Syllabus & Teaching Notes PDF Generator
+ * Designed for Recruitment Institute according to top-tier executive training standards
+ * (McKinsey Academy / Coursera Enterprise / LinkedIn Learning).
  */
 
 import fs from 'fs'
@@ -203,7 +203,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
       theme: 'Opening & Context Setting',
       talkingPoints: [
         `Welcome students and link today's session on "${moduleTitle}" to the broader recruitment lifecycle.`,
-        'Poll the cohort: "How many of you have faced friction or drops at this specific hiring stage?"',
+        'Poll the cohort: "How many of you have faced friction or candidate drop-offs at this stage?"',
         'State the concrete business outcome: how mastering this makes a recruiter 3x more productive and hire-ready.',
       ],
     },
@@ -345,57 +345,61 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
     const fileStream = fs.createWriteStream(outputPath)
     doc.pipe(fileStream)
 
-    // Executive Corporate Palette
-    const NAVY_DARK = '#0F172A'      // Deep Slate 900
-    const INDIGO_PRIMARY = '#1E1B4B' // Deep Indigo
-    const ACCENT_PURPLE = '#4F46E5'  // Indigo Accent
-    const TEAL_ACCENT = '#0D9488'    // Subtle Teal
-    const AMBER_ACCENT = '#D97706'   // Amber highlight
-    const TEXT_BODY = '#1E293B'      // Slate 800
-    const TEXT_MUTED = '#64748B'     // Slate 500
-    const TEXT_LIGHT = '#94A3B8'     // Slate 400
-    const CARD_BG = '#F8FAFC'        // Slate 50
-    const CARD_BORDER = '#E2E8F0'    // Slate 200
+    // Strict Corporate Palette
+    const PRIMARY_NAVY = '#0F172A'    // Primary Deep Navy
+    const ACCENT_INDIGO = '#4F46E5'   // Vibrant Indigo Accent
+    const SOFT_BG = '#F8FAFC'         // Slate 50 Card Fill
+    const CARD_BORDER = '#E2E8F0'     // Slate 200 Border
+    const LIGHT_INDIGO = '#EEF2FF'    // Light Indigo Accent Box
+    const LIGHT_GREEN = '#F0FDF4'     // Soft Green Card Fill
+    const GREEN_BORDER = '#BBF7D0'    // Soft Green Border
+    const TEAL_ACCENT = '#059669'     // Emerald Green Text
+    const LIGHT_AMBER = '#FEF3C7'     // Soft Amber Card Fill
+    const AMBER_BORDER = '#FDE68A'    // Amber Border
+    const AMBER_ACCENT = '#D97706'    // Amber Text/Stripe
+    const BODY_TEXT = '#1E293B'       // Slate 800 Charcoal Body Text
+    const MUTED_TEXT = '#64748B'      // Slate 500 Subtitle/Muted Text
+    const LIGHT_TEXT = '#94A3B8'      // Slate 400
 
     const contentWidth = 507
     const leftMargin = 44
-    const pageBottomLimit = 780
+    const pageBottomLimit = 785
 
-    // Helper: Draw small vector triangle/chevron (NO unicode!)
-    function drawVectorChevron(x: number, y: number, color = ACCENT_PURPLE) {
+    // Helper: Draw small vector chevron (NO unicode!)
+    function drawVectorChevron(x: number, y: number, color = ACCENT_INDIGO) {
       doc.save()
-      doc.polygon([x, y], [x + 4, y + 3], [x, y + 6]).fill(color)
+      doc.polygon([x, y], [x + 4.5, y + 3.5], [x, y + 7]).fill(color)
       doc.restore()
     }
 
     // Helper: Draw clean vector checkmark (NO unicode!)
     function drawVectorCheck(x: number, y: number, color = TEAL_ACCENT) {
       doc.save()
-      doc.moveTo(x, y + 3)
-        .lineTo(x + 2.5, y + 6)
-        .lineTo(x + 7.5, y + 1)
+      doc.moveTo(x, y + 3.5)
+        .lineTo(x + 3, y + 7)
+        .lineTo(x + 8.5, y + 1)
         .strokeColor(color)
-        .lineWidth(1.5)
+        .lineWidth(1.6)
         .stroke()
       doc.restore()
     }
 
     // Helper: Draw bullet circle (NO unicode!)
-    function drawBulletCircle(x: number, y: number, color = ACCENT_PURPLE, radius = 2) {
+    function drawBulletCircle(x: number, y: number, color = ACCENT_INDIGO, radius = 2.2) {
       doc.save()
       doc.circle(x, y, radius).fill(color)
       doc.restore()
     }
 
-    // Running Header on Pages 2, 3, 4...
+    // Running Header on subsequent pages
     function drawRunningHeader() {
       const currentY = 22
       doc.save()
-      doc.fillColor(TEXT_LIGHT).fontSize(7.5).font('Helvetica-Bold')
+      doc.fillColor(LIGHT_TEXT).fontSize(7.5).font('Helvetica-Bold')
       doc.text('RECRUITMENT INSTITUTE', leftMargin, currentY, { characterSpacing: 0.5 })
 
       const headerRight = `${data.courseTitle.toUpperCase()}  |  SESSION ${data.sessionNumber}`
-      doc.font('Helvetica').fillColor(TEXT_MUTED)
+      doc.font('Helvetica').fillColor(MUTED_TEXT)
       doc.text(headerRight, leftMargin, currentY, { width: contentWidth, align: 'right' })
 
       doc.moveTo(leftMargin, currentY + 11)
@@ -407,30 +411,34 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
       doc.y = 38
     }
 
-    // Section Header Builder
-    function drawSectionHeader(title: string, badgeNumber: string, subtitle?: string) {
-      // If within 50pt of footer, move to next page
-      if (doc.y > pageBottomLimit - 50) {
+    // Check if space needed exceeds page bottom; if so, break page cleanly
+    function ensureSpace(neededHeight: number) {
+      if (doc.y + neededHeight > pageBottomLimit) {
         doc.addPage()
         drawRunningHeader()
       }
+    }
 
-      doc.moveDown(0.4)
+    // Section Header Builder with Orphan Prevention
+    function drawSectionHeader(title: string, badgeNumber: string, subtitle?: string, minContentHeight = 65) {
+      ensureSpace(38 + minContentHeight)
+
+      doc.moveDown(0.3)
       const currentY = doc.y
 
-      // Number badge pill
+      // Large numbered circle in indigo
       doc.save()
-      doc.roundedRect(leftMargin, currentY, 24, 18, 5).fill(INDIGO_PRIMARY)
+      doc.circle(leftMargin + 12, currentY + 11, 11).fill(ACCENT_INDIGO)
       doc.fillColor('#FFFFFF').fontSize(9.5).font('Helvetica-Bold')
-      doc.text(badgeNumber, leftMargin, currentY + 4, { width: 24, align: 'center' })
+      doc.text(badgeNumber, leftMargin, currentY + 5.5, { width: 24, align: 'center' })
       doc.restore()
 
-      // Title
-      doc.fillColor(NAVY_DARK).fontSize(12).font('Helvetica-Bold')
-      doc.text(title, leftMargin + 32, currentY + 2.5)
+      // Section Title
+      doc.fillColor(PRIMARY_NAVY).fontSize(12).font('Helvetica-Bold')
+      doc.text(title, leftMargin + 32, currentY + 2)
 
       if (subtitle) {
-        doc.fillColor(TEXT_MUTED).fontSize(8).font('Helvetica')
+        doc.fillColor(MUTED_TEXT).fontSize(8.2).font('Helvetica')
         doc.text(subtitle, leftMargin + 32, doc.y + 1)
       }
 
@@ -444,225 +452,229 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
       doc.y = lineY + 6
     }
 
-    // ── PAGE 1: HERO, OBJECTIVES & CURRICULUM BREAKDOWN ───────────────────────
-    // Top colored accent bars
-    doc.rect(0, 0, 595.28, 4).fill(INDIGO_PRIMARY)
-    doc.rect(0, 4, 595.28, 2).fill(ACCENT_PURPLE)
-
-    // Header brand
-    doc.y = 26
-    doc.fillColor(ACCENT_PURPLE).fontSize(8).font('Helvetica-Bold')
-    doc.text('RECRUITMENT INSTITUTE  •  EXECUTIVE TALENT ACQUISITION MASTERCLASS', leftMargin, doc.y, {
-      characterSpacing: 0.6,
+    // ── PAGE 1: COVER HEADER & CURRICULUM BREAKDOWN ───────────────────────────
+    // 1. Dark navy top bar with white text
+    doc.rect(0, 0, 595.28, 40).fill(PRIMARY_NAVY)
+    doc.fillColor('#FFFFFF').fontSize(8.5).font('Helvetica-Bold')
+    doc.text('RECRUITMENT INSTITUTE  •  PRACTICAL TALENT ACQUISITION MASTERCLASS', leftMargin, 16, {
+      characterSpacing: 0.8,
     })
+    doc.fillColor('#818CF8').fontSize(8).font('Helvetica-Bold')
+    doc.text('EXECUTIVE TEACHING GUIDE', leftMargin, 16, { width: contentWidth, align: 'right' })
 
-    // Course Title
-    doc.moveDown(0.15)
-    doc.fillColor(NAVY_DARK).fontSize(15).font('Helvetica-Bold')
-    doc.text(data.courseTitle, leftMargin, doc.y)
+    // Course Title & Session Header
+    doc.y = 52
+    doc.fillColor(ACCENT_INDIGO).fontSize(8.5).font('Helvetica-Bold')
+    doc.text(`COURSE PROGRAM: ${data.courseTitle.toUpperCase()}`, leftMargin, doc.y, { characterSpacing: 0.5 })
 
-    // Hero Card Container
+    doc.moveDown(0.2)
+    doc.fillColor(PRIMARY_NAVY).fontSize(16).font('Helvetica-Bold')
+    doc.text(data.sessionTitle, leftMargin, doc.y)
+
+    // 2. Clean Info Card with Batch, Trainer, Date & Time
     doc.moveDown(0.35)
-    const heroY = doc.y
-    const heroHeight = 72
+    const infoCardY = doc.y
+    const infoCardHeight = 60
 
     doc.save()
-    doc.roundedRect(leftMargin, heroY, contentWidth, heroHeight, 8).fillAndStroke(CARD_BG, CARD_BORDER)
-    doc.roundedRect(leftMargin, heroY, 4, heroHeight, 2).fill(ACCENT_PURPLE)
+    doc.roundedRect(leftMargin, infoCardY, contentWidth, infoCardHeight, 8).fillAndStroke(SOFT_BG, CARD_BORDER)
+    // Left decorative indigo accent stripe
+    doc.roundedRect(leftMargin, infoCardY, 4, infoCardHeight, 2).fill(ACCENT_INDIGO)
     doc.restore()
 
-    // Hero Badge
-    const badgeText = `SESSION ${data.sessionNumber}  |  SYLLABUS & TRAINER TEACHING GUIDE`
-    doc.save()
-    doc.roundedRect(leftMargin + 14, heroY + 10, 240, 15, 4).fill('#EEF2FF')
-    doc.fillColor(ACCENT_PURPLE).fontSize(7.5).font('Helvetica-Bold')
-    doc.text(badgeText, leftMargin + 20, heroY + 13.5)
-    doc.restore()
+    // 3 Columns inside Info Card
+    const colW = (contentWidth - 28) / 3
+    // Col 1: Batch & Mode
+    doc.fillColor(MUTED_TEXT).fontSize(7.2).font('Helvetica-Bold')
+    doc.text('BATCH COHORT', leftMargin + 16, infoCardY + 10)
+    doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica-Bold')
+    doc.text(data.batchName, leftMargin + 16, infoCardY + 22, { width: colW })
 
-    // Session Title
-    doc.fillColor(NAVY_DARK).fontSize(13.5).font('Helvetica-Bold')
-    doc.text(data.sessionTitle, leftMargin + 14, heroY + 30, { width: contentWidth - 28 })
+    // Col 2: Trainer & Credentials
+    doc.fillColor(MUTED_TEXT).fontSize(7.2).font('Helvetica-Bold')
+    doc.text('LEAD INSTRUCTOR', leftMargin + 16 + colW, infoCardY + 10)
+    doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica-Bold')
+    doc.text(data.trainerName, leftMargin + 16 + colW, infoCardY + 22, { width: colW })
 
-    // Meta Details
-    doc.fillColor(TEXT_MUTED).fontSize(8.5).font('Helvetica')
-    const metaString = `Batch: ${data.batchName}   |   Lead Trainer: ${data.trainerName}   |   ${data.sessionDateStr} (${data.sessionTimeStr})`
-    doc.text(metaString, leftMargin + 14, heroY + 51, { width: contentWidth - 28 })
+    // Col 3: Schedule & Meeting
+    doc.fillColor(MUTED_TEXT).fontSize(7.2).font('Helvetica-Bold')
+    doc.text('SCHEDULE & TIMING', leftMargin + 16 + colW * 2, infoCardY + 10)
+    doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica-Bold')
+    doc.text(`${data.sessionDateStr}`, leftMargin + 16 + colW * 2, infoCardY + 22, { width: colW })
+    doc.fillColor(MUTED_TEXT).fontSize(7.8).font('Helvetica')
+    doc.text(data.sessionTimeStr, leftMargin + 16 + colW * 2, infoCardY + 35, { width: colW })
 
-    doc.y = heroY + heroHeight + 6
+    doc.y = infoCardY + infoCardHeight + 8
 
     // ── SECTION 01: LEARNING OBJECTIVES ───────────────────────────────────────
-    drawSectionHeader('Learning Objectives & Session Outcomes', '01', 'Core competencies attendees master upon completing this session')
+    drawSectionHeader('Learning Objectives & Target Capabilities', '01', 'Core competencies attendees master upon completing this session')
 
-    const objBoxY = doc.y
-    const objBoxHeight = data.objectives.length * 18 + 12
-    doc.save()
-    doc.roundedRect(leftMargin, objBoxY, contentWidth, objBoxHeight, 6).fillAndStroke('#F0FDF4', '#BBF7D0')
-    doc.restore()
-
-    let objCursor = objBoxY + 8
+    // Calculate dynamic height for objectives box
+    const objTextWidth = contentWidth - 42
+    let calculatedObjHeight = 16
     data.objectives.forEach((obj) => {
-      drawVectorCheck(leftMargin + 12, objCursor, TEAL_ACCENT)
-      doc.fillColor(TEXT_BODY).fontSize(8.5).font('Helvetica-Bold')
-      doc.text(obj, leftMargin + 26, objCursor, { width: contentWidth - 36, lineGap: 1.5 })
-      objCursor = doc.y + 4
+      const h = doc.fontSize(8.5).font('Helvetica-Bold').heightOfString(obj, { width: objTextWidth, lineGap: 1.5 })
+      calculatedObjHeight += h + 6
     })
 
-    doc.y = objBoxY + objBoxHeight + 6
+    const objBoxY = doc.y
+    doc.save()
+    doc.roundedRect(leftMargin, objBoxY, contentWidth, calculatedObjHeight, 8).fillAndStroke(LIGHT_GREEN, GREEN_BORDER)
+    doc.restore()
+
+    let objCursor = objBoxY + 10
+    data.objectives.forEach((obj) => {
+      drawVectorCheck(leftMargin + 14, objCursor, TEAL_ACCENT)
+      doc.fillColor(BODY_TEXT).fontSize(8.5).font('Helvetica-Bold')
+      doc.text(obj, leftMargin + 28, objCursor, { width: objTextWidth, lineGap: 1.5 })
+      objCursor = doc.y + 6
+    })
+
+    doc.y = objBoxY + calculatedObjHeight + 8
 
     // ── SECTION 02: CURRICULUM BREAKDOWN ──────────────────────────────────────
     drawSectionHeader('Detailed Syllabus Topics & Curriculum Breakdown', '02', 'Step-by-step modular components covered in this session')
 
     data.topics.forEach((t) => {
-      if (doc.y > pageBottomLimit - 50) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      ensureSpace(45)
 
       const tHeaderY = doc.y
       doc.save()
-      doc.roundedRect(leftMargin, tHeaderY, contentWidth, 19, 4).fill('#F1F5F9')
-      doc.fillColor(INDIGO_PRIMARY).fontSize(9).font('Helvetica-Bold')
-      doc.text(t.title, leftMargin + 10, tHeaderY + 5)
+      doc.roundedRect(leftMargin, tHeaderY, contentWidth, 19, 5).fill('#F1F5F9')
+      doc.fillColor(PRIMARY_NAVY).fontSize(9).font('Helvetica-Bold')
+      doc.text(t.title, leftMargin + 12, tHeaderY + 5)
       doc.restore()
 
       doc.y = tHeaderY + 23
 
       t.subtopics.forEach((st) => {
-        if (doc.y > pageBottomLimit - 25) {
-          doc.addPage()
-          drawRunningHeader()
-        }
-        drawBulletCircle(leftMargin + 14, doc.y + 4, ACCENT_PURPLE, 1.8)
-        doc.fillColor(TEXT_BODY).fontSize(8.2).font('Helvetica')
-        doc.text(st, leftMargin + 24, doc.y, { width: contentWidth - 32, lineGap: 1.5 })
+        ensureSpace(20)
+        drawBulletCircle(leftMargin + 16, doc.y + 4.5, ACCENT_INDIGO, 1.8)
+        doc.fillColor(BODY_TEXT).fontSize(8.3).font('Helvetica')
+        doc.text(st, leftMargin + 26, doc.y, { width: contentWidth - 34, lineGap: 1.5 })
         doc.moveDown(0.18)
       })
       doc.moveDown(0.25)
     })
 
-    // ── PAGE 2: TRAINER TEACHING NOTES & TIMELINE ─────────────────────────────
-    doc.addPage()
-    drawRunningHeader()
-
+    // ── SECTION 03: TRAINER TEACHING NOTES & TIMELINE ─────────────────────────
     drawSectionHeader('Trainer Teaching Notes & Paced Talking Points', '03', 'Chronological 120-minute delivery framework with talking points')
 
-    // Trainer Guidance Callout
+    // Trainer Guidance Callout (Soft light accent box)
+    ensureSpace(34)
     const guidanceY = doc.y
     doc.save()
-    doc.roundedRect(leftMargin, guidanceY, contentWidth, 24, 4).fillAndStroke('#FFFBEB', '#FDE68A')
-    doc.fillColor('#92400E').fontSize(8).font('Helvetica-Bold')
-    doc.text('PEDAGOGICAL GUIDANCE FOR TRAINER:', leftMargin + 10, guidanceY + 4)
-    doc.fillColor('#78350F').fontSize(7.8).font('Helvetica')
-    doc.text('Follow this 4-stage pacing model. Balance conceptual clarity with live screen-sharing and student role-plays.', leftMargin + 10, guidanceY + 13)
+    doc.roundedRect(leftMargin, guidanceY, contentWidth, 26, 5).fillAndStroke(LIGHT_INDIGO, '#C7D2FE')
+    doc.roundedRect(leftMargin, guidanceY, 3.5, 26, 2).fill(ACCENT_INDIGO)
+    doc.fillColor('#3730A3').fontSize(8).font('Helvetica-Bold')
+    doc.text('PEDAGOGICAL GUIDANCE FOR TRAINER:', leftMargin + 12, guidanceY + 4.5)
+    doc.fillColor('#4338CA').fontSize(7.8).font('Helvetica')
+    doc.text('Follow this 4-stage delivery timeline. Balance conceptual delivery with live screen-sharing and student interaction.', leftMargin + 12, guidanceY + 15)
     doc.restore()
 
-    doc.y = guidanceY + 30
+    doc.y = guidanceY + 32
 
-    // 4 Timeline Segments
+    // 4 Timeline Segments (Pill-style badges + light background cards)
     data.trainerTalkingPoints.forEach((tp) => {
-      if (doc.y > pageBottomLimit - 70) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      ensureSpace(55)
 
       const segBoxY = doc.y
 
-      // Time Pill Badge + Theme
+      // Time Pill Badge + Theme Header
       doc.save()
-      doc.roundedRect(leftMargin, segBoxY, 62, 15, 7.5).fill(INDIGO_PRIMARY)
-      doc.fillColor('#FFFFFF').fontSize(7).font('Helvetica-Bold')
+      doc.roundedRect(leftMargin, segBoxY, 62, 15, 7).fill(ACCENT_INDIGO)
+      doc.fillColor('#FFFFFF').fontSize(7.2).font('Helvetica-Bold')
       doc.text(`${tp.timeMinutes} MINS`, leftMargin, segBoxY + 4, { width: 62, align: 'center' })
 
-      doc.fillColor(NAVY_DARK).fontSize(9.2).font('Helvetica-Bold')
+      doc.fillColor(PRIMARY_NAVY).fontSize(9.2).font('Helvetica-Bold')
       doc.text(tp.theme, leftMargin + 70, segBoxY + 3)
       doc.restore()
 
-      doc.y = segBoxY + 19
+      doc.y = segBoxY + 20
 
       tp.talkingPoints.forEach((pt) => {
-        if (doc.y > pageBottomLimit - 25) {
-          doc.addPage()
-          drawRunningHeader()
-        }
-        drawVectorChevron(leftMargin + 10, doc.y + 2, ACCENT_PURPLE)
-        doc.fillColor(TEXT_BODY).fontSize(8.2).font('Helvetica')
-        doc.text(pt, leftMargin + 20, doc.y, { width: contentWidth - 26, lineGap: 2 })
+        ensureSpace(22)
+        drawVectorChevron(leftMargin + 12, doc.y + 2, ACCENT_INDIGO)
+        doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica')
+        doc.text(pt, leftMargin + 22, doc.y, { width: contentWidth - 28, lineGap: 2 })
         doc.moveDown(0.2)
       })
-      doc.moveDown(0.35)
+      doc.moveDown(0.3)
     })
 
-    // ── PAGE 3: CASE STUDIES, LABS & RECRUITMENT TECH STACK ───────────────────
-    doc.addPage()
-    drawRunningHeader()
-
-    // SECTION 04: KEY CONCEPTS & CASE STUDIES
-    drawSectionHeader('Key Concepts & Industry Case Studies', '04', 'Applied talent acquisition frameworks & corporate hiring benchmarks')
+    // ── SECTION 04: KEY CONCEPTS & INDUSTRY CASE STUDIES ──────────────────────
+    drawSectionHeader('Key Concepts & Industry Case Studies', '04', 'Applied talent acquisition frameworks & verified corporate benchmarks', 110)
 
     data.keyConceptsAndCaseStudies.forEach((kc) => {
-      if (doc.y > pageBottomLimit - 85) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      const csWidth = contentWidth - 24
+      const csDescH = doc.fontSize(7.8).font('Helvetica').heightOfString(kc.realWorldExample, { width: csWidth, lineGap: 1.4 })
+      const csBoxHeight = 10 + csDescH + 10
+      ensureSpace(40 + csBoxHeight)
 
-      doc.fillColor(INDIGO_PRIMARY).fontSize(9.5).font('Helvetica-Bold')
+      doc.fillColor(PRIMARY_NAVY).fontSize(9.2).font('Helvetica-Bold')
       doc.text(kc.concept, leftMargin, doc.y)
-      doc.moveDown(0.15)
+      doc.moveDown(0.14)
 
-      doc.fillColor(TEXT_BODY).fontSize(8.2).font('Helvetica')
-      doc.text(kc.explanation, leftMargin, doc.y, { width: contentWidth, lineGap: 1.8 })
-      doc.moveDown(0.25)
+      doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica')
+      doc.text(kc.explanation, leftMargin, doc.y, { width: contentWidth, lineGap: 1.5 })
+      doc.moveDown(0.2)
 
-      // Case Study Box
+      // Industry Example & Case Study (Soft yellow/orange callout box)
       const csBoxY = doc.y
-      const csBoxHeight = 34
       doc.save()
-      doc.roundedRect(leftMargin, csBoxY, contentWidth, csBoxHeight, 4).fillAndStroke(CARD_BG, CARD_BORDER)
-      doc.rect(leftMargin, csBoxY, 3, csBoxHeight).fill(AMBER_ACCENT)
-      doc.fillColor('#B45309').fontSize(7.5).font('Helvetica-Bold')
-      doc.text('CASE STUDY BENCHMARK:', leftMargin + 10, csBoxY + 4)
-      doc.fillColor(TEXT_BODY).fontSize(7.8).font('Helvetica')
-      doc.text(kc.realWorldExample, leftMargin + 10, csBoxY + 14, { width: contentWidth - 18, lineGap: 1.5 })
+      doc.roundedRect(leftMargin, csBoxY, contentWidth, csBoxHeight, 5).fillAndStroke(LIGHT_AMBER, AMBER_BORDER)
+      doc.roundedRect(leftMargin, csBoxY, 4, csBoxHeight, 2).fill(AMBER_ACCENT)
+      doc.fillColor('#92400E').fontSize(7.5).font('Helvetica-Bold')
+      doc.text('REAL-WORLD CASE STUDY & METRIC BENCHMARK:', leftMargin + 12, csBoxY + 4.5)
+      doc.fillColor('#78350F').fontSize(7.8).font('Helvetica')
+      doc.text(kc.realWorldExample, leftMargin + 12, csBoxY + 15, { width: csWidth, lineGap: 1.4 })
       doc.restore()
 
       doc.y = csBoxY + csBoxHeight + 6
     })
 
-    // SECTION 05: PRACTICAL LABS & DELIVERABLES
-    drawSectionHeader('Practical Classroom Activities & Exercises', '05', 'Direct classroom simulations and portfolio artifacts')
+    // ── SECTION 05: PRACTICAL CLASSROOM ACTIVITIES & HANDS-ON LAB ─────────────
+    drawSectionHeader('Practical Classroom Activities & Exercises', '05', 'Direct classroom simulations and portfolio artifacts', 75)
 
     data.practicalActivities.forEach((act) => {
-      if (doc.y > pageBottomLimit - 60) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      const actWidth = contentWidth - 28
+      const titleH = doc.fontSize(9.2).font('Helvetica-Bold').heightOfString(act.title, { width: actWidth })
+      const instrH = doc.fontSize(8.2).font('Helvetica').heightOfString(`Instructions: ${act.instructions}`, { width: actWidth, lineGap: 1.4 })
+      const delivH = doc.fontSize(8.2).font('Helvetica-Bold').heightOfString(`Tangible Deliverable: ${act.deliverable}`, { width: actWidth, lineGap: 1.4 })
+      const actBoxHeight = 8 + titleH + 4 + instrH + 5 + delivH + 8
+
+      ensureSpace(actBoxHeight + 8)
 
       const actBoxY = doc.y
-      const actBoxHeight = 48
       doc.save()
-      doc.roundedRect(leftMargin, actBoxY, contentWidth, actBoxHeight, 6).fillAndStroke('#F0FDF4', '#86EFAC')
-      doc.fillColor(TEAL_ACCENT).fontSize(9).font('Helvetica-Bold')
-      doc.text(act.title, leftMargin + 12, actBoxY + 6)
+      doc.roundedRect(leftMargin, actBoxY, contentWidth, actBoxHeight, 6).fillAndStroke(LIGHT_GREEN, '#86EFAC')
+      doc.roundedRect(leftMargin, actBoxY, 4, actBoxHeight, 2).fill(TEAL_ACCENT)
 
-      doc.fillColor(TEXT_BODY).fontSize(8).font('Helvetica')
-      doc.text(`Instructions: ${act.instructions}`, leftMargin + 12, actBoxY + 19, { width: contentWidth - 24, lineGap: 1.5 })
+      // Title
+      let currentActCursor = actBoxY + 7
+      doc.fillColor(TEAL_ACCENT).fontSize(9.2).font('Helvetica-Bold')
+      doc.text(act.title, leftMargin + 14, currentActCursor, { width: actWidth })
+      currentActCursor = doc.y + 3
 
-      doc.fillColor('#166534').fontSize(8).font('Helvetica-Bold')
-      doc.text(`Deliverable: ${act.deliverable}`, leftMargin + 12, actBoxY + 33, { width: contentWidth - 24 })
+      // Instructions
+      doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica')
+      doc.text(`Instructions: ${act.instructions}`, leftMargin + 14, currentActCursor, { width: actWidth, lineGap: 1.4 })
+      currentActCursor = doc.y + 4
+
+      // Tangible Deliverable
+      doc.fillColor('#166534').fontSize(8.2).font('Helvetica-Bold')
+      doc.text(`Tangible Deliverable: ${act.deliverable}`, leftMargin + 14, currentActCursor, { width: actWidth, lineGap: 1.4 })
       doc.restore()
 
       doc.y = actBoxY + actBoxHeight + 6
     })
 
-    // SECTION 06: RECOMMENDED TECH STACK
-    drawSectionHeader('Recommended Recruitment Software & Tech Stack', '06', 'Enterprise-grade recruiting tools utilized during this session')
+    // ── SECTION 06: RECOMMENDED TOOLS & TECH STACK ────────────────────────────
+    drawSectionHeader('Recommended Recruitment Software & Tech Stack', '06', 'Enterprise-grade recruiting tools utilized during this session', 50)
 
     const toolColWidth = (contentWidth - 10) / 2
     for (let i = 0; i < data.recommendedTools.length; i += 2) {
-      if (doc.y > pageBottomLimit - 44) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      ensureSpace(42)
 
       const rowY = doc.y
       const t1 = data.recommendedTools[i]
@@ -670,96 +682,95 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
 
       if (t1) {
         doc.save()
-        doc.roundedRect(leftMargin, rowY, toolColWidth, 38, 4).fillAndStroke(CARD_BG, CARD_BORDER)
-        doc.fillColor(INDIGO_PRIMARY).fontSize(8.8).font('Helvetica-Bold')
-        doc.text(t1.name, leftMargin + 8, rowY + 5)
-        doc.fillColor(ACCENT_PURPLE).fontSize(7.2).font('Helvetica-Bold')
-        doc.text(t1.category, leftMargin + 8, rowY + 16)
-        doc.fillColor(TEXT_MUTED).fontSize(7.2).font('Helvetica')
-        doc.text(t1.usage, leftMargin + 8, rowY + 26, { width: toolColWidth - 14 })
+        doc.roundedRect(leftMargin, rowY, toolColWidth, 36, 5).fillAndStroke('#FFFFFF', CARD_BORDER)
+        doc.fillColor(PRIMARY_NAVY).fontSize(8.8).font('Helvetica-Bold')
+        doc.text(t1.name, leftMargin + 10, rowY + 5)
+
+        // Pill badge for category
+        doc.roundedRect(leftMargin + toolColWidth - 85, rowY + 4.5, 75, 11, 3).fill(LIGHT_INDIGO)
+        doc.fillColor(ACCENT_INDIGO).fontSize(6.8).font('Helvetica-Bold')
+        doc.text(t1.category, leftMargin + toolColWidth - 85, rowY + 6.5, { width: 75, align: 'center' })
+
+        doc.fillColor(MUTED_TEXT).fontSize(7.5).font('Helvetica')
+        doc.text(t1.usage, leftMargin + 10, rowY + 20, { width: toolColWidth - 20 })
         doc.restore()
       }
 
       if (t2) {
         const col2X = leftMargin + toolColWidth + 10
         doc.save()
-        doc.roundedRect(col2X, rowY, toolColWidth, 38, 4).fillAndStroke(CARD_BG, CARD_BORDER)
-        doc.fillColor(INDIGO_PRIMARY).fontSize(8.8).font('Helvetica-Bold')
-        doc.text(t2.name, col2X + 8, rowY + 5)
-        doc.fillColor(ACCENT_PURPLE).fontSize(7.2).font('Helvetica-Bold')
-        doc.text(t2.category, col2X + 8, rowY + 16)
-        doc.fillColor(TEXT_MUTED).fontSize(7.2).font('Helvetica')
-        doc.text(t2.usage, col2X + 8, rowY + 26, { width: toolColWidth - 14 })
+        doc.roundedRect(col2X, rowY, toolColWidth, 36, 5).fillAndStroke('#FFFFFF', CARD_BORDER)
+        doc.fillColor(PRIMARY_NAVY).fontSize(8.8).font('Helvetica-Bold')
+        doc.text(t2.name, col2X + 10, rowY + 5)
+
+        // Pill badge for category
+        doc.roundedRect(col2X + toolColWidth - 85, rowY + 4.5, 75, 11, 3).fill(LIGHT_INDIGO)
+        doc.fillColor(ACCENT_INDIGO).fontSize(6.8).font('Helvetica-Bold')
+        doc.text(t2.category, col2X + toolColWidth - 85, rowY + 6.5, { width: 75, align: 'center' })
+
+        doc.fillColor(MUTED_TEXT).fontSize(7.5).font('Helvetica')
+        doc.text(t2.usage, col2X + 10, rowY + 20, { width: toolColWidth - 20 })
         doc.restore()
       }
 
-      doc.y = rowY + 44
+      doc.y = rowY + 40
     }
 
-    // ── PAGE 4: VIVA ASSESSMENT, ACTION ITEMS & CLOSING ACCREDITATION ──────────
-    doc.addPage()
-    drawRunningHeader()
-
-    // SECTION 07: VIVA & ASSESSMENT POINTS
-    drawSectionHeader('Check-for-Understanding & Discussion Prompts', '07', 'Oral viva check and critical scenario analysis')
+    // ── SECTION 07: CHECK-FOR-UNDERSTANDING & DISCUSSION PROMPTS ──────────────
+    drawSectionHeader('Check-for-Understanding & Discussion Prompts', '07', 'Oral viva check and critical scenario analysis', 45)
 
     data.assessmentQuestions.forEach((q, idx) => {
-      if (doc.y > pageBottomLimit - 30) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      ensureSpace(24)
 
-      doc.fillColor(ACCENT_PURPLE).fontSize(8.5).font('Helvetica-Bold')
-      doc.text(`Q${idx + 1}.`, leftMargin, doc.y)
-      doc.fillColor(TEXT_BODY).fontSize(8.2).font('Helvetica')
-      doc.text(q, leftMargin + 20, doc.y, { width: contentWidth - 24, lineGap: 2 })
-      doc.moveDown(0.25)
+      doc.save()
+      doc.roundedRect(leftMargin, doc.y, 22, 13, 4).fill(LIGHT_INDIGO)
+      doc.fillColor(ACCENT_INDIGO).fontSize(7.8).font('Helvetica-Bold')
+      doc.text(`Q${idx + 1}`, leftMargin, doc.y + 2.5, { width: 22, align: 'center' })
+      doc.restore()
+
+      doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica')
+      doc.text(q, leftMargin + 28, doc.y, { width: contentWidth - 32, lineGap: 1.6 })
+      doc.moveDown(0.18)
     })
 
-    // SECTION 08: SUMMARY & ACTION ITEMS
-    drawSectionHeader('Session Summary & Post-Class Action Items', '08', 'Core takeaways and mandatory preparation before next session')
+    // ── SECTION 08: SUMMARY & ACTION ITEMS ────────────────────────────────────
+    drawSectionHeader('Session Summary & Post-Class Action Items', '08', 'Core takeaways and mandatory preparation before next session', 45)
 
     data.summaryTakeaways.forEach((t) => {
-      if (doc.y > pageBottomLimit - 25) {
-        doc.addPage()
-        drawRunningHeader()
-      }
+      ensureSpace(20)
 
-      drawVectorCheck(leftMargin + 2, doc.y + 1, TEAL_ACCENT)
-      doc.fillColor(TEXT_BODY).fontSize(8.2).font('Helvetica')
-      doc.text(t, leftMargin + 18, doc.y, { width: contentWidth - 22, lineGap: 2 })
-      doc.moveDown(0.25)
+      drawVectorCheck(leftMargin + 4, doc.y + 1, TEAL_ACCENT)
+      doc.fillColor(BODY_TEXT).fontSize(8.2).font('Helvetica')
+      doc.text(t, leftMargin + 22, doc.y, { width: contentWidth - 26, lineGap: 1.6 })
+      doc.moveDown(0.18)
     })
 
     // Institutional Closing Accreditation Card
-    doc.moveDown(0.8)
-    if (doc.y > pageBottomLimit - 50) {
-      doc.addPage()
-      drawRunningHeader()
-    }
+    ensureSpace(48)
+    doc.moveDown(0.3)
 
     const footCardY = doc.y
-    const footCardHeight = 46
+    const footCardHeight = 42
     doc.save()
-    doc.roundedRect(leftMargin, footCardY, contentWidth, footCardHeight, 6).fillAndStroke(CARD_BG, CARD_BORDER)
-    doc.fillColor(INDIGO_PRIMARY).fontSize(8.5).font('Helvetica-Bold')
-    doc.text('RECRUITMENT INSTITUTE  •  EXCELLENCE IN RECRUITMENT EDUCATION', leftMargin + 10, footCardY + 8, { width: contentWidth - 20, align: 'center' })
-    doc.fillColor(TEXT_MUTED).fontSize(7.5).font('Helvetica')
+    doc.roundedRect(leftMargin, footCardY, contentWidth, footCardHeight, 6).fillAndStroke(SOFT_BG, CARD_BORDER)
+    doc.fillColor(PRIMARY_NAVY).fontSize(8.2).font('Helvetica-Bold')
+    doc.text('RECRUITMENT INSTITUTE  •  EXCELLENCE IN RECRUITMENT EDUCATION', leftMargin + 10, footCardY + 7, { width: contentWidth - 20, align: 'center' })
+    doc.fillColor(MUTED_TEXT).fontSize(7).font('Helvetica')
     doc.text(
-      'Pune Campus & Online Live Programs  •  placement@recruitmentinstitute.in  •  recruitmentinstitute.in\nOfficial syllabus & pedagogical teaching guide. All rights reserved.',
+      'Pune Campus & Online Live Cohorts  •  placement@recruitmentinstitute.in  •  recruitmentinstitute.in\nOfficial syllabus & pedagogical teaching guide. All rights reserved.',
       leftMargin + 10,
-      footCardY + 22,
-      { width: contentWidth - 20, align: 'center', lineGap: 2 }
+      footCardY + 19,
+      { width: contentWidth - 20, align: 'center', lineGap: 1.8 }
     )
     doc.restore()
 
-    // ── GLOBAL FOOTER ON ALL PAGES ────────────────────────────────────────────
+    // ── GLOBAL FOOTER ON ALL PAGES (3 NON-OVERLAPPING ZONES) ──────────────────
     const totalPages = doc.bufferedPageRange().count
     for (let i = 0; i < totalPages; i++) {
       doc.switchToPage(i)
       doc.page.margins.bottom = 0 // Disable bottom margin check for footer
 
-      const footerY = 804
+      const footerY = 806
 
       // Thin hairline rule
       doc.moveTo(leftMargin, footerY)
@@ -768,25 +779,27 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
         .lineWidth(0.5)
         .stroke()
 
-      // Left brand tag
-      doc.fillColor(TEXT_LIGHT).fontSize(7.5).font('Helvetica')
+      // Zone 1: Left brand & session tag (Width 160pt)
+      doc.fillColor(LIGHT_TEXT).fontSize(7.5).font('Helvetica')
       doc.text(
-        `Recruitment Institute • ${data.courseTitle} • Session ${data.sessionNumber}`,
+        `Recruitment Institute • Session ${data.sessionNumber}`,
         leftMargin,
         footerY + 6,
-        { lineBreak: false }
+        { width: 160, align: 'left', lineBreak: false }
       )
 
-      // Center confidentiality
-      doc.text('Confidential - For Enrolled Training Use', leftMargin, footerY + 6, {
-        width: contentWidth,
+      // Zone 2: Center confidentiality (Strict design rule)
+      doc.fillColor(MUTED_TEXT).fontSize(7.5).font('Helvetica')
+      doc.text('Recruitment Institute • Confidential – Trainer Copy', leftMargin + 160, footerY + 6, {
+        width: contentWidth - 260,
         align: 'center',
         lineBreak: false,
       })
 
-      // Right page count
-      doc.text(`Page ${i + 1} of ${totalPages}`, leftMargin, footerY + 6, {
-        width: contentWidth,
+      // Zone 3: Right page count (Width 100pt)
+      doc.fillColor(LIGHT_TEXT).fontSize(7.5).font('Helvetica')
+      doc.text(`Page ${i + 1} of ${totalPages}`, leftMargin + contentWidth - 100, footerY + 6, {
+        width: 100,
         align: 'right',
         lineBreak: false,
       })
