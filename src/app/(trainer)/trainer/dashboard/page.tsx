@@ -20,6 +20,7 @@ import {
   Award,
   Sparkles,
   BookOpen,
+  FileText,
 } from 'lucide-react'
 
 export default async function TrainerDashboardPage() {
@@ -413,9 +414,9 @@ export default async function TrainerDashboardPage() {
                         </Link>
                         <Link
                           href={`/trainer/sessions?batchId=${b.id}`}
-                          style={{ fontSize: 11.5, fontWeight: 700, color: '#7c3aed', textDecoration: 'none', background: '#ffffff', padding: '4px 10px', borderRadius: 6, border: '1px solid #ddd6fe' }}
+                          style={{ fontSize: 11.5, fontWeight: 700, color: '#047857', textDecoration: 'none', background: '#ecfdf5', padding: '4px 10px', borderRadius: 6, border: '1px solid #a7f3d0' }}
                         >
-                          Sessions
+                          Sessions & Syllabus
                         </Link>
                       </div>
                     </div>
@@ -503,7 +504,7 @@ export default async function TrainerDashboardPage() {
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, paddingTop: 10, borderTop: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12, paddingTop: 10, borderTop: '1px solid #e2e8f0', flexWrap: 'wrap', gap: 6 }}>
                       {isCompleted ? (
                         <span
                           style={{
@@ -534,8 +535,8 @@ export default async function TrainerDashboardPage() {
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 6,
-                                fontSize: 12,
+                                gap: 5,
+                                fontSize: 11.5,
                                 fontWeight: 700,
                                 color: '#ffffff',
                                 background: isLive ? '#dc2626' : '#2563eb',
@@ -552,25 +553,50 @@ export default async function TrainerDashboardPage() {
                         })()
                       )}
 
-                      <Link
-                        href={`/trainer/attendance?sessionId=${s.id}`}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 4,
-                          fontSize: 11.5,
-                          fontWeight: 700,
-                          color: '#0f172a',
-                          background: '#ffffff',
-                          border: '1px solid #cbd5e1',
-                          padding: '5px 10px',
-                          borderRadius: 8,
-                          textDecoration: 'none',
-                        }}
-                      >
-                        <UserCheck style={{ width: 12, height: 12, color: '#16a34a' }} />
-                        {isCompleted ? 'Review Attendance' : 'Attendance'}
-                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <a
+                          href={`/api/sessions/${s.id}/syllabus-pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Open Session Syllabus & Teaching Notes PDF"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontSize: 11.5,
+                            fontWeight: 700,
+                            color: '#047857',
+                            background: '#ecfdf5',
+                            border: '1px solid #a7f3d0',
+                            padding: '5px 10px',
+                            borderRadius: 8,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          <FileText style={{ width: 12, height: 12, color: '#059669' }} />
+                          Syllabus PDF
+                        </a>
+
+                        <Link
+                          href={`/trainer/attendance?sessionId=${s.id}`}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 4,
+                            fontSize: 11.5,
+                            fontWeight: 700,
+                            color: '#0f172a',
+                            background: '#ffffff',
+                            border: '1px solid #cbd5e1',
+                            padding: '5px 10px',
+                            borderRadius: 8,
+                            textDecoration: 'none',
+                          }}
+                        >
+                          <UserCheck style={{ width: 12, height: 12, color: '#16a34a' }} />
+                          {isCompleted ? 'Review Attendance' : 'Attendance'}
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 )
