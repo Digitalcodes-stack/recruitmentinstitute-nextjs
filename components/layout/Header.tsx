@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import {
   Menu, X, ChevronDown, Phone, Mail,
-  BookOpen, Award, Briefcase, GraduationCap, User, ArrowRight, Users, Building2, LogOut
+  BookOpen, Award, Briefcase, GraduationCap, User, ArrowRight, Users, Building2, LogOut, Sparkles
 } from 'lucide-react'
 
 type SessionUser = { name: string; email: string; type: string }
@@ -19,6 +19,13 @@ const loginOptions = [
 ]
 
 const courses = [
+  {
+    label: 'AI for Recruitment',
+    description: 'Flagship: Master AI tools from Job Description to Joining',
+    href: '/ai-for-recruitment',
+    icon: <Sparkles className="w-5 h-5" />,
+    iconStyle: { color: '#6366F1', background: '#EEF2FF' },
+  },
   {
     label: 'End-to-End Recruitment Training',
     description: 'Master the full hiring lifecycle across all domains',

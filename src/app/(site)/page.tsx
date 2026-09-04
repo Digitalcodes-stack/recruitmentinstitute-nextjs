@@ -67,6 +67,7 @@ export default async function Page() {
   ])
 
   const SLUG_ORDER = [
+    'ai-for-recruitment',
     'for-freshers',
     'for-professionals',
     'senior-professionals',
@@ -76,6 +77,14 @@ export default async function Page() {
   ]
 
   const SLUG_ROUTE_MAP: Record<string, { href: string; badge: string; badgeCls: string; bar: string; image: string; highlights: string[] }> = {
+    'ai-for-recruitment': {
+      href: '/ai-for-recruitment',
+      badge: 'Flagship AI Course',
+      badgeCls: 'bg-indigo-600 text-white',
+      bar: 'from-indigo-500 to-purple-700',
+      image: '/assets/images/courses/home14/3.jpg',
+      highlights: ['Prompt Engineering & Sourcing', 'AI Resume Match & Screen', 'No-Code Recruiter Automation'],
+    },
     'for-freshers': {
       href: '/recruitment-career-starter',
       badge: 'Beginner Friendly',

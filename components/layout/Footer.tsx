@@ -7,6 +7,7 @@ import { Phone, Mail, MapPin, Send, ArrowRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const courseLinks = [
+  { label: 'AI for Recruitment (Flagship)', href: '/ai-for-recruitment' },
   { label: 'End-to-End Recruitment Training', href: '/end-to-end-recruitment-training' },
   { label: 'HR Courses for Beginners', href: '/hr-courses-for-beginners' },
   { label: 'HR Entrepreneurship Program', href: '/hr-entrepreneurship-program' },

@@ -1,5 +1,12 @@
+import dotenv from 'dotenv'
+import { Pool } from 'pg'
+import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+
+dotenv.config()
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
 
 async function check() {
   const courses = await prisma.course.findMany()

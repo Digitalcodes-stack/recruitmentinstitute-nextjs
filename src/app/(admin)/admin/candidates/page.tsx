@@ -9,6 +9,7 @@ type CandidateRow = {
   email: string
   mobile: string | null
   phone: string | null
+  birthdate?: Date | string | null
   courseSelect: string | null
   acceptSignin: number
   createdAt: Date
@@ -27,6 +28,7 @@ export default async function AdminCandidatesPage() {
     select: {
       id: true, name: true, email: true, mobile: true, courseSelect: true,
       acceptSignin: true, createdAt: true, city: true, gender: true, phone: true, address: true,
+      birthdate: true,
     },
   })
 

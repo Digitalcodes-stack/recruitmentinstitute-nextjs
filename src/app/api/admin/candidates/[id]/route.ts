@@ -19,7 +19,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   try {
     const body = await req.json()
-    const { name, email, mobile, phone, city, gender, address, courseSelect, acceptSignin, password } = body
+    const { name, email, mobile, phone, birthdate, city, gender, address, courseSelect, acceptSignin, password } = body
 
     const updateData: any = {}
 
@@ -44,6 +44,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     if (mobile !== undefined) updateData.mobile = mobile ? mobile.trim() : null
     if (phone !== undefined) updateData.phone = phone ? phone.trim() : null
+    if (birthdate !== undefined) {
+      if (!birthdate) {
+        updateData.birthdate = null
+      } else {
+        const parsedDate = new Date(birthdate)
+        updateData.birthdate = isNaN(parsedDate.getTime()) ? null : parsedDate
+      }
+    }
     if (city !== undefined) updateData.city = city ? city.trim() : null
     if (gender !== undefined) updateData.gender = gender ? gender.trim() : null
     if (address !== undefined) {

@@ -53,6 +53,20 @@ const META: Record<string, {
     badgeText: '#b45309',
     icon: Sparkles,
   },
+  'ai-for-recruitment': {
+    accent: '#6366f1',
+    iconBg: '#eef2ff',
+    badgeBg: '#e0e7ff',
+    badgeText: '#4338ca',
+    icon: Sparkles,
+  },
+  'ai-and-future-skills': {
+    accent: '#6366f1',
+    iconBg: '#eef2ff',
+    badgeBg: '#e0e7ff',
+    badgeText: '#4338ca',
+    icon: Sparkles,
+  },
 }
 const FALLBACK = {
   accent: '#334155',

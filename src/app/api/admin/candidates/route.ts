@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
       skip: (page - 1) * limit,
       select: {
         id: true, name: true, email: true, mobile: true, courseSelect: true,
-        acceptSignin: true, createdAt: true, city: true, gender: true,
+        acceptSignin: true, createdAt: true, city: true, gender: true, phone: true,
+        address: true, birthdate: true,
       },
     }),
     prisma.candidate.count({ where }),

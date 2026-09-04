@@ -11,12 +11,31 @@ interface Candidate {
   email: string
   mobile: string | null
   phone: string | null
+  birthdate?: string | Date | null
   courseSelect: string | null
   acceptSignin: number
   createdAt: Date
   city: string | null
   gender: string | null
   address?: string | null
+}
+
+function formatDateForInput(val: string | Date | null | undefined): string {
+  if (!val) return ''
+  try {
+    if (typeof val === 'string') {
+      if (val.includes('T')) return val.split('T')[0]
+      if (/^\d{4}-\d{2}-\d{2}$/.test(val)) return val
+    }
+    const d = new Date(val)
+    if (isNaN(d.getTime())) return ''
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  } catch {
+    return ''
+  }
 }
 
 interface Props {
@@ -66,6 +85,7 @@ export default function AdminCandidates({ candidates: initial }: Props) {
     name: '',
     email: '',
     phone: '',
+    birthdate: '',
     city: '',
     gender: '',
     address: '',
@@ -81,6 +101,7 @@ export default function AdminCandidates({ candidates: initial }: Props) {
       name: c.name,
       email: c.email,
       phone: c.mobile || c.phone || '',
+      birthdate: formatDateForInput(c.birthdate),
       city: c.city || '',
       gender: c.gender || '',
       address: c.address || '',
@@ -108,6 +129,7 @@ export default function AdminCandidates({ candidates: initial }: Props) {
           email: editForm.email.trim().toLowerCase(),
           mobile: editForm.phone.trim() || null,
           phone: editForm.phone.trim() || null,
+          birthdate: editForm.birthdate ? editForm.birthdate : null,
           city: editForm.city.trim() || null,
           gender: editForm.gender.trim() || null,
           address: editForm.address.trim() || null,
@@ -128,6 +150,7 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                   email: editForm.email.trim().toLowerCase(),
                   mobile: editForm.phone.trim() || null,
                   phone: editForm.phone.trim() || null,
+                  birthdate: editForm.birthdate ? new Date(editForm.birthdate) : null,
                   city: editForm.city.trim() || null,
                   gender: editForm.gender.trim() || null,
                   address: editForm.address.trim() || null,
@@ -261,9 +284,13 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                 {/* Name */}
                 <div style={{ paddingRight: 16, minWidth: 0 }}>
                   <p style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.name}</p>
-                  {(c.city || c.gender) && (
+                  {(c.city || c.gender || c.birthdate) && (
                     <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>
-                      {[c.city, c.gender].filter(Boolean).join(' · ')}
+                      {[
+                        c.city,
+                        c.gender,
+                        c.birthdate ? `DOB: ${new Date(c.birthdate).toLocaleDateString('en-IN')}` : null,
+                      ].filter(Boolean).join(' · ')}
                     </p>
                   )}
                 </div>
@@ -514,6 +541,25 @@ export default function AdminCandidates({ candidates: initial }: Props) {
 
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 5 }}>
+                    Date of Birth
+                  </label>
+                  <input
+                    type="date"
+                    value={editForm.birthdate}
+                    onChange={(e) => setEditForm({ ...editForm, birthdate: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '8px 12px',
+                      borderRadius: 8,
+                      border: '1px solid #cbd5e1',
+                      fontSize: 13.5,
+                      outline: 'none',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 5 }}>
                     Gender
                   </label>
                   <select
@@ -536,7 +582,7 @@ export default function AdminCandidates({ candidates: initial }: Props) {
                   </select>
                 </div>
 
-                <div>
+                <div style={{ gridColumn: 'span 2' }}>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 5 }}>
                     Course Selection
                   </label>
