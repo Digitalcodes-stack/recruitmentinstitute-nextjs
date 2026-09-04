@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain, Phone, MapPin } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain, Phone, MapPin, FileText, Lock } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 import BatchCountdown from '@/components/shared/BatchCountdown'
@@ -18,6 +18,8 @@ export default async function ProfilePage() {
   const session = await getUserSession()
   if (!session) redirect('/candidate-login')
 
+  const now = new Date()
+
   const enrollments = session.type === 'student'
     ? await prisma.enrollment.findMany({
         where: { studentId: session.userId },
@@ -26,10 +28,15 @@ export default async function ProfilePage() {
             include: {
               course: { select: { id: true, title: true } },
               trainer: { select: { name: true } },
-              sessions: { orderBy: [{ sessionDate: 'asc' }, { startTime: 'asc' }] },
+              sessions: {
+                orderBy: [{ sessionDate: 'asc' }, { startTime: 'asc' }],
+                include: {
+                  sessionAssessments: { select: { id: true, fastapiAssessmentId: true } },
+                },
+              },
             },
           },
-          attendance: { select: { sessionId: true, present: true } },
+          attendance: { select: { sessionId: true, present: true, joinedAt: true } },
         },
         orderBy: { enrolledAt: 'desc' },
       })
@@ -50,7 +57,7 @@ export default async function ProfilePage() {
     ? enrollments
         .flatMap((enrollment) =>
           enrollment.batch.sessions
-            .filter((s) => s.status !== 'CANCELLED' && new Date(s.startTime) >= new Date())
+            .filter((s) => s.status !== 'CANCELLED' && new Date(s.startTime) >= now)
             .map((s) => ({
               id: s.id,
               title: s.title,
@@ -66,9 +73,53 @@ export default async function ProfilePage() {
         .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
     : []
 
+  const completedSessions = session.type === 'student'
+    ? enrollments
+        .flatMap((enrollment) => {
+          const attendanceMap = new Map(enrollment.attendance.map((a) => [a.sessionId, a.present]))
+
+          return enrollment.batch.sessions
+            .filter((s) => {
+              if (s.status === 'CANCELLED') return false
+              const hasAttendance = attendanceMap.has(s.id)
+              const isPast = new Date(s.endTime) <= now || new Date(s.startTime) <= now
+              const isCompletedStatus = s.status === 'COMPLETED'
+              return isCompletedStatus || isPast || hasAttendance
+            })
+            .map((s) => {
+              const hasAttRecord = attendanceMap.has(s.id)
+              const isPresent = hasAttRecord ? Boolean(attendanceMap.get(s.id)) : false
+              const hasAssessment = Boolean(s.sessionAssessments && s.sessionAssessments.length > 0)
+              const assessmentId = s.sessionAssessments?.[0]?.fastapiAssessmentId || null
+
+              return {
+                id: s.id,
+                title: s.title,
+                sessionDate: s.sessionDate,
+                startTime: s.startTime,
+                endTime: s.endTime,
+                status: s.status,
+                batchId: enrollment.batch.id,
+                batchName: enrollment.batch.name,
+                courseId: enrollment.batch.course.id,
+                courseTitle: enrollment.batch.course.title,
+                trainerName: enrollment.batch.trainer.name,
+                isPresent,
+                hasAttRecord,
+                syllabusPdfSentAt: s.syllabusPdfSentAt,
+                syllabusPdfUrl: s.syllabusPdfUrl,
+                hasAssessment,
+                assessmentId,
+              }
+            })
+        })
+        .filter((s, idx, arr) => arr.findIndex((x) => x.id === s.id) === idx)
+        .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime())
+    : []
+
   const nextUpcomingBatch = enrollments
     .map((e) => e.batch)
-    .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > new Date())
+    .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > now)
     .sort((a, b) => a.startDate.getTime() - b.startDate.getTime())[0]
 
   let userDetails: { phone?: string | null; city?: string | null; gender?: string | null; address?: string | null } = {}
@@ -300,6 +351,190 @@ export default async function ProfilePage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* ── Completed Sessions & Syllabus Resources Section ── */}
+            {session.type === 'student' && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <FileText style={{ width: 16, height: 16, color: '#059669' }} />
+                    <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.01em' }}>
+                      Completed Sessions & Syllabus Resources
+                    </h3>
+                  </div>
+                  {completedSessions.length > 0 && (
+                    <span style={{ fontSize: 11.5, fontWeight: 700, color: '#059669', background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '3px 10px', borderRadius: 100 }}>
+                      {completedSessions.filter((s) => s.isPresent).length} Unlocked Syllabus PDF{completedSessions.filter((s) => s.isPresent).length === 1 ? '' : 's'}
+                    </span>
+                  )}
+                </div>
+
+                {completedSessions.length === 0 ? (
+                  <div style={{ background: '#fff', border: '1px solid #e8ecf0', borderRadius: 18, padding: '32px 24px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#f0fdf4', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+                      <FileText style={{ width: 22, height: 22, color: '#059669' }} />
+                    </div>
+                    <h4 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>No Completed Sessions Yet</h4>
+                    <p style={{ fontSize: 13, color: '#64748b', maxWidth: 460, margin: '0 auto', lineHeight: 1.5 }}>
+                      No completed session resources available yet. Once your trainer conducts a live class and records your attendance, your session syllabus and teaching notes will appear here.
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {completedSessions.map((s) => (
+                      <div
+                        key={s.id}
+                        style={{
+                          background: '#fff',
+                          border: s.isPresent ? '1px solid #a7f3d0' : '1px solid #e8ecf0',
+                          borderRadius: 18,
+                          padding: '18px 20px',
+                          boxShadow: s.isPresent ? '0 4px 14px rgba(16,185,129,0.06)' : '0 1px 4px rgba(0,0,0,0.04)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 16,
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        <div style={{ flex: '1 1 280px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                            {s.isPresent ? (
+                              <div
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  padding: '4px 10px',
+                                  borderRadius: 999,
+                                  background: '#ecfdf5',
+                                  border: '1px solid #a7f3d0',
+                                }}
+                              >
+                                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#059669' }} />
+                                <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#047857' }}>
+                                  ● ATTENDED · COMPLETED
+                                </span>
+                              </div>
+                            ) : (
+                              <div
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  padding: '4px 10px',
+                                  borderRadius: 999,
+                                  background: '#fef2f2',
+                                  border: '1px solid #fecaca',
+                                }}
+                              >
+                                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#dc2626' }} />
+                                <span style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#dc2626' }}>
+                                  ● ABSENT
+                                </span>
+                              </div>
+                            )}
+
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#64748b', background: '#f1f5f9', padding: '3px 8px', borderRadius: 6 }}>
+                              {s.batchName}
+                            </span>
+                          </div>
+
+                          <h4 style={{ fontSize: 15, fontWeight: 800, color: '#0f172a', marginBottom: 4, lineHeight: 1.3 }}>
+                            {s.title}
+                          </h4>
+
+                          <p style={{ fontSize: 12, color: '#64748b' }}>
+                            {s.courseTitle} · Mentor: {s.trainerName}
+                          </p>
+
+                          <p style={{ fontSize: 12, color: '#94a3b8', marginTop: 4, display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <CalendarDays style={{ width: 12, height: 12, color: '#64748b' }} />
+                            {new Date(s.sessionDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            {' · '}
+                            {new Date(s.startTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+
+                        {/* Action buttons */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {s.isPresent ? (
+                            <>
+                              <a
+                                href={`/api/sessions/${s.id}/syllabus-pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                  padding: '10px 16px',
+                                  borderRadius: 12,
+                                  background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                                  color: '#ffffff',
+                                  fontSize: 12.5,
+                                  fontWeight: 700,
+                                  textDecoration: 'none',
+                                  boxShadow: '0 4px 12px rgba(5,150,105,0.25)',
+                                  transition: 'transform 0.15s ease',
+                                }}
+                                title="Download complete session syllabus, trainer notes & case studies"
+                              >
+                                <FileText style={{ width: 14, height: 14, color: '#ffffff' }} />
+                                View / Download Syllabus PDF
+                              </a>
+
+                              {s.hasAssessment && (
+                                <Link
+                                  href={`/profile/assessments/take/${s.courseId}?sessionAssessmentId=${s.assessmentId}`}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 5,
+                                    padding: '9px 14px',
+                                    borderRadius: 12,
+                                    background: '#f5f3ff',
+                                    border: '1px solid #ddd6fe',
+                                    color: '#7c3aed',
+                                    fontSize: 12,
+                                    fontWeight: 700,
+                                    textDecoration: 'none',
+                                  }}
+                                  title="Take attendance-released session assessment"
+                                >
+                                  <Brain style={{ width: 13, height: 13 }} />
+                                  Take Assessment
+                                </Link>
+                              )}
+                            </>
+                          ) : (
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                padding: '9px 14px',
+                                borderRadius: 10,
+                                background: '#f1f5f9',
+                                border: '1px solid #e2e8f0',
+                                color: '#94a3b8',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                cursor: 'not-allowed',
+                              }}
+                              title="Syllabus PDF & Teaching Notes are exclusively accessible to students who attended this live class"
+                            >
+                              <Lock style={{ width: 13, height: 13 }} />
+                              PDF Locked (Session Not Attended)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 

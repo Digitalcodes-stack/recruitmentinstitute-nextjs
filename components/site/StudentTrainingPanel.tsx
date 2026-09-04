@@ -131,41 +131,41 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 5,
+                                gap: 6,
                                 fontSize: 11.5,
                                 fontWeight: 700,
                                 color: '#047857',
                                 background: '#ecfdf5',
                                 border: '1px solid #a7f3d0',
-                                padding: '5px 12px',
+                                padding: '6px 13px',
                                 borderRadius: 8,
                                 textDecoration: 'none',
-                                boxShadow: '0 1px 3px rgba(16,185,129,0.1)',
+                                boxShadow: '0 1px 3px rgba(16,185,129,0.15)',
                               }}
                               title="Download complete session syllabus, trainer notes and case studies"
                             >
-                              <FileText style={{ width: 12, height: 12, color: '#059669' }} />
-                              Syllabus PDF (Attended)
+                              <FileText style={{ width: 13, height: 13, color: '#059669' }} />
+                              View / Download Syllabus PDF
                             </a>
                           ) : (
                             <span
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
-                                gap: 4,
+                                gap: 5,
                                 fontSize: 11,
                                 fontWeight: 600,
                                 color: '#94a3b8',
                                 background: '#f1f5f9',
                                 border: '1px solid #e2e8f0',
-                                padding: '4px 10px',
+                                padding: '5px 11px',
                                 borderRadius: 8,
                                 cursor: 'not-allowed',
                               }}
-                              title="Syllabus PDF is available exclusively to students who attended this live class"
+                              title="Syllabus PDF & Teaching Notes are exclusively accessible to students who attended this live class"
                             >
-                              <Lock style={{ width: 11, height: 11 }} />
-                              PDF Locked
+                              <Lock style={{ width: 12, height: 12 }} />
+                              PDF Locked (Session Not Attended)
                             </span>
                           )}
 

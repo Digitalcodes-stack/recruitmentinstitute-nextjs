@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
 import { getUserSession } from '@/lib/auth'
 import { releaseAssessmentForPresentStudents } from '@/lib/services/assessmentReleaseService'
@@ -234,6 +235,14 @@ export async function POST(req: NextRequest) {
       })
     } catch (adminMailErr) {
       console.error('[attendance POST] Admin attendance report email failed:', adminMailErr)
+    }
+
+    try {
+      revalidatePath('/profile')
+      revalidatePath('/trainer/dashboard')
+      revalidatePath('/trainer/sessions')
+    } catch (revalErr) {
+      console.warn('[attendance POST] Cache revalidation warning:', revalErr)
     }
 
     return NextResponse.json({

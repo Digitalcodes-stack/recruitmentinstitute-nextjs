@@ -90,8 +90,27 @@ export default function TrainerAttendanceClient({
     setSendingPdf(true)
     setPdfConfirmation(null)
     try {
+      // 1. Automatically commit the current attendance roster first so database records are 100% up to date
+      const records = roster.map((s) => ({
+        enrollmentId: s.enrollmentId,
+        studentId: s.studentId,
+        present: s.present,
+      }))
+
+      await fetch('/api/trainer/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: activeSession.id,
+          records,
+        }),
+      })
+
+      // 2. Dispatch the syllabus PDF to all attended students
       const res = await fetch(`/api/trainer/sessions/${activeSession.id}/send-syllabus-pdf`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ records }),
       })
       const data = await res.json()
       if (!res.ok || !data.success) {
