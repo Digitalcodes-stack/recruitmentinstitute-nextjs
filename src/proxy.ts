@@ -10,16 +10,23 @@ export function proxy(req: NextRequest) {
     '/course_main':          '/courses',
   }
 
+  // Determine safe base origin to avoid 0.0.0.0 issues
+  const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || req.nextUrl.host
+  let baseOrigin = req.nextUrl.origin
+  if (baseOrigin.includes('0.0.0.0') || (host && host.includes('0.0.0.0'))) {
+    baseOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  }
+
   if (redirectMap[pathname]) {
-    return NextResponse.redirect(new URL(redirectMap[pathname], req.url), 301)
+    return NextResponse.redirect(new URL(redirectMap[pathname], baseOrigin), 301)
   }
 
   if (pathname === '/blog') {
-    return NextResponse.redirect(new URL('/blogs', req.url), 301)
+    return NextResponse.redirect(new URL('/blogs', baseOrigin), 301)
   }
 
   if (pathname === '/blogpage') {
-    return NextResponse.redirect(new URL(`/blogs${req.nextUrl.search}`, req.url), 301)
+    return NextResponse.redirect(new URL(`/blogs${req.nextUrl.search}`, baseOrigin), 301)
   }
 
   // Security headers

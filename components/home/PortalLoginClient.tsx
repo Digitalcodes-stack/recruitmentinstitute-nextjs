@@ -79,7 +79,7 @@ export default function PortalLoginClient({
       const data = await res.json()
       if (data.success) {
         toast.success('Login successful')
-        router.push('/profile')
+        window.location.href = '/profile'
       } else {
         toast.error(data.message || 'Invalid credentials')
       }

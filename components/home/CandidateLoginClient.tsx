@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -315,7 +315,7 @@ function LoginForm({ onForgot }: { onForgot: () => void }) {
       const data = await res.json()
       if (data.success) {
         toast.success('Login successful!')
-        router.push('/profile')
+        window.location.href = '/profile'
       } else {
         toast.error(data.message || 'Login failed')
       }

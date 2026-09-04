@@ -436,7 +436,7 @@ export default async function StudentMembershipPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="/candidate-login" className="sm-hero-cta">
+                <Link href="/student-login" className="sm-hero-cta">
                   Join Now - It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
                 <Link href="#benefits" className="sm-hero-ghost">
@@ -591,7 +591,7 @@ export default async function StudentMembershipPage() {
           {/* Primary CTAs */}
           <div style={{ textAlign: 'center' }}>
             <div className="sm-cta-btns" style={{ display: 'inline-flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link href="/candidate-login" style={{
+              <Link href="/student-login" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 9,
                 background: 'linear-gradient(135deg,#1D4ED8,#2563EB)',
                 color: '#fff', fontWeight: 700, fontSize: 15,
@@ -913,7 +913,7 @@ export default async function StudentMembershipPage() {
               </p>
 
               <div className="sm-cta-btns" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
-                <Link href="/candidate-login" className="sm-cta-red">
+                <Link href="/student-login" className="sm-cta-red">
                   Join Free Now <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
                 <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="sm-cta-outline">
