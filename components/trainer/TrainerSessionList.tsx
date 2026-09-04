@@ -18,6 +18,7 @@ import {
   CheckCircle2,
   AlertCircle,
   ExternalLink,
+  FileText,
 } from 'lucide-react'
 
 type BatchOption = {
@@ -481,6 +482,29 @@ export default function TrainerSessionList({ sessions, batches, defaultBatchFilt
                       )
                     })()
                   )}
+
+                  {/* Syllabus PDF Action */}
+                  <a
+                    href={`/api/sessions/${s.id}/syllabus-pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      fontSize: 12,
+                      fontWeight: 700,
+                      color: '#047857',
+                      background: '#ecfdf5',
+                      border: '1px solid #a7f3d0',
+                      padding: '6px 12px',
+                      borderRadius: 8,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <FileText style={{ width: 13, height: 13, color: '#059669' }} />
+                    Syllabus PDF
+                  </a>
 
                   {/* Attendance Register Link */}
                   <Link

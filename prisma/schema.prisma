@@ -574,6 +574,8 @@ model Session {
   syllabusModuleId   Int?                @map("syllabus_module_id")
   moduleNameSnapshot String?             @map("module_name_snapshot") // snapshot in case module is renamed
   topicsJson         Json?               @map("topics_json") // string[] of topic titles
+  syllabusPdfUrl     String?             @map("syllabus_pdf_url")
+  syllabusPdfSentAt  DateTime?           @map("syllabus_pdf_sent_at")
   createdAt          DateTime            @default(now()) @map("created_at")
   updatedAt          DateTime            @updatedAt @map("updated_at")
   batch              Batch               @relation(fields: [batchId], references: [id])

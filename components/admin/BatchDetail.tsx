@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Users, Video, Plus, Trash2, Loader2, Link2, RefreshCw, AlertCircle, CalendarClock, RotateCcw, Sparkles } from 'lucide-react'
+import { ArrowLeft, Users, Video, Plus, Trash2, Loader2, Link2, RefreshCw, AlertCircle, CalendarClock, RotateCcw, Sparkles, FileText } from 'lucide-react'
 
 interface Student { id: number; name: string; email: string }
 interface EnrolledStudent {
@@ -480,6 +480,14 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
                                 <Sparkles style={{ width: 10, height: 10 }} /> Series
                               </span>
                             )}
+                            <a
+                              href={`/api/sessions/${s.id}/syllabus-pdf`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 700, color: '#047857', background: '#ecfdf5', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: 6, textDecoration: 'none' }}
+                            >
+                              <FileText style={{ width: 11, height: 11 }} /> Syllabus PDF
+                            </a>
                           </div>
                         </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

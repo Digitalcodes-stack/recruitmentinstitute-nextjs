@@ -6,6 +6,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { sendSessionScheduledEmail } from '@/lib/email'
+import { ensureSessionSyllabusPdf } from '@/lib/services/sessionSyllabusPdfGenerator'
 
 export interface SessionGeneratorOptions {
   /** Class days of week: 0=Sun, 1=Mon ... 6=Sat. Default: [1,3,5] Mon/Wed/Fri */
@@ -198,6 +199,13 @@ export async function generateSessionsForBatch(
         topicsJson: topics,
       },
     })
+
+    // Auto-generate rich Syllabus PDF for trainer & student access
+    try {
+      await ensureSessionSyllabusPdf(createdSession.id)
+    } catch (pdfErr) {
+      console.error(`[generateSessionsForBatch] PDF generation failed for session ${createdSession.id}:`, pdfErr)
+    }
 
     preview.push({
       moduleTitle: mod.title,

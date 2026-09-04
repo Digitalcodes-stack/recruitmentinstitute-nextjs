@@ -940,3 +940,42 @@ export async function sendSessionCancelledEmail(data: {
     }),
   })
 }
+
+export async function sendSessionSyllabusPdfEmail(data: {
+  studentEmail: string
+  studentName: string
+  sessionTitle: string
+  batchName: string
+  courseTitle: string
+  trainerName: string
+  downloadUrl: string
+}) {
+  const rows: EmailRow[] = [
+    { label: 'Course', value: data.courseTitle },
+    { label: 'Batch', value: data.batchName },
+    { label: 'Session', value: data.sessionTitle },
+    { label: 'Trainer', value: data.trainerName },
+    { label: 'Access Status', value: 'Unlocked (Verified Attendance)' },
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: data.studentEmail,
+    subject: `Syllabus PDF & Teaching Notes Unlocked: ${data.sessionTitle}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Teaching Notes & Syllabus Released',
+      badgeBg: '#ecfdf5',
+      badgeColor: '#047857',
+      badgeBorder: '#a7f3d0',
+      title: 'Session Syllabus & Teaching Guide Unlocked',
+      subtitle: `${data.sessionTitle} • ${data.courseTitle}`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>Thank you for attending today's live class! Your trainer <strong>${data.trainerName}</strong> has released the complete <strong>Session Syllabus, Teaching Notes, Practical Exercises & Frameworks (PDF)</strong> for your session.<br/><br/>As an attended student, you have exclusive access to review, download, and practice from this guide.`,
+      rows,
+      actionButton: {
+        text: 'Download Session Syllabus PDF →',
+        url: data.downloadUrl,
+        color: '#2563eb',
+      },
+    }),
+  })
+}

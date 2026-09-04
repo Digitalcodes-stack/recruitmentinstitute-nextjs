@@ -12,6 +12,7 @@ import {
   Clock,
   Sparkles,
   AlertCircle,
+  FileText,
 } from 'lucide-react'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -229,20 +230,38 @@ export default async function SessionAssessmentsPage() {
                     </div>
                   </div>
 
-                  {/* Action Button */}
-                  <Link
-                    href={`/profile/assessments/take/${item.courseId}?sessionAssessmentId=${item.fastapiAssessmentId}`}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                      padding: '10px 20px', borderRadius: 12, fontSize: 13, fontWeight: 700,
-                      background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
-                      color: '#fff', textDecoration: 'none', flexShrink: 0,
-                      boxShadow: '0 2px 8px rgba(79,70,229,0.3)',
-                    }}
-                  >
-                    <Play style={{ width: 13, height: 13 }} />
-                    Start Assessment
-                  </Link>
+                  {/* Action Buttons */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
+                    <a
+                      href={`/api/sessions/${item.sessionId}/syllabus-pdf`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                        padding: '10px 16px', borderRadius: 12, fontSize: 12.5, fontWeight: 700,
+                        background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0',
+                        textDecoration: 'none',
+                      }}
+                      title="Download complete session syllabus, trainer notes & case studies"
+                    >
+                      <FileText style={{ width: 13, height: 13, color: '#059669' }} />
+                      Syllabus PDF
+                    </a>
+
+                    <Link
+                      href={`/profile/assessments/take/${item.courseId}?sessionAssessmentId=${item.fastapiAssessmentId}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                        padding: '10px 20px', borderRadius: 12, fontSize: 13, fontWeight: 700,
+                        background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                        color: '#fff', textDecoration: 'none', flexShrink: 0,
+                        boxShadow: '0 2px 8px rgba(79,70,229,0.3)',
+                      }}
+                    >
+                      <Play style={{ width: 13, height: 13 }} />
+                      Start Assessment
+                    </Link>
+                  </div>
                 </div>
               </div>
             )

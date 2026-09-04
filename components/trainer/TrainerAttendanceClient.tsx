@@ -17,6 +17,8 @@ import {
   Sparkles,
   Layers3,
   Brain,
+  FileText,
+  Send,
 } from 'lucide-react'
 
 
@@ -63,6 +65,12 @@ export default function TrainerAttendanceClient({
   const [roster, setRoster] = useState<StudentAttendanceRecord[]>(initialRoster)
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [sendingPdf, setSendingPdf] = useState(false)
+  const [pdfConfirmation, setPdfConfirmation] = useState<{
+    sent: boolean
+    attendedCount: number
+    message: string
+  } | null>(null)
   const [assessmentConfirmation, setAssessmentConfirmation] = useState<{
     assessmentReleased: boolean
     presentCount: number
@@ -76,6 +84,32 @@ export default function TrainerAttendanceClient({
     () => sessions.find((s) => s.id === selectedSessionId) ?? sessions[0] ?? null,
     [sessions, selectedSessionId]
   )
+
+  const handleSendPdf = async () => {
+    if (!activeSession) return
+    setSendingPdf(true)
+    setPdfConfirmation(null)
+    try {
+      const res = await fetch(`/api/trainer/sessions/${activeSession.id}/send-syllabus-pdf`, {
+        method: 'POST',
+      })
+      const data = await res.json()
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to dispatch syllabus PDF')
+      }
+      toast.success(data.message || 'Syllabus PDF sent to attended students!')
+      setPdfConfirmation({
+        sent: true,
+        attendedCount: data.data?.attendedStudentsCount ?? 0,
+        message: data.message,
+      })
+      router.refresh()
+    } catch (err: any) {
+      toast.error(err.message || 'Error sending syllabus PDF')
+    } finally {
+      setSendingPdf(false)
+    }
+  }
 
   // Fetch roster when session changes
   const handleSessionChange = async (sessionId: number) => {
@@ -457,30 +491,105 @@ export default function TrainerAttendanceClient({
           </div>
         )}
 
-        {/* Save Attendance Button */}
-        <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>
-          <button
-            onClick={handleSave}
-            disabled={saving || roster.length === 0}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '13px 28px',
-              borderRadius: 12,
-              background: saving ? '#93c5fd' : 'linear-gradient(135deg, #1e40af 0%, #2563eb 100%)',
-              color: '#ffffff',
-              fontSize: 14,
-              fontWeight: 800,
-              border: 'none',
-              cursor: saving || roster.length === 0 ? 'not-allowed' : 'pointer',
-              boxShadow: '0 4px 14px rgba(30,64,175,0.3)',
-            }}
-          >
-            {saving ? <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> : <Save style={{ width: 16, height: 16 }} />}
-            {saving ? 'Saving Records...' : 'Save Attendance Register'}
-          </button>
+        {/* Actions Bar */}
+        <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          {activeSession && (
+            <a
+              href={`/api/sessions/${activeSession.id}/syllabus-pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '12px 20px',
+                borderRadius: 12,
+                background: '#f8fafc',
+                border: '1.5px solid #cbd5e1',
+                color: '#0f172a',
+                fontSize: 13.5,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              <FileText style={{ width: 16, height: 16, color: '#2563eb' }} />
+              View Syllabus PDF
+            </a>
+          )}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={handleSendPdf}
+              disabled={sendingPdf || presentCount === 0}
+              title={presentCount === 0 ? 'Mark at least one student as Present first' : 'Send PDF to all present students'}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '13px 22px',
+                borderRadius: 12,
+                background: sendingPdf || presentCount === 0 ? '#cbd5e1' : 'linear-gradient(135deg, #059669 0%, #10b981 100%)',
+                color: '#ffffff',
+                fontSize: 13.5,
+                fontWeight: 800,
+                border: 'none',
+                cursor: sendingPdf || presentCount === 0 ? 'not-allowed' : 'pointer',
+                boxShadow: presentCount > 0 ? '0 4px 14px rgba(16,185,129,0.3)' : 'none',
+              }}
+            >
+              {sendingPdf ? <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> : <Send style={{ width: 16, height: 16 }} />}
+              {sendingPdf ? 'Sending PDF...' : `Send Session PDF to Attended Students (${presentCount})`}
+            </button>
+
+            <button
+              onClick={handleSave}
+              disabled={saving || roster.length === 0}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '13px 24px',
+                borderRadius: 12,
+                background: saving ? '#93c5fd' : 'linear-gradient(135deg, #1e40af 0%, #2563eb 100%)',
+                color: '#ffffff',
+                fontSize: 13.5,
+                fontWeight: 800,
+                border: 'none',
+                cursor: saving || roster.length === 0 ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 14px rgba(30,64,175,0.3)',
+              }}
+            >
+              {saving ? <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> : <Save style={{ width: 16, height: 16 }} />}
+              {saving ? 'Saving Records...' : 'Save Attendance Register'}
+            </button>
+          </div>
         </div>
+
+        {/* ── PDF Release Confirmation Banner ─────────────────────────────── */}
+        {pdfConfirmation && (
+          <div style={{
+            marginTop: 20,
+            borderRadius: 16,
+            overflow: 'hidden',
+            border: '1px solid #86efac',
+            background: '#f0fdf4',
+            padding: '14px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <FileText style={{ width: 20, height: 20, color: '#16a34a', flexShrink: 0 }} />
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: '#15803d' }}>
+                📄 Syllabus PDF Dispatched Successfully!
+              </div>
+              <div style={{ fontSize: 12, color: '#166534', marginTop: 2 }}>
+                {pdfConfirmation.message} Access has been unlocked on the Student Dashboard for all {pdfConfirmation.attendedCount} present students.
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Assessment Release Confirmation Banner ─────────────────────── */}
         {assessmentConfirmation && (

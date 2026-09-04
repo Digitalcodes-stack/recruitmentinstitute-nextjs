@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { CalendarDays, Video, CheckCircle2, Clock, Sparkles } from 'lucide-react'
+import { CalendarDays, Video, CheckCircle2, Clock, Sparkles, FileText, Lock } from 'lucide-react'
 import SessionCompletionModal from '@/components/shared/SessionCompletionModal'
 
 interface SessionRow {
@@ -110,14 +110,65 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
 
             {completed.length > 0 && (
               <div>
-                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 8 }}>Completed Sessions</p>
+                <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 8 }}>Completed Sessions & Teaching Notes</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {completed.slice(-3).reverse().map((s) => {
+                  {completed.slice(-5).reverse().map((s) => {
                     const att = enrollment.attendance.find((a) => a.sessionId === s.id)
+                    const isPresent = Boolean(att?.present)
                     return (
-                      <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 14px', background: '#f8fafc', borderRadius: 10 }}>
-                        <p style={{ fontSize: 12, color: '#475569', margin: 0 }}>{s.title} · {fmtDate(s.sessionDate)}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div key={s.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', background: '#f8fafc', borderRadius: 10, flexWrap: 'wrap', gap: 8 }}>
+                        <div>
+                          <p style={{ fontSize: 12.5, fontWeight: 600, color: '#0f172a', margin: 0 }}>{s.title}</p>
+                          <p style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>{fmtDate(s.sessionDate)}</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {/* Syllabus PDF Access (Attendance Gated) */}
+                          {isPresent ? (
+                            <a
+                              href={`/api/sessions/${s.id}/syllabus-pdf`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 5,
+                                fontSize: 11.5,
+                                fontWeight: 700,
+                                color: '#047857',
+                                background: '#ecfdf5',
+                                border: '1px solid #a7f3d0',
+                                padding: '5px 12px',
+                                borderRadius: 8,
+                                textDecoration: 'none',
+                                boxShadow: '0 1px 3px rgba(16,185,129,0.1)',
+                              }}
+                              title="Download complete session syllabus, trainer notes and case studies"
+                            >
+                              <FileText style={{ width: 12, height: 12, color: '#059669' }} />
+                              Syllabus PDF (Attended)
+                            </a>
+                          ) : (
+                            <span
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 4,
+                                fontSize: 11,
+                                fontWeight: 600,
+                                color: '#94a3b8',
+                                background: '#f1f5f9',
+                                border: '1px solid #e2e8f0',
+                                padding: '4px 10px',
+                                borderRadius: 8,
+                                cursor: 'not-allowed',
+                              }}
+                              title="Syllabus PDF is available exclusively to students who attended this live class"
+                            >
+                              <Lock style={{ width: 11, height: 11 }} />
+                              PDF Locked
+                            </span>
+                          )}
+
                           <button
                             onClick={() => setSelectedCompletedSession({
                               sessionTitle: s.title,
@@ -142,8 +193,8 @@ export default function StudentTrainingPanel({ enrollments }: Props) {
                             <Sparkles style={{ width: 11, height: 11, color: '#F59E0B' }} />
                             <span>Milestone</span>
                           </button>
-                          <span style={{ fontSize: 11, fontWeight: 600, color: att?.present ? '#059669' : '#94a3b8' }}>
-                            {att?.present ? 'Present' : 'Completed'}
+                          <span style={{ fontSize: 11, fontWeight: 700, color: isPresent ? '#059669' : '#dc2626' }}>
+                            {isPresent ? 'Present' : 'Absent'}
                           </span>
                         </div>
                       </div>
