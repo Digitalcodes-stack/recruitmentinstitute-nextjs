@@ -129,7 +129,7 @@ export default function UserProfileClient({ initialProfile, onProfileUpdated }: 
     }
   }
 
-  const isCandidateOrStudent = initialProfile.type === 'candidate' || initialProfile.type === 'student'
+  const isStudent = initialProfile.type === 'student'
 
   return (
     <>
@@ -303,7 +303,7 @@ export default function UserProfileClient({ initialProfile, onProfileUpdated }: 
                   </span>
                 </div>
 
-                <div style={{ gridColumn: isCandidateOrStudent ? 'span 1' : 'span 2' }}>
+                <div style={{ gridColumn: isStudent ? 'span 1' : 'span 2' }}>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>
                     Phone / Contact Number
                   </label>
@@ -327,7 +327,7 @@ export default function UserProfileClient({ initialProfile, onProfileUpdated }: 
                   </div>
                 </div>
 
-                {isCandidateOrStudent && (
+                {isStudent && (
                   <div>
                     <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>
                       City / Location
@@ -353,7 +353,7 @@ export default function UserProfileClient({ initialProfile, onProfileUpdated }: 
                   </div>
                 )}
 
-                {isCandidateOrStudent && (
+                {isStudent && (
                   <>
                     <div>
                       <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 6 }}>

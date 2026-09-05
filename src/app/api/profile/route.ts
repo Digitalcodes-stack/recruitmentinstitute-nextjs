@@ -14,47 +14,23 @@ export async function GET() {
     if (session.type === 'student') {
       const student = await prisma.student.findUnique({
         where: { id: session.userId },
-        select: { id: true, name: true, email: true, contact: true, createdAt: true, isActive: true },
-      })
-      if (student) {
-        // Also check if there is an associated candidate record with address details
-        const candidate = await prisma.candidate.findUnique({
-          where: { email: student.email },
-          select: { city: true, gender: true, address: true, streetAddress: true, phone: true, mobile: true },
-        })
-        profile = {
-          ...student,
-          type: 'student',
-          phone: student.contact || candidate?.phone || candidate?.mobile || null,
-          city: candidate?.city || null,
-          gender: candidate?.gender || null,
-          address: candidate?.address || candidate?.streetAddress || null,
-        }
-      }
-    } else if (session.type === 'candidate') {
-      const candidate = await prisma.candidate.findUnique({
-        where: { id: session.userId },
         select: {
           id: true,
           name: true,
           email: true,
-          mobile: true,
-          phone: true,
+          contact: true,
           city: true,
           gender: true,
           address: true,
-          streetAddress: true,
-          courseSelect: true,
           createdAt: true,
+          isActive: true,
         },
       })
-      if (candidate) {
+      if (student) {
         profile = {
-          ...candidate,
-          type: 'candidate',
-          contact: candidate.mobile || candidate.phone || null,
-          phone: candidate.phone || candidate.mobile || null,
-          address: candidate.address || candidate.streetAddress || null,
+          ...student,
+          type: 'student',
+          phone: student.contact,
         }
       }
     } else if (session.type === 'membership') {
@@ -103,17 +79,15 @@ export async function PATCH(req: NextRequest) {
     const currentEmail = session.email.trim().toLowerCase()
     const phoneNumber = (contact || phone || '').trim() || null
 
-    // If changing email, ensure it's not already in use by another user
+    // If changing email, ensure it's not already in use by another student/member
     if (cleanEmail !== currentEmail) {
-      const [existingStudent, existingCandidate, existingMember] = await Promise.all([
+      const [existingStudent, existingMember] = await Promise.all([
         prisma.student.findUnique({ where: { email: cleanEmail } }),
-        prisma.candidate.findUnique({ where: { email: cleanEmail } }),
         prisma.membership.findUnique({ where: { email: cleanEmail } }),
       ])
 
       const isConflict =
         (session.type === 'student' && existingStudent && existingStudent.id !== session.userId) ||
-        (session.type === 'candidate' && existingCandidate && existingCandidate.id !== session.userId) ||
         (session.type === 'membership' && existingMember && existingMember.id !== session.userId)
 
       if (isConflict) {
@@ -130,13 +104,16 @@ export async function PATCH(req: NextRequest) {
     }
 
     let updatedUserId = session.userId
-    let updatedName = name.trim()
+    const updatedName = name.trim()
 
     if (session.type === 'student') {
       const updateData: any = {
         name: updatedName,
         email: cleanEmail,
         contact: phoneNumber,
+        city: city?.trim() || null,
+        gender: gender?.trim() || null,
+        address: address?.trim() || null,
       }
       if (hashedPassword) updateData.password = hashedPassword
 
@@ -145,61 +122,6 @@ export async function PATCH(req: NextRequest) {
         data: updateData,
       })
       updatedUserId = student.id
-
-      // Sync linked candidate record if exists
-      const linkedCandidate = await prisma.candidate.findFirst({
-        where: { OR: [{ email: currentEmail }, { email: cleanEmail }] },
-      })
-      if (linkedCandidate) {
-        const candidateUpdate: any = {
-          name: updatedName,
-          email: cleanEmail,
-          mobile: phoneNumber,
-          phone: phoneNumber,
-          city: city?.trim() || linkedCandidate.city,
-          gender: gender?.trim() || linkedCandidate.gender,
-          address: address?.trim() || linkedCandidate.address,
-        }
-        if (hashedPassword) candidateUpdate.password = hashedPassword
-        await prisma.candidate.update({
-          where: { id: linkedCandidate.id },
-          data: candidateUpdate,
-        })
-      }
-    } else if (session.type === 'candidate') {
-      const updateData: any = {
-        name: updatedName,
-        email: cleanEmail,
-        mobile: phoneNumber,
-        phone: phoneNumber,
-        city: city?.trim() || null,
-        gender: gender?.trim() || null,
-        address: address?.trim() || null,
-      }
-      if (hashedPassword) updateData.password = hashedPassword
-
-      const candidate = await prisma.candidate.update({
-        where: { id: session.userId },
-        data: updateData,
-      })
-      updatedUserId = candidate.id
-
-      // Sync linked student record if exists
-      const linkedStudent = await prisma.student.findFirst({
-        where: { OR: [{ email: currentEmail }, { email: cleanEmail }] },
-      })
-      if (linkedStudent) {
-        const studentUpdate: any = {
-          name: updatedName,
-          email: cleanEmail,
-          contact: phoneNumber,
-        }
-        if (hashedPassword) studentUpdate.password = hashedPassword
-        await prisma.student.update({
-          where: { id: linkedStudent.id },
-          data: studentUpdate,
-        })
-      }
     } else if (session.type === 'membership') {
       const updateData: any = {
         name: updatedName,

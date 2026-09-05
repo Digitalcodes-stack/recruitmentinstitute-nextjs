@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from 'next/server'
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  // Redirect old CI routes to new Next.js routes
+  // Redirect old CI routes and candidate routes to new Next.js routes
   const redirectMap: Record<string, string> = {
-    '/home/login_student':   '/candidate-login',
-    '/home/login_membership': '/candidate-login',
-    '/course_main':          '/courses',
+    '/home/login_student':    '/student-login',
+    '/home/login_membership': '/membership-login',
+    '/candidate-login':       '/student-login',
+    '/course_main':           '/courses',
   }
 
   // Determine safe base origin to avoid 0.0.0.0 issues

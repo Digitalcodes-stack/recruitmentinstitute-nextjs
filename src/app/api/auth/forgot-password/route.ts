@@ -15,12 +15,13 @@ export async function POST(req: NextRequest) {
 
     const email = validated.data.email.trim().toLowerCase()
 
-    const [candidate, student, membership] = await Promise.all([
-      prisma.candidate.findUnique({ where: { email } }),
+    const [student, trainer, admin, membership] = await Promise.all([
       prisma.student.findUnique({ where: { email } }),
+      prisma.trainer.findUnique({ where: { email } }),
+      prisma.adminUser.findUnique({ where: { email } }),
       prisma.membership.findUnique({ where: { email } }),
     ])
-    const account = candidate || student || membership
+    const account = student || trainer || admin || membership
 
     // Always return success to prevent email enumeration
     if (!account) {

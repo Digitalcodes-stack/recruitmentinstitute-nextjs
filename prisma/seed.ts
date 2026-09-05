@@ -96,19 +96,6 @@ async function main() {
   })
   console.log('✅  Memberships seeded')
 
-  // ─── 3. CANDIDATES (extra) ───────────────────────────────────────────────
-  const candPw = await bcrypt.hash('Cand@123', 10)
-  await prisma.candidate.createMany({
-    skipDuplicates: true,
-    data: [
-      { name: 'Ravi Kumar',    email: 'ravi.kumar@gmail.com',    mobile: '9900000001', password: candPw, city: 'Mumbai',   state: 'Maharashtra', gender: 'Male',   courseSelect: 'Degree',        acceptSignin: 1 },
-      { name: 'Meena Rao',     email: 'meena.rao@gmail.com',     mobile: '9900000002', password: candPw, city: 'Pune',     state: 'Maharashtra', gender: 'Female', courseSelect: 'Certification', acceptSignin: 0 },
-      { name: 'Kiran Desai',   email: 'kiran.desai@gmail.com',   mobile: '9900000003', password: candPw, city: 'Delhi',    state: 'Delhi',       gender: 'Male',   courseSelect: 'Corporate',     acceptSignin: 1 },
-      { name: 'Swati More',    email: 'swati.more@gmail.com',    mobile: '9900000004', password: candPw, city: 'Nagpur',   state: 'Maharashtra', gender: 'Female', courseSelect: 'Entrepreneur',  acceptSignin: 1 },
-      { name: 'Ajay Patil',    email: 'ajay.patil@gmail.com',    mobile: '9900000005', password: candPw, city: 'Nashik',   state: 'Maharashtra', gender: 'Male',   courseSelect: 'Degree',        acceptSignin: 0 },
-    ],
-  })
-  console.log('✅  Candidates seeded')
 
   // ─── 4. EXPERTS ──────────────────────────────────────────────────────────
   // categories: 1=Degree, 2=Certification, 3=Entrepreneur, 4=Corporate Traning
@@ -730,12 +717,11 @@ async function main() {
 
   // ─── 28. NOTIFICATIONS + RECIPIENTS ─────────────────────────────────────────
   const tplByKey = (key: string) => templates.find((t) => t.key === key)!
-  const seededCandidates = await prisma.candidate.findMany({ select: { id: true, name: true, email: true } })
   const allStudents = await prisma.student.findMany({ where: { isActive: true }, select: { id: true, name: true, email: true, contact: true } })
   const firstBatch = batches[0]
 
   type RecipientSeed = {
-    recipientType: 'STUDENT' | 'CANDIDATE'
+    recipientType: 'STUDENT'
     recipientId: number
     channel: 'EMAIL' | 'SMS' | 'WHATSAPP' | 'PUSH' | 'IN_APP'
     address: string
@@ -747,7 +733,7 @@ async function main() {
     title: string
     templateKey: string
     channels: ('EMAIL' | 'SMS' | 'WHATSAPP' | 'PUSH' | 'IN_APP')[]
-    audienceType: 'SINGLE' | 'SEGMENT' | 'ALL_STUDENTS' | 'ALL_CANDIDATES' | 'CUSTOM_LIST'
+    audienceType: 'SINGLE' | 'SEGMENT' | 'ALL_STUDENTS' | 'CUSTOM_LIST'
     audienceFilter?: Record<string, unknown>
     status: 'DRAFT' | 'SCHEDULED' | 'PROCESSING' | 'COMPLETED' | 'PARTIALLY_FAILED' | 'FAILED' | 'CANCELLED'
     scheduledAt?: Date
@@ -783,11 +769,11 @@ async function main() {
       title: 'New HR Corporate Batch — Enrollment Open',
       templateKey: 'new_batch_announcement',
       channels: ['EMAIL'],
-      audienceType: 'ALL_CANDIDATES',
+      audienceType: 'ALL_STUDENTS',
       status: 'COMPLETED',
       variables: { courseName: 'HR Corporate Training Course', startDate: '15 Jul 2026' },
-      recipients: seededCandidates.slice(0, 5).map((c) => ({
-        recipientType: 'CANDIDATE', recipientId: c.id, channel: 'EMAIL', address: c.email, status: 'DELIVERED',
+      recipients: allStudents.slice(0, 5).map((s) => ({
+        recipientType: 'STUDENT', recipientId: s.id, channel: 'EMAIL', address: s.email, status: 'DELIVERED',
       })),
     },
     {
@@ -844,7 +830,7 @@ async function main() {
       title: 'July Batch Promo Blast',
       templateKey: 'new_batch_announcement',
       channels: ['EMAIL'],
-      audienceType: 'ALL_CANDIDATES',
+      audienceType: 'ALL_STUDENTS',
       status: 'SCHEDULED',
       scheduledAt: new Date(Date.now() + 3 * 86400000),
       variables: { courseName: 'HR Entrepreneurship Program', startDate: '1 Aug 2026' },
@@ -854,7 +840,7 @@ async function main() {
       title: 'August Re-engagement Draft',
       templateKey: 'new_batch_announcement',
       channels: ['EMAIL', 'SMS'],
-      audienceType: 'ALL_CANDIDATES',
+      audienceType: 'ALL_STUDENTS',
       status: 'DRAFT',
       variables: { courseName: 'HR Courses for Beginners', startDate: '15 Aug 2026' },
       recipients: [],
@@ -1049,7 +1035,6 @@ async function main() {
   const models = [
     ['Students',       await prisma.student.count()],
     ['Memberships',    await prisma.membership.count()],
-    ['Candidates',     await prisma.candidate.count()],
     ['Experts',        await prisma.expert.count()],
     ['CourseFees',     await prisma.courseFee.count()],
     ['CourseReviews',  await prisma.courseReview.count()],

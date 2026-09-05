@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { ArrowLeft, Award, Sparkles, CheckCircle2, User, BookOpen } from 'lucide-react'
 import CourseCertificate from '@/components/shared/CourseCertificate'
 
-export default function CandidateCertificatePage() {
-  const [candidate, setCandidate] = useState({
+export default function StudentCertificatePage() {
+  const [student, setStudent] = useState({
     certificateNo: 'RI-CERT-2026-000010',
     studentName: 'Priya Sharma',
     courseTitle: 'End-to-End Recruitment Training & Certification Program',
@@ -46,13 +46,13 @@ export default function CandidateCertificatePage() {
 
         {/* Certificate Display */}
         <CourseCertificate
-          certificateNo={candidate.certificateNo}
-          studentName={candidate.studentName}
-          courseTitle={candidate.courseTitle}
-          finalScore={candidate.finalScore}
-          issuedAt={candidate.issuedAt}
-          trainerName={candidate.trainerName}
-          directorName={candidate.directorName}
+          certificateNo={student.certificateNo}
+          studentName={student.studentName}
+          courseTitle={student.courseTitle}
+          finalScore={student.finalScore}
+          issuedAt={student.issuedAt}
+          trainerName={student.trainerName}
+          directorName={student.directorName}
         />
       </div>
     </div>

@@ -32,7 +32,10 @@ model Student {
   contact                   String?
   email                     String                     @unique
   password                  String
-  isActive                  Boolean                    @default(false) @map("status")
+  isActive                  Boolean                    @default(true) @map("status")
+  gender                    String?
+  city                      String?
+  address                   String?
   createdAt                 DateTime                   @default(now()) @map("created_at")
   updatedAt                 DateTime                   @updatedAt @map("updated_at")
   enrollments               Enrollment[]
@@ -55,29 +58,6 @@ model Membership {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("login_membership")
-}
-
-model Candidate {
-  id            Int       @id @default(autoincrement())
-  name          String
-  mobile        String?
-  email         String    @unique
-  password      String
-  birthdate     DateTime?
-  gender        String?
-  address       String?
-  streetAddress String?   @map("street_address")
-  city          String?
-  state         String?
-  zip           String?
-  phone         String?
-  courseSelect  String?   @map("course_select")
-  comments      String?
-  acceptSignin  Int       @default(0) @map("accept_signin")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-
-  @@map("candidate_login")
 }
 
 model CommunityUser {
@@ -422,7 +402,7 @@ model RolePermission {
 model NotificationPreference {
   id                       Int       @id @default(autoincrement())
   adminUserId              Int       @unique @map("admin_user_id")
-  newCandidateAlert        Boolean   @default(true) @map("new_candidate_alert")
+  newStudentAlert          Boolean   @default(true) @map("new_candidate_alert")
   contactMessageAlert      Boolean   @default(true) @map("contact_message_alert")
   calendarSyncFailureAlert Boolean   @default(true) @map("calendar_sync_failure_alert")
   sessionReminderAlert     Boolean   @default(true) @map("session_reminder_alert")
@@ -1109,13 +1089,11 @@ enum AudienceType {
   SINGLE
   SEGMENT
   ALL_STUDENTS
-  ALL_CANDIDATES
   CUSTOM_LIST
 }
 
 enum RecipientType {
   STUDENT
-  CANDIDATE
   ADMIN
   TRAINER
   RAW

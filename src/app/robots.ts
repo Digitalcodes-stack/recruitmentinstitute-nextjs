@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
           '/profile',
           '/activity',
           '/subscriptions',
-          '/candidate-login',
+          '/student-login',
           '/thank-you',
           '/_next/',
           '/static/',

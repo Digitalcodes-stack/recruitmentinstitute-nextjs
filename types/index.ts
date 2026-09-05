@@ -198,7 +198,7 @@ export interface AuthSession {
   email: string
   name: string
   role: AdminRole
-  type: 'admin' | 'student' | 'membership' | 'candidate' | 'community' | 'trainer'
+  type: 'admin' | 'student' | 'membership' | 'community' | 'trainer'
 }
 
 export interface Trainer {
@@ -228,34 +228,22 @@ export interface CourseEnquiryData {
   contact: string
 }
 
-export interface CandidateLoginData {
+export interface StudentLoginData {
   email: string
   password: string
-}
-
-export interface CandidateSignupData {
-  name: string
-  email: string
-  password: string
-  confirmPassword: string
-  birthdate?: string
-  gender?: string
-  address?: string
-  streetAddress?: string
-  city?: string
-  state?: string
-  zip?: string
-  phone?: string
-  courseSelect?: string
-  comments?: string
 }
 
 export interface StudentRegisterData {
   name: string
-  contact: string
+  contact?: string
   email: string
   password: string
-  re_password: string
+  confirmPassword?: string
+  re_password?: string
+  city?: string
+  gender?: string
+  address?: string
+  courseSelect?: string
 }
 
 export interface NewsletterData {

@@ -21,21 +21,27 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await hashPassword(password)
+    const email = resetToken.email.toLowerCase()
 
-    const email = resetToken.email
-    const [candidate, student, membership] = await Promise.all([
-      prisma.candidate.findUnique({ where: { email } }),
+    const [student, trainer, admin, membership] = await Promise.all([
       prisma.student.findUnique({ where: { email } }),
+      prisma.trainer.findUnique({ where: { email } }),
+      prisma.adminUser.findUnique({ where: { email } }),
       prisma.membership.findUnique({ where: { email } }),
     ])
 
-    if (candidate) {
-      await prisma.candidate.update({
+    if (student) {
+      await prisma.student.update({
         where: { email },
         data: { password: hashedPassword },
       })
-    } else if (student) {
-      await prisma.student.update({
+    } else if (trainer) {
+      await prisma.trainer.update({
+        where: { email },
+        data: { password: hashedPassword },
+      })
+    } else if (admin) {
+      await prisma.adminUser.update({
         where: { email },
         data: { password: hashedPassword },
       })

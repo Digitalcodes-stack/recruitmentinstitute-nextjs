@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage() {
   const session = await getUserSession()
-  if (!session) redirect('/candidate-login')
+  if (!session) redirect('/student-login')
 
   const now = new Date()
 
@@ -117,6 +117,27 @@ export default async function ProfilePage() {
         .sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime())
     : []
 
+  // Completed courses where all non-cancelled sessions are done
+  const completedCourses = session.type === 'student'
+    ? enrollments
+        .filter((e) => {
+          const validSessions = e.batch.sessions.filter((s) => s.status !== 'CANCELLED')
+          if (validSessions.length === 0) return false
+          const doneSessions = validSessions.filter(
+            (s) => s.status === 'COMPLETED' || new Date(s.endTime) <= now
+          )
+          return e.batch.status === 'COMPLETED' || doneSessions.length === validSessions.length
+        })
+        .map((e) => ({
+          batchId: e.batch.id,
+          batchName: e.batch.name,
+          courseId: e.batch.course.id,
+          courseTitle: e.batch.course.title,
+          totalSessions: e.batch.sessions.filter((s) => s.status !== 'CANCELLED').length,
+          attendedCount: e.attendance.filter((a) => a.present).length,
+        }))
+    : []
+
   const nextUpcomingBatch = enrollments
     .map((e) => e.batch)
     .filter((b) => b.status === 'UPCOMING' && new Date(b.startDate) > now)
@@ -124,32 +145,15 @@ export default async function ProfilePage() {
 
   let userDetails: { phone?: string | null; city?: string | null; gender?: string | null; address?: string | null } = {}
   if (session.type === 'student') {
-    const [s, c] = await Promise.all([
-      prisma.student.findUnique({
-        where: { id: session.userId },
-        select: { contact: true },
-      }),
-      prisma.candidate.findFirst({
-        where: { email: session.email },
-        select: { mobile: true, phone: true, city: true, gender: true, address: true, streetAddress: true },
-      }),
-    ])
-    userDetails = {
-      phone: s?.contact || c?.phone || c?.mobile || null,
-      city: c?.city || null,
-      gender: c?.gender || null,
-      address: c?.address || c?.streetAddress || null,
-    }
-  } else if (session.type === 'candidate') {
-    const c = await prisma.candidate.findUnique({
+    const s = await prisma.student.findUnique({
       where: { id: session.userId },
-      select: { mobile: true, phone: true, city: true, gender: true, address: true, streetAddress: true },
+      select: { contact: true, city: true, gender: true, address: true },
     })
     userDetails = {
-      phone: c?.phone || c?.mobile || null,
-      city: c?.city || null,
-      gender: c?.gender || null,
-      address: c?.address || c?.streetAddress || null,
+      phone: s?.contact || null,
+      city: s?.city || null,
+      gender: s?.gender || null,
+      address: s?.address || null,
     }
   } else if (session.type === 'membership') {
     const m = await prisma.membership.findUnique({
@@ -166,10 +170,7 @@ export default async function ProfilePage() {
     .join('')
     .toUpperCase()
 
-  const accountLabel =
-    session.type === 'candidate' ? 'Candidate'
-    : session.type === 'student' ? 'Student'
-    : 'Member'
+  const accountLabel = session.type === 'student' ? 'Student' : 'Member'
 
   return (
     <>
@@ -283,7 +284,7 @@ export default async function ProfilePage() {
 
               {/* Sign out */}
               <Link
-                href="/api/auth/candidate/logout"
+                href="/api/auth/logout"
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 14, padding: '11px', borderRadius: 12, background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
               >
                 <LogOut style={{ width: 14, height: 14 }} />
@@ -294,6 +295,77 @@ export default async function ProfilePage() {
 
           {/* ── Right: welcome + resource cards ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+            {/* Final Course Assessment Banner (when student finishes course sessions) */}
+            {completedCourses.map((c) => (
+              <div
+                key={c.courseId}
+                style={{
+                  background: 'linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%)',
+                  borderRadius: 24,
+                  padding: '28px 32px',
+                  color: '#ffffff',
+                  boxShadow: '0 12px 36px rgba(5,150,105,0.22)',
+                  border: '1px solid #10B981',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}
+              >
+                <div style={{ position: 'absolute', top: -30, right: -30, width: 140, height: 140, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 12px', borderRadius: 999, background: 'rgba(255,255,255,0.2)', fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                    <Sparkles style={{ width: 12, height: 12, color: '#FCD34D' }} /> COURSE COMPLETED
+                  </span>
+                  <span style={{ fontSize: 12, color: '#A7F3D0', fontWeight: 600 }}>{c.batchName}</span>
+                </div>
+                <h3 style={{ fontSize: 22, fontWeight: 900, letterSpacing: '-0.02em', marginBottom: 8, lineHeight: 1.25 }}>
+                  🎉 Congratulations! You&apos;ve completed all sessions of {c.courseTitle}
+                </h3>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, maxWidth: 640, marginBottom: 20 }}>
+                  You have attended all live classes. Complete your final AI-evaluated diagnostic assessment to test your mastery, unlock your verified completion certificate, and showcase your recruitment credentials.
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <Link
+                    href={`/profile/assessments/take/${c.courseId}`}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '12px 22px',
+                      borderRadius: 12,
+                      background: '#ffffff',
+                      color: '#064E3B',
+                      fontSize: 13.5,
+                      fontWeight: 800,
+                      textDecoration: 'none',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
+                    }}
+                  >
+                    <Brain style={{ width: 16, height: 16, color: '#047857' }} />
+                    Take Final Course Assessment
+                  </Link>
+                  <Link
+                    href="/profile/certificate"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '12px 20px',
+                      borderRadius: 12,
+                      background: 'rgba(255,255,255,0.15)',
+                      border: '1px solid rgba(255,255,255,0.3)',
+                      color: '#ffffff',
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Award style={{ width: 16, height: 16, color: '#FCD34D' }} />
+                    View Certificate
+                  </Link>
+                </div>
+              </div>
+            ))}
 
             {/* Welcome banner */}
             <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 60%, #2563EB 100%)', borderRadius: 24, padding: '32px 36px', position: 'relative', overflow: 'hidden' }}>

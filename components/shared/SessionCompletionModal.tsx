@@ -7,9 +7,14 @@ import { ArrowRight, X, Sparkles } from 'lucide-react'
 export interface SessionCompletionModalProps {
   isOpen: boolean
   onClose: () => void
+  studentName?: string
   candidateName?: string
   sessionTitle?: string
   courseTitle?: string
+  completedSessionNum?: number
+  totalSessions?: number
+  nextSessionTitle?: string
+  nextSessionDate?: string
   onContinueNextSession?: () => void
   nextSessionUrl?: string
   progressUrl?: string
@@ -18,9 +23,14 @@ export interface SessionCompletionModalProps {
 export default function SessionCompletionModal({
   isOpen,
   onClose,
+  studentName,
   candidateName,
   sessionTitle,
   courseTitle,
+  completedSessionNum,
+  totalSessions,
+  nextSessionTitle,
+  nextSessionDate,
   onContinueNextSession,
   nextSessionUrl = '/profile',
   progressUrl = '/profile',
@@ -385,8 +395,8 @@ export default function SessionCompletionModal({
         {/* ── CENTER CONTENT SECTION ── */}
         <div style={{ padding: '28px 32px 36px', textAlign: 'center' }}>
           
-          {/* Candidate Badge (if present) */}
-          {candidateName && (
+          {/* Student Badge (if present) */}
+          {(studentName || candidateName) && (
             <div
               style={{
                 display: 'inline-block',
@@ -399,7 +409,7 @@ export default function SessionCompletionModal({
                 marginBottom: '12px',
               }}
             >
-              Candidate: <span style={{ color: '#0F172A' }}>{candidateName}</span>
+              Student: <span style={{ color: '#0F172A' }}>{studentName || candidateName}</span>
             </div>
           )}
 

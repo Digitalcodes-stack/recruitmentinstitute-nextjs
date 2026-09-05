@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getDynamicCourseData } from '@/lib/services/courseDataService'
-import DynamicCourseLandingClient from '@/components/site/DynamicCourseLandingClient'
+import AiForRecruitmentLandingClient from '@/components/site/AiForRecruitmentLandingClient'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -40,5 +40,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function AiForRecruitmentPage() {
   const course = await getDynamicCourseData('ai-for-recruitment')
-  return <DynamicCourseLandingClient course={course} />
+  return <AiForRecruitmentLandingClient course={course} />
 }

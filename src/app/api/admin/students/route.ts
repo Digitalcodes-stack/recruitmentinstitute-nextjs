@@ -111,29 +111,6 @@ export async function PATCH(req: NextRequest) {
       data: updateData,
     })
 
-    // Keep candidate_login synchronized if the student has a linked candidate profile
-    const oldEmail = currentStudent.email.toLowerCase()
-    const newEmail = updateData.email || oldEmail
-    const linkedCandidate = await prisma.candidate.findFirst({
-      where: { OR: [{ email: oldEmail }, { email: newEmail }] },
-    })
-
-    if (linkedCandidate) {
-      const candidateUpdate: any = {}
-      if (updateData.name) candidateUpdate.name = updateData.name
-      if (updateData.email) candidateUpdate.email = updateData.email
-      if (updateData.contact !== undefined) {
-        candidateUpdate.mobile = updateData.contact
-        candidateUpdate.phone = updateData.contact
-      }
-      if (hashedPassword) candidateUpdate.password = hashedPassword
-
-      await prisma.candidate.update({
-        where: { id: linkedCandidate.id },
-        data: candidateUpdate,
-      })
-    }
-
     return NextResponse.json({ success: true, data: updatedStudent, message: 'Student updated successfully' })
   } catch (error) {
     console.error('Update student error:', error)

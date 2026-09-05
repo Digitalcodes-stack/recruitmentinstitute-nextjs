@@ -57,14 +57,6 @@ interface StatsData {
       student: { id: number; name: string; email: string }
       assignment: { id: number; title: string; batch: { id: number; name: string } }
     }>
-    candidates: Array<{
-      id: number
-      name: string
-      email: string
-      courseSelect: string | null
-      createdAt: string
-      acceptSignin: number
-    }>
     contacts: Array<{
       id: number
       name: string

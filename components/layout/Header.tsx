@@ -13,7 +13,6 @@ type SessionUser = { name: string; email: string; type: string }
 
 const loginOptions = [
   { label: 'Student Login', href: '/student-login', icon: <GraduationCap className="w-4 h-4" /> },
-  { label: 'Candidate Login', href: '/candidate-login', icon: <User className="w-4 h-4" /> },
   { label: 'Membership Login', href: '/membership-login', icon: <Users className="w-4 h-4" /> },
   { label: 'Trainer Login', href: '/trainer-login', icon: <Building2 className="w-4 h-4" /> },
 ]

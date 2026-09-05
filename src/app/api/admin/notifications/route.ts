@@ -9,7 +9,7 @@ const createSchema = z.object({
   templateId: z.number().int().optional(),
   title: z.string().min(2),
   channels: z.array(z.enum(['EMAIL', 'SMS', 'WHATSAPP', 'PUSH', 'IN_APP'])).min(1),
-  audienceType: z.enum(['SINGLE', 'SEGMENT', 'ALL_STUDENTS', 'ALL_CANDIDATES', 'CUSTOM_LIST']),
+  audienceType: z.enum(['SINGLE', 'SEGMENT', 'ALL_STUDENTS', 'CUSTOM_LIST']),
   audienceFilter: z.record(z.string(), z.unknown()).optional(),
   variables: z.record(z.string(), z.unknown()).default({}),
   scheduledAt: z.string().datetime().optional(),

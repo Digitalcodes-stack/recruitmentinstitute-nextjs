@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     }
 
     const countByMonth = async (
-      model: 'candidate' | 'courseLead' | 'contactSubmission' | 'student' | 'subscriber',
+      model: 'courseLead' | 'contactSubmission' | 'student' | 'subscriber',
       dateField = 'createdAt',
     ) => {
       return Promise.all(
@@ -35,8 +35,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const [candidates, leads, contacts, students, subscribers] = await Promise.all([
-      countByMonth('candidate'),
+    const [leads, contacts, students, subscribers] = await Promise.all([
       countByMonth('courseLead'),
       countByMonth('contactSubmission'),
       countByMonth('student'),
@@ -48,7 +47,7 @@ export async function GET(req: NextRequest) {
       data: {
         labels: months.map(m => m.label),
         series: {
-          candidates,
+          candidates: students,
           leads,
           contacts,
           students,

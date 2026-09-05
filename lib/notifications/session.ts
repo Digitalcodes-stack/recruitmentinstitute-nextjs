@@ -3,7 +3,6 @@ import type { AuthSession } from '@/types'
 
 const TYPE_MAP: Record<AuthSession['type'], RecipientType | null> = {
   student: 'STUDENT',
-  candidate: 'CANDIDATE',
   admin: 'ADMIN',
   trainer: 'TRAINER',
   membership: null,

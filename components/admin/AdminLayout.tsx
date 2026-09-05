@@ -47,7 +47,6 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Students',    href: '/admin/students',    icon: GraduationCap },
       { label: 'Trainers',    href: '/admin/trainers',    icon: Presentation },
-      { label: 'Candidates',  href: '/admin/candidates',  icon: UserCheck },
       { label: 'Memberships', href: '/admin/memberships', icon: CreditCard },
       { label: 'Subscribers', href: '/admin/subscribers', icon: Mail },
       { label: 'Experts',     href: '/admin/experts',     icon: Users2 },

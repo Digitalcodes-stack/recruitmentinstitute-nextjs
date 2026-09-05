@@ -29,10 +29,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { courseSlug, candidateName, candidateEmail, candidatePhone, customNote } = body
+    const { courseSlug, studentName, candidateName, studentEmail, candidateEmail, studentPhone, candidatePhone, customNote } = body
 
-    if (!courseSlug || !candidateEmail) {
-      return NextResponse.json({ error: 'Course slug and Candidate Email are required' }, { status: 400 })
+    const targetEmail = studentEmail || candidateEmail
+    if (!courseSlug || !targetEmail) {
+      return NextResponse.json({ error: 'Course slug and email address are required' }, { status: 400 })
     }
 
     const brochure = COURSE_BROCHURES.find((b) => b.slug === courseSlug)
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const transporter = getTransporter()
-    const name = candidateName ? candidateName.trim() : 'Candidate'
+    const name = (studentName || candidateName) ? (studentName || candidateName).trim() : 'Student'
     const baseUrl = process.env.NEXTAUTH_URL || 'https://recruitmentinstitute.in'
     const brochureLink = `${baseUrl}/brochures/${brochure.slug}`
     const demoLink = `${baseUrl}/contact?course=${encodeURIComponent(brochure.title)}`

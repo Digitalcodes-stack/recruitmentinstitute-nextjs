@@ -19,8 +19,7 @@ interface Batch {
 const CHANNELS = ['EMAIL', 'SMS', 'WHATSAPP', 'PUSH', 'IN_APP']
 const AUDIENCES = [
   { value: 'ALL_STUDENTS', label: 'All Active Students' },
-  { value: 'ALL_CANDIDATES', label: 'All Candidates' },
-  { value: 'SEGMENT', label: 'Students in a Batch' },
+  { value: 'SEGMENT', label: 'Students in a Specific Batch' },
 ]
 
 export default function NotificationCampaignForm({ templates, batches }: { templates: Template[]; batches: Batch[] }) {

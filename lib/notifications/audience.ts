@@ -54,8 +54,6 @@ export async function resolveAudience(
     people.push({ recipientType: 'STUDENT', list: await studentsForFilter(audienceFilter) })
   } else if (audienceType === 'ALL_STUDENTS') {
     people.push({ recipientType: 'STUDENT', list: await prisma.student.findMany({ where: { isActive: true } }) })
-  } else if (audienceType === 'ALL_CANDIDATES') {
-    people.push({ recipientType: 'CANDIDATE', list: await prisma.candidate.findMany() })
   } else if (audienceType === 'CUSTOM_LIST') {
     for (const entry of customList ?? []) {
       for (const channel of channels) {

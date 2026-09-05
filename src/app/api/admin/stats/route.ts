@@ -111,10 +111,10 @@ export async function GET(req: NextRequest) {
           },
         },
       }),
-      prisma.candidate.findMany({
+      prisma.student.findMany({
         orderBy: { createdAt: 'desc' },
         take: 5,
-        select: { id: true, name: true, email: true, courseSelect: true, createdAt: true, acceptSignin: true },
+        select: { id: true, name: true, email: true, createdAt: true, isActive: true },
       }),
       prisma.contactSubmission.findMany({
         orderBy: { createdAt: 'desc' },
@@ -176,7 +176,15 @@ export async function GET(req: NextRequest) {
         recentActivity: {
           enrollments: recentEnrollments,
           submissions: recentSubmissions,
-          candidates: recentCandidates,
+          students: recentCandidates,
+          candidates: recentCandidates.map((s) => ({
+            id: s.id,
+            name: s.name,
+            email: s.email,
+            courseSelect: 'Enrolled Student',
+            createdAt: s.createdAt,
+            acceptSignin: s.isActive ? 1 : 0,
+          })),
           contacts: recentContacts,
         },
         batchTelemetry,

@@ -21,45 +21,42 @@ export const blogVisitorSchema = z.object({
   contact: z.string().min(10, 'Contact required'),
 })
 
-export const candidateLoginSchema = z.object({
+export const studentLoginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
-export const candidateSignupSchema = z
-  .object({
-    name: z.string().min(2, 'Name is required'),
-    email: z.string().email('Invalid email'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirmPassword: z.string().min(6, 'Confirm password required'),
-    birthdate: z.string().optional(),
-    gender: z.enum(['male', 'female', 'other']).optional(),
-    address: z.string().optional(),
-    streetAddress: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    zip: z.string().optional(),
-    phone: z.string().optional(),
-    courseSelect: z.string().optional(),
-    comments: z.string().optional(),
-  })
-  .refine((d) => d.password === d.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
+// Backwards-compatible alias for any remaining imports
+export const candidateLoginSchema = studentLoginSchema
 
 export const studentRegisterSchema = z
   .object({
     name: z.string().min(2, 'Name is required'),
-    contact: z.string().min(10, 'Contact is required'),
-    email: z.string().email('Invalid email'),
+    email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    re_password: z.string().min(6, 'Confirm password required'),
+    confirmPassword: z.string().min(6, 'Confirm password required').optional(),
+    re_password: z.string().min(6, 'Confirm password required').optional(),
+    contact: z.string().optional(),
+    phone: z.string().optional(),
+    city: z.string().optional(),
+    gender: z.string().optional(),
+    address: z.string().optional(),
+    courseSelect: z.string().optional(),
+    comments: z.string().optional(),
   })
-  .refine((d) => d.password === d.re_password, {
+  .refine((d) => {
+    const confirmation = d.confirmPassword || d.re_password
+    if (confirmation) {
+      return d.password === confirmation
+    }
+    return true
+  }, {
     message: 'Passwords do not match',
-    path: ['re_password'],
+    path: ['confirmPassword'],
   })
+
+// Backwards-compatible alias
+export const candidateSignupSchema = studentRegisterSchema
 
 export const newsletterSchema = z.object({
   email: z.string().email('Invalid email address'),

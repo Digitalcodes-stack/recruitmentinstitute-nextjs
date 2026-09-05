@@ -4,8 +4,6 @@ import { prisma } from '@/lib/prisma'
 import AdminLayout from '@/components/admin/AdminLayout'
 import BatchDetail from '@/components/admin/BatchDetail'
 
-import { syncApprovedCandidatesToStudents } from '@/lib/sync-users'
-
 interface Props {
   params: Promise<{ id: string }>
 }
@@ -16,9 +14,6 @@ export default async function BatchDetailPage({ params }: Props) {
 
   const { id } = await params
   const batchId = parseInt(id)
-
-  // Ensure all approved candidates are synchronized into the Student table
-  await syncApprovedCandidatesToStudents()
 
   const batch = await prisma.batch.findUnique({
     where: { id: batchId },
