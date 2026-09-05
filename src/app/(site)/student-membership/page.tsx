@@ -24,6 +24,7 @@ import {
   Shield,
   PlayCircle,
 } from 'lucide-react'
+import WhatsAppIcon from '@/components/shared/WhatsAppIcon'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
@@ -916,8 +917,8 @@ export default async function StudentMembershipPage() {
                 <Link href="/student-login" className="sm-cta-red">
                   Join Free Now <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
-                <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="sm-cta-outline">
-                  <MessageCircle style={{ width: 15, height: 15 }} /> WhatsApp Us
+                <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="sm-cta-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  <WhatsAppIcon size={16} color="#25D366" /> WhatsApp Us
                 </a>
               </div>
 

@@ -9,6 +9,7 @@ import {
   Eye, EyeOff, ArrowRight, ChevronRight, Info,
   Mail, Lock, CalendarCheck2, ClipboardCheck, Users, CheckCircle2,
 } from 'lucide-react'
+import WhatsAppIcon from '@/components/shared/WhatsAppIcon'
 
 const fieldLabel: React.CSSProperties = {
   display: 'block',
@@ -242,10 +243,12 @@ export default function TrainerLoginClient() {
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', margin: '0 0 6px' }}>Need help signing in?</p>
                 <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.65, margin: '0 0 12px' }}>Contact the admin team to recover access to your trainer account.</p>
                 <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" style={{
-                  display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 700,
+                  display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, fontWeight: 700,
                   color: '#059669', textDecoration: 'none',
                 }}>
-                  <span style={{ width: 22, height: 22, borderRadius: '50%', background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11 }}>💬</span>
+                  <span style={{ width: 26, height: 26, borderRadius: '50%', background: '#F0FDF4', border: '1px solid #BBF7D0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <WhatsAppIcon size={15} color="#25D366" />
+                  </span>
                   WhatsApp Us
                 </a>
               </div>

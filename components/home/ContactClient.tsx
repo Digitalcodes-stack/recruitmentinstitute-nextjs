@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Phone, Mail, MapPin, Clock, MessageSquare, Send, ChevronRight, CheckCircle2, RefreshCw, ArrowRight, ShieldCheck } from 'lucide-react'
 import toast from 'react-hot-toast'
+import WhatsAppIcon from '@/components/shared/WhatsAppIcon'
 
 export default function ContactClient() {
   const [form, setForm] = useState({ name: '', email: '', mobile: '', message: '' })
@@ -173,7 +174,7 @@ export default function ContactClient() {
                         className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-white text-sm transition-all shadow-md"
                         style={{ background: '#059669' }}
                       >
-                        💬 Connect on WhatsApp Now
+                        <WhatsAppIcon size={18} color="#ffffff" /> Connect on WhatsApp Now
                       </a>
                       <Link
                         href="/courses"
@@ -394,10 +395,8 @@ export default function ContactClient() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 font-bold rounded-xl transition-all"
                         style={{ background: 'white', color: '#059669', padding: '10px 20px', fontSize: '13px', textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}
-
-
                       >
-                        Chat on WhatsApp →
+                        <WhatsAppIcon size={16} color="#059669" /> Chat on WhatsApp →
                       </a>
                     </div>
                   </div>
