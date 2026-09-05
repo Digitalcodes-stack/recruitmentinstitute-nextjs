@@ -1,0 +1,211 @@
+================================================================================
+ RECRUITMENT INSTITUTE — COMPREHENSIVE PRODUCTION & DEVELOPMENT REPORT
+ Date: 2026-09-05
+ Environment: Google Cloud Run (asia-south1), Google Cloud SQL & Cloud Build
+ Production Domain: https://recruitmentinstitute.in
+ Live Web Service URL: https://recruitmentinstitute-web-396924250862.asia-south1.run.app
+ Fast API LMS URL: https://recruitmentinstitute-api-mgtpwwbuua-el.a.run.app
+ AI Desk Service URL: https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app
+================================================================================
+
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Today, major UI/UX re-architectures, authentication consolidations, flagship 
+course upgrades, and end-to-end Google Cloud Run production deployments were 
+successfully executed, tested, committed to Git, and rolled out live to production.
+
+Key Highlights of Today's Accomplishments:
+  1. Homepage Courses Grid Redesign: Solved the awkward dangling card and blank space 
+     issue where 7 courses previously sat unevenly across 3 rows. Elevated the new 
+     flagship program ("AI for Recruitment") into a full-width hero spotlight banner 
+     while balancing the 6 core certification tracks into a flawless 3x2 grid.
+  2. Authentic WhatsApp Brand Integration: Designed and deployed a dedicated SVG 
+     WhatsApp brand asset across student login, candidate login, and contact channels, 
+     ensuring direct WhatsApp click-to-chat with the institute (+91-7385204165).
+  3. Student Auth & Redirect Sanitization: Completely resolved 0.0.0.0 redirect 
+     anomalies during logout/login, and eliminated router cache bounces by enforcing 
+     clean hard navigations to `/profile`.
+  4. Candidate Role Deprecation & Student Journey Unification: Cleaned up redundant 
+     candidate authentication schemas, combining all learner activities into a unified 
+     Student profile and portal experience.
+  5. AI for Recruitment Master Landing Page: Developed and integrated the rich, 
+     interactive `AiForRecruitmentLandingClient.tsx` featuring full module breakdowns, 
+     hands-on lab previews, prompt engineering showcases, and cohort enrollments.
+  6. Google Cloud Build & Cloud Run Rollout: Successfully compiled the standalone 
+     Next.js production container via Cloud Build (5m 8s build time) and deployed 
+     revision `recruitmentinstitute-web-00073-4qd` with 100% traffic allocation. 
+     Verified `HTTP 200 OK` on `https://recruitmentinstitute.in`.
+
+================================================================================
+2. DETAILED BREAKDOWN OF TODAY'S TASKS & IMPLEMENTATIONS
+================================================================================
+
+--------------------------------------------------------------------------------
+TASK 1: HOMEPAGE COURSES SECTION REDESIGN (ELIMINATING BLANK SPACE)
+--------------------------------------------------------------------------------
+• Problem Identified:
+  - On the homepage (`/`), the courses section rendered all courses inside a 
+    standard 3-column CSS grid:
+      `<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">`
+  - With 7 active courses in the database, the grid rendered:
+      Row 1: 3 cards (AI for Recruitment, Career Starter, Professional Specialist)
+      Row 2: 3 cards (Advanced TA, Business Accelerator, Growth Consulting)
+      Row 3: 1 single card (Corporate Recruitment Training) in column 1, leaving 
+             columns 2 and 3 completely empty.
+  - This 66% vacant space on desktop looked unfinished and broken.
+
+• Solution Implemented:
+  1. Flagship AI Course Spotlight Banner:
+     - Elevated `courses[0]` ("AI for Recruitment") into a bespoke, full-width 
+       Hero Spotlight Showcase directly beneath the section title.
+     - Engineered with a deep luxury gradient (`from-slate-900 via-indigo-950 to-slate-900`), 
+       ambient purple/indigo blur orbs, and a 12-column responsive layout.
+     - Features:
+       • Glowing badge pill: "⚡ FLAGSHIP AI COURSE • AI & Future Skills"
+       • Live status pill: "Next Cohort Starting Soon" with pulsing indicator
+       • 4-card feature grid: Prompt Engineering & Sourcing, AI Resume Match & 
+         Screen, No-Code Recruiter Automation, Accredited AI Recruiter Certificate
+       • Pricing banner: "Online: 50% OFF • Classroom: 10% OFF • Hands-On Labs"
+       • Action CTAs: "Explore Flagship Program →" and "Download Syllabus & Fees"
+       • High-resolution preview image with duration badge ("4 Weeks")
+  2. Balanced 3x2 Grid for the 6 Core Programs:
+     - Separated the remaining 6 courses into a neat 3-column × 2-row grid:
+       • Row 1:
+         - Card 1: Recruitment Career Starter (Freshers) — Sky Blue Accent (01)
+         - Card 2: Professional Recruitment Specialist (Professionals) — Red Accent (02)
+         - Card 3: Advanced Recruitment & TA Masterclass (Senior TA) — Purple Accent (03)
+       • Row 2:
+         - Card 4: Recruitment Business Accelerator (Entrepreneurship) — Amber Accent (04)
+         - Card 5: Recruitment Business Growth Consulting (Consulting) — Emerald Accent (05)
+         - Card 6: Corporate Recruitment Training (Enterprise) — Indigo Accent (06)
+     - Row 2 Column 3 now houses Corporate Recruitment Training cleanly.
+     - Zero dangling cards, zero empty grid slots, 100% occupied space.
+  3. Verification:
+     - Validated locally and in headless browser; confirmed all rows are completely 
+       symmetrical and responsive on desktop, tablet, and mobile.
+
+--------------------------------------------------------------------------------
+TASK 2: AUTHENTIC WHATSAPP BRAND ICON & HELP CARD FIX
+--------------------------------------------------------------------------------
+• Problem Identified:
+  - Several login and registration pages displayed missing icons, corrupted emoji 
+    characters, or generic telephone symbols next to "Need help registering?"
+  - Lacked official brand recognition for prospective students seeking WhatsApp support.
+
+• Solution Implemented:
+  1. Component Creation (`components/shared/WhatsAppIcon.tsx`):
+     - Built a clean, reusable React component rendering the official vector 
+       WhatsApp brand glyph with customizable dimensions and colors.
+  2. Integration across Portals:
+     - Updated Student Login (`components/home/PortalLoginClient.tsx`)
+     - Updated Candidate Login (`components/home/CandidateLoginClient.tsx`)
+     - Updated Contact Page and Student Membership cards
+     - Configured one-click WhatsApp redirection to `https://wa.me/917385204165` 
+       with pre-filled inquiry text: "Hello Recruitment Institute, I need help with..."
+
+--------------------------------------------------------------------------------
+TASK 3: STUDENT AUTHENTICATION, LOGOUT & REDIRECT SANITIZATION
+--------------------------------------------------------------------------------
+• Problem Identified:
+  - On signout, the browser was redirecting to `https://0.0.0.0:3000/student-login`, 
+    which resulted in an unreachable ERR_CONNECTION_REFUSED error.
+  - When clicking links after student login, Next.js client-side router cache 
+    occasionally bounced users back to `/student-login`.
+
+• Solution Implemented:
+  1. Host Sanitization:
+     - Updated auth logout handlers and server redirects to strip bind-all IP 
+       addresses (`0.0.0.0`) and resolve to the current `window.location.origin` 
+       or canonical domain `https://recruitmentinstitute.in`.
+  2. Router Cache Fix:
+     - Replaced `router.push('/profile')` upon successful login with a clean 
+       `window.location.href = '/profile'`, ensuring fresh cookies and hydration 
+       of student sessions.
+  3. Verified complete student login -> dashboard -> logout lifecycle without bounces.
+
+--------------------------------------------------------------------------------
+TASK 4: CANDIDATE ROLE REMOVAL & STUDENT ARCHITECTURE CONSOLIDATION
+--------------------------------------------------------------------------------
+• Problem Identified:
+  - The codebase maintained two parallel, redundant user systems: "Candidate" and 
+    "Student", creating friction in database records, separate login pages, and 
+    unnecessary admin tabs.
+
+• Solution Implemented:
+  1. Consolidated Schema & Roles (`prisma/schema.prisma`):
+     - Merged user accounts under the unified `STUDENT` role model.
+     - Deprecated legacy candidate routes (`src/app/api/auth/candidate/*`, 
+       `src/app/api/admin/candidates/*`).
+  2. Unified Registration & Login (`src/app/api/auth/student/*`):
+     - Consolidated self-registration into `/api/auth/student/register`.
+     - Standardized login via `/student-login` powered by `PortalLoginClient.tsx`.
+     - Preserved legacy `/candidate-login` with seamless redirection to `/student-login`.
+  3. Cleaned Admin Portal:
+     - Removed redundant candidate management tabs in favor of the active 
+       Students & Enrollments manager.
+
+--------------------------------------------------------------------------------
+TASK 5: AI FOR RECRUITMENT FLAGSHIP PAGE OVERHAUL
+--------------------------------------------------------------------------------
+• Implementation:
+  - Created `components/site/AiForRecruitmentLandingClient.tsx` (1,798 lines):
+    • Dynamic syllabus curriculum breakdown spanning all 4 weeks of the cohort.
+    • Interactive modules: Generative AI tools (ChatGPT, Claude, Perplexity), 
+      automated candidate sourcing, boolean AI generation, and ATS automations.
+    • Trainer profiles, student outcome metrics, and live batch schedule selector.
+    • Direct brochure download, fee structure breakdown, and enrollment triggers.
+
+--------------------------------------------------------------------------------
+TASK 6: GOOGLE CLOUD BUILD & CLOUD RUN PRODUCTION DEPLOYMENT
+--------------------------------------------------------------------------------
+• Implementation:
+  1. Container Compilation via Google Cloud Build:
+     - Command: `gcloud builds submit --config=cloudbuild.yaml .`
+     - Build ID: `e189c670-dd5d-4fc6-8439-13b64ffcba22`
+     - Duration: 5 minutes 8 seconds
+     - Successfully built and pushed Docker image:
+       `gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest`
+       Digest: `sha256:fa6eb32bbaaa7731e3a0b68d7d6409603b498c54e8dbdb37e0c8af934ea024be`
+  2. Deployment to Google Cloud Run (asia-south1):
+     - Command:
+       `gcloud run deploy recruitmentinstitute-web --image gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest --region asia-south1 --platform managed --allow-unauthenticated`
+     - Created Revision: `recruitmentinstitute-web-00073-4qd`
+     - Traffic Allocation: 100% routed to `recruitmentinstitute-web-00073-4qd`
+     - Service URL: `https://recruitmentinstitute-web-396924250862.asia-south1.run.app`
+     - Production Custom Domain: `https://recruitmentinstitute.in`
+  3. Verification & Live Health Check:
+     - Executed remote HTTP request against production:
+       `curl.exe -I -s https://recruitmentinstitute.in`
+       Result: `HTTP/1.1 200 OK` (Google Frontend proxying to standalone Next.js server).
+
+================================================================================
+3. GIT COMMITS RECORD TODAY (2026-09-05)
+================================================================================
+Repository: https://github.com/Digitalcodes-stack/recruitmentinstitute-nextjs.git
+Branch: main (Clean, up to date with origin/main)
+
+• ba6d2bf (2026-09-05 16:11:28 +0530):
+  "feat: redesign ai-for-recruitment page, remove candidate role, unify student auth and journey"
+  - 43 files changed, 2,559 insertions(+), 2,304 deletions(-)
+
+• 9c6fb6d (2026-09-05 11:43:52 +0530):
+  "feat(home): feature Flagship AI course in spotlight showcase and balance 6 training tracks in 3x2 grid"
+  - 1 file changed, 146 insertions(+), 3 deletions(-)
+
+• d11b78a (2026-09-05 10:57:20 +0530):
+  "fix(ui): add authentic WhatsApp brand icon to Need help registering and login assistance cards"
+  - 5 files changed, 128 insertions(+), 18 deletions(-)
+
+================================================================================
+4. PRODUCTION ENVIRONMENT SERVICE STATUS SUMMARY
+================================================================================
+| Service Name                  | Type        | Active Revision                  | Status         | Public URL |
+| :---------------------------- | :---------- | :------------------------------- | :------------- | :--------- |
+| `recruitmentinstitute-web`    | Next.js App | `recruitmentinstitute-web-00073-4qd` | Healthy (200 OK)| https://recruitmentinstitute.in |
+| `recruitmentinstitute-api`    | FastAPI LMS | `recruitmentinstitute-api-00018-wn2` | Healthy (200 OK)| https://recruitmentinstitute-api-mgtpwwbuua-el.a.run.app |
+| `recruitmentinstitute-aidesk` | AI Voice    | `recruitmentinstitute-aidesk-00012-7gg`| Healthy (200 OK)| https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app |
+| Google Cloud SQL (Postgres)   | PostgreSQL  | 35.200.228.49:5432               | Active         | Port 5432 (SSL Enabled) |
+
+================================================================================
+END OF REPORT — RECRUITMENT INSTITUTE DEV TEAM
+================================================================================
