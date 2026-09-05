@@ -7,7 +7,7 @@ import {
   CheckCircle2, Star,
   Users, BookOpen, Award, TrendingUp, ArrowRight,
   Phone, GraduationCap,
-  BadgeCheck, Clock, Layers, PlayCircle
+  BadgeCheck, Clock, Layers, PlayCircle, Sparkles
 } from 'lucide-react'
 import EnquiryModal from './EnquiryModal'
 import homeStudentsBanner from '../../public/assets/images/banner/home9.jpg'
@@ -196,6 +196,19 @@ export default function HomePage({
   const experts = expertData ?? []
   const clients = clientData ?? []
   const [enquiryOpen, setEnquiryOpen] = useState(false)
+
+  const flagshipIndex = courses.findIndex(
+    (c) =>
+      c.href?.includes('ai-for-recruitment') ||
+      c.badge?.toLowerCase().includes('flagship') ||
+      c.title?.toLowerCase().includes('ai for recruitment')
+  )
+
+  const hasFlagship = flagshipIndex !== -1 && courses.length >= 7
+  const flagshipCourse = hasFlagship ? courses[flagshipIndex] : null
+  const regularCourses = hasFlagship
+    ? courses.filter((_, idx) => idx !== flagshipIndex)
+    : courses
 
   return (
     <>
@@ -401,9 +414,139 @@ export default function HomePage({
             </Link>
           </div>
 
+          {/* ── FLAGSHIP COURSE SPOTLIGHT ── */}
+          {flagshipCourse && (
+            <div className="relative overflow-hidden rounded-3xl mb-12 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-6 sm:p-8 lg:p-10 shadow-2xl border border-indigo-500/30">
+              {/* Ambient Background Glows */}
+              <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-10 w-80 h-80 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                {/* Content Column */}
+                <div className="lg:col-span-7 flex flex-col justify-between">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-md shadow-amber-500/20">
+                        <Sparkles className="w-3.5 h-3.5 fill-slate-950" />
+                        {flagshipCourse.badge || 'Flagship AI Course'}
+                      </span>
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-indigo-200 border border-white/15 backdrop-blur-sm">
+                        {flagshipCourse.level || 'AI & Future Skills'}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Next Cohort Starting Soon
+                      </span>
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-3">
+                      {flagshipCourse.title}
+                    </h3>
+
+                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-6 line-clamp-3">
+                      {flagshipCourse.desc}
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
+                      {(flagshipCourse.highlights?.length ? flagshipCourse.highlights : [
+                        'Prompt Engineering & Boolean Sourcing',
+                        'AI Resume Match & Screen',
+                        'No-Code Recruiter Automation',
+                        'Accredited AI Recruiter Certificate',
+                      ]).map((h) => (
+                        <div
+                          key={h}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/[0.07] border border-white/10 backdrop-blur-sm text-xs sm:text-sm font-medium text-slate-200"
+                        >
+                          <div className="w-5 h-5 rounded-md bg-indigo-500/30 border border-indigo-400/40 flex items-center justify-center shrink-0">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-indigo-300" />
+                          </div>
+                          <span className="truncate">{h}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 p-3 rounded-xl bg-white/[0.05] border border-white/10 mb-6 text-xs font-bold text-slate-300">
+                      <span className="text-sky-300 font-extrabold">Online: 50% OFF</span>
+                      <span className="text-white/30">•</span>
+                      <span className="text-amber-300 font-extrabold">Classroom: 10% OFF</span>
+                      <span className="text-white/30">•</span>
+                      <span className="text-emerald-300 font-medium">Hands-On ATS &amp; AI Labs</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <Link
+                      href={flagshipCourse.href}
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-indigo-500 via-purple-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 hover:brightness-110 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+                    >
+                      Explore Flagship Program
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => setEnquiryOpen(true)}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl font-bold text-sm bg-white/10 hover:bg-white/15 text-white border border-white/20 backdrop-blur-sm transition-all duration-200"
+                    >
+                      Download Syllabus &amp; Fees
+                    </button>
+                  </div>
+                </div>
+
+                {/* Preview Image Column */}
+                <div className="lg:col-span-5">
+                  <div className="relative aspect-[16/11] rounded-2xl overflow-hidden shadow-2xl border border-white/20 group">
+                    <Image
+                      src={flagshipCourse.image}
+                      alt={flagshipCourse.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width:1024px) 100vw, 420px"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/20 to-transparent" />
+
+                    <div className="absolute top-3 right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/25 text-white text-xs font-bold shadow-lg">
+                      <Clock className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>{flagshipCourse.duration || '4 Weeks'}</span>
+                    </div>
+
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <div className="text-[11px] font-black uppercase tracking-wider text-indigo-300 mb-0.5">
+                        Live Cohort-Based Program
+                      </div>
+                      <div className="text-sm font-bold leading-tight drop-shadow-sm">
+                        Generative AI &amp; Recruiter Automation
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── CORE PROGRAMS SUBHEADER (when flagship is highlighted) ── */}
+          {hasFlagship && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-8 mb-8 border-t border-slate-200/80 pt-8">
+              <div>
+                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 mb-2">
+                  <Layers className="w-3.5 h-3.5" /> Specialized Career Tracks
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Role-Specific Training Programs
+                </h3>
+                <p className="text-slate-500 text-sm mt-1">
+                  Curated industry tracks designed for every stage — from freshers to corporate hiring leaders.
+                </p>
+              </div>
+              <div className="text-xs font-extrabold text-slate-400 uppercase tracking-wider hidden sm:block">
+                {regularCourses.length} Comprehensive Tracks
+              </div>
+            </div>
+          )}
+
+          {/* ── 3-COLUMN BALANCED GRID ── */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((c, i) => {
-              const a = ACCENTS[i] ?? ACCENTS[0]
+            {regularCourses.map((c, i) => {
+              const a = ACCENTS[i % ACCENTS.length] ?? ACCENTS[0]
               return (
                 <article
                   key={c.id}
