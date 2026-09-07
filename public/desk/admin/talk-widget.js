@@ -90,6 +90,7 @@ margin-top:14px;border:none;}\
   var END_ICON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>';
 
   function openTalk(exec) {
+    if (talkState) stopTalk();
     var backdrop = document.createElement("div");
     backdrop.className = "aidt-backdrop";
     backdrop.id = "aidtModal";
@@ -188,6 +189,25 @@ registerProcessor('mic-processor', MicProcessor);";
     return processorNode;
   }
 
+  async function acquireMicStream() {
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+        }
+      });
+    } catch (e1) {
+      console.warn("[ai-desk] Advanced mic constraints failed, attempting fallback to basic audio:", e1);
+      try {
+        return await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (e2) {
+        throw e2;
+      }
+    }
+  }
+
   function startTalk(execId, callerName, callerPhone, agentName, preAudioCtx, prePlaybackCtx) {
     var statusEl = document.getElementById("aidtStatus");
     var dotEl = document.getElementById("aidtMicDot");
@@ -198,14 +218,7 @@ registerProcessor('mic-processor', MicProcessor);";
     var playbackCtx = prePlaybackCtx || new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
     if (playbackCtx.state === "suspended") playbackCtx.resume();
 
-    navigator.mediaDevices.getUserMedia({
-      audio: {
-        channelCount: 1,
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    })
+    acquireMicStream()
       .then(async function (micStream) {
         if (audioCtx.state === "suspended") audioCtx.resume();
         if (playbackCtx.state === "suspended") playbackCtx.resume();
@@ -314,7 +327,19 @@ registerProcessor('mic-processor', MicProcessor);";
         toggleEl.classList.add("active");
         runAvatarAnimationLoop();
       })
-      .catch(function (e) { statusEl.textContent = "Mic access failed: " + e.message; });
+      .catch(function (e) {
+        if (audioCtx) { try { audioCtx.close(); } catch (_) {} }
+        if (playbackCtx) { try { playbackCtx.close(); } catch (_) {} }
+        dotEl.classList.remove("live");
+        console.error("[ai-desk] Mic access failed:", e);
+        if (e.name === "NotReadableError" || (e.message && e.message.indexOf("Could not start audio source") !== -1)) {
+          statusEl.textContent = "Mic is busy or used by another tab/app (e.g. Chrome Settings or Zoom). Please close other mic tabs and retry.";
+        } else if (e.name === "NotAllowedError" || e.name === "PermissionDeniedError") {
+          statusEl.textContent = "Microphone permission denied. Please allow microphone access in your browser address bar.";
+        } else {
+          statusEl.textContent = "Mic access failed: " + (e.message || e.name);
+        }
+      });
   }
 
   function setFaceFrame(openness) {
@@ -368,11 +393,23 @@ registerProcessor('mic-processor', MicProcessor);";
       window.removeEventListener("click", talkState.resumeListener);
       window.removeEventListener("touchstart", talkState.resumeListener);
     }
-    talkState.ws.close();
-    talkState.processorNode.disconnect();
-    talkState.micStream.getTracks().forEach(function (t) { t.stop(); });
-    talkState.audioCtx.close();
-    talkState.playbackCtx.close();
+    if (talkState.ws) {
+      try { talkState.ws.close(); } catch (_) {}
+    }
+    if (talkState.processorNode) {
+      try { talkState.processorNode.disconnect(); } catch (_) {}
+    }
+    if (talkState.micStream) {
+      try {
+        talkState.micStream.getTracks().forEach(function (t) { t.stop(); });
+      } catch (_) {}
+    }
+    if (talkState.audioCtx) {
+      try { talkState.audioCtx.close(); } catch (_) {}
+    }
+    if (talkState.playbackCtx) {
+      try { talkState.playbackCtx.close(); } catch (_) {}
+    }
     talkState = null;
     var toggleEl = document.getElementById("aidtToggle");
     if (toggleEl) { toggleEl.innerHTML = CALL_ICON + ' Call'; toggleEl.classList.remove("active"); }
