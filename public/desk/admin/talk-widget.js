@@ -107,7 +107,10 @@ margin-top:14px;border:none;}\
     document.body.appendChild(backdrop);
     backdrop.addEventListener("click", function (e) { if (e.target === backdrop) closeTalk(); });
     document.getElementById("aidtClose").onclick = closeTalk;
-    document.getElementById("aidtToggle").onclick = function () { stopTalk(); };
+    document.getElementById("aidtToggle").onclick = function () {
+      if (talkState) stopTalk();
+      closeTalk();
+    };
 
     // Start the call immediately with the counsellor's name and active AudioContexts
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
