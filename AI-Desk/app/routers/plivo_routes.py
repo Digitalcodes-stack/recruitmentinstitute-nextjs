@@ -96,6 +96,7 @@ async def request_callback(payload: RequestCallbackPayload, request: Request):
         "preferred_course": payload.preferred_course or "",
         "executive_id": exec_id_str,
         "executive_name": exec_name,
+        "status": "ringing",
         "requested_at": datetime.now(timezone.utc).isoformat(),
     }
 
@@ -157,6 +158,8 @@ async def plivo_answer(request: Request):
     if form_data.get("CallUUID"):
         meta["plivo_call_uuid"] = form_data.get("CallUUID")
 
+    meta["status"] = "in_call"
+
     # Determine public host for WebSocket URL
     host = request.headers.get("host", "localhost:8000")
     if settings.PUBLIC_BASE_URL:
@@ -171,6 +174,27 @@ async def plivo_answer(request: Request):
     xml_content = generate_stream_xml(ws_url, content_type="audio/x-mulaw;rate=8000")
     logger.info("✅ Returning Plivo AudioStream XML for call_id=%s:\n%s", call_id, xml_content)
     return Response(content=xml_content, media_type="application/xml")
+
+
+@router.get("/call-status/{call_id}")
+async def get_call_status(call_id: str):
+    """
+    Returns real-time call status for frontend widget polling.
+    Possible status values: 'ringing', 'in_call', 'completed', 'failed'.
+    """
+    meta = _CALL_STORE.get(call_id)
+    if not meta:
+        return {"call_id": call_id, "status": "completed", "disconnected": True}
+
+    status_val = meta.get("status", "ringing")
+    disconnected = status_val in ("completed", "failed", "rejected", "hangup")
+    return {
+        "call_id": call_id,
+        "status": status_val,
+        "disconnected": disconnected,
+        "duration": meta.get("duration", 0),
+        "hangup_cause": meta.get("hangup_cause"),
+    }
 
 
 @router.post("/hangup")
@@ -198,7 +222,10 @@ async def plivo_hangup(request: Request):
         call_duration,
     )
     if call_id and call_id in _CALL_STORE:
-        _CALL_STORE.pop(call_id, None)
+        _CALL_STORE[call_id]["status"] = "completed"
+        _CALL_STORE[call_id]["hangup_cause"] = hangup_cause
+        _CALL_STORE[call_id]["duration"] = call_duration
+        _CALL_STORE[call_id]["ended_at"] = datetime.now(timezone.utc).isoformat()
     return Response(content='<?xml version="1.0" encoding="UTF-8"?><Response/>', media_type="application/xml")
 
 
@@ -263,6 +290,8 @@ async def handle_plivo_stream(websocket: WebSocket, call_id: str):
     started_at = datetime.now(timezone.utc)
     transcript: list[dict] = []
     extraction: dict = {}
+    if call_id in _CALL_STORE:
+        _CALL_STORE[call_id]["status"] = "in_call"
 
     try:
         logger.info("🎙️ Running VoiceChatSession with Gemini Live for call_id=%s...", call_id)
@@ -271,6 +300,9 @@ async def handle_plivo_stream(websocket: WebSocket, call_id: str):
     except Exception as exc:
         logger.exception("❌ Plivo AudioStream session failed for call_id=%s: %s", call_id, exc)
     finally:
+        if call_id in _CALL_STORE:
+            _CALL_STORE[call_id]["status"] = "completed"
+            _CALL_STORE[call_id]["ended_at"] = datetime.now(timezone.utc).isoformat()
         # Post-call processing & database persistence
         extracted_name = ""
         extracted_phone = ""
