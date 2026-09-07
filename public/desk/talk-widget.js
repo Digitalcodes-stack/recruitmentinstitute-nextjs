@@ -108,8 +108,13 @@ margin-top:14px;border:none;}\
     document.getElementById("aidtClose").onclick = closeTalk;
     document.getElementById("aidtToggle").onclick = function () { stopTalk(); };
 
-    // Start the call immediately with the counsellor's name
-    startTalk(exec.id, "Candidate", "", exec.name);
+    // Start the call immediately with the counsellor's name and active AudioContexts
+    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var playbackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+    if (playbackCtx.state === "suspended") playbackCtx.resume();
+
+    startTalk(exec.id, "Candidate", "", exec.name, audioCtx, playbackCtx);
   }
 
   function closeTalk() {
@@ -118,7 +123,37 @@ margin-top:14px;border:none;}\
     if (el) el.remove();
   }
 
-  var WORKLET_CODE = "class MicProcessor extends AudioWorkletProcessor{constructor(){super();this.bufferSize=2048;this.buffer=new Float32Array(this.bufferSize);this.bytesWritten=0;}process(inputs){const input=inputs[0];if(!input||!input[0])return true;const ch=input[0];let off=0;while(off<ch.length){const need=this.bufferSize-this.bytesWritten;const copy=Math.min(need,ch.length-off);this.buffer.set(ch.subarray(off,off+copy),this.bytesWritten);this.bytesWritten+=copy;off+=copy;if(this.bytesWritten>=this.bufferSize){this.port.postMessage(this.buffer.slice());this.bytesWritten=0;}}return true;}}registerProcessor('mic-processor',MicProcessor);";
+  var WORKLET_CODE = "\
+class MicProcessor extends AudioWorkletProcessor {\
+  constructor() {\
+    super();\
+    this.bufferSize = 4096;\
+    this.buffer = new Float32Array(this.bufferSize);\
+    this.bytesWritten = 0;\
+  }\
+  process(inputs, outputs) {\
+    const input = inputs[0];\
+    if (!input || !input[0]) return true;\
+    const ch = input[0];\
+    if (outputs && outputs[0] && outputs[0][0]) {\
+      outputs[0][0].set(ch);\
+    }\
+    let off = 0;\
+    while (off < ch.length) {\
+      const need = this.bufferSize - this.bytesWritten;\
+      const copy = Math.min(need, ch.length - off);\
+      this.buffer.set(ch.subarray(off, off + copy), this.bytesWritten);\
+      this.bytesWritten += copy;\
+      off += copy;\
+      if (this.bytesWritten >= this.bufferSize) {\
+        this.port.postMessage(this.buffer.slice());\
+        this.bytesWritten = 0;\
+      }\
+    }\
+    return true;\
+  }\
+}\
+registerProcessor('mic-processor', MicProcessor);";
 
   async function createAudioInputNode(audioCtx, source, onAudio) {
     if (audioCtx.audioWorklet) {
@@ -153,12 +188,28 @@ margin-top:14px;border:none;}\
     return processorNode;
   }
 
-  function startTalk(execId, callerName, callerPhone, agentName) {
+  function startTalk(execId, callerName, callerPhone, agentName, preAudioCtx, prePlaybackCtx) {
     var statusEl = document.getElementById("aidtStatus");
     var dotEl = document.getElementById("aidtMicDot");
     var toggleEl = document.getElementById("aidtToggle");
-    navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: GEMINI_SAMPLE_RATE } })
+
+    var audioCtx = preAudioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var playbackCtx = prePlaybackCtx || new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
+    if (playbackCtx.state === "suspended") playbackCtx.resume();
+
+    navigator.mediaDevices.getUserMedia({
+      audio: {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    })
       .then(async function (micStream) {
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        if (playbackCtx.state === "suspended") playbackCtx.resume();
+
         // Build WebSocket URL: use API_BASE directly (e.g. Cloud Run or http://localhost:8000)
         // so the connection goes straight to FastAPI, not through Next.js proxy.
         var defaultCloudRunBase = "https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app";
@@ -170,22 +221,23 @@ margin-top:14px;border:none;}\
         var ws = new WebSocket(wsUrl + "?" + params);
         ws.binaryType = "arraybuffer";
 
-        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (audioCtx.state === "suspended") audioCtx.resume();
         var source = audioCtx.createMediaStreamSource(micStream);
         var micAnalyser = audioCtx.createAnalyser();
         micAnalyser.fftSize = 256;
         source.connect(micAnalyser);
 
+        var pcmCount = 0;
         var processorNode = await createAudioInputNode(audioCtx, source, function (input) {
           var targetWs = (talkState && talkState.ws) || ws;
           if (targetWs.readyState !== WebSocket.OPEN) return;
           var pcm16 = floatTo16BitPCM(resampleTo(input, audioCtx.sampleRate, GEMINI_SAMPLE_RATE));
           targetWs.send(pcm16);
+          pcmCount++;
+          if (pcmCount === 1 || pcmCount % 50 === 0) {
+            console.log("[ai-desk] Sending mic audio frames to Priya (frame #" + pcmCount + ", " + pcm16.byteLength + " bytes)");
+          }
         });
 
-        var playbackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
-        if (playbackCtx.state === "suspended") playbackCtx.resume();
         var playCursor = playbackCtx.currentTime;
         var playbackAnalyser = playbackCtx.createAnalyser();
         playbackAnalyser.fftSize = 256;
