@@ -202,10 +202,30 @@ registerProcessor('mic-processor', MicProcessor);";
         }
       });
     } catch (e1) {
-      console.warn("[ai-desk] Advanced mic constraints failed, attempting fallback to basic audio:", e1);
+      console.warn("[ai-desk] Advanced mic constraints failed, attempting basic audio:", e1);
       try {
         return await navigator.mediaDevices.getUserMedia({ audio: true });
       } catch (e2) {
+        console.warn("[ai-desk] Default mic failed, enumerating individual devices:", e2);
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+          try {
+            var devices = await navigator.mediaDevices.enumerateDevices();
+            var audioInputs = devices.filter(function (d) {
+              return d.kind === "audioinput" && d.deviceId && d.deviceId !== "default" && d.deviceId !== "communications";
+            });
+            for (var i = 0; i < audioInputs.length; i++) {
+              try {
+                return await navigator.mediaDevices.getUserMedia({
+                  audio: { deviceId: { exact: audioInputs[i].deviceId } }
+                });
+              } catch (devErr) {
+                console.warn("[ai-desk] Device " + audioInputs[i].label + " failed:", devErr);
+              }
+            }
+          } catch (enumErr) {
+            console.warn("[ai-desk] enumerateDevices fallback failed:", enumErr);
+          }
+        }
         throw e2;
       }
     }
