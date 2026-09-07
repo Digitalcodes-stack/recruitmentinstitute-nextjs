@@ -211,5 +211,14 @@ export default async function Page() {
 
   const clientData = clients.map(c => ({ id: c.id, name: c.name, logo: c.logo, website: c.website || '' }))
 
-  return <HomePage courses={courses} stats={siteStats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
+  // Dynamically sync course count so stats are always automatically updated with live courses
+  const liveCourseCount = String(courses.length || totalCourses || 7)
+  const dynamicStats = (siteStats && siteStats.length ? siteStats : stats).map((item) => {
+    if (item.icon === 'book' || item.label?.toLowerCase().includes('course') || item.label?.toLowerCase().includes('program')) {
+      return { ...item, value: liveCourseCount }
+    }
+    return item
+  })
+
+  return <HomePage courses={courses} stats={dynamicStats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
 }

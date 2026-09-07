@@ -210,6 +210,33 @@ export default function HomePage({
     ? courses.filter((_, idx) => idx !== flagshipIndex)
     : courses
 
+  const graduatesStat = stats.find(
+    (s) =>
+      s.icon === 'users' ||
+      s.label?.toLowerCase().includes('student') ||
+      s.label?.toLowerCase().includes('graduate') ||
+      s.label?.toLowerCase().includes('trained')
+  )
+  const graduatesVal = graduatesStat?.value || '5,000+'
+
+  const placementStat = stats.find(
+    (s) =>
+      s.icon === 'trending' ||
+      s.label?.toLowerCase().includes('placement') ||
+      s.label?.toLowerCase().includes('success') ||
+      s.value?.includes('%')
+  )
+  const placementVal = placementStat?.value || '95%'
+
+  // Automatically keep course count stat in sync with live courses catalog
+  const coursesCount = String(courses?.length || 7)
+  const displayStats = stats.map((s) => {
+    if (s.icon === 'book' || s.label?.toLowerCase().includes('course') || s.label?.toLowerCase().includes('program')) {
+      return { ...s, value: coursesCount }
+    }
+    return s
+  })
+
   return (
     <>
       {/* ══ HERO ══════════════════════════════════════════════ */}
@@ -244,8 +271,8 @@ export default function HomePage({
 
               <div className="hero-chips">
                 {[
-                  { label: `${stats[0]?.value || '5,000+'} Graduates`, cls: 'hero-chip hero-chip--blue' },
-                  { label: `${stats[3]?.value || '95%'} Placement Rate`, cls: 'hero-chip hero-chip--green' },
+                  { label: `${graduatesVal} Graduates`, cls: 'hero-chip hero-chip--blue' },
+                  { label: `${placementVal} Placement Rate`, cls: 'hero-chip hero-chip--green' },
                   { label: 'Industry Certificate', cls: 'hero-chip hero-chip--purple' },
                   { label: 'Live + Online Batches', cls: 'hero-chip hero-chip--orange' },
                 ].map((chip) => (
@@ -277,7 +304,7 @@ export default function HomePage({
                   <div className="hero-stars">
                     {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
                   </div>
-                  <p className="hero-social-text">Trusted by <strong style={{ color: '#0F172A' }}>{stats[0]?.value || '5,000+'}</strong> HR professionals</p>
+                  <p className="hero-social-text">Trusted by <strong style={{ color: '#0F172A' }}>{graduatesVal}</strong> HR professionals</p>
                 </div>
               </div>
             </div>
@@ -295,7 +322,7 @@ export default function HomePage({
                     <GraduationCap style={{ width: 22, height: 22, color: 'white' }} />
                   </div>
                   <div>
-                    <p className="hero-img-badge-num">{stats[0]?.value || '5,000+'}</p>
+                    <p className="hero-img-badge-num">{graduatesVal}</p>
                     <p className="hero-img-badge-sub">Graduates Placed</p>
                   </div>
                 </div>
@@ -310,7 +337,7 @@ export default function HomePage({
               </div>
 
               <div className="hero-float-placement">
-                <p className="hero-float-placement-num">{stats[3]?.value || '95%'}</p>
+                <p className="hero-float-placement-num">{placementVal}</p>
                 <p className="hero-float-placement-sub">Placement Support Success</p>
                 <div className="hero-float-placement-bar-track">
                   <div className="hero-float-placement-bar-fill" />
@@ -327,7 +354,7 @@ export default function HomePage({
 
           {/* TRUST BAR */}
           <div className="hero-trust-bar">
-            {stats.map((item, i, arr) => (
+            {displayStats.map((item, i, arr) => (
               <div key={i} className={`hero-trust-item${i < arr.length - 1 ? ' hero-trust-item--bordered' : ''}`}>
                 <div className="hero-trust-icon" style={{ background: item.iconBg, color: item.iconColor }}>
                   {renderStatIcon(item.icon, "w-5 h-5")}
@@ -538,7 +565,7 @@ export default function HomePage({
                 </p>
               </div>
               <div className="text-xs font-extrabold text-slate-400 uppercase tracking-wider hidden sm:block">
-                {regularCourses.length} Comprehensive Tracks
+                {courses.length} Comprehensive Tracks
               </div>
             </div>
           )}
@@ -695,15 +722,7 @@ export default function HomePage({
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  {(stats && stats.length > 0
-                    ? stats
-                    : [
-                        { value: '5,000+', label: 'Students Trained' },
-                        { value: '95%', label: 'Placement Rate' },
-                        { value: '25+ Yrs', label: 'Of Excellence' },
-                        { value: `${courses.length || 6}`, label: 'Expert Courses' },
-                      ]
-                  ).map((s, idx) => (
+                  {displayStats.map((s, idx) => (
                     <div key={idx} className="why-promo-stat">
                       <div className="why-promo-stat-value">{s.value}</div>
                       <div className="why-promo-stat-label">{s.label}</div>

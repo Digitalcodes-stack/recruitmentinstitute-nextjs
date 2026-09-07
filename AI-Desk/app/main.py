@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import auth, conversations, executives, voice_chat
+from app.routers import auth, conversations, executives, plivo_routes, voice_chat
 
 logging.basicConfig(
     level=settings.LOG_LEVEL,
@@ -48,6 +48,8 @@ app.include_router(auth.router)
 app.include_router(executives.router)
 app.include_router(conversations.router)
 app.include_router(voice_chat.router)
+app.include_router(plivo_routes.router)
+app.include_router(plivo_routes.ws_router)
 
 
 @app.get("/admin", include_in_schema=False)

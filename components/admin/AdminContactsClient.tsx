@@ -481,9 +481,7 @@ export default function AdminContactsClient({
       fullText.includes('pune') ||
       fullText.includes('classroom') ||
       fullText.includes('offline') ||
-      fullText.includes('campus') ||
-      fullText.includes('fc road') ||
-      fullText.includes('shivajinagar')
+      fullText.includes('campus')
     ) {
       badges.push({
         category: 'mode',

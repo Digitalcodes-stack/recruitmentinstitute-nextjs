@@ -32,7 +32,7 @@ def _extract_intent_bullets(conversation: "Conversation") -> list[str]:
         bullets.append("⏰ Batch Preference: Weekday / Evening Timing")
     if any(k in full_text for k in ["placement", "job", "support", "interview", "package", "95%", "100%"]):
         bullets.append("🎯 Placement: Inquired about 95% Placement & Corporate Hiring Partners")
-    if any(k in full_text for k in ["pune", "classroom", "offline", "campus", "fc road"]):
+    if any(k in full_text for k in ["pune", "classroom", "offline", "campus"]):
         bullets.append("🏢 Learning Mode: Pune Classroom Training")
     elif any(k in full_text for k in ["online", "zoom", "live class", "remote"]):
         bullets.append("💻 Learning Mode: Live Online Interactive Batches")
@@ -170,6 +170,11 @@ def format_conversation_whatsapp(conversation: "Conversation") -> str:
             snippet_lines.append(f"• *{r}:* {txt}")
         transcript_snippet = "\n".join(snippet_lines)
 
+    spoken_part = f"*CANDIDATE SPOKEN WORDS:*\n{quotes_str}\n" if quotes_str else ""
+    notes_part = f"📝 *Office Notes:* {notes}\n" if notes != "None" else ""
+    wa_part = f"💬 *Direct WhatsApp Candidate:* {wa_direct}\n" if wa_direct else ""
+    recent_dialogue = transcript_snippet if transcript_snippet else "(Dialogue logged in database)"
+
     msg = f"""🎓 *VOICE AI LEAD ALERT — Recruitment Institute*
 ━━━━━━━━━━━━━━━━━━━━
 👤 *Candidate:* {caller}
@@ -182,11 +187,9 @@ def format_conversation_whatsapp(conversation: "Conversation") -> str:
 🎯 *EXACT CANDIDATE INQUIRIES & DEMANDS:*
 {bullets_formatted}
 
-{f'*CANDIDATE SPOKEN WORDS:*\n{quotes_str}\n' if quotes_str else ''}{f'📝 *Office Notes:* {notes}\n' if notes != 'None' else ''}
-{f'💬 *Direct WhatsApp Candidate:* {wa_direct}' if wa_direct else ''}
-🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts
+{spoken_part}{notes_part}{wa_part}🔗 *Admin Portal:* https://recruitmentinstitute.in/admin/contacts
 ━━━━━━━━━━━━━━━━━━━━
 *Recent Dialogue:*
-{transcript_snippet if transcript_snippet else '(Dialogue logged in database)'}"""
+{recent_dialogue}"""
 
     return msg.strip()

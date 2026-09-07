@@ -789,7 +789,7 @@ export const COURSE_BROCHURES: CourseBrochure[] = [
       {
         type: 'Pune Center Classroom Batch',
         timing: '10:30 AM - 01:30 PM IST (Saturday)',
-        days: 'Saturday (FC Road Center)',
+        days: 'Saturday (Pune Center)',
         seatsLeft: 5,
         status: 'Few Seats',
       },

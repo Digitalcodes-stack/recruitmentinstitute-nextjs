@@ -54,11 +54,31 @@ GEMINI_OUT_RATE = 24000  # Hz, PCM16, returned by Gemini Live output — sent to
 
 
 class VoiceChatSession:
-    """One live browser voice conversation: owns the browser WS and the Gemini Live WS for its duration."""
+    """One live voice conversation: owns the client WS (browser or Plivo) and the Gemini Live WS for its duration."""
 
-    def __init__(self, browser_ws: WebSocket, system_prompt: str, **kwargs):
+    def __init__(
+        self,
+        browser_ws: WebSocket,
+        system_prompt: str,
+        is_plivo: bool = False,
+        transcoder=None,
+        caller_name: str | None = None,
+        caller_phone: str | None = None,
+        preferred_course: str | None = None,
+        agent_name: str | None = None,
+        company: str | None = None,
+        **kwargs,
+    ):
         self.browser_ws = browser_ws
+        self.client_ws = browser_ws
         self.system_prompt = system_prompt
+        self.is_plivo = is_plivo
+        self.transcoder = transcoder
+        self.caller_name = caller_name
+        self.caller_phone = caller_phone
+        self.preferred_course = preferred_course
+        self.agent_name = agent_name
+        self.company = company
         self.transcript: list[dict] = []  # [{"role": "assistant"|"caller", "text": str}]
         self._gemini_ws = None
         self._closed = False
@@ -66,10 +86,8 @@ class VoiceChatSession:
 
     async def run(self, extraction_prompt: str) -> tuple[list[dict], dict]:
         """
-        Runs the full bidirectional bridge until the browser disconnects.
-        Returns (transcript, extraction) — the structured-summary request is
-        a separate plain-text API call (see _request_structured_summary),
-        so it doesn't need the Live WebSocket to still be open.
+        Runs the full bidirectional bridge until the client disconnects.
+        Returns (transcript, extraction).
         """
         url = f"{GEMINI_LIVE_URL}?key={settings.GEMINI_API_KEY}"
 
@@ -78,22 +96,13 @@ class VoiceChatSession:
             await self._send_setup()
             await self._trigger_opening_line()
 
-            # Either direction ending (browser disconnects, or Gemini closes)
-            # should end the whole session — asyncio.gather() alone would
-            # leave the other pump task awaiting forever, since one task
-            # returning normally doesn't cancel its sibling.
-            to_gemini = asyncio.create_task(self._pump_browser_to_gemini())
-            to_browser = asyncio.create_task(self._pump_gemini_to_browser())
+            to_gemini = asyncio.create_task(self._pump_client_to_gemini())
+            to_client = asyncio.create_task(self._pump_gemini_to_client())
             done, pending = await asyncio.wait(
-                {to_gemini, to_browser}, return_when=asyncio.FIRST_COMPLETED
+                {to_gemini, to_client}, return_when=asyncio.FIRST_COMPLETED
             )
             for task in pending:
                 task.cancel()
-            # .cancel() only *schedules* the CancelledError — without awaiting
-            # the task, it can still be mid-recv() on gemini_ws when
-            # _request_structured_summary() below starts its own recv() on
-            # the same socket, tripping websockets' ConcurrencyError. Await
-            # (and swallow) the cancellation to guarantee it's actually done.
             for task in pending:
                 try:
                     await task
@@ -111,87 +120,136 @@ class VoiceChatSession:
 
     async def _send_setup(self):
         """Sends the BidiGenerateContent setup message with our system prompt and audio config."""
+        logger.info("Sending Gemini Live setup configuration (model=%s)...", settings.GEMINI_LIVE_MODEL)
         await self._gemini_ws.send(json.dumps({
             "setup": {
                 "model": f"models/{settings.GEMINI_LIVE_MODEL}",
                 "generationConfig": {
                     "responseModalities": ["AUDIO"],
-                    # Lower than the default — less randomness means fewer
-                    # rushed/rambling responses and steadier pacing.
                     "temperature": 0.4,
                 },
                 "systemInstruction": {"parts": [{"text": self.system_prompt}]},
-                # Without these, serverContent carries audio only — no text
-                # of what either side said, so the saved transcript would be
-                # incomplete or (for the assistant's side) entirely empty.
                 "inputAudioTranscription": {},
                 "outputAudioTranscription": {},
-                # LOW end-of-speech sensitivity + longer silence requirement
-                # = the model waits longer for the caller to actually finish
-                # before responding, instead of jumping in on a mid-sentence
-                # pause. Fixes "she talks over me / doesn't listen".
                 "realtimeInputConfig": {
                     "automaticActivityDetection": {
                         "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
-                        "silenceDurationMs": 800,
+                        "silenceDurationMs": 750,
                     },
                 },
             },
         }))
-        # First message back is setupComplete — wait for it before streaming audio.
         raw = await self._gemini_ws.recv()
         event = json.loads(raw)
         if "setupComplete" not in event:
             logger.warning("Unexpected first Gemini Live message (expected setupComplete): %s", event)
+        else:
+            logger.info("✅ Gemini Live setupComplete received successfully.")
 
     async def _trigger_opening_line(self):
         """
-        Gemini Live only speaks in response to a turn — with automaticActivityDetection
-        on, that means waiting for the caller's mic input by default, so nobody says
-        anything until the caller speaks first. Sending an empty clientContent turn
-        with turnComplete=True immediately after setup gives the model a turn to
-        respond to with no caller input yet, so it opens with its own introduction
-        instead of sitting silently.
+        Gemini Live only speaks in response to a turn. If the caller's name is known,
+        instruct Gemini to greet them warmly by name right away.
         """
+        if self.caller_name and self.caller_name.lower() not in ("candidate", "caller", "user", "visitor", ""):
+            course_text = f" regarding the {self.preferred_course}" if self.preferred_course else ""
+            instruction = (
+                f"(The phone call has just connected with {self.caller_name}{course_text}. "
+                f"Immediately greet them warmly by their name '{self.caller_name}', introduce yourself as "
+                f"{self.agent_name or 'Rupali'} from {self.company or 'Recruitment Institute'}, and state that you are calling them back right now as requested.)"
+            )
+        else:
+            instruction = "(The call has just connected. Greet the caller and introduce yourself now, following your instructions.)"
+
+        logger.info("Triggering Gemini Live opening greeting for %s: %s", self.caller_name, instruction[:120])
         await self._gemini_ws.send(json.dumps({
             "clientContent": {
-                "turns": [{"role": "user", "parts": [{"text": "(The call has just connected. Greet the caller and introduce yourself now, following your instructions.)"}]}],
+                "turns": [{"role": "user", "parts": [{"text": instruction}]}],
                 "turnComplete": True,
             },
         }))
 
-    async def _pump_browser_to_gemini(self):
-        """Reads raw PCM16 binary frames from the browser mic, forwards to Gemini as base64."""
+    async def _pump_client_to_gemini(self):
+        """Reads audio from client (browser binary or Plivo JSON base64), forwards to Gemini."""
+        first_audio_logged = False
         while not self._closed:
-            msg = await self.browser_ws.receive()
-            if msg.get("type") == "websocket.disconnect":
+            try:
+                msg = await self.client_ws.receive()
+            except (WebSocketDisconnect, RuntimeError):
+                logger.info("Client WebSocket disconnected in _pump_client_to_gemini")
                 break
-            data = msg.get("bytes")
-            if not data:
-                continue  # ignore any stray text frames (e.g. browser-side control messages)
 
-            if BROWSER_IN_RATE != GEMINI_IN_RATE:
-                data, self._in_resample_state = audioop.ratecv(
-                    data, 2, 1, BROWSER_IN_RATE, GEMINI_IN_RATE, self._in_resample_state
-                )
+            if msg.get("type") == "websocket.disconnect":
+                logger.info("Client WebSocket received disconnect event")
+                break
 
-            await self._gemini_ws.send(json.dumps({
-                "realtimeInput": {
-                    "audio": {
-                        "mimeType": f"audio/pcm;rate={GEMINI_IN_RATE}",
-                        "data": base64.b64encode(data).decode("ascii"),
+            if self.is_plivo:
+                # Plivo sends text frames with JSON payloads
+                text_data = msg.get("text")
+                if not text_data:
+                    bytes_data = msg.get("bytes")
+                    if bytes_data:
+                        try:
+                            text_data = bytes_data.decode("utf-8")
+                        except Exception:
+                            pass
+                if not text_data:
+                    continue
+                try:
+                    event = json.loads(text_data)
+                except Exception:
+                    continue
+
+                evt_type = event.get("event")
+                if evt_type == "start":
+                    logger.info("▶️ Plivo Stream 'start' event: streamId=%s, callId=%s",
+                                event.get("start", {}).get("streamId"),
+                                event.get("start", {}).get("callId"))
+                elif evt_type == "media":
+                    media = event.get("media", {})
+                    payload = media.get("payload")
+                    if payload and self.transcoder:
+                        if not first_audio_logged:
+                            logger.info("🎙️ First inbound audio packet received from Plivo caller")
+                            first_audio_logged = True
+                        pcm16 = self.transcoder.decode_inbound(payload)
+                        if pcm16:
+                            await self._gemini_ws.send(json.dumps({
+                                "realtimeInput": {
+                                    "audio": {
+                                        "mimeType": f"audio/pcm;rate={GEMINI_IN_RATE}",
+                                        "data": base64.b64encode(pcm16).decode("ascii"),
+                                    },
+                                },
+                            }))
+                elif evt_type in ("stop", "hangup"):
+                    logger.info("⏹️ Plivo audio stream sent stop/hangup event: %s", event)
+                    break
+            else:
+                # Browser mic sends raw PCM16 binary frames
+                data = msg.get("bytes")
+                if not data:
+                    continue
+
+                if BROWSER_IN_RATE != GEMINI_IN_RATE:
+                    data, self._in_resample_state = audioop.ratecv(
+                        data, 2, 1, BROWSER_IN_RATE, GEMINI_IN_RATE, self._in_resample_state
+                    )
+
+                await self._gemini_ws.send(json.dumps({
+                    "realtimeInput": {
+                        "audio": {
+                            "mimeType": f"audio/pcm;rate={GEMINI_IN_RATE}",
+                            "data": base64.b64encode(data).decode("ascii"),
+                        },
                     },
-                },
-            }))
+                }))
 
-    async def _pump_gemini_to_browser(self):
-        """Reads Gemini Live events, forwards model audio to the browser as raw PCM16 binary, records transcript."""
-        # outputTranscription/inputTranscription arrive as many small chunks per
-        # spoken turn, not one clean sentence — accumulate each side's current
-        # turn and flush as a single transcript entry when Gemini signals the
-        # turn is complete, so the saved transcript reads as real sentences.
+    async def _pump_gemini_to_client(self):
+        """Reads Gemini Live events, forwards audio to client, records transcript, handles barge-in."""
         pending_assistant = ""
         pending_caller = ""
+        first_outbound_logged = False
 
         async for raw in self._gemini_ws:
             if self._closed:
@@ -199,12 +257,37 @@ class VoiceChatSession:
             event = json.loads(raw)
 
             server_content = event.get("serverContent", {})
+
+            # Low-latency Barge-in / interruption: clear Plivo audio buffer when user interrupts
+            if server_content.get("interrupted") and self.is_plivo:
+                logger.info("⚡ Caller barge-in detected: sending clearAudio to Plivo buffer")
+                try:
+                    await self.client_ws.send_text(json.dumps({"event": "clearAudio"}))
+                except Exception:
+                    pass
+
             model_turn = server_content.get("modelTurn", {})
             for part in model_turn.get("parts", []):
                 inline_data = part.get("inlineData")
                 if inline_data:
                     pcm24k = base64.b64decode(inline_data["data"])
-                    await self.browser_ws.send_bytes(pcm24k)
+                    if self.is_plivo:
+                        if self.transcoder:
+                            outbound_payload = self.transcoder.encode_outbound(pcm24k)
+                            if outbound_payload:
+                                if not first_outbound_logged:
+                                    logger.info("🔊 Streaming voice audio back to Plivo caller (playAudio)")
+                                    first_outbound_logged = True
+                                await self.client_ws.send_text(json.dumps({
+                                    "event": "playAudio",
+                                    "media": {
+                                        "contentType": "audio/x-mulaw",
+                                        "sampleRate": 8000,
+                                        "payload": outbound_payload,
+                                    },
+                                }))
+                    else:
+                        await self.client_ws.send_bytes(pcm24k)
 
             output_chunk = server_content.get("outputTranscription", {}).get("text")
             if output_chunk:

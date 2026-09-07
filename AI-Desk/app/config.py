@@ -48,6 +48,12 @@ class Settings(BaseSettings):
     WHATSAPP_API_VERSION: str = "v20.0"
     WHATSAPP_WEBHOOK_URL: str = ""
 
+    # --- Plivo Outbound / Telephony Integration ---
+    PLIVO_AUTH_ID: str = ""
+    PLIVO_AUTH_TOKEN: str = ""
+    PLIVO_PHONE_NUMBER: str = "+912269851989"
+    PUBLIC_BASE_URL: str = ""
+
     # --- Logging ---
     LOG_LEVEL: str = "INFO"
 

@@ -522,7 +522,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                 }}
               >
                 <Building2 style={{ width: 15, height: 15 }} />
-                <span>Classroom Pune (FC Road)</span>
+                <span>Classroom Pune Center</span>
               </button>
             </div>
           </div>
@@ -597,7 +597,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                       'Direct WhatsApp Mastermind access with faculty & peers',
                     ]
                   : [
-                      'In-Person Classroom Masterclasses at Pune (FC Road / Shivaji Nagar)',
+                      'In-Person Classroom Masterclasses at Pune Center',
                       'Direct live lab guidance & personalized prompt engineering drills',
                       '1-on-1 resume, career strategy & agency launch consultation',
                       'Physical printed toolkit binder + hardcopy embossed certificate',

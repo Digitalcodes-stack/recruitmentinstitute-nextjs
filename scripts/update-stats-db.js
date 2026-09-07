@@ -5,9 +5,9 @@ const prodUrl = 'postgresql://postgres:RI_CloudSql_2026_Pass!@35.200.228.49:5432
 
 const newStats = [
   { icon: 'users', value: '5,000+', label: 'Students Trained', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
-  { icon: 'trending', value: '95%', label: 'Placement Rate', iconBg: '#F0FDF4', iconColor: '#16A34A' },
+  { icon: 'book', value: '7', label: 'Expert Courses', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
   { icon: 'award', value: '25+ Yrs', label: 'Of Excellence', iconBg: '#FFFBEB', iconColor: '#D97706' },
-  { icon: 'book', value: '6', label: 'Expert Courses', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
+  { icon: 'trending', value: '95%', label: 'Placement Rate', iconBg: '#F0FDF4', iconColor: '#16A34A' },
 ];
 
 async function updateDb(url, name) {

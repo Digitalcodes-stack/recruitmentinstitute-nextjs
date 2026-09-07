@@ -79,7 +79,7 @@ const AI_COURSE_DATA = {
     },
     {
       q: 'Can I attend classes offline in Pune, or is it only online?',
-      a: 'We offer both options! You can enroll in our interactive Live Online cohort or attend in-person classroom masterclasses at our Pune center (FC Road / Shivaji Nagar campus). Both formats include identical LMS access, lifetime recordings, and the AI Recruitment Toolkit.',
+      a: 'We offer both options! You can enroll in our interactive Live Online cohort or attend in-person classroom masterclasses at our Pune center. Both formats include identical LMS access, lifetime recordings, and the AI Recruitment Toolkit.',
     },
     {
       q: 'Are corporate team training and 1-to-1 implementation available?',

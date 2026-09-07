@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Poppins } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'react-hot-toast'
+import RequestCallWidget from '@/components/RequestCallWidget'
 
 // All pages fetch live data — skip static generation at build time
 export const dynamic = 'force-dynamic'
@@ -268,6 +269,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${poppins.variable} font-sans min-h-screen flex flex-col antialiased`} suppressHydrationWarning>
         {children}
         <Toaster position="top-right" />
+        <RequestCallWidget />
         {/* AI Desk Talk widget — floating voice-assistant button */}
         <script
           src="/desk/admin/talk-widget.js"
