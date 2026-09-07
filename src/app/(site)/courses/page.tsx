@@ -514,6 +514,9 @@ export default async function CoursesPage() {
     }
   })
 
+  const featuredCard = allCards.find((c) => c.slug.includes('ai') || c.slug === 'ai-for-recruitment') || allCards[0]
+  const regularCards = allCards.filter((c) => c.slug !== featuredCard.slug)
+
   const coursesSchema = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -536,6 +539,7 @@ export default async function CoursesPage() {
 
       <style>{`
         body { font-family: 'Poppins', sans-serif; }
+        .container { width: 100%; max-width: 1360px; margin-left: auto; margin-right: auto; padding-left: 24px; padding-right: 24px; }
         .cp-crumb { color: #64748B; text-decoration: none; font-size: 12px; font-weight: 500; transition: color .18s; }
         .cp-crumb:hover { color: #CBD5E1; }
         .cp-cta { display:inline-flex; align-items:center; gap:9px; background:linear-gradient(135deg,#DC2626,#EF4444); color:#fff; font-weight:700; font-size:14px; padding:14px 30px; border-radius:11px; text-decoration:none; box-shadow:0 8px 28px rgba(220,38,38,.38); transition:transform .2s,box-shadow .2s; }
@@ -544,12 +548,15 @@ export default async function CoursesPage() {
         .cp-ghost:hover { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.3); }
 
         /* Course cards */
-        .cp-card { background:#fff; border-radius:24px; border:1.5px solid #E2E8F0; overflow:hidden; box-shadow:0 4px 24px rgba(15,23,42,.07); transition:transform .3s,box-shadow .3s,border-color .3s; display:flex; flex-direction:column; }
+        .cp-card { background:#fff; border-radius:24px; border:1.5px solid #E2E8F0; overflow:hidden; box-shadow:0 4px 24px rgba(15,23,42,.07); transition:transform .3s,box-shadow .3s,border-color .3s; display:flex; flex-direction:column; height:100%; }
         .cp-card:hover { transform:translateY(-8px); box-shadow:0 28px 64px rgba(15,23,42,.14); }
         .cp-card-img { transition:transform .6s ease; }
         .cp-card:hover .cp-card-img { transform:scale(1.07); }
         .cp-card-btn { display:flex; align-items:center; justify-content:center; gap:8px; flex:1; font-weight:700; font-size:13px; padding:13px 16px; border-radius:10px; text-decoration:none; transition:transform .18s,box-shadow .18s; border:none; cursor:pointer; }
         .cp-card-btn:hover { transform:translateY(-1px); }
+
+        /* 3-column balanced cards grid */
+        .cp-cards-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px; }
 
         /* Trust bar */
         .cp-trust-item { display:flex; align-items:flex-start; gap:18px; padding:28px 32px; }
@@ -558,9 +565,10 @@ export default async function CoursesPage() {
         .cp-bottom-cta-btn { display:flex; align-items:center; justify-content:center; gap:9px; font-weight:700; font-size:14px; padding:15px 36px; border-radius:11px; text-decoration:none; transition:transform .2s,box-shadow .2s; }
         .cp-bottom-cta-btn:hover { transform:translateY(-2px); }
 
+        @media(max-width:1180px){ .cp-cards-grid{grid-template-columns:repeat(2,1fr) !important;} }
         @media(max-width:1100px){ .cp-hero-grid{grid-template-columns:1fr !important;} .cp-hero-right{display:none !important;} }
-        @media(max-width:960px){ .cp-cards-grid{grid-template-columns:repeat(2,1fr) !important;} .cp-stats-grid{grid-template-columns:repeat(2,1fr) !important;} }
-        @media(max-width:640px){ .cp-cards-grid{grid-template-columns:1fr !important;} .cp-trust-grid{grid-template-columns:1fr !important;} .cp-cta-row{flex-direction:column !important;} }
+        @media(max-width:960px){ .cp-stats-grid{grid-template-columns:repeat(2,1fr) !important;} }
+        @media(max-width:680px){ .cp-cards-grid{grid-template-columns:1fr !important;} .cp-trust-grid{grid-template-columns:1fr !important;} .cp-cta-row{flex-direction:column !important;} }
         @media(max-width:560px){ .cp-stats-grid{grid-template-columns:repeat(2,1fr) !important;} }
       `}</style>
 
@@ -728,136 +736,275 @@ export default async function CoursesPage() {
               No programs found. Please check back soon.
             </div>
           ) : (
-            <div className="cp-cards-grid" style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:28 }}>
-              {allCards.map((card) => {
-                const m = card.meta
+            <div>
+              {/* ── FLAGSHIP SPOTLIGHT PROGRAM (Full Width) ── */}
+              {featuredCard && (() => {
+                const fm = featuredCard.meta
                 return (
-                  <article key={card.slug} className="cp-card">
-                    {/* Image header */}
-                    <div style={{ position:'relative', height:280, background:'#0F172A', overflow:'hidden', flexShrink:0 }}>
-                      <Image
-                        src={m.image}
-                        alt={card.title}
-                        fill sizes="(max-width:960px) 100vw, 50vw"
-                        className="cp-card-img"
-                        style={{ objectFit:'cover', objectPosition:'center top' }}
-                      />
-                      {/* Dark overlay */}
-                      <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(0,0,0,.05) 0%,transparent 38%,rgba(0,0,0,.7) 100%)' }} />
-                      {/* Accent top-left glow */}
-                      <div aria-hidden style={{ position:'absolute', bottom:-40, right:-40, width:200, height:200, background:`radial-gradient(circle,${m.accentGlow} 0%,transparent 70%)`, pointerEvents:'none' }} />
-
-                      {/* Badge */}
-                      <div style={{ position:'absolute', top:18, left:18, display:'inline-flex', alignItems:'center', gap:6, padding:'6px 13px', borderRadius:50, background:m.badgeBg, border:`1px solid ${m.badgeBorder}`, backdropFilter:'blur(12px)' }}>
-                        <span style={{ width:5, height:5, borderRadius:'50%', background:m.badgeColor, flexShrink:0, display:'block', boxShadow:`0 0 6px ${m.badgeColor}` }} />
-                        <span style={{ fontSize:10, fontWeight:800, color:m.badgeColor, textTransform:'uppercase', letterSpacing:'.14em' }}>{m.badge}</span>
-                      </div>
-
-                      {/* Rating */}
-                      <div style={{ position:'absolute', top:18, right:18, display:'inline-flex', alignItems:'center', gap:5, padding:'6px 12px', borderRadius:50, background:'rgba(255,255,255,.14)', backdropFilter:'blur(12px)', border:'1px solid rgba(255,255,255,.22)' }}>
-                        <Star style={{ width:12, height:12, color:'#FBBF24', fill:'#FBBF24' }} />
-                        <span style={{ fontSize:12, fontWeight:800, color:'#fff' }}>{card.rating.toFixed(1)}</span>
-                      </div>
-
-                      {/* Bottom highlight */}
-                      <div style={{ position:'absolute', bottom:18, left:18, display:'flex', alignItems:'center', gap:10 }}>
-                        <div style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:42, height:42, borderRadius:12, background:m.badgeBg, border:`1px solid ${m.badgeBorder}`, backdropFilter:'blur(12px)', fontSize:19 }}>
-                          {m.icon}
+                  <article
+                    className="cp-card"
+                    style={{
+                      marginBottom: '44px',
+                      border: '2px solid #C7D2FE',
+                      boxShadow: '0 16px 44px rgba(99,102,241,0.14)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+                        alignItems: 'stretch',
+                      }}
+                    >
+                      {/* Left: Image banner */}
+                      <div style={{ position: 'relative', minHeight: 320, background: '#0F172A', overflow: 'hidden' }}>
+                        <Image
+                          src={fm.image}
+                          alt={featuredCard.title}
+                          fill
+                          sizes="(max-width:1024px) 100vw, 50vw"
+                          className="cp-card-img"
+                          style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                        />
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)' }} />
+                        <div style={{ position: 'absolute', top: 18, left: 18, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 50, background: fm.badgeBg, border: `1px solid ${fm.badgeBorder}`, backdropFilter: 'blur(12px)' }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: fm.badgeColor, boxShadow: `0 0 8px ${fm.badgeColor}` }} />
+                          <span style={{ fontSize: 11, fontWeight: 800, color: fm.badgeColor, textTransform: 'uppercase', letterSpacing: '.14em' }}>{fm.badge}</span>
                         </div>
-                        <div>
-                          <p style={{ fontSize:10, fontWeight:700, color:'rgba(255,255,255,.55)', textTransform:'uppercase', letterSpacing:'.1em', margin:'0 0 2px' }}>Highlight</p>
-                          <p style={{ fontSize:13, fontWeight:800, color:'#fff', margin:0 }}>{m.highlight}</p>
+                        <div style={{ position: 'absolute', top: 18, right: 18, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', borderRadius: 50, background: 'rgba(255,255,255,.16)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.24)' }}>
+                          <Star style={{ width: 13, height: 13, color: '#FBBF24', fill: '#FBBF24' }} />
+                          <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>{featuredCard.rating.toFixed(1)}</span>
                         </div>
-                      </div>
-
-                      {/* Enrolled bottom-right */}
-                      <div style={{ position:'absolute', bottom:18, right:18, display:'inline-flex', alignItems:'center', gap:6, padding:'5px 12px', borderRadius:50, background:'rgba(0,0,0,.5)', backdropFilter:'blur(10px)', border:'1px solid rgba(255,255,255,.14)' }}>
-                        <Users style={{ width:11, height:11, color:'#94A3B8' }} />
-                        <span style={{ fontSize:11, fontWeight:700, color:'#CBD5E1' }}>{card.enrolled} enrolled</span>
-                      </div>
-                    </div>
-
-                    {/* Body */}
-                    <div style={{ padding:'28px 28px 24px', display:'flex', flexDirection:'column', flex:1 }}>
-                      {/* Course label + title */}
-                      <div style={{ marginBottom:16 }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:7, marginBottom:8 }}>
-                          <div style={{ width:3, height:14, borderRadius:2, background:m.accent, flexShrink:0 }} />
-                          <span style={{ fontSize:10, fontWeight:800, color:m.accent, textTransform:'uppercase', letterSpacing:'.16em' }}>{m.tagline}</span>
-                        </div>
-                        <h3 style={{ fontSize:'clamp(18px,1.8vw,22px)', fontWeight:900, color:'#0F172A', lineHeight:1.22, letterSpacing:'-.025em', margin:0 }}>{card.title}</h3>
-                      </div>
-
-                      {/* Stars + reviews */}
-                      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:16, paddingBottom:14, borderBottom:'1px solid #F1F5F9' }}>
-                        <Stars rating={card.rating} />
-                        <span style={{ fontSize:12, fontWeight:700, color:'#0F172A' }}>{card.rating.toFixed(1)}</span>
-                        <span style={{ fontSize:12, color:'#94A3B8' }}>({card.reviewCount} reviews)</span>
-                      </div>
-
-                      {/* Tags */}
-                      <div style={{ display:'flex', flexWrap:'wrap', gap:7, marginBottom:16 }}>
-                        {[card.duration, m.tags[1] || 'Online & Offline', m.tags[2] || 'Certificate'].map((tag, tIdx) => (
-                          <span key={tag} style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'5px 12px', borderRadius:50, background:m.accentLight, border:`1px solid ${m.accentBorder}`, fontSize:11, fontWeight:700, color:m.accent }}>
-                            {tIdx === 0 ? <Clock style={{ width:10, height:10 }} /> : tIdx === 1 ? <Monitor style={{ width:10, height:10 }} /> : <BadgeCheck style={{ width:10, height:10 }} />}
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Description */}
-                      <p style={{ fontSize:14, color:'#475569', lineHeight:1.82, marginBottom:22, flex:1 }}>{card.description}</p>
-
-                      {/* Key features */}
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'8px 12px', marginBottom:22, paddingBottom:20, borderBottom:'1px solid #F1F5F9' }}>
-                        {[
-                          `${card.duration} duration`,
-                          `${m.mode} delivery`,
-                          'Industry certificate',
-                          'Placement support',
-                        ].map(f => (
-                          <div key={f} style={{ display:'flex', alignItems:'flex-start', gap:7 }}>
-                            <div style={{ width:17, height:17, borderRadius:'50%', flexShrink:0, background:m.accentLight, border:`1px solid ${m.accentBorder}`, display:'flex', alignItems:'center', justifyContent:'center', marginTop:1 }}>
-                              <CheckCircle2 style={{ width:10, height:10, color:m.accent }} />
-                            </div>
-                            <span style={{ fontSize:12, fontWeight:600, color:'#334155', lineHeight:1.5 }}>{f}</span>
+                        <div style={{ position: 'absolute', bottom: 18, left: 18, display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 42, height: 42, borderRadius: 12, background: fm.badgeBg, border: `1px solid ${fm.badgeBorder}`, backdropFilter: 'blur(12px)', fontSize: 20 }}>
+                            {fm.icon}
                           </div>
-                        ))}
-                      </div>
-
-                      {/* Pricing pills */}
-                      <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: '10px 14px', marginBottom: 18, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: 10, fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
-                            Online 50% OFF
-                          </span>
-                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
-                            ₹{card.onlinePrice.toLocaleString('en-IN')}
-                          </span>
+                          <div>
+                            <p style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.6)', textTransform: 'uppercase', letterSpacing: '.1em', margin: '0 0 2px' }}>Highlight</p>
+                            <p style={{ fontSize: 14, fontWeight: 800, color: '#fff', margin: 0 }}>{fm.highlight}</p>
+                          </div>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: 10, fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 6px', borderRadius: 6, textTransform: 'uppercase' }}>
-                            Classroom 10% OFF
-                          </span>
-                          <span style={{ fontSize: 13, fontWeight: 900, color: '#0F172A' }}>
-                            ₹{card.offlinePrice.toLocaleString('en-IN')}
-                          </span>
+                        <div style={{ position: 'absolute', bottom: 18, right: 18, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 50, background: 'rgba(0,0,0,.55)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.16)' }}>
+                          <Users style={{ width: 12, height: 12, color: '#94A3B8' }} />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#CBD5E1' }}>{featuredCard.enrolled} enrolled</span>
                         </div>
                       </div>
 
-                      {/* CTAs */}
-                      <div style={{ display:'flex', gap:10 }}>
-                        <Link href={card.route} className="cp-card-btn" style={{ background:m.gradient, color:'#fff', boxShadow:`0 6px 20px ${m.accentGlow}` }}>
-                          Learn More <ArrowRight style={{ width:14, height:14 }} />
-                        </Link>
-                        <Link href="/contact" className="cp-card-btn" style={{ background:'#0F172A', color:'#fff', boxShadow:'0 4px 14px rgba(15,23,42,.22)' }}>
-                          <Phone style={{ width:13, height:13 }} /> Enquire Now
-                        </Link>
+                      {/* Right: Content details */}
+                      <div style={{ padding: '30px 34px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#FFFFFF' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+                            <div style={{ width: 3, height: 14, borderRadius: 2, background: fm.accent }} />
+                            <span style={{ fontSize: 11, fontWeight: 800, color: fm.accent, textTransform: 'uppercase', letterSpacing: '.16em' }}>{fm.tagline}</span>
+                          </div>
+                          <h3 style={{ fontSize: 'clamp(22px,2.2vw,28px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.2, letterSpacing: '-.03em', margin: '0 0 10px' }}>{featuredCard.title}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid #F1F5F9' }}>
+                            <Stars rating={featuredCard.rating} />
+                            <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>{featuredCard.rating.toFixed(1)}</span>
+                            <span style={{ fontSize: 12, color: '#94A3B8' }}>({featuredCard.reviewCount} reviews)</span>
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 14 }}>
+                            {[featuredCard.duration, fm.tags[1] || 'Online & Offline', fm.tags[2] || 'Certificate'].map((tag, tIdx) => (
+                              <span key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 12px', borderRadius: 50, background: fm.accentLight, border: `1px solid ${fm.accentBorder}`, fontSize: 11, fontWeight: 700, color: fm.accent }}>
+                                {tIdx === 0 ? <Clock style={{ width: 10, height: 10 }} /> : tIdx === 1 ? <Monitor style={{ width: 10, height: 10 }} /> : <BadgeCheck style={{ width: 10, height: 10 }} />}
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.75, marginBottom: 16 }}>{featuredCard.description}</p>
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px 14px', marginBottom: 18, paddingBottom: 16, borderBottom: '1px solid #F1F5F9' }}>
+                            {[`${featuredCard.duration} duration`, `${fm.mode} delivery`, 'Industry certificate', 'Placement support'].map((f) => (
+                              <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                                <div style={{ width: 16, height: 16, borderRadius: '50%', flexShrink: 0, background: fm.accentLight, border: `1px solid ${fm.accentBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <CheckCircle2 style={{ width: 10, height: 10, color: fm.accent }} />
+                                </div>
+                                <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>{f}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div>
+                          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 14, padding: '10px 16px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span style={{ fontSize: 11, fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>Online 50% OFF</span>
+                              <span style={{ fontSize: 15, fontWeight: 900, color: '#0F172A' }}>₹{featuredCard.onlinePrice.toLocaleString('en-IN')}</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                              <span style={{ fontSize: 11, fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 8px', borderRadius: 6, textTransform: 'uppercase' }}>Classroom 10% OFF</span>
+                              <span style={{ fontSize: 15, fontWeight: 900, color: '#0F172A' }}>₹{featuredCard.offlinePrice.toLocaleString('en-IN')}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                            <Link href={featuredCard.route} className="cp-card-btn" style={{ background: fm.gradient, color: '#fff', boxShadow: `0 6px 20px ${fm.accentGlow}` }}>
+                              Learn More <ArrowRight style={{ width: 14, height: 14 }} />
+                            </Link>
+                            <Link href="/contact" className="cp-card-btn" style={{ background: '#0F172A', color: '#fff', boxShadow: '0 4px 14px rgba(15,23,42,.22)' }}>
+                              <Phone style={{ width: 13, height: 13 }} /> Enquire Now
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </article>
                 )
-              })}
+              })()}
+
+              {/* Section Subtitle for 6 Regular Tracks */}
+              <div style={{ marginTop: '40px', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: 'clamp(20px, 2vw, 26px)', fontWeight: 900, color: '#0F172A', letterSpacing: '-.025em', margin: '0 0 6px' }}>
+                  Specialized Career Tracks &amp; Corporate Programs
+                </h3>
+                <p style={{ fontSize: 14, color: '#64748B', margin: 0 }}>
+                  Structured certifications tailored for every experience level — from freshers to executive leaders.
+                </p>
+              </div>
+
+              {/* ── 3-COLUMN BALANCED GRID (6 Courses = 2 Rows x 3 Columns) ── */}
+              <div className="cp-cards-grid">
+                {regularCards.map((card) => {
+                  const m = card.meta
+                  return (
+                    <article key={card.slug} className="cp-card">
+                      {/* Image header */}
+                      <div style={{ position: 'relative', height: 230, background: '#0F172A', overflow: 'hidden', flexShrink: 0 }}>
+                        <Image
+                          src={m.image}
+                          alt={card.title}
+                          fill
+                          sizes="(max-width:680px) 100vw, (max-width:1180px) 50vw, 33vw"
+                          className="cp-card-img"
+                          style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                        />
+                        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,.05) 0%, transparent 38%, rgba(0,0,0,.7) 100%)' }} />
+                        <div aria-hidden style={{ position: 'absolute', bottom: -40, right: -40, width: 200, height: 200, background: `radial-gradient(circle,${m.accentGlow} 0%,transparent 70%)`, pointerEvents: 'none' }} />
+
+                        {/* Badge */}
+                        <div style={{ position: 'absolute', top: 14, left: 14, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '5px 11px', borderRadius: 50, background: m.badgeBg, border: `1px solid ${m.badgeBorder}`, backdropFilter: 'blur(12px)' }}>
+                          <span style={{ width: 5, height: 5, borderRadius: '50%', background: m.badgeColor, flexShrink: 0, display: 'block', boxShadow: `0 0 6px ${m.badgeColor}` }} />
+                          <span style={{ fontSize: 10, fontWeight: 800, color: m.badgeColor, textTransform: 'uppercase', letterSpacing: '.14em' }}>{m.badge}</span>
+                        </div>
+
+                        {/* Rating */}
+                        <div style={{ position: 'absolute', top: 14, right: 14, display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', borderRadius: 50, background: 'rgba(255,255,255,.14)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,.22)' }}>
+                          <Star style={{ width: 11, height: 11, color: '#FBBF24', fill: '#FBBF24' }} />
+                          <span style={{ fontSize: 11, fontWeight: 800, color: '#fff' }}>{card.rating.toFixed(1)}</span>
+                        </div>
+
+                        {/* Bottom highlight */}
+                        <div style={{ position: 'absolute', bottom: 14, left: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 36, height: 36, borderRadius: 10, background: m.badgeBg, border: `1px solid ${m.badgeBorder}`, backdropFilter: 'blur(12px)', fontSize: 17 }}>
+                            {m.icon}
+                          </div>
+                          <div>
+                            <p style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.1em', margin: '0 0 1px' }}>Highlight</p>
+                            <p style={{ fontSize: 12, fontWeight: 800, color: '#fff', margin: 0 }}>{m.highlight}</p>
+                          </div>
+                        </div>
+
+                        {/* Enrolled bottom-right */}
+                        <div style={{ position: 'absolute', bottom: 14, right: 14, display: 'inline-flex', alignItems: 'center', gap: 5, padding: '4px 10px', borderRadius: 50, background: 'rgba(0,0,0,.5)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,.14)' }}>
+                          <Users style={{ width: 10, height: 10, color: '#94A3B8' }} />
+                          <span style={{ fontSize: 10, fontWeight: 700, color: '#CBD5E1' }}>{card.enrolled}</span>
+                        </div>
+                      </div>
+
+                      {/* Body */}
+                      <div style={{ padding: '24px 22px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <div style={{ marginBottom: 12 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                            <div style={{ width: 3, height: 12, borderRadius: 2, background: m.accent, flexShrink: 0 }} />
+                            <span style={{ fontSize: 10, fontWeight: 800, color: m.accent, textTransform: 'uppercase', letterSpacing: '.14em' }}>{m.tagline}</span>
+                          </div>
+                          <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', lineHeight: 1.25, letterSpacing: '-.02em', margin: 0 }}>{card.title}</h3>
+                        </div>
+
+                        {/* Stars + reviews */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, paddingBottom: 10, borderBottom: '1px solid #F1F5F9' }}>
+                          <Stars rating={card.rating} />
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#0F172A' }}>{card.rating.toFixed(1)}</span>
+                          <span style={{ fontSize: 11, color: '#94A3B8' }}>({card.reviewCount} reviews)</span>
+                        </div>
+
+                        {/* Tags */}
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 12 }}>
+                          {[card.duration, m.tags[1] || 'Online & Offline', m.tags[2] || 'Certificate'].map((tag, tIdx) => (
+                            <span key={tag} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 50, background: m.accentLight, border: `1px solid ${m.accentBorder}`, fontSize: 10.5, fontWeight: 700, color: m.accent }}>
+                              {tIdx === 0 ? <Clock style={{ width: 9, height: 9 }} /> : tIdx === 1 ? <Monitor style={{ width: 9, height: 9 }} /> : <BadgeCheck style={{ width: 9, height: 9 }} />}
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Description */}
+                        <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.7, marginBottom: 16, flex: 1 }}>{card.description}</p>
+
+                        {/* Key features */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 10px', marginBottom: 16, paddingBottom: 14, borderBottom: '1px solid #F1F5F9' }}>
+                          {[
+                            `${card.duration} duration`,
+                            `${m.mode} delivery`,
+                            'Industry certificate',
+                            'Placement support',
+                          ].map((f) => (
+                            <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 6 }}>
+                              <div style={{ width: 15, height: 15, borderRadius: '50%', flexShrink: 0, background: m.accentLight, border: `1px solid ${m.accentBorder}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+                                <CheckCircle2 style={{ width: 9, height: 9, color: m.accent }} />
+                              </div>
+                              <span style={{ fontSize: 11, fontWeight: 600, color: '#334155', lineHeight: 1.4 }}>{f}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Pricing pills */}
+                        <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: '8px 12px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <span style={{ fontSize: 9.5, fontWeight: 800, color: '#0284C7', background: '#E0F2FE', padding: '2px 5px', borderRadius: 4, textTransform: 'uppercase' }}>Online 50% OFF</span>
+                            <span style={{ fontSize: 12.5, fontWeight: 900, color: '#0F172A' }}>₹{card.onlinePrice.toLocaleString('en-IN')}</span>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                            <span style={{ fontSize: 9.5, fontWeight: 800, color: '#D97706', background: '#FEF3C7', padding: '2px 5px', borderRadius: 4, textTransform: 'uppercase' }}>Classroom 10% OFF</span>
+                            <span style={{ fontSize: 12.5, fontWeight: 900, color: '#0F172A' }}>₹{card.offlinePrice.toLocaleString('en-IN')}</span>
+                          </div>
+                        </div>
+
+                        {/* CTAs */}
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <Link href={card.route} className="cp-card-btn" style={{ background: m.gradient, color: '#fff', boxShadow: `0 4px 16px ${m.accentGlow}` }}>
+                            Learn More <ArrowRight style={{ width: 13, height: 13 }} />
+                          </Link>
+                          <Link href="/contact" className="cp-card-btn" style={{ background: '#0F172A', color: '#fff', boxShadow: '0 3px 12px rgba(15,23,42,.18)' }}>
+                            <Phone style={{ width: 12, height: 12 }} /> Enquire Now
+                          </Link>
+                        </div>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+
+              {/* ── CAREER ADVISORY BANNER (Bottom of Cards) ── */}
+              <div style={{ marginTop: '48px', background: 'linear-gradient(135deg, #04091A 0%, #0F172A 100%)', borderRadius: '24px', padding: '36px 40px', border: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '28px', flexWrap: 'wrap', boxShadow: '0 16px 40px rgba(15,23,42,0.12)' }}>
+                <div style={{ maxWidth: '680px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '4px 14px', borderRadius: 50, background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', color: '#FCD34D', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.14em', marginBottom: 12 }}>
+                    <Sparkles style={{ width: 12, height: 12 }} /> Free Career Guidance
+                  </div>
+                  <h4 style={{ fontSize: 'clamp(20px, 2vw, 26px)', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.25, margin: '0 0 10px', letterSpacing: '-.025em' }}>
+                    Not sure which program matches your goals?
+                  </h4>
+                  <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.7, margin: 0 }}>
+                    Speak with our Senior Career Counsellor Priya for a free 15-minute profile assessment, syllabus breakdown, and placement assistance details.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <Link href="/contact" className="cp-cta">
+                    <Phone style={{ width: 15, height: 15 }} /> Request a Call
+                  </Link>
+                  <a href="https://wa.me/917385204165?text=Hello%2C%20I%20am%20exploring%20Recruitment%20Institute%20courses%20and%20need%20guidance" target="_blank" rel="noopener noreferrer" className="cp-ghost" style={{ background: '#25D366', borderColor: '#25D366' }}>
+                    WhatsApp Advisor
+                  </a>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -306,14 +306,24 @@ export default function UpcomingBatches({
           transform: translateY(-6px);
           box-shadow: 0 20px 48px rgba(15, 23, 42, 0.12) !important;
         }
-        @media (max-width: 768px) {
+        @media (min-width: 1024px) {
+          .batches-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          }
+        }
+        @media (max-width: 1023px) and (min-width: 641px) {
+          .batches-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+        @media (max-width: 640px) {
           .batches-grid {
             grid-template-columns: 1fr !important;
           }
         }
       `}</style>
 
-      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 20px' }}>
+      <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 24px' }}>
         {/* ── HEADER ─────────────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', maxWidth: '760px', margin: '0 auto 48px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 18px', borderRadius: '50px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626', fontSize: '11px', fontWeight: 800, letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: '16px' }}>
