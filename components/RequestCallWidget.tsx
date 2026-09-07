@@ -6,9 +6,81 @@ import { Phone, PhoneCall, CheckCircle2, AlertCircle, X, Clock, User, Sparkles }
 
 type WidgetState = 'idle' | 'submitting' | 'calling' | 'connected' | 'disconnected' | 'error'
 
+interface Counselor {
+  name: string
+  displayName: string
+  photo: string
+  role: string
+}
+
+const COUNSELORS: Counselor[] = [
+  {
+    name: 'Priya Sharma',
+    displayName: 'Priya',
+    photo: '/desk/avatars/priya_counselor.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Anjali Patil',
+    displayName: 'Anjali',
+    photo: '/assets/images/trainers/snehal_patil.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Sneha Deshmukh',
+    displayName: 'Sneha',
+    photo: '/assets/images/trainers/priyanka_kulkarni.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Riya Joshi',
+    displayName: 'Riya',
+    photo: '/assets/images/trainers/ananya_roy.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Pooja Kulkarni',
+    displayName: 'Pooja',
+    photo: '/desk/avatars/priya_counselor.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Divya Nair',
+    displayName: 'Divya',
+    photo: '/assets/images/trainers/snehal_patil.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Meera Rao',
+    displayName: 'Meera',
+    photo: '/assets/images/trainers/priyanka_kulkarni.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Neha Verma',
+    displayName: 'Neha',
+    photo: '/desk/avatars/priya_counselor.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Tanvi Kadam',
+    displayName: 'Tanvi',
+    photo: '/assets/images/trainers/snehal_patil.jpg',
+    role: 'Senior Career Counsellor',
+  },
+  {
+    name: 'Shreya Shinde',
+    displayName: 'Shreya',
+    photo: '/assets/images/trainers/ananya_roy.jpg',
+    role: 'Senior Career Counsellor',
+  },
+]
+
 export default function RequestCallWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [state, setState] = useState<WidgetState>('idle')
+  const [counselorIndex, setCounselorIndex] = useState(0)
+  const currentCounselor = COUNSELORS[counselorIndex] || COUNSELORS[0]
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -18,6 +90,18 @@ export default function RequestCallWidget() {
 
   const durationTimerRef = useRef<NodeJS.Timeout | null>(null)
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Pick random counselor on client mount
+  useEffect(() => {
+    setCounselorIndex(Math.floor(Math.random() * COUNSELORS.length))
+  }, [])
+
+  // Rotate to a different counselor each time modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setCounselorIndex((prev) => (prev + 1) % COUNSELORS.length)
+    }
+  }, [isOpen])
 
   // Listen for global custom event to open widget from any CTA button
   useEffect(() => {
@@ -181,12 +265,12 @@ export default function RequestCallWidget() {
             </div>
           )}
 
-          {/* Call Priya: Purple Small Icon */}
+          {/* Call Counselor: Purple Small Icon */}
           <button
             id="call-priya-btn"
             onClick={handleCallPriya}
-            title="Call Priya"
-            aria-label="Call Priya"
+            title={`Call ${currentCounselor.displayName}`}
+            aria-label={`Call ${currentCounselor.displayName}`}
             className="group relative flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-full text-white shadow-xl shadow-indigo-900/40 hover:scale-110 active:scale-95 transition-all duration-200 border border-white/25 cursor-pointer"
             style={{ background: 'linear-gradient(135deg, #4f3cc9, #4230b3)' }}
           >
@@ -196,7 +280,7 @@ export default function RequestCallWidget() {
             </span>
             <Phone className="w-5 h-5 text-white animate-pulse" />
             <span className="absolute right-14 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-lg pointer-events-none border border-slate-700">
-              Call Priya
+              Call {currentCounselor.displayName}
             </span>
           </button>
         </div>
@@ -266,44 +350,44 @@ export default function RequestCallWidget() {
               </span>
             </div>
 
-            {/* Counselor Card (Priya) - No AI and No Location */}
+            {/* Counselor Card - Big Size Portrait & Dynamic Indian Woman's Name */}
             <div className="px-5 pb-5">
-              <div className="relative bg-gradient-to-b from-white to-slate-50 text-slate-900 rounded-2xl p-5 shadow-xl border border-slate-100 overflow-hidden text-center">
+              <div className="relative bg-gradient-to-b from-white via-slate-50 to-indigo-50/30 text-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-100/90 overflow-hidden text-center">
                 {/* Decorative gradients */}
-                <div className="absolute top-0 left-0 w-24 h-24 bg-blue-100/60 rounded-full blur-2xl -translate-x-6 -translate-y-6 pointer-events-none"></div>
-                <div className="absolute top-0 right-0 w-24 h-24 bg-indigo-100/60 rounded-full blur-2xl translate-x-6 -translate-y-6 pointer-events-none"></div>
+                <div className="absolute top-0 left-0 w-32 h-32 bg-blue-100/70 rounded-full blur-3xl -translate-x-10 -translate-y-10 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-purple-100/70 rounded-full blur-3xl translate-x-10 -translate-y-10 pointer-events-none"></div>
 
-                {/* Counselor Portrait */}
-                <div className="relative w-32 h-32 mx-auto mb-3">
+                {/* Counselor Portrait - Big in size */}
+                <div className="relative w-44 h-44 sm:w-48 sm:h-48 mx-auto mb-4">
                   {state === 'calling' && (
-                    <span className="animate-ping absolute inset-0 rounded-2xl bg-emerald-400 opacity-50"></span>
+                    <span className="animate-ping absolute inset-0 rounded-3xl bg-emerald-400 opacity-60"></span>
                   )}
-                  <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-md border-2 border-white bg-slate-100">
+                  <div className="relative w-full h-full rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl ring-4 ring-indigo-100/80 border-2 border-white bg-slate-100 transition-all duration-300">
                     <Image
-                      src="/desk/avatars/priya_counselor.jpg"
-                      alt="Priya - Senior Career Counsellor"
+                      src={currentCounselor.photo}
+                      alt={`${currentCounselor.name} - Senior Career Counsellor`}
                       fill
-                      sizes="128px"
-                      className="object-cover object-top"
+                      sizes="(max-width: 640px) 176px, 192px"
+                      className="object-cover object-top hover:scale-105 transition-transform duration-500"
                       priority
                     />
                   </div>
                 </div>
 
                 {/* Name */}
-                <h4 className="text-xl font-extrabold text-slate-900 tracking-tight">
-                  Priya
+                <h4 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-1">
+                  {currentCounselor.name}
                 </h4>
 
                 {/* Role Badge */}
-                <div className="mt-1.5 inline-block">
-                  <span className="px-3.5 py-1 rounded-full text-xs font-semibold bg-[#1a365d] text-white shadow-sm">
-                    Senior Career Counsellor
+                <div className="inline-block mb-1.5">
+                  <span className="px-4 py-1.5 rounded-full text-xs font-bold bg-[#1a365d] text-white shadow-md tracking-wide">
+                    {currentCounselor.role}
                   </span>
                 </div>
 
                 {/* Institute (No location) */}
-                <div className="mt-2 text-xs font-semibold text-slate-800">
+                <div className="text-xs font-semibold text-slate-600">
                   Recruitment Institute
                 </div>
               </div>
@@ -397,7 +481,7 @@ export default function RequestCallWidget() {
                       </p>
                     </div>
                     <div className="text-[11px] text-slate-300 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700/60">
-                      Please answer your phone to speak with Priya.
+                      Please answer your phone to speak with {currentCounselor.displayName}.
                     </div>
                   </div>
                 )}
@@ -416,7 +500,7 @@ export default function RequestCallWidget() {
                       </div>
                     </div>
                     <p className="text-xs text-slate-400">
-                      You are now speaking with Priya on your mobile phone.
+                      You are now speaking with {currentCounselor.displayName} on your mobile phone.
                     </p>
                     <p className="text-[10px] text-slate-500">
                       This window will close automatically when the call ends.
