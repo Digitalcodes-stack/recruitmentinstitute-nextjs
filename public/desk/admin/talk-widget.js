@@ -118,17 +118,51 @@ margin-top:14px;border:none;}\
     if (el) el.remove();
   }
 
+  var WORKLET_CODE = "class MicProcessor extends AudioWorkletProcessor{constructor(){super();this.bufferSize=2048;this.buffer=new Float32Array(this.bufferSize);this.bytesWritten=0;}process(inputs){const input=inputs[0];if(!input||!input[0])return true;const ch=input[0];let off=0;while(off<ch.length){const need=this.bufferSize-this.bytesWritten;const copy=Math.min(need,ch.length-off);this.buffer.set(ch.subarray(off,off+copy),this.bytesWritten);this.bytesWritten+=copy;off+=copy;if(this.bytesWritten>=this.bufferSize){this.port.postMessage(this.buffer.slice());this.bytesWritten=0;}}return true;}}registerProcessor('mic-processor',MicProcessor);";
+
+  async function createAudioInputNode(audioCtx, source, onAudio) {
+    if (audioCtx.audioWorklet) {
+      try {
+        var blob = new Blob([WORKLET_CODE], { type: "application/javascript" });
+        var blobUrl = URL.createObjectURL(blob);
+        await audioCtx.audioWorklet.addModule(blobUrl);
+        URL.revokeObjectURL(blobUrl);
+        var workletNode = new AudioWorkletNode(audioCtx, "mic-processor");
+        workletNode.port.onmessage = function (e) {
+          onAudio(e.data);
+        };
+        source.connect(workletNode);
+        var silent = audioCtx.createGain();
+        silent.gain.value = 0;
+        workletNode.connect(silent);
+        silent.connect(audioCtx.destination);
+        return workletNode;
+      } catch (err) {
+        console.warn("[ai-desk] AudioWorklet init failed, falling back to ScriptProcessor:", err);
+      }
+    }
+    var processorNode = audioCtx.createScriptProcessor(4096, 1, 1);
+    processorNode.onaudioprocess = function (e) {
+      onAudio(e.inputBuffer.getChannelData(0));
+    };
+    source.connect(processorNode);
+    var silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+    processorNode.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+    return processorNode;
+  }
+
   function startTalk(execId, callerName, callerPhone, agentName) {
     var statusEl = document.getElementById("aidtStatus");
     var dotEl = document.getElementById("aidtMicDot");
     var toggleEl = document.getElementById("aidtToggle");
     navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, sampleRate: GEMINI_SAMPLE_RATE } })
-      .then(function (micStream) {
+      .then(async function (micStream) {
         // Build WebSocket URL: use API_BASE directly (e.g. Cloud Run or http://localhost:8000)
         // so the connection goes straight to FastAPI, not through Next.js proxy.
         var defaultCloudRunBase = "https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app";
-        var isProdHost = typeof location !== "undefined" && (location.hostname === "recruitmentinstitute.in" || location.hostname === "www.recruitmentinstitute.in");
-        var wsBase = API_BASE || (isProdHost ? defaultCloudRunBase : (location.origin + "/desk"));
+        var wsBase = API_BASE || defaultCloudRunBase;
         var wsUrl = wsBase.replace(/^https:/, "wss:").replace(/^http:/, "ws:") + "/ws/voice-chat/" + execId;
         var params = new URLSearchParams({ caller_name: callerName || "Candidate" });
         if (callerPhone) params.set("caller_phone", callerPhone);
@@ -137,56 +171,93 @@ margin-top:14px;border:none;}\
         ws.binaryType = "arraybuffer";
 
         var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === "suspended") audioCtx.resume();
         var source = audioCtx.createMediaStreamSource(micStream);
-        var processorNode = audioCtx.createScriptProcessor(4096, 1, 1);
-        processorNode.onaudioprocess = function (e) {
-          if (ws.readyState !== WebSocket.OPEN) return;
-          var input = e.inputBuffer.getChannelData(0);
-          var pcm16 = floatTo16BitPCM(resampleTo(input, audioCtx.sampleRate, GEMINI_SAMPLE_RATE));
-          ws.send(pcm16);
-        };
         var micAnalyser = audioCtx.createAnalyser();
         micAnalyser.fftSize = 256;
         source.connect(micAnalyser);
 
-        source.connect(processorNode);
-        var silentGain = audioCtx.createGain();
-        silentGain.gain.value = 0;
-        processorNode.connect(silentGain);
-        silentGain.connect(audioCtx.destination);
+        var processorNode = await createAudioInputNode(audioCtx, source, function (input) {
+          var targetWs = (talkState && talkState.ws) || ws;
+          if (targetWs.readyState !== WebSocket.OPEN) return;
+          var pcm16 = floatTo16BitPCM(resampleTo(input, audioCtx.sampleRate, GEMINI_SAMPLE_RATE));
+          targetWs.send(pcm16);
+        });
 
         var playbackCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
-        // Browsers create AudioContexts suspended until a user gesture resumes them.
-        // getUserMedia() above satisfies the gesture requirement for audioCtx, but this
-        // second context is created later inside the same handler and needs its own
-        // resume() call — otherwise playback is silently dropped (no error, no sound).
         if (playbackCtx.state === "suspended") playbackCtx.resume();
         var playCursor = playbackCtx.currentTime;
         var playbackAnalyser = playbackCtx.createAnalyser();
         playbackAnalyser.fftSize = 256;
         playbackAnalyser.connect(playbackCtx.destination);
 
-        ws.onmessage = function (event) {
-          if (typeof event.data === "string") return;
-          if (playbackCtx.state === "suspended") playbackCtx.resume(); // guard against re-suspension (e.g. tab backgrounded)
-          var pcm16 = new Int16Array(event.data);
-          var float32 = new Float32Array(pcm16.length);
-          for (var i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;
-          var buffer = playbackCtx.createBuffer(1, float32.length, 24000);
-          buffer.copyToChannel(float32, 0);
-          var src = playbackCtx.createBufferSource();
-          src.buffer = buffer;
-          src.connect(playbackAnalyser);
-          var startAt = Math.max(playCursor, playbackCtx.currentTime);
-          src.start(startAt);
-          playCursor = startAt + buffer.duration;
+        var resumeAudio = function () {
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+          if (playbackCtx && playbackCtx.state === "suspended") playbackCtx.resume();
         };
+        window.addEventListener("click", resumeAudio);
+        window.addEventListener("touchstart", resumeAudio);
 
-        ws.onerror = function () { statusEl.textContent = "Connection error."; };
-        ws.onclose = function () { statusEl.textContent = "Call ended."; dotEl.classList.remove("live"); };
-        ws.onopen = function () { statusEl.textContent = "Live — speak naturally."; dotEl.classList.add("live"); };
+        var opened = false;
+        var isLocal = /localhost|127\.0\.0\.1/.test(wsBase);
 
-        talkState = { ws: ws, audioCtx: audioCtx, micStream: micStream, processorNode: processorNode, playbackCtx: playbackCtx, micAnalyser: micAnalyser, playbackAnalyser: playbackAnalyser, animFrame: null };
+        function setupWsHandlers(activeWs) {
+          activeWs.onmessage = function (event) {
+            if (typeof event.data === "string") return;
+
+            var playAudio = function (arrayBuf) {
+              if (playbackCtx.state === "suspended") playbackCtx.resume();
+              var pcm16 = new Int16Array(arrayBuf);
+              var float32 = new Float32Array(pcm16.length);
+              for (var i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;
+              var buffer = playbackCtx.createBuffer(1, float32.length, 24000);
+              buffer.copyToChannel(float32, 0);
+              var src = playbackCtx.createBufferSource();
+              src.buffer = buffer;
+              src.connect(playbackAnalyser);
+              var startAt = Math.max(playCursor, playbackCtx.currentTime);
+              src.start(startAt);
+              playCursor = startAt + buffer.duration;
+            };
+
+            if (event.data instanceof ArrayBuffer) {
+              playAudio(event.data);
+            } else if (event.data instanceof Blob) {
+              event.data.arrayBuffer().then(playAudio);
+            }
+          };
+
+          activeWs.onerror = function () {
+            if (!opened && isLocal && wsBase !== defaultCloudRunBase) {
+              console.warn("[ai-desk] Local backend (" + wsBase + ") unavailable. Retrying with Cloud Run fallback...");
+              try { activeWs.close(); } catch (_) {}
+              var fallbackUrl = defaultCloudRunBase.replace(/^https:/, "wss:").replace(/^http:/, "ws:") + "/ws/voice-chat/" + execId;
+              var fallbackWs = new WebSocket(fallbackUrl + "?" + params);
+              fallbackWs.binaryType = "arraybuffer";
+              if (talkState) talkState.ws = fallbackWs;
+              ws = fallbackWs;
+              isLocal = false;
+              setupWsHandlers(fallbackWs);
+              return;
+            }
+            statusEl.textContent = "Connection error.";
+          };
+
+          activeWs.onclose = function () {
+            statusEl.textContent = "Call ended.";
+            dotEl.classList.remove("live");
+          };
+
+          activeWs.onopen = function () {
+            opened = true;
+            statusEl.textContent = "Live — speak naturally.";
+            dotEl.classList.add("live");
+          };
+        }
+
+        setupWsHandlers(ws);
+
+        talkState = { ws: ws, audioCtx: audioCtx, micStream: micStream, processorNode: processorNode, playbackCtx: playbackCtx, micAnalyser: micAnalyser, playbackAnalyser: playbackAnalyser, resumeListener: resumeAudio, animFrame: null };
         toggleEl.innerHTML = END_ICON + ' End Call';
         toggleEl.classList.add("active");
         runAvatarAnimationLoop();
@@ -241,6 +312,10 @@ margin-top:14px;border:none;}\
   function stopTalk() {
     if (!talkState) return;
     if (talkState.animFrame) cancelAnimationFrame(talkState.animFrame);
+    if (talkState.resumeListener) {
+      window.removeEventListener("click", talkState.resumeListener);
+      window.removeEventListener("touchstart", talkState.resumeListener);
+    }
     talkState.ws.close();
     talkState.processorNode.disconnect();
     talkState.micStream.getTracks().forEach(function (t) { t.stop(); });

@@ -275,9 +275,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           data-exec-name="Priya"
           data-api-base={
             process.env.NEXT_PUBLIC_AIDESK_API_URL ||
-            (process.env.NODE_ENV === 'production'
-              ? 'https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app'
-              : 'http://localhost:8000')
+            'https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app'
           }
           async
         />
