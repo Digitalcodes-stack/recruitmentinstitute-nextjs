@@ -488,6 +488,11 @@ registerProcessor('mic-processor', MicProcessor);";
       nameIndex++;
       var nextName = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
       var nextLabel = "Call " + nextName;
+      fab.setAttribute("aria-label", nextLabel);
+      fab.title = nextLabel;
+      openTalk({ id: EXEC_ID, name: counsellor, avatar_url: EXEC_AVATAR });
+    };
+
     // Expose global openTalk function
     window.aidtOpenTalk = function () {
       if (document.getElementById("aidtModal")) return;
