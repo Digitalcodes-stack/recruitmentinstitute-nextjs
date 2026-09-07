@@ -213,6 +213,7 @@ export default function RequestCallWidget() {
         body: JSON.stringify({
           name: cleanName,
           phone: cleanPhone,
+          counselor_name: currentCounselor.name,
         }),
       })
 

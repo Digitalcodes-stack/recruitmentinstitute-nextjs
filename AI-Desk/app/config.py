@@ -31,12 +31,12 @@ class Settings(BaseSettings):
 
     # --- Email (SMTP — e.g. Gmail with an App Password) ---
     SMTP_HOST: str = "smtp.gmail.com"
-    SMTP_PORT: int = 587
-    SMTP_SECURE: bool = False  # true = implicit SSL (typically port 465); false = STARTTLS (typically port 587)
-    SMTP_USER: str = ""
-    SMTP_PASS: str = ""
-    EMAIL_FROM: str = ""  # defaults to SMTP_USER if unset
-    EMAIL_FROM_NAME: str = "Recruitment Institute AI Desk"
+    SMTP_PORT: int = 465
+    SMTP_SECURE: bool = True  # true = implicit SSL (typically port 465); false = STARTTLS (typically port 587)
+    SMTP_USER: str = "recruitmentinstitute5@gmail.com"
+    SMTP_PASS: str = "ledemkmjiesdqfpk"
+    EMAIL_FROM: str = "recruitmentinstitute5@gmail.com"
+    EMAIL_FROM_NAME: str = "Recruitment Institute"
     EMAIL_CC: str = "sesasiba.es@gmail.com,patilrupalib@gmail.com"  # optional, comma-separated — CC'd on every outgoing email
     ADMIN_EMAIL: str = "sesasiba.es@gmail.com"
     ADMIN_PHONE: str = "+91 7385204165"

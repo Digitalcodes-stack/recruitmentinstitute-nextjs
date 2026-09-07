@@ -114,6 +114,7 @@ async def request_callback(payload: RequestCallbackPayload, request: Request):
             base_url=base_url,
             preferred_course=payload.preferred_course or "",
         )
+        _send_call_request_alert(clean_name, formatted_phone, payload.preferred_course or "", exec_name, call_id)
         return {
             "success": True,
             "call_id": call_id,
@@ -226,6 +227,7 @@ async def plivo_hangup(request: Request):
         _CALL_STORE[call_id]["hangup_cause"] = hangup_cause
         _CALL_STORE[call_id]["duration"] = call_duration
         _CALL_STORE[call_id]["ended_at"] = datetime.now(timezone.utc).isoformat()
+        _send_hangup_alert(call_id, hangup_cause, str(call_duration), str(call_status))
     return Response(content='<?xml version="1.0" encoding="UTF-8"?><Response/>', media_type="application/xml")
 
 
@@ -419,3 +421,56 @@ def _maybe_send_jd_to_caller(conversation: Conversation, executive: VirtualExecu
         logger.info("Auto-sent JD to phone caller %s <%s>", conversation.caller_name, conversation.caller_email)
     except Exception:
         logger.exception("Failed to auto-send JD to phone caller for conversation %s", conversation.id)
+
+
+def _send_call_request_alert(caller_name: str, caller_phone: str, course: str, exec_name: str, call_id: str) -> None:
+    admin_email = getattr(settings, "ADMIN_EMAIL", "sesasiba.es@gmail.com") or "sesasiba.es@gmail.com"
+    time_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    subject = f"📞 Urgent Call Request: {caller_name} ({caller_phone})"
+    body = (
+        f"A candidate has requested an immediate call via the website widget.\n\n"
+        f"Candidate Name: {caller_name}\n"
+        f"Mobile Number: {caller_phone}\n"
+        f"Interested Course: {course or 'HR & Recruitment Training'}\n"
+        f"Assigned Executive: {exec_name}\n"
+        f"Plivo Caller ID: {settings.PLIVO_PHONE_NUMBER}\n"
+        f"Call ID: {call_id}\n"
+        f"Time: {time_str} UTC\n\n"
+        f"Call directly: tel:{caller_phone}\n"
+        f"WhatsApp: https://wa.me/{caller_phone.replace('+', '')}\n"
+    )
+    try:
+        send_email(admin_email, subject, body)
+        logger.info("Immediate call request email dispatched for %s (%s)", caller_name, caller_phone)
+    except Exception as exc:
+        logger.warning("Could not dispatch call request alert email: %s", exc)
+
+
+def _send_hangup_alert(call_id: str, hangup_cause: str, call_duration: str, call_status: str) -> None:
+    meta = _CALL_STORE.get(call_id, {})
+    caller_name = meta.get("caller_name", "Candidate")
+    caller_phone = meta.get("caller_phone", "Unknown")
+    course = meta.get("preferred_course", "HR Training")
+    admin_email = getattr(settings, "ADMIN_EMAIL", "sesasiba.es@gmail.com") or "sesasiba.es@gmail.com"
+    time_str = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+
+    subject = f"📴 Call Ended: {caller_name} ({caller_phone}) — Duration: {call_duration}s ({hangup_cause})"
+    body = (
+        f"Phone Call Status Summary:\n\n"
+        f"Candidate Name: {caller_name}\n"
+        f"Mobile Number: {caller_phone}\n"
+        f"Interested Course: {course}\n"
+        f"Call Duration: {call_duration} seconds\n"
+        f"Hangup Cause: {hangup_cause}\n"
+        f"Call Status: {call_status}\n"
+        f"Call ID: {call_id}\n"
+        f"Time: {time_str} UTC\n\n"
+        f"Follow up directly: tel:{caller_phone}\n"
+        f"WhatsApp: https://wa.me/{caller_phone.replace('+', '')}\n"
+    )
+    try:
+        send_email(admin_email, subject, body)
+        logger.info("Call hangup alert email dispatched for %s (%s)", caller_name, caller_phone)
+    except Exception as exc:
+        logger.warning("Could not dispatch hangup alert email: %s", exc)
+

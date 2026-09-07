@@ -69,6 +69,62 @@ async function sendMail(options: nodemailer.SendMailOptions) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 0. REQUEST A CALL / IMMEDIATE CALLBACK LEAD
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendCallRequestLeadEmail(data: {
+  name: string
+  phone: string
+  preferredCourse?: string
+  counselorName?: string
+  callId?: string
+  clientIp?: string
+}) {
+  const cleanName = data.name.trim()
+  const cleanPhone = data.phone.trim()
+  const course = data.preferredCourse || 'HR & Recruitment Training Program'
+  const counselor = data.counselorName || 'Senior Career Counsellor'
+  const timeNow = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })
+  const cleanDigits = cleanPhone.replace(/\D/g, '').replace(/^91/, '')
+
+  const rows: EmailRow[] = [
+    { label: 'Candidate Name', value: cleanName, isHighlight: true },
+    { label: 'Mobile Number', value: cleanPhone, isPhone: true },
+    { label: 'Interested Program', value: course },
+    { label: 'Assigned Counselor', value: counselor },
+    { label: 'Request Timestamp', value: `${timeNow} (IST)` },
+    ...(data.callId ? [{ label: 'Call Tracking ID', value: data.callId }] : []),
+    ...(data.clientIp ? [{ label: 'Candidate IP', value: data.clientIp }] : []),
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    subject: `📞 Urgent Lead: Immediate Call Requested by ${cleanName} (${cleanPhone})`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'Immediate Call Request',
+      badgeBg: '#fdf2f8',
+      badgeColor: '#be185d',
+      badgeBorder: '#fbcfe8',
+      title: 'New "Request a Call" Submission',
+      subtitle: `${cleanName} requested an instant phone callback`,
+      introText: `A candidate has just submitted the <strong>Request a Call</strong> form on the Recruitment Institute website. An automated callback has been initiated from <strong>+91 22 6985 1989</strong>. Please follow up directly with the candidate:`,
+      rows,
+      actionButton: {
+        text: `📞 Call ${cleanName} (${cleanPhone})`,
+        url: `tel:${cleanPhone}`,
+        color: '#4f46e5',
+      },
+      secondaryButton: {
+        text: '💬 Message on WhatsApp',
+        url: `https://wa.me/91${cleanDigits}?text=${encodeURIComponent(`Hello ${cleanName}, thank you for requesting a call with Recruitment Institute regarding ${course}. How can we assist you today?`)}`,
+      },
+      footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
+    }),
+  })
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 1. CONTACT US FORM SUBMISSION
 // ─────────────────────────────────────────────────────────────────────────────
 export async function sendContactEmail(data: {
