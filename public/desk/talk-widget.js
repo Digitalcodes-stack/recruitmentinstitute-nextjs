@@ -37,6 +37,7 @@ background:linear-gradient(135deg,#4f3cc9,#4230b3);color:#fff;border:none;cursor
 box-shadow:0 6px 20px -4px rgba(28,26,40,.35);font-size:22px;display:flex;align-items:center;justify-content:center;\
 transition:transform .15s ease;}\
 .aidt-fab:hover{transform:scale(1.08);box-shadow:0 8px 24px -2px rgba(79,60,201,.5);}\
+body:has(#call-priya-btn) .aidt-fab{display:none!important;}\
 .aidt-backdrop{position:fixed;inset:0;background:rgba(19,16,25,.55);backdrop-filter:blur(2px);\
 display:flex;align-items:center;justify-content:center;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,sans-serif;}\
 .aidt-modal{background:#fff;color:#1c1a28;border:1px solid #e4e2ed;border-radius:16px;padding:26px;\
@@ -487,10 +488,16 @@ registerProcessor('mic-processor', MicProcessor);";
       nameIndex++;
       var nextName = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
       var nextLabel = "Call " + nextName;
-      fab.setAttribute("aria-label", nextLabel);
-      fab.title = nextLabel;
+    // Expose global openTalk function
+    window.aidtOpenTalk = function () {
+      if (document.getElementById("aidtModal")) return;
+      var counsellor = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
       openTalk({ id: EXEC_ID, name: counsellor, avatar_url: EXEC_AVATAR });
     };
+
+    if (document.getElementById("call-priya-btn")) {
+      fab.style.display = "none";
+    }
     document.body.appendChild(fab);
   }
 

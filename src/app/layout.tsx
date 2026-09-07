@@ -270,6 +270,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {children}
         <Toaster position="top-right" />
         <RequestCallWidget />
+        {/* AI Desk Talk widget — floating voice-assistant button */}
+        <script
+          src="/desk/admin/talk-widget.js"
+          data-exec-id="aa76d1ef-ae97-4c64-9e1b-426555239b8d"
+          data-exec-name="Priya"
+          data-api-base={
+            process.env.NEXT_PUBLIC_AIDESK_API_URL ||
+            'https://recruitmentinstitute-aidesk-396924250862.asia-south1.run.app'
+          }
+          async
+        />
       </body>
     </html>
   )
