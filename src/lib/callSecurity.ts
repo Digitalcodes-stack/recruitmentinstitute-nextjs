@@ -38,6 +38,8 @@ const MAX_CALLS_PER_IP_HOUR = 10
 export function validateIndianPhoneNumber(raw: string): {
   isValid: boolean
   formatted: string
+  raw10?: string
+  display?: string
   error?: string
 } {
   if (!raw || typeof raw !== 'string') {
@@ -48,28 +50,25 @@ export function validateIndianPhoneNumber(raw: string): {
     }
   }
 
-  // Remove whitespace, dashes, parens, letters
-  let clean = raw.replace(/[^\d+]/g, '').trim()
+  // Extract digits only and strip redundant prefixes e.g. 91, 0, or double 9191
+  let digits = raw.replace(/\D/g, '').trim()
+  if (digits.startsWith('9191') && digits.length === 14) digits = digits.slice(4)
+  else if (digits.startsWith('91') && digits.length === 12) digits = digits.slice(2)
+  else if (digits.startsWith('0') && digits.length === 11) digits = digits.slice(1)
 
-  // Standardize prefix
-  if (clean.startsWith('00')) clean = '+' + clean.slice(2)
-  if (clean.startsWith('0') && clean.length === 11) clean = '+91' + clean.slice(1)
-  if (clean.length === 10) clean = '+91' + clean
-  if (clean.length === 12 && clean.startsWith('91')) clean = '+' + clean
-  if (!clean.startsWith('+')) clean = '+' + clean
-
-  // Verify +91 followed by valid 10-digit Indian mobile starting with 6, 7, 8, or 9
-  const indianRegex = /^\+91([6-9]\d{9})$/
-  const match = clean.match(indianRegex)
-  if (!match) {
+  // Must be 10 digits starting with 6, 7, 8, or 9
+  if (digits.length !== 10 || !/^[6-9]/.test(digits)) {
     return {
       isValid: false,
-      formatted: clean,
-      error: 'Please enter a valid 10-digit mobile number.',
+      formatted: raw,
+      raw10: '',
+      display: raw,
+      error: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.',
     }
   }
 
-  const num = match[1]
+  const num = digits
+  const clean = `+91${num}`
 
   // --- Fake Number Detection ---
 
@@ -123,7 +122,12 @@ export function validateIndianPhoneNumber(raw: string): {
     }
   }
 
-  return { isValid: true, formatted: clean }
+  return {
+    isValid: true,
+    formatted: clean,
+    raw10: num,
+    display: `+91 ${num}`,
+  }
 }
 
 /**

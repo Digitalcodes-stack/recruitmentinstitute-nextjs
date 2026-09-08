@@ -79,6 +79,15 @@ class VoiceChatSession:
         self.preferred_course = preferred_course
         self.agent_name = agent_name
         self.company = company
+        self.call_id = kwargs.get("call_id")
+        self.plivo_call_uuid = kwargs.get("plivo_call_uuid")
+        raw_lang = kwargs.get("language") or "English"
+        if "(" in raw_lang:
+            raw_lang = raw_lang.split("(")[0].strip()
+        self.language = raw_lang.strip().capitalize()
+        self._opening_greeting_delivered = False
+        self._closing_triggered = False
+        self._hangup_task = None
         self.transcript: list[dict] = []  # [{"role": "assistant"|"caller", "text": str}]
         self._gemini_ws = None
         self._closed = False
@@ -120,13 +129,30 @@ class VoiceChatSession:
 
     async def _send_setup(self):
         """Sends the BidiGenerateContent setup message with our system prompt and audio config."""
-        logger.info("Sending Gemini Live setup configuration (model=%s)...", settings.GEMINI_LIVE_MODEL)
+        # Realistic Indian Voice Selection:
+        # Vikram Joshi (Male) -> "Puck" (Natural, articulate conversational Indian male voice)
+        # Pooja Kulkarni, Anjali Patil, Sneha Deshmukh, Meera Rao, Riya Joshi -> "Kore" (Warm, natural, realistic Indian female counsellor)
+        counselor_lower = (self.agent_name or "").lower()
+        if "vikram" in counselor_lower or ("joshi" in counselor_lower and "riya" not in counselor_lower):
+            selected_voice = "Puck"
+        else:
+            selected_voice = "Kore"
+
+        logger.info("Sending Gemini Live setup configuration (model=%s, voice=%s, temp=0.65, silence=1400ms)...",
+                    settings.GEMINI_LIVE_MODEL, selected_voice)
         await self._gemini_ws.send(json.dumps({
             "setup": {
                 "model": f"models/{settings.GEMINI_LIVE_MODEL}",
                 "generationConfig": {
                     "responseModalities": ["AUDIO"],
-                    "temperature": 0.4,
+                    "speechConfig": {
+                        "voiceConfig": {
+                            "prebuiltVoiceConfig": {
+                                "voiceName": selected_voice
+                            }
+                        }
+                    },
+                    "temperature": 0.65,
                 },
                 "systemInstruction": {"parts": [{"text": self.system_prompt}]},
                 "inputAudioTranscription": {},
@@ -134,7 +160,7 @@ class VoiceChatSession:
                 "realtimeInputConfig": {
                     "automaticActivityDetection": {
                         "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
-                        "silenceDurationMs": 750,
+                        "silenceDurationMs": 1400,
                     },
                 },
             },
@@ -144,24 +170,102 @@ class VoiceChatSession:
         if "setupComplete" not in event:
             logger.warning("Unexpected first Gemini Live message (expected setupComplete): %s", event)
         else:
-            logger.info("✅ Gemini Live setupComplete received successfully.")
+            logger.info("✅ Gemini Live setupComplete received successfully (voice=%s).", selected_voice)
 
     async def _trigger_opening_line(self):
         """
-        Gemini Live only speaks in response to a turn. If the caller's name is known,
-        instruct Gemini to greet them warmly by name right away.
+        Gemini Live speaks in response to a turn.
+        We instruct Gemini in the EXACT language selected by the user to guarantee
+        that the very first generated sentence is in that language with natural human warmth.
         """
-        if self.caller_name and self.caller_name.lower() not in ("candidate", "caller", "user", "visitor", ""):
-            course_text = f" regarding the {self.preferred_course}" if self.preferred_course else ""
+        lang = self.language or "English"
+        caller = self.caller_name if (self.caller_name and self.caller_name.lower() not in ("candidate", "caller", "user", "visitor", "")) else "Candidate"
+        caller_first = caller.split()[0] if caller else "there"
+        counselor = self.agent_name or "Pooja Kulkarni"
+        inst_company = self.company or "Recruitment Institute"
+
+        if lang == "Marathi":
             instruction = (
-                f"(The phone call has just connected with {self.caller_name}{course_text}. "
-                f"Immediately greet them warmly by their name '{self.caller_name}', introduce yourself as "
-                f"{self.agent_name or 'Rupali'} from {self.company or 'Recruitment Institute'}, and state that you are calling them back right now as requested.)"
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN MARATHI (मराठी). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
+                f"कॉल नुकताच सुरू झाला आहे. तुम्ही {counselor} आहात आणि {inst_company} मधून बोलत आहात. "
+                f"कॉलवर {caller_first} आहेत. त्यांना अत्यंत आपुलकीने आणि सहजपणे नमस्कार करा: "
+                f"'नमस्कार {caller_first}! मी रिक्रूटमेंट इन्स्टिट्यूटमधून {counselor} बोलत आहे. तुम्ही आमच्या प्रॅक्टिकल रिक्रूटमेंट ट्रेनिंगसाठी कॉल विनंती केली होती, म्हणून मी लगेच कॉल केला आहे. कसे आहात तुम्ही?'"
+            )
+        elif lang == "Hindi":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN HINDI (हिंदी). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
+                f"कॉल अभी कनेक्ट हुआ है। आप {counselor} हैं और {inst_company} से बात कर रही हैं। "
+                f"कॉल पर {caller_first} हैं। उन्हें तुरंत गर्मजोशी और सहज भाव से हिंदी में ग्रीट करें: "
+                f"'नमस्ते {caller_first}! मैं रिक्रूटमेंट इंस्टीट्यूट से {counselor} बात कर रही हूँ। आपने हमारे प्रैक्टिकल रिक्रूटमेंट ट्रेनिंग कोर्स के लिए कॉल रिक्वेस्ट की थी, इसलिए मैंने आपको तुरंत कॉल किया है। कैसे हैं आप?'"
+            )
+        elif lang == "Odia":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN ODIA (ଓଡ଼ିଆ). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Odia right now: "
+                f"'ନମସ୍କାର {caller_first}! ମୁଁ {inst_company}ରୁ {counselor} କହୁଛି। ଆପଣ ଆମର ପ୍ରାକ୍ଟିକାଲ ରିକ୍ରୁଟମେଣ୍ଟ ଟ୍ରେନିଂ ପାଇଁ କଲ୍ ରିକ୍ୱେଷ୍ଟ କରିଥିଲେ, ସେଥିପାଇଁ ମୁଁ ତୁରନ୍ତ କଲ୍ କରିଛି। କେମିତି ଅଛନ୍ତି?'"
+            )
+        elif lang == "Assamese":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN ASSAMESE (অসমীয়া). Sound completely like a real Indian counsellor talking on the phone.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Assamese right now: "
+                f"'নমস্কাৰ {caller_first}! মই {inst_company}ৰ পৰা {counselor} কৈছোঁ। আপুনি আমাৰ প্ৰেক্টিকেল ৰিক্ৰুটমেণ্ট ট্ৰেনিং বাবে কল অনুৰোধ কৰিছিল, সেইবাবে তৎক্ষণাৎ কল কৰিলোঁ। কেনে আছে আপুনি?'"
+            )
+        elif lang == "Konkani":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN KONKANI (कोंकणी). Sound completely like a real person.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly in natural spoken Konkani right now: "
+                f"'नमस्कार {caller_first}! हांव {inst_company} कडल्यान {counselor} उलयतां. तुमी कॉल विनंती केल्ली, देखून हांवें रोकडोच कॉल केला. कशे आसात तुमी?'"
+            )
+        elif lang == "Tamil":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN TAMIL (தமிழ்). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Tamil right now: "
+                f"'வணக்கம் {caller_first}! நான் {inst_company}லிருந்து {counselor} பேசுகிறேன். நீங்கள் கேட்டிருந்த படி உடனே அழைத்துள்ளேன். எப்படி இருக்கிறீர்கள்?'"
+            )
+        elif lang == "Telugu":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN TELUGU (తెలుగు). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Telugu right now: "
+                f"'నమస్కారం {caller_first}! నేను {inst_company} నుండి {counselor} మాట్లాడుతున్నాను. మీరు కోరిన ప్రకారం వెంటనే కాల్ చేశాను. ఎలా ఉన్నారు?'"
+            )
+        elif lang == "Kannada":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN KANNADA (ಕನ್ನಡ). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Kannada right now: "
+                f"'ನಮಸ್ಕಾರ {caller_first}! ನಾನು {inst_company}ಯಿಂದ {counselor} ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ. ನೀವು ವಿನಂತಿಸಿದಂತೆ ತಕ್ಷಣ ಕರೆ ಮಾಡಿದ್ದೇನೆ. ಹೇಗಿದ್ದೀರಿ?'"
+            )
+        elif lang == "Bengali":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN BENGALI (বাংলা). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Bengali right now: "
+                f"'নমস্কার {caller_first}! আমি {inst_company} থেকে {counselor} বলছি। আপনি রিকোয়েস্ট করেছিলেন তাই এখনই ফোন করলাম। কেমন আছেন?'"
+            )
+        elif lang == "Gujarati":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN GUJARATI (ગુજરાતી). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Gujarati right now: "
+                f"'નમસ્તે {caller_first}! હું {inst_company}માંથી {counselor} વાત કરું છું. તમે કૉલ રિક્વેસ્ટ કરી હતી એટલે તરત જ કૉલ કર્યો છે. કેમ છો?'"
+            )
+        elif lang == "Malayalam":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN MALAYALAM (മലയാളം). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Malayalam right now: "
+                f"'നമസ്കാരം {caller_first}! ഞാൻ {inst_company}യിൽ നിന്ന് {counselor} സംസാരിക്കുന്നു. താങ്കൾ ആവശ്യപ്പെട്ടതനുസരിച്ച് വിളിച്ചതാണ്. സുഖമാണോ?'"
+            )
+        elif lang == "Punjabi":
+            instruction = (
+                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN PUNJABI (ਪੰਜਾਬੀ). Sound like a real person, not an AI.]\n"
+                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Punjabi right now: "
+                f"'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ {caller_first}! ਮੈਂ {inst_company} ਤੋਂ {counselor} ਬੋਲ ਰਹੀ ਹਾਂ। ਤੁਸੀਂ ਕਾਲ ਰਿਕਵੈਸਟ ਕੀਤੀ ਸੀ, ਇਸ ਲਈ ਮੈਂ ਫ਼ੋਨ ਕੀਤਾ ਹੈ। ਕਿਵੇਂ ਹੋ ਤੁਸੀਂ?'"
             )
         else:
-            instruction = "(The call has just connected. Greet the caller and introduce yourself now, following your instructions.)"
+            instruction = (
+                f"[CRITICAL: Speak in natural Indian English with a warm, genuine, human tone. Never sound like a robotic assistant or reading a script.]\n"
+                f"The phone call has just connected with {caller_first}. Greet them warmly and naturally right now: "
+                f"'Hi {caller_first}! {counselor} here from Recruitment Institute. You requested a callback regarding our practical recruitment training, so I called you right away. How are you doing today?'"
+            )
 
-        logger.info("Triggering Gemini Live opening greeting for %s: %s", self.caller_name, instruction[:120])
+        logger.info("Triggering Gemini Live opening greeting for %s in %s: %s", self.caller_name, lang, instruction[:150])
         await self._gemini_ws.send(json.dumps({
             "clientContent": {
                 "turns": [{"role": "user", "parts": [{"text": instruction}]}],
@@ -172,6 +276,7 @@ class VoiceChatSession:
     async def _pump_client_to_gemini(self):
         """Reads audio from client (browser binary or Plivo JSON base64), forwards to Gemini."""
         first_audio_logged = False
+        stream_start_time = asyncio.get_event_loop().time()
         while not self._closed:
             try:
                 msg = await self.client_ws.receive()
@@ -202,15 +307,21 @@ class VoiceChatSession:
 
                 evt_type = event.get("event")
                 if evt_type == "start":
+                    start_call_id = event.get("start", {}).get("callId")
+                    if start_call_id and not self.plivo_call_uuid:
+                        self.plivo_call_uuid = start_call_id
                     logger.info("▶️ Plivo Stream 'start' event: streamId=%s, callId=%s",
                                 event.get("start", {}).get("streamId"),
-                                event.get("start", {}).get("callId"))
+                                start_call_id)
                 elif evt_type == "media":
+                    # Ignore initial 1.2s carrier connection transient clicks/noise to prevent false barge-in
+                    if asyncio.get_event_loop().time() - stream_start_time < 1.2:
+                        continue
                     media = event.get("media", {})
                     payload = media.get("payload")
                     if payload and self.transcoder:
                         if not first_audio_logged:
-                            logger.info("🎙️ First inbound audio packet received from Plivo caller")
+                            logger.info("🎙️ First inbound audio packet received from Plivo caller (past carrier guard)")
                             first_audio_logged = True
                         pcm16 = self.transcoder.decode_inbound(payload)
                         if pcm16:
@@ -260,11 +371,14 @@ class VoiceChatSession:
 
             # Low-latency Barge-in / interruption: clear Plivo audio buffer when user interrupts
             if server_content.get("interrupted") and self.is_plivo:
-                logger.info("⚡ Caller barge-in detected: sending clearAudio to Plivo buffer")
-                try:
-                    await self.client_ws.send_text(json.dumps({"event": "clearAudio"}))
-                except Exception:
-                    pass
+                if self._opening_greeting_delivered:
+                    logger.info("⚡ Caller barge-in detected: sending clearAudio to Plivo buffer")
+                    try:
+                        await self.client_ws.send_text(json.dumps({"event": "clearAudio"}))
+                    except Exception:
+                        pass
+                else:
+                    logger.info("🛡️ Guarding opening greeting: ignoring premature line-noise barge-in")
 
             model_turn = server_content.get("modelTurn", {})
             for part in model_turn.get("parts", []):
@@ -298,12 +412,91 @@ class VoiceChatSession:
                 pending_caller += input_chunk
 
             if server_content.get("turnComplete"):
-                if pending_assistant.strip():
-                    self.transcript.append({"role": "assistant", "text": pending_assistant.strip()})
-                    pending_assistant = ""
-                if pending_caller.strip():
-                    self.transcript.append({"role": "caller", "text": pending_caller.strip()})
+                caller_turn = pending_caller.strip()
+                asst_turn = pending_assistant.strip()
+
+                if caller_turn:
+                    self.transcript.append({"role": "caller", "text": caller_turn})
                     pending_caller = ""
+                    # Check for buy / enroll / admission intent
+                    caller_lower = caller_turn.lower()
+                    buy_keywords = [
+                        # English
+                        "want to buy", "buy the course", "buy this course", "buy course",
+                        "want to enroll", "enroll in", "enroll now", "enroll karna",
+                        "take admission", "take the admission", "ready to join",
+                        "purchase the course", "purchase course", "make payment",
+                        "send payment link", "pay the fee", "pay fees",
+                        # Hindi
+                        "admission lena", "admission confirm", "admission process",
+                        "join karna", "fees pay karna", "payment karna", "paise kaise dene",
+                        "link bhej do", "admission kar do", "admission chahiye",
+                        # Marathi
+                        "ॲडमिशन", "ऍडमिशन", "प्रवेश घ्यायचा", "प्रवेश", "कोर्स घ्यायचा",
+                        "जॉईन करायचा", "फीस भरायची", "फी भरायची", "पेमेंट करायचे",
+                        "लिंक पाठवा", "पैसे कसे भरायचे", "प्रवेश निश्चित",
+                        # Multilingual
+                        "சேர்க்கை", "அட்மிஷன்", "అడ్మిషన్", "చేరాలి", "ಪ್ರವೇಶ",
+                        "অ্যাডমিশন", "ভর্তি হতে চাই", "એડમિશન લેવું", "ਦਾਖਲਾ ਲੈਣਾ",
+                    ]
+                    if any(kw in caller_lower for kw in buy_keywords):
+                        logger.info("🎯 Student expressed buying/enrollment intent: '%s'. Guiding Gemini to immediate single-sentence closing.", caller_turn)
+                        self._closing_triggered = True
+
+                if asst_turn:
+                    self.transcript.append({"role": "assistant", "text": asst_turn})
+                    self._opening_greeting_delivered = True
+                    pending_assistant = ""
+                    asst_lower = asst_turn.lower()
+                    # Detect closing sentence or if closing was already triggered
+                    closing_phrases = [
+                        # English
+                        "admission request", "consultation request", "registered email", "have a great day", "have a wonderful day",
+                        "enrollment details will be sent", "sent directly to your registered email",
+                        # Hindi
+                        "admission request register kar liya", "admission request note kar liya",
+                        "registered email par", "shubh ho", "turant bheji ja rahi",
+                        # Marathi
+                        "नोंदवून घेतली", "ईमेलवर लगेच", "दिवस खूप छान जावो", "अधिकृत पेमेंट", "नावनोंदणी लिंक",
+                        # Multilingual
+                        "பதிவு செய்துள்ளேன்", "నమోదు చేసాను", "ನೋಂದಾಯಿಸಿದ್ದೇನೆ",
+                        "নথিভুক্ত করেছি", "નોંધી લીધી છે", "രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്", "ਦਰਜ ਕਰ ਲਈ",
+                        "email", "ईमेल",
+                    ]
+                    if self._closing_triggered or any(cp in asst_lower for cp in closing_phrases):
+                        if not self._hangup_task:
+                            logger.info("🛑 Single closing sentence completed. Scheduling clean call hangup in 2.2s.")
+                            self._hangup_task = asyncio.create_task(self._delayed_call_hangup(delay_seconds=2.2))
+
+    async def _delayed_call_hangup(self, delay_seconds: float = 2.2):
+        """
+        Allows the single closing sentence audio to fully stream to the caller,
+        then cleanly terminates the Plivo telephone call and closes the session.
+        Prevents multiple 'bye bye' repetitions and guarantees clean disconnect.
+        """
+        try:
+            await asyncio.sleep(delay_seconds)
+            logger.info("📴 Executing clean call disconnect (plivo_call_uuid=%s)", self.plivo_call_uuid)
+            if self.is_plivo and self.plivo_call_uuid:
+                try:
+                    from app.services.plivo_service import get_plivo_client
+                    client = get_plivo_client()
+                    client.calls.hangup(call_uuid=self.plivo_call_uuid)
+                    logger.info("✅ Plivo telephone call hung up cleanly via REST API: %s", self.plivo_call_uuid)
+                except Exception as e:
+                    logger.warning("Plivo call hangup via REST API: %s", e)
+            self._closed = True
+            try:
+                await self.client_ws.close()
+            except Exception:
+                pass
+            if self._gemini_ws:
+                try:
+                    await self._gemini_ws.close()
+                except Exception:
+                    pass
+        except Exception as exc:
+            logger.warning("Error during delayed call hangup: %s", exc)
 
     async def _request_structured_summary(self, extraction_prompt: str) -> dict:
         """

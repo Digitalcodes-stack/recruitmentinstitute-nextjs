@@ -116,41 +116,65 @@ export default function Header() {
 
       {/* Top Bar */}
       <div className="header-topbar">
-        <div className="container h-full flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <a href="tel:+917385204165" className="header-topbar-link">
-              <Phone className="w-3 h-3 header-topbar-icon" />
-              +91 7385204165
+        <div className="container h-full flex items-center justify-between px-3 sm:px-4 md:px-6">
+          {/* Left: Phone (Always visible, single line, direct dial) + Email (Desktop only) */}
+          <div className="flex items-center gap-3 sm:gap-6 shrink-0">
+            <a
+              href="tel:+917385204165"
+              className="header-topbar-link group"
+              aria-label="Call Recruitment Institute at +91 7385204165"
+            >
+              <Phone className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
+              <span className="font-semibold text-slate-200 tracking-tight text-[11px] sm:text-xs">+91 7385204165</span>
             </a>
-            <a href="mailto:support@recruitmentinstitute.in" className="header-topbar-link hidden sm:flex">
-              <Mail className="w-3 h-3 header-topbar-icon" />
-              support@recruitmentinstitute.in
+            <a
+              href="mailto:support@recruitmentinstitute.in"
+              className="header-topbar-link header-topbar-email group"
+              aria-label="Email support@recruitmentinstitute.in"
+            >
+              <Mail className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
+              <span className="text-[11px] sm:text-xs">support@recruitmentinstitute.in</span>
             </a>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/student-membership" className="header-topbar-link hidden sm:block">
-              Student Membership
+
+          {/* Right: Student Membership + Separator + Login Dropdown */}
+          <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+            <Link
+              href="/student-membership"
+              className="header-topbar-link group"
+              aria-label="Student Membership"
+            >
+              <GraduationCap className="w-3 h-3 text-indigo-400 group-hover:text-white transition-colors shrink-0 hidden xs:inline-block" />
+              <span className="text-[11px] sm:text-xs font-medium text-slate-300 group-hover:text-white transition-colors">
+                <span className="hidden sm:inline">Student </span>Membership
+              </span>
             </Link>
-            <span className="header-topbar-sep hidden sm:block">|</span>
+
+            <span className="header-topbar-sep" aria-hidden="true">|</span>
+
             <div ref={loginDropdownRef} className="relative">
               <button
                 onClick={() => setLoginOpen((v) => !v)}
-                className="header-topbar-link header-topbar-login-btn"
+                className="header-topbar-link header-topbar-login-btn group"
                 aria-expanded={loginOpen}
+                aria-label="Account Login Menu"
               >
-                <User className="w-3 h-3" /> {user ? user.name.split(' ')[0] : 'Login'}
-                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${loginOpen ? 'rotate-180' : ''}`} />
+                <User className="w-3 h-3 text-emerald-400 group-hover:text-white transition-colors shrink-0" />
+                <span className="text-[11px] sm:text-xs font-medium text-slate-200 group-hover:text-white transition-colors">
+                  {user ? user.name.split(' ')[0] : 'Login'}
+                </span>
+                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${loginOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {loginOpen && (
-                <div className="header-login-dropdown">
+                <div className="header-login-dropdown animate-in fade-in slide-in-from-top-2 duration-150">
                   {user ? (
                     <>
                       <Link href="/profile" className="header-login-dropdown-item" onClick={() => setLoginOpen(false)}>
-                        <User className="w-4 h-4" /> My Profile
+                        <User className="w-4 h-4 text-blue-600" /> My Profile
                       </Link>
-                      <button onClick={handleSignOut} className="header-login-dropdown-item header-login-dropdown-item--btn">
-                        <LogOut className="w-4 h-4" /> Sign Out
+                      <button onClick={handleSignOut} className="header-login-dropdown-item header-login-dropdown-item--btn text-red-600">
+                        <LogOut className="w-4 h-4 text-red-600" /> Sign Out
                       </button>
                     </>
                   ) : (
@@ -162,7 +186,7 @@ export default function Header() {
                         onClick={() => setLoginOpen(false)}
                       >
                         {opt.icon}
-                        {opt.label}
+                        <span>{opt.label}</span>
                       </Link>
                     ))
                   )}
@@ -357,17 +381,33 @@ export default function Header() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-2 mb-2">
-                {loginOptions.map((opt) => (
+              <div className="flex flex-col gap-1.5 mb-2.5">
+                <div className="grid grid-cols-2 gap-2">
                   <Link
-                    key={opt.href}
-                    href={opt.href}
+                    href={loginOptions[0].href}
                     className="header-mobile-login-btn"
                     onClick={() => setMobileOpen(false)}
                   >
-                    {opt.label}
+                    {loginOptions[0].icon}
+                    <span>{loginOptions[0].label}</span>
                   </Link>
-                ))}
+                  <Link
+                    href={loginOptions[1].href}
+                    className="header-mobile-login-btn"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {loginOptions[1].icon}
+                    <span>{loginOptions[1].label}</span>
+                  </Link>
+                </div>
+                <Link
+                  href={loginOptions[2].href}
+                  className="header-mobile-login-btn w-full"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {loginOptions[2].icon}
+                  <span>{loginOptions[2].label}</span>
+                </Link>
               </div>
             )}
             <div className="grid grid-cols-2 gap-2">

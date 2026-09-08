@@ -21,7 +21,7 @@ class EmailNotConfigured(Exception):
     """Raised when SMTP_USER/SMTP_PASS aren't set — caller should surface a clear error, not a stack trace."""
 
 
-def send_email(to_address: str, subject: str, body: str) -> None:
+def send_email(to_address: str, subject: str, body: str, html_body: str | None = None) -> None:
     if not settings.SMTP_USER or not settings.SMTP_PASS:
         raise EmailNotConfigured("SMTP_USER/SMTP_PASS are not configured in .env")
 
@@ -35,6 +35,8 @@ def send_email(to_address: str, subject: str, body: str) -> None:
     if cc_addresses:
         message["Cc"] = ", ".join(cc_addresses)
     message.set_content(body)
+    if html_body:
+        message.add_alternative(html_body, subtype="html")
 
     all_recipients = [to_address] + cc_addresses
 

@@ -18,8 +18,8 @@
   // If omitted, falls back to page origin + /desk prefix.
   var API_BASE = (CUR_SCRIPT.getAttribute("data-api-base") || "").replace(/\/$/, "");
 
-  // Rotating female counsellor names shown on the FAB label each call
-  var FEMALE_NAMES = ["Priya", "Anjali", "Sneha", "Meera", "Divya", "Riya", "Pooja", "Nisha"];
+  // Rotating counsellor names
+  var FEMALE_NAMES = ["Pooja", "Anjali", "Sneha", "Meera", "Divya", "Riya", "Nisha"];
   var nameIndex = 0;
   function nextCallerName() {
     var n = FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
@@ -32,11 +32,12 @@
 
   function injectStyles() {
     var css = "\
-.aidt-fab{position:fixed;right:22px;bottom:90px;z-index:99998;width:54px;height:54px;border-radius:50%;\
+.aidt-fab{display:none!important;position:fixed;right:22px;bottom:90px;z-index:99998;width:54px;height:54px;border-radius:50%;\
 background:linear-gradient(135deg,#4f3cc9,#4230b3);color:#fff;border:none;cursor:pointer;\
-box-shadow:0 6px 20px -4px rgba(28,26,40,.35);font-size:22px;display:flex;align-items:center;justify-content:center;\
+box-shadow:0 6px 20px -4px rgba(28,26,40,.35);font-size:22px;align-items:center;justify-content:center;\
 transition:transform .15s ease;}\
 .aidt-fab:hover{transform:scale(1.08);box-shadow:0 8px 24px -2px rgba(79,60,201,.5);}\
+body:has(#call-executive-btn) .aidt-fab,body:has(#request-a-call-btn) .aidt-fab,body:has(#call-priya-btn) .aidt-fab{display:none!important;}\
 .aidt-backdrop{position:fixed;inset:0;background:rgba(19,16,25,.55);backdrop-filter:blur(2px);\
 display:flex;align-items:center;justify-content:center;z-index:99999;font-family:system-ui,-apple-system,Segoe UI,sans-serif;}\
 .aidt-modal{background:#fff;color:#1c1a28;border:1px solid #e4e2ed;border-radius:16px;padding:26px;\
@@ -477,21 +478,20 @@ registerProcessor('mic-processor', MicProcessor);";
     var fab = document.createElement("button");
     fab.className = "aidt-fab";
     var activeCounsellor = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[0];
-    var firstLabel = "Call " + activeCounsellor;
-    fab.setAttribute("aria-label", firstLabel);
-    fab.title = firstLabel;
-    fab.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.24 1.01l-2.2 2.2z"/></svg>';
-    fab.onclick = function () {
-      if (document.getElementById("aidtModal")) return; // already open
-      var counsellor = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
-      nameIndex++;
-      var nextName = (EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length];
-      var nextLabel = "Call " + nextName;
-      fab.setAttribute("aria-label", nextLabel);
-      fab.title = nextLabel;
-      openTalk({ id: EXEC_ID, name: counsellor, avatar_url: EXEC_AVATAR });
+    // Expose global openTalk function with optional parameters
+    window.aidtOpenTalk = function (opts) {
+      if (document.getElementById("aidtModal")) return;
+      var counsellor = (opts && opts.name) || ((EXEC_NAME && EXEC_NAME !== "Assistant") ? EXEC_NAME : FEMALE_NAMES[nameIndex % FEMALE_NAMES.length]);
+      var avatar = (opts && opts.avatar_url) || EXEC_AVATAR;
+      var id = (opts && opts.id) || EXEC_ID;
+      openTalk({ id: id, name: counsellor, avatar_url: avatar });
     };
-    document.body.appendChild(fab);
+
+    // Always hide standalone FAB since unified RequestCallWidget is present
+    fab.style.display = "none";
+    if (document.body) {
+      document.body.appendChild(fab);
+    }
   }
 
   if (document.readyState === "loading") {

@@ -63,7 +63,7 @@ export default function Footer() {
       <div className="footer-glow-top" />
 
       <div className="container relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 footer-grid">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 lg:gap-12 footer-grid">
 
           {/* Brand column */}
           <div className="flex flex-col gap-6">
@@ -89,11 +89,11 @@ export default function Footer() {
                 </span>
                 +91 7385204165
               </a>
-              <a href="mailto:support@recruitmentinstitute.in" className="footer-contact-link hidden sm:flex">
+              <a href="mailto:support@recruitmentinstitute.in" className="footer-contact-link flex">
                 <span className="footer-icon-box">
                   <Mail className="w-3.5 h-3.5 footer-icon-blue" />
                 </span>
-                support@recruitmentinstitute.in
+                <span className="break-all">support@recruitmentinstitute.in</span>
               </a>
               <div className="footer-address">
                 <span className="footer-icon-box mt-0.5">
@@ -193,15 +193,15 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="footer-bottom flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="footer-copy" suppressHydrationWarning>© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
-          <div className="flex items-center gap-5">
+        <div className="footer-bottom flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <p className="footer-copy text-xs sm:text-sm" suppressHydrationWarning>© {new Date().getFullYear()} Recruitment Institute. All rights reserved. Pune, Maharashtra, India.</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-3 sm:gap-5">
             {[
               ['Privacy Policy', '/privacy'],
               ['Terms of Service', '/terms'],
               ['Sitemap', '/sitemap.xml'],
             ].map(([label, href]) => (
-              <Link key={label} href={href} className="footer-legal-link">
+              <Link key={label} href={href} className="footer-legal-link text-xs sm:text-sm">
                 {label}
               </Link>
             ))}

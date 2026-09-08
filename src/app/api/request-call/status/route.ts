@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { recordCallOutcome } from '@/lib/callSecurity'
+import { triggerPostCallDelivery, getCallSession } from '@/lib/postCallService'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,10 +42,20 @@ export async function GET(req: NextRequest) {
     }
 
     const data = await res.json()
+    const isDisconnected = Boolean(data.disconnected) || data.status === 'completed' || data.status === 'failed'
 
     // If call concluded or connected, record outcome for cooldown tracking
-    if (data.disconnected && phone) {
+    if (isDisconnected && phone) {
       recordCallOutcome(phone, data.status)
+
+      // Automatically trigger post-call delivery (WhatsApp + Email) exactly once
+      const session = getCallSession(callId) || (phone ? getCallSession(phone) : undefined)
+      if (session) {
+        triggerPostCallDelivery({
+          ...session,
+          duration: data.duration || 0,
+        }).catch((err) => console.error('[PostCall] Error in status poller trigger:', err))
+      }
     } else if (data.status === 'in_call' && phone) {
       recordCallOutcome(phone, 'in_call')
     }
@@ -53,7 +64,7 @@ export async function GET(req: NextRequest) {
       success: true,
       call_id: callId,
       status: data.status,
-      disconnected: Boolean(data.disconnected),
+      disconnected: isDisconnected,
       duration: data.duration || 0,
     })
   } catch (error: any) {

@@ -57,6 +57,7 @@ def trigger_outbound_call(
     call_id: str,
     base_url: str | None = None,
     preferred_course: str = "",
+    language: str = "English",
 ) -> dict:
     """
     Initiates an outbound phone call to the candidate's mobile phone via Plivo.
@@ -74,6 +75,7 @@ def trigger_outbound_call(
         "name": caller_name,
         "phone": formatted_to,
         "course": preferred_course,
+        "language": language,
     }
     answer_url = f"{root_url}/api/plivo/answer?{urlencode(query_params)}"
     hangup_url = f"{root_url}/api/plivo/hangup?{urlencode(query_params)}"
