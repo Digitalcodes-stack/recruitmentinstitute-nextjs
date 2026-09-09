@@ -13,8 +13,8 @@ async function main() {
       ],
     },
     data: {
-      specialization: 'HR & Soft Skills Specialist',
-      bio: 'Senior HR strategist and soft-skills mentor with 22+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
+      specialization: 'Recruitment & HR Transformation Expert',
+      bio: 'Talent Acquisition Leader, Recruitment Business Mentor and Corporate & MNC Hiring Specialist with 22+ years empowering professionals and entrepreneurs to build structured, scalable recruitment practices.',
     },
   })
   console.log('Updated Brahmita rows:', brahmita.count)
@@ -28,8 +28,8 @@ async function main() {
       ],
     },
     data: {
-      specialization: 'AI Transformation & Recruitment Specialist',
-      bio: 'AI recruitment architect and executive talent intelligence strategist with 22+ years engineering high-velocity sourcing pipelines, automated candidate discovery and tech recruiting frameworks for global enterprises.',
+      specialization: 'AI Transformation & Recruitment Specialist | Startup & Business Growth Strategist',
+      bio: 'AI Business Transformation Consultant, Startup Builder and Growth Strategist bridging the gap between traditional recruitment and AI-powered recruitment.',
     },
   })
   console.log('Updated Shesha rows:', shesha.count)
@@ -41,11 +41,12 @@ async function main() {
         { email: 'dpattanayak@institute.com' },
         { name: { contains: 'Debabrata', mode: 'insensitive' } },
         { name: { contains: 'Pattanayak', mode: 'insensitive' } },
+        { name: { contains: 'Deba', mode: 'insensitive' } },
       ],
     },
     data: {
-      specialization: 'Director of Human Resources (Cluster)',
-      bio: 'Cluster Director of Human Resources at The Park Hotels, Apeejay Surrendra Group with 22+ years of leadership in corporate HR operations, ethical people management and strategic talent acquisition.',
+      specialization: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
+      bio: 'Senior HR & Talent Acquisition Leader bringing 22+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
     },
   })
   console.log('Updated Debabrata rows:', debabrata.count)

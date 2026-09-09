@@ -140,12 +140,41 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
       {/* ── CARD BODY ─────────────────────────────────────────────────── */}
       <div style={{ padding: '20px 22px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#FFFFFF' }}>
         <div>
-          {/* Trainer Name + Verified Badge */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', lineHeight: 1.25, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {trainer.name}
-            </h3>
-            <CheckCircle style={{ width: '16px', height: '16px', color: '#10B981', flexShrink: 0 }} />
+          {/* Trainer Name + Verified Badge + LinkedIn Profile Link */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 900, color: '#0F172A', lineHeight: 1.25, margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {trainer.name}
+              </h3>
+              <CheckCircle style={{ width: '16px', height: '16px', color: '#10B981', flexShrink: 0 }} />
+            </div>
+
+            {trainer.linkedinUrl && (
+              <a
+                href={trainer.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                title={`${trainer.name} on LinkedIn`}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '28px',
+                  height: '28px',
+                  borderRadius: '8px',
+                  background: '#0A66C2',
+                  color: '#FFFFFF',
+                  flexShrink: 0,
+                  boxShadow: '0 2px 6px rgba(10,102,194,0.3)',
+                  transition: 'transform 0.15s ease',
+                }}
+              >
+                <svg style={{ width: '13px', height: '13px', fill: 'currentColor' }} viewBox="0 0 24 24">
+                  <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0-.02-3.28 1.64 1.64 0 0 0 .02 3.28m1.39 9.74v-8.37H5.07v8.37h2.78Z"/>
+                </svg>
+              </a>
+            )}
           </div>
 
           {/* Role Title */}

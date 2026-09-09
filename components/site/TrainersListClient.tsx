@@ -424,10 +424,22 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
                 <h4 style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#94A3B8', margin: '0 0 8px' }}>
                   Executive Background
                 </h4>
-                <p style={{ color: '#475569', lineHeight: 1.7, margin: 0, fontWeight: 500 }}>
+                <p style={{ color: '#475569', lineHeight: 1.7, margin: 0, fontWeight: 500, whiteSpace: 'pre-line' }}>
                   {activeTrainer.longBio || activeTrainer.bio}
                 </p>
               </div>
+
+              {/* Philosophy / Quote */}
+              {activeTrainer.quote && (
+                <div style={{ padding: '14px 18px', borderRadius: '14px', background: '#FEF3C7', border: '1px solid #FDE68A', color: '#92400E' }}>
+                  <span style={{ fontSize: '10.5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.08em', display: 'block', marginBottom: '4px', color: '#B45309' }}>
+                    Philosophy
+                  </span>
+                  <p style={{ margin: 0, fontSize: '13px', fontStyle: 'italic', fontWeight: 600, lineHeight: 1.6 }}>
+                    &ldquo;{activeTrainer.quote}&rdquo;
+                  </p>
+                </div>
+              )}
 
               {/* Skills & Domains */}
               <div>
