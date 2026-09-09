@@ -2,7 +2,7 @@
  * nextBatchGenerator.ts
  * Creates the next upcoming batch for a course: picks a start date after the last
  * batch's end (or today), assigns the best available trainer for the requested
- * schedule, and auto-generates sessions from the syllabus.
+ * schedule and auto-generates sessions from the syllabus.
  */
 
 import { prisma } from '@/lib/prisma'

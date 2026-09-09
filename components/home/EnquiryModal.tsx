@@ -98,7 +98,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultCourse, defaultMo
 
             <h2 className="enquiry-left-heading">Start Your HR Career Today</h2>
             <p className="enquiry-left-desc">
-              Talk to our expert counsellor for personalised guidance on course selection, batch timings, and online/offline fee discounts.
+              Talk to our expert counsellor for personalised guidance on course selection, batch timings and online/offline fee discounts.
             </p>
 
             <ul className="enquiry-trust-list">
@@ -230,7 +230,7 @@ export default function EnquiryModal({ isOpen, onClose, defaultCourse, defaultMo
                 value={form.message}
                 onChange={e => setForm({ ...form, message: e.target.value })}
                 rows={2}
-                placeholder="Questions about batch timing, discounts, or placement?"
+                placeholder="Questions about batch timing, discounts or placement?"
                 className="enquiry-field"
                 style={{ resize: 'none' }}
               />

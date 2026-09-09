@@ -14,13 +14,13 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
   22: [
     {
       title: 'Module 1: Recruitment Process Audit & Benchmarking',
-      description: 'Assess current hiring workflows, identify bottlenecks, and implement best-practice frameworks.',
+      description: 'Assess current hiring workflows, identify bottlenecks and implement best-practice frameworks.',
       chapters: [
         {
           title: 'Recruitment Process Audit & Workflow Analysis',
           topics: [
             'Mapping your existing end-to-end recruitment workflow',
-            'Identifying inefficiencies, delays, and compliance gaps',
+            'Identifying inefficiencies, delays and compliance gaps',
             'Benchmarking against industry best practices',
             'Creating a recruitment process improvement roadmap',
             'Stakeholder alignment and change management basics',
@@ -31,12 +31,12 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 2: Advanced Sourcing & Talent Pipeline',
-      description: 'Master Boolean search, talent mapping, LinkedIn Recruiter, employee referrals, and campus pipelines.',
+      description: 'Master Boolean search, talent mapping, LinkedIn Recruiter, employee referrals and campus pipelines.',
       chapters: [
         {
           title: 'Advanced Talent Sourcing Strategies',
           topics: [
-            'Boolean search strings, X-ray techniques, and talent mapping',
+            'Boolean search strings, X-ray techniques and talent mapping',
             'Maximising LinkedIn Recruiter and sourcing platforms',
             'Building proactive talent pools and talent communities',
             'Campus hiring, employee referral programme design',
@@ -65,15 +65,15 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 4: ATS Optimisation & Recruitment Technology',
-      description: 'Maximise ROI on ATS, configure workflows, automate follow-ups, and reduce time-to-fill.',
+      description: 'Maximise ROI on ATS, configure workflows, automate follow-ups and reduce time-to-fill.',
       chapters: [
         {
           title: 'Recruitment Technology & ATS Systems',
           topics: [
             'ATS configuration: job requisition and workflow setup',
-            'Candidate disposition, tagging, and pipeline management',
+            'Candidate disposition, tagging and pipeline management',
             'Automating interview scheduling and communication',
-            'Integrating job boards, LinkedIn, and careers page',
+            'Integrating job boards, LinkedIn and careers page',
             'AI sourcing tools: overview and practical use',
             'Data hygiene and candidate privacy compliance (GDPR / DPDP)',
           ],
@@ -82,7 +82,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 5: Employer Branding & Candidate Experience',
-      description: 'Develop an employer value proposition, careers page, and social strategy to attract top talent.',
+      description: 'Develop an employer value proposition, careers page and social strategy to attract top talent.',
       chapters: [
         {
           title: 'Employer Branding & Candidate Engagement',
@@ -99,7 +99,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 6: Recruitment Metrics, Analytics & Reporting',
-      description: 'Track quality-of-hire, cost-per-hire, offer acceptance rate, and build leadership dashboards.',
+      description: 'Track quality-of-hire, cost-per-hire, offer acceptance rate and build leadership dashboards.',
       chapters: [
         {
           title: 'Hiring Metrics, Dashboards & ROI',
@@ -120,7 +120,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
   2: [
     {
       title: 'Week 1–2: Recruitment Fundamentals & Job Analysis',
-      description: 'Job analysis, role intake meetings, recruiter responsibilities, and hiring lifecycle.',
+      description: 'Job analysis, role intake meetings, recruiter responsibilities and hiring lifecycle.',
       chapters: [
         {
           title: 'Foundations & Job Analysis',
@@ -130,14 +130,14 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Understanding the end-to-end hiring lifecycle',
             'Key recruitment terminology and frameworks',
             'Navigating multiple applicant sourcing channels',
-            'Recruiter roles, skills, and daily responsibilities',
+            'Recruiter roles, skills and daily responsibilities',
           ],
         },
       ],
     },
     {
       title: 'Week 3–4: Sourcing Strategies & Boolean Search',
-      description: 'Google X-ray, Boolean strings, LinkedIn Recruiter filters, and talent pipelines.',
+      description: 'Google X-ray, Boolean strings, LinkedIn Recruiter filters and talent pipelines.',
       chapters: [
         {
           title: 'Candidate Sourcing & Search Techniques',
@@ -154,14 +154,14 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Week 5–6: Screening, Interviews & Candidate Assessment',
-      description: 'Competency-based interviews, automated screening, interview structures, and evaluation frameworks.',
+      description: 'Competency-based interviews, automated screening, interview structures and evaluation frameworks.',
       chapters: [
         {
           title: 'Screening & Interview Execution',
           topics: [
             'Competency-based and behavioural interview techniques',
             'Vetting resumes at scale with automated tools',
-            'Phone, video, and in-person interview structures',
+            'Phone, video and in-person interview structures',
             'Conducting initial screening calls professionally',
             'Decision-making and candidate evaluation frameworks',
             'Candidate communication and workflow management',
@@ -171,7 +171,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Week 7–8: Domain Specialisation (IT / Non-IT / BFSI / Healthcare)',
-      description: 'Domain-specific staffing models across IT, BFSI, Healthcare, Pharma, Manufacturing, and FMCG.',
+      description: 'Domain-specific staffing models across IT, BFSI, Healthcare, Pharma, Manufacturing and FMCG.',
       chapters: [
         {
           title: 'Domain Hiring Specialisation',
@@ -188,7 +188,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Week 9–10: Offer Management, Onboarding & Employer Branding',
-      description: 'Offer negotiation, counteroffers, candidate onboarding checklists, and employer branding.',
+      description: 'Offer negotiation, counteroffers, candidate onboarding checklists and employer branding.',
       chapters: [
         {
           title: 'Offers, Onboarding & Brand Strategy',
@@ -205,13 +205,13 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Week 11–12: Metrics, ATS Tools, Practical Project & Placement Prep',
-      description: 'ATS platform operations, hiring metrics, live sourcing capstone project, and placement registration.',
+      description: 'ATS platform operations, hiring metrics, live sourcing capstone project and placement registration.',
       chapters: [
         {
           title: 'Metrics, Live Capstone Project & Placement',
           topics: [
             'Modern ATS platform overview and operations',
-            'KPI trackers, dashboards, and hiring metrics',
+            'KPI trackers, dashboards and hiring metrics',
             'Complete end-to-end recruitment plan development',
             'Live candidate sourcing and screening project',
             'Mock interviews and final hiring rationale',
@@ -226,7 +226,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
   19: [
     {
       title: 'Module 1: Introduction to Recruitment',
-      description: 'Definition, purpose, hiring lifecycle overview, and recruitment terminology.',
+      description: 'Definition, purpose, hiring lifecycle overview and recruitment terminology.',
       chapters: [
         {
           title: 'Recruitment Basics & Terminology',
@@ -234,7 +234,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Definition and purpose of recruitment',
             'The role of recruitment in organisational success',
             'Overview of the end-to-end recruitment process',
-            'Common recruitment terms, jargon, and job specifications',
+            'Common recruitment terms, jargon and job specifications',
             'Differentiating between recruitment and selection',
             'Current trends and challenges in hiring',
           ],
@@ -243,7 +243,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 2: Sourcing Candidates',
-      description: 'Candidate sourcing methods, job boards (Naukri, Indeed), and social hiring on LinkedIn.',
+      description: 'Candidate sourcing methods, job boards (Naukri, Indeed) and social hiring on LinkedIn.',
       chapters: [
         {
           title: 'Candidate Sourcing & Job Portals',
@@ -252,7 +252,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Strategies for attracting quality candidates',
             'Importance of a strong employer brand',
             'Using job boards (Naukri, Indeed) effectively',
-            'Leveraging LinkedIn, Facebook, and Twitter for hiring',
+            'Leveraging LinkedIn, Facebook and Twitter for hiring',
             'Tips for engaging with candidates online',
           ],
         },
@@ -260,7 +260,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 3: Screening and Interviewing',
-      description: 'Resume screening techniques, red flags, structured interview questions, and evaluation.',
+      description: 'Resume screening techniques, red flags, structured interview questions and evaluation.',
       chapters: [
         {
           title: 'Screening & Interviewing Essentials',
@@ -277,7 +277,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 4: Job Offers and Onboarding',
-      description: 'Job offer components, salary negotiation, structured onboarding, and culture integration.',
+      description: 'Job offer components, salary negotiation, structured onboarding and culture integration.',
       chapters: [
         {
           title: 'Offer Negotiation & Onboarding Process',
@@ -298,7 +298,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
   21: [
     {
       title: 'Module 1–2: Entrepreneurship Foundations & Market Research',
-      description: 'Agency business model, industry trends, niche evaluation, and market feasibility.',
+      description: 'Agency business model, industry trends, niche evaluation and market feasibility.',
       chapters: [
         {
           title: 'Recruitment Agency Foundations',
@@ -308,14 +308,14 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Spotting market gaps and unmet hiring needs',
             'Evaluating niches and specialization areas',
             'Market research and feasibility studies',
-            'Setting vision, mission, and business goals',
+            'Setting vision, mission and business goals',
           ],
         },
       ],
     },
     {
       title: 'Module 3–4: Business Planning, Legal Setup & Pricing',
-      description: 'Proprietorship vs LLC, GST registration, retainer pricing, and office infrastructure.',
+      description: 'Proprietorship vs LLC, GST registration, retainer pricing and office infrastructure.',
       chapters: [
         {
           title: 'Legal Setup, Pricing & Infrastructure',
@@ -324,7 +324,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Business registration and documentation steps',
             'Tax registration & GST filings',
             'Structuring commission and retainer packages',
-            'Essential tools, technologies, and office setup',
+            'Essential tools, technologies and office setup',
             'Administrative processes and systems',
           ],
         },
@@ -332,7 +332,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 5–6: Client Acquisition, B2B Sales & Marketing',
-      description: 'Cold outreach templates, LinkedIn client acquisition, retainer billing, and closing deals.',
+      description: 'Cold outreach templates, LinkedIn client acquisition, retainer billing and closing deals.',
       chapters: [
         {
           title: 'B2B Sales & Client Acquisition',
@@ -340,7 +340,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
             'Cold emailing templates that convert',
             'LinkedIn outreach and social media strategy',
             'Finding and closing high-value corporate clients',
-            'Content marketing, SEO, and online advertising',
+            'Content marketing, SEO and online advertising',
             'Negotiating billing rates and terms of business',
             'Building a referral and partnership network',
           ],
@@ -349,14 +349,14 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
     },
     {
       title: 'Module 7–8: Agency Operations, Team Management & Scaling',
-      description: 'Hiring recruiter teams, daily KPI trackers, agency ATS selection, and RPO scaling.',
+      description: 'Hiring recruiter teams, daily KPI trackers, agency ATS selection and RPO scaling.',
       chapters: [
         {
           title: 'Operations, Recruiter KPIs & Scaling',
           topics: [
             'Recruiting and onboarding associate screeners',
             'Setting up daily target trackers and KPIs',
-            'Performance reviews, incentives, and rewards',
+            'Performance reviews, incentives and rewards',
             'Agency ATS platform selection and automation',
             'Contract staffing and executive search expansion',
             'Scaling revenue with retainer and RPO models',
@@ -368,7 +368,7 @@ const SYLLABUS_MAP: Record<number, CurriculumModule[]> = {
 }
 
 async function seedCurriculum() {
-  console.log('🔄 Seeding full frontend-matching curriculums into LMS modules, chapters, and topics...')
+  console.log('🔄 Seeding full frontend-matching curriculums into LMS modules, chapters and topics...')
 
   for (const [courseIdStr, modules] of Object.entries(SYLLABUS_MAP)) {
     const courseId = Number(courseIdStr)
@@ -383,7 +383,7 @@ async function seedCurriculum() {
     // Delete existing old dummy modules for this course
     await prisma.module.deleteMany({ where: { courseId } })
 
-    // Create new rich modules, chapters, and topics
+    // Create new rich modules, chapters and topics
     for (let mIdx = 0; mIdx < modules.length; mIdx++) {
       const mod = modules[mIdx]
       const createdModule = await prisma.module.create({

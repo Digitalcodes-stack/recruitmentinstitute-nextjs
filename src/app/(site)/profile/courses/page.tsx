@@ -84,7 +84,7 @@ export default async function StudentCoursesPage() {
         <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 10 }}>Student Portal</p>
         <h1 style={{ fontSize: 34, fontWeight: 900, letterSpacing: '-0.03em', color: '#0f172a', lineHeight: 1.1 }}>My Courses</h1>
         <p style={{ fontSize: 14, color: '#64748b', marginTop: 8 }}>
-          Single source of truth catalog: View complete curriculum, enroll in upcoming cohorts, and access live LMS player.
+          Single source of truth catalog: View complete curriculum, enroll in upcoming cohorts and access live LMS player.
         </p>
       </div>
 

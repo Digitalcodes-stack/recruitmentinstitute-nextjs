@@ -22,7 +22,7 @@ const defaultCourses = [
     badgeCls: 'bg-sky-600 text-white',
     level: 'For Freshers',
     duration: '4 Weeks',
-    desc: 'Become job-ready for your first recruitment job in 4 weeks. Master candidate sourcing, Boolean search, Job Portal sourcing, and screening calls.',
+    desc: 'Become job-ready for your first recruitment job in 4 weeks. Master candidate sourcing, Boolean search, Job Portal sourcing and screening calls.',
     href: '/recruitment-career-starter',
     image: '/assets/images/about/tab1.jpg',
     bar: 'from-sky-500 to-sky-700',
@@ -35,7 +35,7 @@ const defaultCourses = [
     badgeCls: 'bg-red-600 text-white',
     level: 'For Professionals',
     duration: '8 Weeks',
-    desc: 'Master end-to-end recruitment with practical industry training. Full lifecycle requisition management, IT/Non-IT sourcing, and STAR interviewing.',
+    desc: 'Master end-to-end recruitment with practical industry training. Full lifecycle requisition management, IT/Non-IT sourcing and STAR interviewing.',
     href: '/professional-recruitment-specialist',
     image: '/assets/images/banner/home9.jpg',
     bar: 'from-red-500 to-red-700',
@@ -48,7 +48,7 @@ const defaultCourses = [
     badgeCls: 'bg-purple-600 text-white',
     level: 'Senior Professionals',
     duration: '6 Weeks',
-    desc: 'Upgrade from recruiter to strategic talent acquisition leader. Headhunting, TA analytics, headcount forecasting, and leadership SLAs.',
+    desc: 'Upgrade from recruiter to strategic talent acquisition leader. Headhunting, TA analytics, headcount forecasting and leadership SLAs.',
     href: '/advanced-recruitment-ta-masterclass',
     image: '/assets/images/courses/home14/3.jpg',
     bar: 'from-purple-500 to-purple-700',
@@ -61,7 +61,7 @@ const defaultCourses = [
     badgeCls: 'bg-amber-600 text-white',
     level: 'Entrepreneurship',
     duration: '8 Weeks',
-    desc: 'Don’t just become a recruiter — build your recruitment agency. Legal incorporation, B2B client acquisition, MSAs, and 12-month ₹1 Cr scaling roadmap.',
+    desc: 'Don’t just become a recruiter — build your recruitment agency. Legal incorporation, B2B client acquisition, MSAs and 12-month ₹1 Cr scaling roadmap.',
     href: '/recruitment-business-accelerator',
     image: '/assets/images/courses/style4/4.jpg',
     bar: 'from-amber-500 to-amber-700',
@@ -117,8 +117,8 @@ function renderStatIcon(icon: string, cls = "w-6 h-6 sm:w-7 sm:h-7") {
 const whyUs = [
   { icon: <BadgeCheck className="w-6 h-6" />, title: 'Expert Instructors', desc: 'Learn from active industry recruiters and HR professionals with real corporate experience.', iconBg: '#EFF6FF', iconColor: '#1D4ED8' },
   { icon: <Layers className="w-6 h-6" />, title: 'Comprehensive Syllabus', desc: 'Every module maps to real-world workflows — no placeholders, no outdated theory.', iconBg: '#F5F3FF', iconColor: '#7C3AED' },
-  { icon: <PlayCircle className="w-6 h-6" />, title: '100% Practical Focus', desc: 'Work with live ATS platforms, boolean search strings, and real-world recruitment cases.', iconBg: '#F0FDF4', iconColor: '#16A34A' },
-  { icon: <GraduationCap className="w-6 h-6" />, title: 'Placement Assistance', desc: 'Receive mock interview coaching, resume reviews, and partner company referrals.', iconBg: '#FFFBEB', iconColor: '#D97706' },
+  { icon: <PlayCircle className="w-6 h-6" />, title: '100% Practical Focus', desc: 'Work with live ATS platforms, boolean search strings and real-world recruitment cases.', iconBg: '#F0FDF4', iconColor: '#16A34A' },
+  { icon: <GraduationCap className="w-6 h-6" />, title: 'Placement Assistance', desc: 'Receive mock interview coaching, resume reviews and partner company referrals.', iconBg: '#FFFBEB', iconColor: '#D97706' },
   { icon: <Clock className="w-6 h-6" />, title: 'Flexible Batches', desc: 'Weekday and weekend batches designed for working professionals and students alike.', iconBg: '#FFF1F2', iconColor: '#E11D48' },
   { icon: <Award className="w-6 h-6" />, title: 'Industry Certificate', desc: 'Earn a recognised certification that demonstrates your HR and recruitment expertise.', iconBg: '#F0FDF4', iconColor: '#059669' },
 ]
@@ -126,8 +126,8 @@ const whyUs = [
 const process = [
   { n: '01', title: 'Choose Your Course', desc: 'Browse our programs and select the one that best fits your career goals and experience level.' },
   { n: '02', title: 'Enroll & Register', desc: 'Fill out the enquiry form or WhatsApp us. Our counsellors will guide you through admissions.' },
-  { n: '03', title: 'Learn & Practice', desc: 'Attend live sessions, complete hands-on projects, and practice on real ATS tools and job portals.' },
-  { n: '04', title: 'Get Certified & Placed', desc: 'Earn your certificate, build your HR resume, and get placement assistance through our network.' },
+  { n: '03', title: 'Learn & Practice', desc: 'Attend live sessions, complete hands-on projects and practice on real ATS tools and job portals.' },
+  { n: '04', title: 'Get Certified & Placed', desc: 'Earn your certificate, build your HR resume and get placement assistance through our network.' },
 ]
 
 const defaultTestimonials = [
@@ -266,7 +266,7 @@ export default function HomePage({
               </div>
 
               <p className="hero-sub">
-                India&apos;s most practical recruitment training — boolean search, ATS tools, sourcing strategy, and real placement support. From freshers to entrepreneurs.
+                India&apos;s most practical recruitment training — boolean search, ATS tools, sourcing strategy and real placement support. From freshers to entrepreneurs.
               </p>
 
               <div className="hero-chips">
@@ -717,7 +717,7 @@ export default function HomePage({
                 <div>
                   <h3 className="why-promo-title">Begin Your Learning Path Today</h3>
                   <p className="why-promo-desc">
-                    Join a network of 5,000+ HR graduates placing in specialised roles across India. Master modern ATS tools, sourcing, and build your recruiter career.
+                    Join a network of 5,000+ HR graduates placing in specialised roles across India. Master modern ATS tools, sourcing and build your recruiter career.
                   </p>
                 </div>
 
@@ -974,7 +974,7 @@ export default function HomePage({
           <h2 className="cta-banner-heading">Start Your Recruitment Career Today</h2>
 
           <p className="cta-banner-sub">
-            Register today. Join our live recruiter training network, master modern screening models, and fast-track your HR career.
+            Register today. Join our live recruiter training network, master modern screening models and fast-track your HR career.
           </p>
 
           <div className="flex flex-wrap justify-center gap-5">

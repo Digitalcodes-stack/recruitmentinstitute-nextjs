@@ -54,7 +54,7 @@ pip install -r requirements.txt
 copy .env.example .env
 # edit .env: DATABASE_URL, GEMINI_API_KEY (see below)
 
-# start Postgres yourself, or via docker:
+# start Postgres yourself or via docker:
 docker compose up -d db
 
 alembic upgrade head
@@ -63,7 +63,7 @@ py -m seed.seed_data     # creates rupali@digitalaiml.com / ChangeMe123!
 uvicorn app.main:app --reload
 ```
 
-Open **http://localhost:8000/admin** for the panel, or **http://localhost:8000/docs** for the API.
+Open **http://localhost:8000/admin** for the panel or **http://localhost:8000/docs** for the API.
 
 ### 2. Full Docker
 
@@ -95,20 +95,20 @@ via the `key` query parameter on the Live API WebSocket.
    executive's voice plays back through your speakers.
 6. Click **Stop** to end the conversation.
 
-The browser captures mic audio, resamples it to 16kHz PCM16 client-side, and
+The browser captures mic audio, resamples it to 16kHz PCM16 client-side and
 streams it over a WebSocket to `/ws/voice-chat/{executive_id}?caller_name=...`,
 which bridges to Gemini Live using that executive's system prompt (built
 fresh from its profile on every connection). Gemini's 24kHz PCM16 response
 audio streams straight back and plays via the Web Audio API.
 
-When the conversation ends, the caller's identity, full transcript, and
+When the conversation ends, the caller's identity, full transcript and
 Gemini's structured extraction (interest level, disposition, notes, etc.)
 are saved to the `conversations` table. View them under the **Conversations**
-tab in `/admin`, or via `GET /api/conversations` / `GET /api/conversations/{id}`.
+tab in `/admin` or via `GET /api/conversations` / `GET /api/conversations/{id}`.
 
 If the extraction includes `interview_slot_booked` (e.g. "2026-09-02 14:00"),
 `app/services/slot_booking.py` matches it against that executive's
-`action_slots` (by date, spoken/24h time, or label) and marks the matching
+`action_slots` (by date, spoken/24h time or label) and marks the matching
 slot `is_booked: true` — so the next caller isn't offered a slot someone
 already took.
 
@@ -192,14 +192,14 @@ There's no separate JD field — it's built from that executive's
 `app/services/prompt_builder.py::build_system_prompt(executive)` turns any
 `VirtualExecutive` row into a full realtime-voice-agent system prompt:
 identity, voice/language rules, goals, scope, strict don'ts, conversation
-flow, situational handling, FAQs, available slots, business hours, and the
+flow, situational handling, FAQs, available slots, business hours and the
 structured-data-extraction contract. `app/prompts/rupali_patil_master_prompt.py`
 is a separate, standalone example: a fully fixed, hand-scripted prompt for one
 specific screening call (single role, literal slots, literal lines) — useful
 as a second reference point when tuning the builder's tone, but not wired
 into the app; the live system always uses `build_system_prompt`.
 
-Preview any executive's live prompt via `/admin` → **Prompt** button, or
+Preview any executive's live prompt via `/admin` → **Prompt** button or
 `GET /api/executives/{id}/prompt-preview`.
 
 ## Environment variables

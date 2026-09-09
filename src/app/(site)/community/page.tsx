@@ -7,7 +7,7 @@ import CommunityClient from '@/components/home/CommunityClient'
 export const metadata: Metadata = {
   title: 'Community — HR Q&A Forum',
   description:
-    'Join the Recruitment Institute community. Ask questions, share knowledge, and connect with HR professionals and recruiters.',
+    'Join the Recruitment Institute community. Ask questions, share knowledge and connect with HR professionals and recruiters.',
 }
 
 export const revalidate = 60

@@ -489,7 +489,7 @@ export default function DynamicCourseLandingClient({ course }: Props) {
               Tools & Platforms Covered
             </h2>
             <p className="text-slate-400 text-sm md:text-base mt-3">
-              Gain practical familiarity with industry-standard sourcing portals, ATS systems, and AI recruiter tools.
+              Gain practical familiarity with industry-standard sourcing portals, ATS systems and AI recruiter tools.
             </p>
           </div>
 
@@ -563,7 +563,7 @@ export default function DynamicCourseLandingClient({ course }: Props) {
                 Cohort Learning Roadmap
               </h2>
               <p className="text-slate-600 text-sm md:text-base mt-3">
-                Structured timeline of weekly lecture modules, self-paced labs, and mentorship reviews.
+                Structured timeline of weekly lecture modules, self-paced labs and mentorship reviews.
               </p>
             </div>
 

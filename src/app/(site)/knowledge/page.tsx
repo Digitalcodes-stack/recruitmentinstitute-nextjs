@@ -11,7 +11,7 @@ import {
 export const metadata: Metadata = {
   title: 'HR & Recruitment Knowledge Base | Recruitment Institute',
   description:
-    'Browse 36+ expert answers on HR workflows, boolean search, ATS tools, LinkedIn sourcing, salary benchmarking, and recruitment career advice.',
+    'Browse 36+ expert answers on HR workflows, boolean search, ATS tools, LinkedIn sourcing, salary benchmarking and recruitment career advice.',
 }
 
 export const revalidate = 3600
@@ -22,8 +22,8 @@ interface Props {
 
 const fallbackItems = [
   { id: 1, question: 'What is the difference between active and passive candidate sourcing?', answer: 'Active candidate sourcing targets professionals who are actively searching for new roles. Passive candidate sourcing involves identifying and engaging talent who are currently employed but might be open to a career progression opportunity.', addedBy: 'Admissions Lead' },
-  { id: 2, question: 'What are Boolean search strings in recruitment?', answer: 'Boolean strings use operators AND, OR, and NOT alongside keywords to filter candidate databases on LinkedIn, Naukri, and ATS tools. Mastering Boolean search is one of the highest-impact skills a recruiter can develop.', addedBy: 'IT Recruitment Trainer' },
-  { id: 3, question: 'How can an ATS help in talent acquisition?', answer: 'An ATS manages recruitment stages electronically — posting jobs, parsing resumes, tracking interview status, and archiving communication pipelines, saving hours of manual work every week.', addedBy: 'Operations Director' },
+  { id: 2, question: 'What are Boolean search strings in recruitment?', answer: 'Boolean strings use operators AND, OR and NOT alongside keywords to filter candidate databases on LinkedIn, Naukri and ATS tools. Mastering Boolean search is one of the highest-impact skills a recruiter can develop.', addedBy: 'IT Recruitment Trainer' },
+  { id: 3, question: 'How can an ATS help in talent acquisition?', answer: 'An ATS manages recruitment stages electronically — posting jobs, parsing resumes, tracking interview status and archiving communication pipelines, saving hours of manual work every week.', addedBy: 'Operations Director' },
   { id: 4, question: 'What is structured competency interviewing?', answer: 'Structured interviewing uses pre-determined, standardized questions mapped to role-specific competencies, ensuring fair grading and reducing interviewer bias for more consistent hiring decisions.', addedBy: 'Corporate Recruiter Trainer' },
 ]
 
@@ -145,7 +145,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
                 <br />Knowledge Base
               </h1>
               <p style={{ fontSize: 17, color: '#475569', lineHeight: 1.85, maxWidth: 500, marginBottom: 36 }}>
-                Expert answers on boolean search, ATS tools, LinkedIn sourcing, salary benchmarking, interview techniques, and your HR career path.
+                Expert answers on boolean search, ATS tools, LinkedIn sourcing, salary benchmarking, interview techniques and your HR career path.
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
                 {[
@@ -200,7 +200,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
               </span>
             </h2>
             <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
-              Find expert answers to commonly asked questions on hiring, boolean strings, ATS tools, interview techniques, and career advice — all from experienced recruiters.
+              Find expert answers to commonly asked questions on hiring, boolean strings, ATS tools, interview techniques and career advice — all from experienced recruiters.
             </p>
           </div>
 
@@ -388,7 +388,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
                   Talk to an HR Training Expert — It&apos;s Free
                 </h2>
                 <p style={{ fontSize: 15, color: 'rgba(255,255,255,.75)', lineHeight: 1.75, margin: 0, maxWidth: 480 }}>
-                  Get personalised guidance on your HR career, course selection, and fee structure from our experienced counsellors.
+                  Get personalised guidance on your HR career, course selection and fee structure from our experienced counsellors.
                 </p>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flexShrink: 0 }}>

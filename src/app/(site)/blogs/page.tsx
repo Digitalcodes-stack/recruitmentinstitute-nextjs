@@ -20,13 +20,13 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: 'Blog - HR & Recruitment Insights',
     description:
-      'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+      'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
     alternates: { canonical: `${BASE_URL}/blogs` },
     robots: filtered ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: {
       title: 'Blog - HR & Recruitment Insights',
       description:
-        'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+        'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
       url: `${BASE_URL}/blogs`,
       type: 'website',
     },
@@ -34,7 +34,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       card: 'summary_large_image',
       title: 'Blog - HR & Recruitment Insights',
       description:
-        'Read expert articles on HR, recruitment strategies, career tips, and industry insights from Recruitment Institute.',
+        'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
     },
   }
 }

@@ -340,7 +340,7 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
 
           <h2 className="text-2xl sm:text-3xl font-extrabold mb-3">95% Dedicated Career & Placement Support</h2>
           <p className="text-emerald-100/90 text-sm max-w-3xl mb-6 font-normal">
-            We don’t just train you — we prepare your resume, conduct rigorous mock interviews with senior HR leaders, and schedule direct interview rounds with our 150+ corporate hiring partners.
+            We don’t just train you — we prepare your resume, conduct rigorous mock interviews with senior HR leaders and schedule direct interview rounds with our 150+ corporate hiring partners.
           </p>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
@@ -440,7 +440,7 @@ export default function CourseBrochureViewerClient({ brochure, allBrochures }: P
             ) : (
               <div>
                 <h3 className="text-lg font-bold mb-1">Attend a Free Live Demo Class Before Enrolling</h3>
-                <p className="text-xs text-slate-300 mb-4">Experience our live practical teaching methodology, ask questions to mentors, and inspect our portal setups.</p>
+                <p className="text-xs text-slate-300 mb-4">Experience our live practical teaching methodology, ask questions to mentors and inspect our portal setups.</p>
                 
                 <form onSubmit={handleLeadSubmit} className="grid sm:grid-cols-3 gap-3">
                   <input

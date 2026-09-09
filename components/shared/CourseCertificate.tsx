@@ -252,7 +252,7 @@ export default function CourseCertificate({
           </div>
 
           <p style={{ fontSize: '13px', color: '#475569', maxWidth: '680px', margin: '0 auto', lineHeight: 1.6 }}>
-            has successfully fulfilled all curriculum requirements, practical assessments, and masterclass sessions for
+            has successfully fulfilled all curriculum requirements, practical assessments and masterclass sessions for
           </p>
 
           {/* Course Title Badge */}

@@ -98,7 +98,7 @@ export default async function AssessmentsIndexPage() {
                 My Assessments & Diagnostics
               </h1>
               <p style={{ fontSize: 14, color: 'rgba(255, 255, 255, 0.75)', maxWidth: 520, lineHeight: 1.6 }}>
-                Track your skill mastery, AI diagnostic feedback, custom revision notes, and 5-day study plans for every completed evaluation.
+                Track your skill mastery, AI diagnostic feedback, custom revision notes and 5-day study plans for every completed evaluation.
               </p>
             </div>
 
@@ -152,7 +152,7 @@ export default async function AssessmentsIndexPage() {
               No Assessments Taken Yet
             </h3>
             <p style={{ fontSize: 14, color: '#64748b', maxWidth: 440, margin: '0 auto 24px', lineHeight: 1.6 }}>
-              When you complete a course, your final assessment will appear here with AI-generated notes, study plans, and diagnostic reports.
+              When you complete a course, your final assessment will appear here with AI-generated notes, study plans and diagnostic reports.
             </p>
             <Link
               href="/profile"

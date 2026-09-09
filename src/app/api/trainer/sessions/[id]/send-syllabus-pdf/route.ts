@@ -30,7 +30,7 @@ export async function POST(
   const body = await req.json().catch(() => ({}))
   const { records } = body || {}
 
-  // Load session with batch, course, trainer, and enrollments
+  // Load session with batch, course, trainer and enrollments
   const classSession = await prisma.session.findUnique({
     where: { id: sessionId },
     include: {
@@ -137,7 +137,7 @@ export async function POST(
     )
   }
 
-  // Revalidate student profile, trainer dashboard, and sessions cache immediately
+  // Revalidate student profile, trainer dashboard and sessions cache immediately
   try {
     revalidatePath('/profile')
     revalidatePath('/trainer/dashboard')

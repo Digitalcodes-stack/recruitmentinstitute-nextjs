@@ -58,7 +58,7 @@ export default function EntityAdminTable({
       <div style={{ padding: '18px 24px', borderBottom: '1px solid #f1f5f9', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <p style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>{entityLabel} Directory</p>
-          <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>Name, contact details, status, and actions</p>
+          <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>Name, contact details, status and actions</p>
         </div>
         <span style={{ fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 100, background: '#fff', border: '1px solid #e8ecf0', color: '#64748b' }}>
           {rows.length} records

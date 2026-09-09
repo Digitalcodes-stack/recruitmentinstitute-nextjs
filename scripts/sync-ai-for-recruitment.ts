@@ -5,7 +5,7 @@
  * - Category: "AI & Future Skills" (slug: "ai-for-recruitment")
  * - Course: "AI for Recruitment" with full rich description
  * - Fees: Dual pricing (Online ₹7,999 vs Pune Classroom ₹12,999, Coupon: AIRECRUIT20)
- * - 14 Syllabus Modules with deep chapters, topics, learning objectives, and practical deliverables
+ * - 14 Syllabus Modules with deep chapters, topics, learning objectives and practical deliverables
  * - 8 High-Quality FAQs
  * - Cohort 1 Batch assigned to Shesha Shhiv Mohanty with 14 scheduled sessions & Meet links
  */
@@ -59,27 +59,27 @@ const AI_COURSE_DATA = {
   faqs: [
     {
       q: 'What is the duration and format of the AI for Recruitment course?',
-      a: 'The course runs for 4 weeks featuring 8 interactive live online masterclasses (2 sessions per week, typically weekday evenings 7:00 PM – 9:00 PM IST or weekend cohorts), totaling 16+ hours of live instructor-led learning, hands-on tool walkthroughs, and capstone mandate execution. In-person classroom batches are also hosted at our Pune training center.',
+      a: 'The course runs for 4 weeks featuring 8 interactive live online masterclasses (2 sessions per week, typically weekday evenings 7:00 PM – 9:00 PM IST or weekend cohorts), totaling 16+ hours of live instructor-led learning, hands-on tool walkthroughs and capstone mandate execution. In-person classroom batches are also hosted at our Pune training center.',
     },
     {
-      q: 'Do I need coding, Python, or technical knowledge to join?',
-      a: 'Absolutely not! This course is 100% no-code and built specifically for recruiters, HR generalists, and talent acquisition teams. You will learn practical prompt engineering, modern AI tool workflows, and ready-to-use recruitment automation without writing a single line of programming code.',
+      q: 'Do I need coding, Python or technical knowledge to join?',
+      a: 'Absolutely not! This course is 100% no-code and built specifically for recruiters, HR generalists and talent acquisition teams. You will learn practical prompt engineering, modern AI tool workflows and ready-to-use recruitment automation without writing a single line of programming code.',
     },
     {
       q: 'How is this different from generic ChatGPT or AI prompt courses?',
-      a: 'Generic AI courses teach broad trivia like email writing or basic summaries. This course is laser-focused on the recruitment lifecycle — building candidate personas from JDs, generating complex Boolean & X-Ray search strings, ATS-resume gap analysis, behavioral interview question design, salary benchmark calculations, and recruitment MIS automation.',
+      a: 'Generic AI courses teach broad trivia like email writing or basic summaries. This course is laser-focused on the recruitment lifecycle — building candidate personas from JDs, generating complex Boolean & X-Ray search strings, ATS-resume gap analysis, behavioral interview question design, salary benchmark calculations and recruitment MIS automation.',
     },
     {
-      q: 'What AI tools will I learn, and do I need paid subscriptions?',
-      a: 'You will learn ChatGPT (GPT-4o), Google Gemini 1.5, Claude 3.5 Sonnet, Perplexity AI, LinkedIn AI features, resume matching tools, and automation platforms like Zapier/Make. All core workflows and assignments can be completed using free-tier accounts or free trials.',
+      q: 'What AI tools will I learn and do I need paid subscriptions?',
+      a: 'You will learn ChatGPT (GPT-4o), Google Gemini 1.5, Claude 3.5 Sonnet, Perplexity AI, LinkedIn AI features, resume matching tools and automation platforms like Zapier/Make. All core workflows and assignments can be completed using free-tier accounts or free trials.',
     },
     {
       q: 'What certificate will I receive upon completion?',
-      a: 'Graduates receive the verifiable "Certified AI Recruitment Professional" credential with unique QR-code verification that can be permanently added to your LinkedIn Licenses & Certifications section, CV, and professional portfolio.',
+      a: 'Graduates receive the verifiable "Certified AI Recruitment Professional" credential with unique QR-code verification that can be permanently added to your LinkedIn Licenses & Certifications section, CV and professional portfolio.',
     },
     {
-      q: 'Can I attend classes offline in Pune, or is it only online?',
-      a: 'We offer both options! You can enroll in our interactive Live Online cohort or attend in-person classroom masterclasses at our Pune center. Both formats include identical LMS access, lifetime recordings, and the AI Recruitment Toolkit.',
+      q: 'Can I attend classes offline in Pune or is it only online?',
+      a: 'We offer both options! You can enroll in our interactive Live Online cohort or attend in-person classroom masterclasses at our Pune center. Both formats include identical LMS access, lifetime recordings and the AI Recruitment Toolkit.',
     },
     {
       q: 'Are corporate team training and 1-to-1 implementation available?',
@@ -87,7 +87,7 @@ const AI_COURSE_DATA = {
     },
     {
       q: 'What is included in the AI Recruitment Toolkit?',
-      a: 'Every student receives our proprietary AI Recruitment Toolkit: 50+ battle-tested recruiter prompt templates, Boolean search generator blueprints, JD-to-Persona mapping sheets, interview scorecard rubrics, candidate communication drip templates (LinkedIn, Email, WhatsApp), and the 14-step Recruitment Playbook.',
+      a: 'Every student receives our proprietary AI Recruitment Toolkit: 50+ battle-tested recruiter prompt templates, Boolean search generator blueprints, JD-to-Persona mapping sheets, interview scorecard rubrics, candidate communication drip templates (LinkedIn, Email, WhatsApp) and the 14-step Recruitment Playbook.',
     },
   ],
 
@@ -96,14 +96,14 @@ const AI_COURSE_DATA = {
       title: 'Module 1 — AI & The Future of Recruitment',
       duration: 'Week 1 / Session 1',
       description:
-        'Foundations of Generative AI for talent acquisition, comparing LLM capabilities, understanding what AI can and cannot do, and mapping the end-to-end AI Recruiter workflow.',
+        'Foundations of Generative AI for talent acquisition, comparing LLM capabilities, understanding what AI can and cannot do and mapping the end-to-end AI Recruiter workflow.',
       objective:
         'Understand Generative AI fundamentals and map traditional recruiting bottlenecks to AI productivity opportunities.',
       topics: [
         'What is AI & Generative AI: Core concepts simplified for recruiters',
         'Model Comparison: ChatGPT vs. Gemini vs. Claude vs. Perplexity in recruitment',
         'AI vs Automation vs Traditional ATS tools: Where each fits in your tech stack',
-        'What AI can and cannot do: Realistic capabilities, limitations, and hallucinations',
+        'What AI can and cannot do: Realistic capabilities, limitations and hallucinations',
         'The AI-Powered Recruiter Workflow: Mapping JD to Joining end-to-end',
         'Practical Exercise: Build your personal AI Recruiter Workflow Blueprint',
       ],
@@ -114,32 +114,32 @@ const AI_COURSE_DATA = {
       title: 'Module 2 — Prompt Engineering for Recruiters',
       duration: 'Week 1 / Session 2',
       description:
-        'Master the recruiter prompt formula: Role + Context + Task + Constraints + Output. Learn prompt chaining, few-shot examples, and reusable recruiter templates.',
+        'Master the recruiter prompt formula: Role + Context + Task + Constraints + Output. Learn prompt chaining, few-shot examples and reusable recruiter templates.',
       objective:
         'Master prompt structures to extract high-accuracy, hallucination-free candidate outputs from AI models.',
       topics: [
         'Anatomy of a high-performance recruitment prompt: Role, Context, Task, Constraints & Output format',
-        'Advanced techniques: Prompt Chaining, Role-based persona prompting, and Few-Shot prompting',
+        'Advanced techniques: Prompt Chaining, Role-based persona prompting and Few-Shot prompting',
         'Prompt refinement & iteration: Eliminating generic corporate jargon from AI outputs',
         'Building reusable recruiter prompt templates in Notion / Google Sheets / Notes',
         'Context Window optimization and document uploads for hiring requirements',
         'Practical Exercise: Assemble your personal 50+ AI Recruitment Prompt Library',
       ],
       practicalActivity:
-        'Construct a 10-prompt custom library covering intake, search, calling, and rejection sequences.',
+        'Construct a 10-prompt custom library covering intake, search, calling and rejection sequences.',
     },
     {
       title: 'Module 3 — AI for Job Analysis & JD Creation',
       duration: 'Week 2 / Session 3',
       description:
-        'Transform vague client briefs into high-converting, SEO-optimized Job Descriptions, Candidate Personas, and Competency Matrices in minutes.',
+        'Transform vague client briefs into high-converting, SEO-optimized Job Descriptions, Candidate Personas and Competency Matrices in minutes.',
       objective:
-        'Translate raw manager intake notes into precise, attractive, and bias-free job specifications.',
+        'Translate raw manager intake notes into precise, attractive and bias-free job specifications.',
       topics: [
         'Deconstructing messy client or hiring manager briefs with structured prompt prompts',
         'Generating comprehensive candidate personas: Must-have vs nice-to-have competencies',
         'SEO-friendly, high-conversion JD rewriting that appeals to top-tier passive talent',
-        'Extracting hard skills, soft competencies, and behavioral indicators automatically',
+        'Extracting hard skills, soft competencies and behavioral indicators automatically',
         'Generating first-round qualifying screening questions directly from JDs',
         'Practical Project: End-to-end JD + Persona + Competency Matrix + Screening Questions package',
       ],
@@ -150,13 +150,13 @@ const AI_COURSE_DATA = {
       title: 'Module 4 — AI-Powered Sourcing',
       duration: 'Week 2 / Session 4',
       description:
-        'Supercharge candidate discovery on LinkedIn, job portals, and Google with AI-generated Boolean search strings, alternative job titles, and X-Ray searches.',
+        'Supercharge candidate discovery on LinkedIn, job portals and Google with AI-generated Boolean search strings, alternative job titles and X-Ray searches.',
       objective:
         'Find untapped talent pools and execute complex search queries in seconds across platforms.',
       topics: [
-        'Instant Boolean search generation: AND, OR, NOT, Quotations, and Wildcards',
-        'Google X-Ray search strings for LinkedIn, GitHub, Behance, and conference attendee lists',
-        'Generating exhaustive alternative job titles, synonyms, and related skill taxonomy',
+        'Instant Boolean search generation: AND Or, NOT, Quotations and Wildcards',
+        'Google X-Ray search strings for LinkedIn, GitHub, Behance and conference attendee lists',
+        'Generating exhaustive alternative job titles, synonyms and related skill taxonomy',
         'Targeting passive talent and identifying hidden candidate pools by industry verticals',
         'Evaluating candidate search result accuracy and tuning Boolean string parameters',
         'Practical Exercise: 10 Boolean Strings + 10 Alternative Titles + Target Company Profile Matrix',
@@ -168,13 +168,13 @@ const AI_COURSE_DATA = {
       title: 'Module 5 — AI Resume Screening & Candidate Matching',
       duration: 'Week 3 / Session 5',
       description:
-        'Analyze resumes against job requirements with precision. Identify red flags, calculate skill gap percentages, and draft objective recruiter shortlist notes.',
+        'Analyze resumes against job requirements with precision. Identify red flags, calculate skill gap percentages and draft objective recruiter shortlist notes.',
       objective:
         'Screen and rank hundreds of candidate profiles accurately while preserving critical human decision-making.',
       topics: [
         'Comparing complex resumes against JDs: Automated skill-gap and experience analysis',
         'Objective candidate ranking and scoring matrix generation',
-        'Detecting red flags, job-hopping timelines, and career trajectory inconsistencies',
+        'Detecting red flags, job-hopping timelines and career trajectory inconsistencies',
         'Golden Governance Principle: AI recommendation ≠ Final hiring decision (Human in the Loop)',
         'Drafting executive candidate presentation summaries for hiring managers',
         'Practical Exercise: Produce a Shortlist Summary + Rejection Reasons + Interview Recommendation report',
@@ -186,14 +186,14 @@ const AI_COURSE_DATA = {
       title: 'Module 6 — AI for Candidate Communication',
       duration: 'Week 3 / Session 6',
       description:
-        'Craft hyper-personalized outreach, nurturing sequences, follow-ups, and offer pitches across LinkedIn InMail, Email, and WhatsApp to skyrocket response rates.',
+        'Craft hyper-personalized outreach, nurturing sequences, follow-ups and offer pitches across LinkedIn InMail, Email and WhatsApp to skyrocket response rates.',
       objective:
         'Triple candidate response rates with persuasive, personalized multi-channel outreach campaigns.',
       topics: [
         'Personalized LinkedIn InMail messages that capture executive attention',
         'Multi-touch cold email candidate outreach sequences (Initial Pitch, Follow-up 1, Follow-up 2, Breakup)',
-        'WhatsApp outreach scripts: Conversational, professional, and compliant messaging',
-        'Adapting tones: Executive, Friendly, Urgent, Campus, and Technical tone calibrations',
+        'WhatsApp outreach scripts: Conversational, professional and compliant messaging',
+        'Adapting tones: Executive, Friendly, Urgent, Campus and Technical tone calibrations',
         'Drafting empathetic rejection letters and candidate talent-pool nurturing sequences',
         'Practical Exercise: Build a complete 5-stage Candidate Outreach Sequence',
       ],
@@ -204,11 +204,11 @@ const AI_COURSE_DATA = {
       title: 'Module 7 — AI for Interviewing & Assessment',
       duration: 'Week 4 / Session 7',
       description:
-        'Generate competency-based, behavioral, and STAR interview questions with calibrated evaluation scorecards and candidate assessment frameworks.',
+        'Generate competency-based, behavioral and STAR interview questions with calibrated evaluation scorecards and candidate assessment frameworks.',
       objective:
         'Standardize interview evaluation criteria and equip hiring managers with structured evaluation frameworks.',
       topics: [
-        'Generating role-specific technical, behavioral, situational, and culture-fit questions',
+        'Generating role-specific technical, behavioral, situational and culture-fit questions',
         'The STAR methodology (Situation, Task, Action, Result) prompt framework',
         'Creating weighted candidate evaluation scorecards with scoring benchmarks (1–5 scale)',
         'Interviewer calibration: Eliminating bias and ensuring structured panel feedback',
@@ -222,11 +222,11 @@ const AI_COURSE_DATA = {
       title: 'Module 8 — AI for Recruitment Operations',
       duration: 'Week 4 / Session 8',
       description:
-        'Streamline everyday recruiter administrative workload: trackers, meeting summaries, SOPs, intake documentation, and daily task management.',
+        'Streamline everyday recruiter administrative workload: trackers, meeting summaries, SOPs, intake documentation and daily task management.',
       objective:
         'Save 8–10 hours per week of manual admin tasks with AI operating templates.',
       topics: [
-        'Structuring recruitment trackers, candidate status updates, and pipeline reports',
+        'Structuring recruitment trackers, candidate status updates and pipeline reports',
         'Summarizing client/candidate meetings and stakeholder action items in seconds',
         'Creating Standard Operating Procedures (SOPs) for recruiter onboarding and SLA adherence',
         'Generating email response drafts and daily operational agendas with voice-to-text AI',
@@ -240,7 +240,7 @@ const AI_COURSE_DATA = {
       title: 'Module 9 — AI for Recruitment Marketing & Employer Branding',
       duration: 'Advanced / Module 9',
       description:
-        'Build a magnetic talent brand on LinkedIn: thought leadership posts, employee value proposition (EVP) content, hiring campaigns, and newsletters.',
+        'Build a magnetic talent brand on LinkedIn: thought leadership posts, employee value proposition (EVP) content, hiring campaigns and newsletters.',
       objective:
         'Position your agency or company as a talent magnet on social channels using AI content engines.',
       topics: [
@@ -252,13 +252,13 @@ const AI_COURSE_DATA = {
         'Practical Project: Build a 30-Day Recruitment Marketing & Employer Branding Calendar',
       ],
       practicalActivity:
-        'Generate a 30-day social recruitment content calendar with post captions, hooks, and hashtags.',
+        'Generate a 30-day social recruitment content calendar with post captions, hooks and hashtags.',
     },
     {
       title: 'Module 10 — AI for Recruitment Analytics',
       duration: 'Advanced / Module 10',
       description:
-        'Turn messy recruiting spreadsheets into actionable intelligence: funnel conversion, time-to-hire, source effectiveness, and cost-per-hire executive dashboards.',
+        'Turn messy recruiting spreadsheets into actionable intelligence: funnel conversion, time-to-hire, source effectiveness and cost-per-hire executive dashboards.',
       objective:
         'Extract strategic talent intelligence from recruitment data and generate leadership reports.',
       topics: [
@@ -276,11 +276,11 @@ const AI_COURSE_DATA = {
       title: 'Module 11 — AI Automation for Recruiters',
       duration: 'Advanced / Module 11',
       description:
-        'Construct no-code automated recruitment pipelines: Trigger → AI Processing → Action → Human Review using Zapier, Make, and webhook integrations.',
+        'Construct no-code automated recruitment pipelines: Trigger → AI Processing → Action → Human Review using Zapier, Make and webhook integrations.',
       objective:
         'Automate repetitive recruitment tasks without sacrificing human warmth or compliance.',
       topics: [
-        'Understanding no-code automation: Triggers, Actions, Webhooks, and AI Nodes',
+        'Understanding no-code automation: Triggers, Actions, Webhooks and AI Nodes',
         'Example 1: Automated inbound application intake and initial skill summary',
         'Example 2: Auto-generating candidate profile pitch summaries when a resume arrives',
         'Example 3: Automated WhatsApp / Email follow-up triggers post-interview',
@@ -294,7 +294,7 @@ const AI_COURSE_DATA = {
       title: 'Module 12 — AI Recruitment Tools & Tool Stack',
       duration: 'Advanced / Module 12',
       description:
-        'Evaluate and select the best tools for your budget and recruitment model. Build your personalized AI Recruiter Stack across sourcing, screening, and operations.',
+        'Evaluate and select the best tools for your budget and recruitment model. Build your personalized AI Recruiter Stack across sourcing, screening and operations.',
       objective:
         'Curate a cost-effective, high-leverage software stack tailored to in-house or agency recruiting.',
       topics: [
@@ -303,7 +303,7 @@ const AI_COURSE_DATA = {
         'ROI calculator: Measuring time saved and cost benefits of AI tooling',
         'Building the Free/Budget AI Recruiter Stack (under ₹2,000/month)',
         'Building the Enterprise/Agency High-Volume AI Recruiter Stack',
-        'Tool audit framework: Data security, privacy, and compliance review checklist',
+        'Tool audit framework: Data security, privacy and compliance review checklist',
       ],
       practicalActivity:
         'Complete your Personal AI Recruiter Tool Stack Blueprint with recommended software and monthly budget.',
@@ -312,9 +312,9 @@ const AI_COURSE_DATA = {
       title: 'Module 13 — Responsible AI in Recruitment',
       duration: 'Advanced / Module 13',
       description:
-        'Navigate ethical considerations, algorithmic bias, data privacy (DPDP Act & GDPR), AI hallucinations, and mandatory human oversight in hiring decisions.',
+        'Navigate ethical considerations, algorithmic bias, data privacy (DPDP Act & GDPR), AI hallucinations and mandatory human oversight in hiring decisions.',
       objective:
-        'Ensure 100% legal, ethical, and bias-free compliance when deploying AI across hiring workflows.',
+        'Ensure 100% legal, ethical and bias-free compliance when deploying AI across hiring workflows.',
       topics: [
         'Algorithmic bias in hiring: How historical hiring bias infects AI models and how to prevent it',
         'Data privacy in recruitment: Handling candidate PII under Indian DPDP Act & international laws',

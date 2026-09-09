@@ -104,7 +104,7 @@ export default function ContactClient() {
             Contact Recruitment Institute
           </h1>
           <p style={{ fontSize: '17px', color: '#94A3B8', lineHeight: 1.75, maxWidth: '520px' }}>
-            Have a question about our courses, batch timings, or admissions? Our admissions team responds within 30 minutes during working hours.
+            Have a question about our courses, batch timings or admissions? Our admissions team responds within 30 minutes during working hours.
           </p>
         </div>
 
@@ -272,7 +272,7 @@ export default function ContactClient() {
                           rows={5}
                           className={`form-input-premium ${errors.message ? 'border-red-500 ring-1 ring-red-500' : ''}`}
                           style={{ resize: 'none' }}
-                          placeholder="Which course are you interested in? Any specific questions about batch timings, fees, or curriculum?"
+                          placeholder="Which course are you interested in? Any specific questions about batch timings, fees or curriculum?"
                         />
                         {errors.message && (
                           <p className="text-red-500 text-xs font-semibold mt-1.5">{errors.message}</p>
@@ -387,7 +387,7 @@ export default function ContactClient() {
                     <div className="flex-1">
                       <p style={{ fontSize: '15px', fontWeight: 700, color: 'white', marginBottom: '6px' }}>Admissions Helpline</p>
                       <p style={{ fontSize: '13px', color: 'rgba(209,250,229,0.9)', lineHeight: 1.6, marginBottom: '16px' }}>
-                        Message our team directly for batch enrollment, fees, and course queries.
+                        Message our team directly for batch enrollment, fees and course queries.
                       </p>
                       <a
                         href="https://wa.me/917385204165"

@@ -64,21 +64,21 @@ const pillars = [
   {
     icon: TrendingUp,
     title: 'Practical Recruitment Skills',
-    text: 'Boolean search, screening, calling, ATS workflows, offer coordination, and the habits hiring teams expect every day.',
+    text: 'Boolean search, screening, calling, ATS workflows, offer coordination and the habits hiring teams expect every day.',
     color: '#1E40AF',
     bg: '#EFF6FF',
   },
   {
     icon: BriefcaseBusiness,
     title: 'Corporate Ready Training',
-    text: 'Sessions built around live hiring cases, job descriptions, recruiter scorecards, and real communication practice.',
+    text: 'Sessions built around live hiring cases, job descriptions, recruiter scorecards and real communication practice.',
     color: '#7C3AED',
     bg: '#F5F3FF',
   },
   {
     icon: Handshake,
     title: 'Career Support',
-    text: 'Resume guidance, mock interviews, and placement support channels for every student after course completion.',
+    text: 'Resume guidance, mock interviews and placement support channels for every student after course completion.',
     color: '#059669',
     bg: '#F0FDF4',
   },
@@ -460,7 +460,7 @@ export default function AboutClient({ sections, testimonials = [], stats }: Prop
             </div>
 
             <p style={{ fontSize: '16px', color: '#94A3B8', lineHeight: 1.85 }}>
-              Designed for freshers, career switchers, HR professionals, and future agency owners who want recruitment skills they can use immediately.
+              Designed for freshers, career switchers, HR professionals and future agency owners who want recruitment skills they can use immediately.
             </p>
           </div>
 
@@ -587,7 +587,7 @@ export default function AboutClient({ sections, testimonials = [], stats }: Prop
                 Walk in curious.<br />Walk out <span style={{ color: '#60A5FA' }}>recruiter-ready.</span>
               </h2>
               <p style={{ fontSize: '16px', color: '#94A3B8', lineHeight: 1.8, maxWidth: '460px' }}>
-                Whether your goal is a first HR role, a better corporate recruitment job, or your own consultancy — every session stays focused on practical execution.
+                Whether your goal is a first HR role, a better corporate recruitment job or your own consultancy — every session stays focused on practical execution.
               </p>
             </div>
 
@@ -644,7 +644,7 @@ export default function AboutClient({ sections, testimonials = [], stats }: Prop
                 </h2>
 
                 <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.85, marginBottom: 36, maxWidth: 400 }}>
-                  Speak with our admissions coordinator about batches, syllabus, eligibility, course fees, and placement support.
+                  Speak with our admissions coordinator about batches, syllabus, eligibility, course fees and placement support.
                 </p>
 
                 {/* buttons */}

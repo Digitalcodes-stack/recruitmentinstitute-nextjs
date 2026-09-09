@@ -40,7 +40,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   const { assessmentName, totalMarks, durationMinutes } = body
 
   if (!assessmentName || !totalMarks || !durationMinutes) {
-    return NextResponse.json({ success: false, message: 'assessmentName, totalMarks, and durationMinutes are required' }, { status: 400 })
+    return NextResponse.json({ success: false, message: 'assessmentName, totalMarks and durationMinutes are required' }, { status: 400 })
   }
 
   try {

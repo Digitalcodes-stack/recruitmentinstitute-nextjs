@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
             <td style="padding:32px 32px 20px 32px;">
               <p style="font-size:16px;font-weight:600;color:#0f172a;margin:0 0 12px 0;">Dear ${name},</p>
               <p style="font-size:14px;line-height:1.6;color:#475569;margin:0 0 16px 0;">
-                Thank you for your interest in advancing your career with <strong>Recruitment Institute</strong>. As requested during your career counselling session, we have enclosed the complete official program syllabus, modules, and schedule for:
+                Thank you for your interest in advancing your career with <strong>Recruitment Institute</strong>. As requested during your career counselling session, we have enclosed the complete official program syllabus, modules and schedule for:
               </p>
 
               <!-- COURSE HIGHLIGHT CARD -->

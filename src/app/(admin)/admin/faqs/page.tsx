@@ -33,7 +33,7 @@ export default async function AdminFaqsPage() {
             FAQs
           </h2>
           <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>
-            Review, search, and organize FAQ content.
+            Review, search and organize FAQ content.
           </p>
         </div>
 

@@ -177,7 +177,7 @@ export async function sendContactEmail(data: {
       badgeBorder: '#bbf7d0',
       title: `Thank You, ${data.name}!`,
       subtitle: 'We have received your enquiry and our admissions team is reviewing it.',
-      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong> — the leading training institute for End-to-End Recruitment, HR Operations, and Talent Acquisition.<br/><br/><strong>What happens next?</strong><br/>• Our Senior Course Advisor will contact you within 30 minutes.<br/>• We will share the comprehensive syllabus, batch schedules, and customized fee options.<br/>• You will receive an invitation to attend a Free Live Demo Session.',
+      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong> — the leading training institute for End-to-End Recruitment, HR Operations and Talent Acquisition.<br/><br/><strong>What happens next?</strong><br/>• Our Senior Course Advisor will contact you within 30 minutes.<br/>• We will share the comprehensive syllabus, batch schedules and customized fee options.<br/>• You will receive an invitation to attend a Free Live Demo Session.',
       rows: [
         { label: 'Inquiry Reference', value: data.name },
         { label: 'Contact Phone', value: data.mobile, isPhone: true },
@@ -253,7 +253,7 @@ export async function sendCourseEnquiryEmail(data: {
       badgeBorder: '#bfdbfe',
       title: `Hello, ${data.firstName}!`,
       subtitle: `Thank you for your interest in ${courseTitle}`,
-      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong>. Our senior counselor will contact you shortly with complete batch details, fee structure, and syllabus.',
+      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong>. Our senior counselor will contact you shortly with complete batch details, fee structure and syllabus.',
       rows: [
         { label: 'Course', value: courseTitle, isHighlight: true },
         { label: 'Contact', value: data.contact, isPhone: true },
@@ -322,7 +322,7 @@ export async function sendFeesEnquiryEmail(data: {
       badgeBorder: '#bbf7d0',
       title: `Hello, ${data.firstName}!`,
       subtitle: 'Thank you for requesting fee information',
-      introText: 'We have received your enquiry. Our admissions team will share the complete program pricing, scholarship concessions, and flexible EMI options with you shortly.',
+      introText: 'We have received your enquiry. Our admissions team will share the complete program pricing, scholarship concessions and flexible EMI options with you shortly.',
       rows: [
         { label: 'Requested By', value: fullName },
         { label: 'Contact Phone', value: data.contact, isPhone: true },
@@ -1025,7 +1025,7 @@ export async function sendSessionSyllabusPdfEmail(data: {
       badgeBorder: '#a7f3d0',
       title: 'Session Syllabus & Teaching Guide Unlocked',
       subtitle: `${data.sessionTitle} • ${data.courseTitle}`,
-      introText: `Hi <strong>${data.studentName}</strong>,<br/>Thank you for attending today's live class! Your trainer <strong>${data.trainerName}</strong> has released the complete <strong>Session Syllabus, Teaching Notes, Practical Exercises & Frameworks (PDF)</strong> for your session.<br/><br/>As an attended student, you have exclusive access to review, download, and practice from this guide.`,
+      introText: `Hi <strong>${data.studentName}</strong>,<br/>Thank you for attending today's live class! Your trainer <strong>${data.trainerName}</strong> has released the complete <strong>Session Syllabus, Teaching Notes, Practical Exercises & Frameworks (PDF)</strong> for your session.<br/><br/>As an attended student, you have exclusive access to review, download and practice from this guide.`,
       rows,
       actionButton: {
         text: 'Download Session Syllabus PDF →',

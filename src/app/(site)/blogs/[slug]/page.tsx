@@ -467,7 +467,7 @@ export default async function BlogDetailPage({ params }: Props) {
                   </div>
                   <h3 style={{ fontSize: 18, fontWeight: 900, color: '#fff', lineHeight: 1.25, letterSpacing: '-.02em', margin: '0 0 10px' }}>Need Career Advice?</h3>
                   <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.75, margin: '0 0 20px' }}>
-                    Speak with our admissions team about HR training formats, syllabus options, and the right next step for your career.
+                    Speak with our admissions team about HR training formats, syllabus options and the right next step for your career.
                   </p>
                   <Link href="/contact" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

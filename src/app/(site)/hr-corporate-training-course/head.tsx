@@ -5,7 +5,7 @@ export default function Head() {
       <title>HR Corporate Training Course in Pune | Recruitment Institute</title>
       <meta
         name="description"
-        content="Upskill HR and recruitment teams with tailored corporate training on sourcing, hiring processes, ATS tools, and process optimisation."
+        content="Upskill HR and recruitment teams with tailored corporate training on sourcing, hiring processes, ATS tools and process optimisation."
       />
       <link rel="canonical" href={`${base}/hr-corporate-training-course`} />
       <meta property="og:title" content="HR Corporate Training Course in Pune" />

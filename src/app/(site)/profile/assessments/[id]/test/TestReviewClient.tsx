@@ -124,7 +124,7 @@ export default function TestReviewClient({
               Assessment Question Breakdown
             </h1>
             <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', maxWidth: 540, lineHeight: 1.6 }}>
-              Review correct solutions, explanations, and your submitted choices to understand key concepts.
+              Review correct solutions, explanations and your submitted choices to understand key concepts.
             </p>
           </div>
 

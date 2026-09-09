@@ -35,7 +35,7 @@ Batch Details:
 - Start Date: ${startDate}
 - Mode: Live Interactive Online Training
 
-You can log in to your student portal anytime to access course materials, session schedule, and live class links:
+You can log in to your student portal anytime to access course materials, session schedule and live class links:
 https://recruitmentinstitute.in/student-login
 
 If you need any assistance, feel free to reply to this email.

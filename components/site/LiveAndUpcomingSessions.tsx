@@ -19,7 +19,7 @@ interface Props {
   sessions: SessionListItem[]
 }
 
-/** Server-rendered strip of real scheduled/live sessions — trainer, batch, and join link. */
+/** Server-rendered strip of real scheduled/live sessions — trainer, batch and join link. */
 export default function LiveAndUpcomingSessions({ sessions }: Props) {
   if (sessions.length === 0) return null
 

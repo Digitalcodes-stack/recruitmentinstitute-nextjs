@@ -201,7 +201,7 @@ export default async function AssessmentStudyPlanPage({
                 Your Deep Study Plan
               </h1>
               <p style={{ fontSize: 13, color: '#93c5fd', marginTop: 8, maxWidth: 520, lineHeight: 1.7 }}>
-                Built from your actual assessment result — each day targets a specific weak topic with structured activities, self-tests, and curated resources.
+                Built from your actual assessment result — each day targets a specific weak topic with structured activities, self-tests and curated resources.
               </p>
 
               {/* Weak / Strong topic chips */}

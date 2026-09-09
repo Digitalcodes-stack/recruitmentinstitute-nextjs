@@ -26,7 +26,7 @@ async function main() {
 
   let updatedCount = 0
   for (const s of sessions) {
-    // If meetLink is sample-link, null, empty, or invalid, give it a proper valid Google Meet room code
+    // If meetLink is sample-link, null, empty or invalid, give it a proper valid Google Meet room code
     if (!s.meetLink || s.meetLink.includes('sample-link') || !s.meetLink.startsWith('http')) {
       const validLink = generateMeetLink(s.id, s.batchId)
       await prisma.session.update({

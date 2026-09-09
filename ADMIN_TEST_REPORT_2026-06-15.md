@@ -132,7 +132,7 @@ This is not necessarily a bug, but it makes admin validation and user experience
 
 ## Recommendation
 
-- Update the live admin password data to a bcrypt hash that matches `lib/auth.ts`, or add a migration/reset flow that converts the legacy MD5 credential.
+- Update the live admin password data to a bcrypt hash that matches `lib/auth.ts` or add a migration/reset flow that converts the legacy MD5 credential.
 - Once login works, rerun the admin CRUD sweep for:
   - blog
   - courses

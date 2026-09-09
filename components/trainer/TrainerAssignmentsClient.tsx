@@ -133,7 +133,7 @@ export default function TrainerAssignmentsClient({
   const handleCreateAssignment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!createBatchId || !createTitle || !createDueDate) {
-      toast.error('Please enter title, batch, and due date')
+      toast.error('Please enter title, batch and due date')
       return
     }
 
@@ -382,7 +382,7 @@ export default function TrainerAssignmentsClient({
           <ClipboardList style={{ width: 44, height: 44, color: '#94a3b8', margin: '0 auto 16px' }} />
           <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>No Assignments Found</h2>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
-            Create assignments for your batches to give homework, tasks, or case studies.
+            Create assignments for your batches to give homework, tasks or case studies.
           </p>
           <button
             onClick={handleOpenCreate}
@@ -646,7 +646,7 @@ export default function TrainerAssignmentsClient({
                   <textarea
                     value={createDescription}
                     onChange={(e) => setCreateDescription(e.target.value)}
-                    placeholder="Provide detailed instructions for completion, submission format, and grading rubric..."
+                    placeholder="Provide detailed instructions for completion, submission format and grading rubric..."
                     rows={3}
                     style={{ ...inputStyle, resize: 'vertical' }}
                   />

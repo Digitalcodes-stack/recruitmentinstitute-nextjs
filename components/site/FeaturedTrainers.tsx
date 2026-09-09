@@ -137,7 +137,7 @@ export default function FeaturedTrainers({
                   <div className="absolute bottom-3 left-3.5 right-3.5">
                     <div className="inline-block px-2.5 py-1 rounded-lg bg-slate-950/85 backdrop-blur-md border border-white/10 max-w-full">
                       <p className="text-[11px] font-bold text-amber-300 uppercase tracking-wider truncate drop-shadow-sm">
-                        {trainer.companyEx}
+                        {trainer.companyEx.replace(/^Ex-?/i, '').replace(/\|\s*Ex-?/gi, '| ').trim()}
                       </p>
                     </div>
                   </div>
@@ -251,7 +251,7 @@ export default function FeaturedTrainers({
                 <h3 className="text-2xl font-black">{selectedTrainer.name}</h3>
                 <p className="text-sm font-semibold text-slate-300 mt-0.5">{selectedTrainer.designation}</p>
                 {selectedTrainer.companyEx && (
-                  <p className="text-xs font-bold text-amber-400 mt-1">{selectedTrainer.companyEx}</p>
+                  <p className="text-xs font-bold text-amber-400 mt-1">{selectedTrainer.companyEx.replace(/^Ex-?/i, '').replace(/\|\s*Ex-?/gi, '| ').trim()}</p>
                 )}
 
                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 mt-3 text-xs text-slate-300">

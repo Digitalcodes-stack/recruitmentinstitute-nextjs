@@ -33,7 +33,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   title: 'HR & Recruitment Training Courses in Pune - All Programs',
   description:
-    'Explore recruitment and HR training programs at Recruitment Institute Pune. End-to-end recruitment, HR basics, entrepreneurship, and corporate training.',
+    'Explore recruitment and HR training programs at Recruitment Institute Pune. End-to-end recruitment, HR basics, entrepreneurship and corporate training.',
   keywords: 'HR courses pune, recruitment training programs, end to end recruitment, HR entrepreneurship, corporate HR training',
   alternates: { canonical: `${BASE_URL}/courses` },
   openGraph: {
@@ -391,7 +391,7 @@ export default async function CoursesPage() {
   }
 
   // Map DB Trainers — only show real DB trainers, no static fallbacks
-  // Map DB Trainers — with distinct rich profiles, quotes, and bios
+  // Map DB Trainers — with distinct rich profiles, quotes and bios
   let formattedTrainers: TrainerItem[] = []
   if (rawDbTrainers && rawDbTrainers.length > 0) {
     formattedTrainers = rawDbTrainers.map((t, idx) => {
@@ -406,19 +406,19 @@ export default async function CoursesPage() {
           email: t.email,
           phone: t.phone || undefined,
           designation: 'HR & Soft Skills Specialist',
-          experienceYears: 15,
+          experienceYears: 22,
           specializationTags: ['HR Operations', 'Soft Skills Mastery', 'Behavioral Interviewing', 'Statutory Compliance'],
-          bio: t.bio || 'Senior HR strategist and soft-skills mentor with 15+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
-          longBio: 'With 15+ years of extensive corporate HR and leadership coaching experience, Brahmita specializes in end-to-end HR operations, behavioral interviewing techniques, stakeholder communication, and candidate engagement. She has coached 1,200+ recruiters and HR professionals across India, helping them master the psychological and interpersonal dynamics required to excel in modern corporate talent acquisition.',
+          bio: t.bio || 'Senior HR strategist and soft-skills mentor with 22+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
+          longBio: 'With 22+ years of extensive corporate HR and leadership coaching experience, Brahmita specializes in end-to-end HR operations, behavioral interviewing techniques, stakeholder communication and candidate engagement. She has coached 1,200+ recruiters and HR professionals across India, helping them master the psychological and interpersonal dynamics required to excel in modern corporate talent acquisition.',
           image: t.image || '/assets/images/trainers/brahmita_mam.jpg',
-          companyEx: 'Ex-Corporate HR Lead & Master Behavioral Coach',
+          companyEx: 'Corporate HR Lead & Master Behavioral Coach',
           rating: 4.95,
           reviewsCount: 128,
           studentsMentored: 1200,
           coursesTaught: ['HR Corporate Training Course', 'HR Courses for Beginners', 'End-to-End Recruitment Training'],
           modes: ['Online', 'Offline', 'Hybrid'],
           featured: true,
-          quote: 'Mastering empathy, structured interviewing, and candidate psychology turns fresh recruiters into boardroom-ready talent partners.',
+          quote: 'Mastering empathy, structured interviewing and candidate psychology turns fresh recruiters into boardroom-ready talent partners.',
           certifications: ['SHRM Certified Professional (SHRM-CP)', 'Certified Behavioral Interviewer', 'Master Corporate Soft Skills Coach'],
         }
       }
@@ -430,20 +430,46 @@ export default async function CoursesPage() {
           email: t.email,
           phone: t.phone || undefined,
           designation: 'AI Transformation & Recruitment Specialist',
-          experienceYears: 16,
+          experienceYears: 22,
           specializationTags: ['AI in Recruitment', 'Boolean Sourcing Mastery', 'Talent Intelligence', 'ATS Pipeline Automation'],
-          bio: t.bio || 'AI recruitment architect and executive talent intelligence strategist with 16+ years engineering high-velocity sourcing pipelines, automated candidate discovery, and tech recruiting frameworks for global enterprises.',
-          longBio: 'Shesha is an industry-recognized talent acquisition strategist and AI recruitment pioneer. With 16+ years designing enterprise hiring infrastructure and tech talent pipelines for leading tech organizations, he trains recruiters to leverage generative AI, deep Boolean search architectures, and predictive analytics to automate sourcing workflows, slash time-to-fill, and out-perform agency competition.',
+          bio: t.bio || 'AI recruitment architect and executive talent intelligence strategist with 22+ years engineering high-velocity sourcing pipelines, automated candidate discovery and tech recruiting frameworks for global enterprises.',
+          longBio: 'Shesha is an industry-recognized talent acquisition strategist and AI recruitment pioneer. With 22+ years designing enterprise hiring infrastructure and tech talent pipelines for leading tech organizations, he trains recruiters to leverage generative AI, deep Boolean search architectures and predictive analytics to automate sourcing workflows, slash time-to-fill and out-perform agency competition.',
           image: t.image || '/assets/images/trainers/shesha_sir.jpg',
-          companyEx: 'Ex-Enterprise TA Architect & AI Talent Strategist',
+          companyEx: 'Enterprise TA Architect & AI Talent Strategist',
           rating: 4.98,
           reviewsCount: 142,
           studentsMentored: 1350,
           coursesTaught: ['AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist'],
           modes: ['Online', 'Offline', 'Hybrid'],
           featured: true,
-          quote: "AI won't replace recruiters, but recruiters who master AI workflows, deep Boolean logic, and talent architecture will replace those who don't.",
+          quote: "AI won't replace recruiters, but recruiters who master AI workflows, deep Boolean logic and talent architecture will replace those who don't.",
           certifications: ['Certified Talent Sourcing Architect (CTSA)', 'Generative AI for Talent Acquisition Specialist', 'Advanced Boolean & Open-Web Search Certified'],
+        }
+      }
+
+      const isDebabrata = lower.includes('debabrata') || lower.includes('pattanayak') || lower.includes('dpattanayak')
+      if (isDebabrata) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'Director of Human Resources (Cluster)',
+          experienceYears: 22,
+          specializationTags: ['Executive HR Leadership', 'People Management & Ethics', 'Corporate HR Operations', 'Talent Strategy & Training', 'Labor & Employee Relations'],
+          bio: t.bio || 'Cluster Director of Human Resources at The Park Hotels, Apeejay Surrendra Group with 22+ years of leadership in corporate HR operations, ethical people management and strategic talent acquisition.',
+          longBio: 'Debabrata Pattanayak is the Cluster Director of Human Resources at The Park Hotels (Apeejay Surrendra Group) and an alumnus of Bharati Vidyapeeth. An active leader with clear leadership qualities and a can-do attitude, he brings 22+ years of experience finding strategic solutions for complex business situations, mentoring emerging HR talent and driving high-performance people operations.\n\nKnown for his ethical and transparent approach to HR governance, Debabrata provides hands-on guidance in talent development, employee relations, stakeholder alignment and modern talent acquisition. His mentorship empowers recruiters and HR professionals to cultivate dependability, innovative people management practices and boardroom-level HR leadership.',
+          image: t.image || '/assets/images/trainers/debabrata_pattanayak.jpg',
+          companyEx: 'Director of HR (Cluster) @ The Park Hotels, Apeejay Surrendra Group',
+          rating: 4.97,
+          reviewsCount: 138,
+          studentsMentored: 1250,
+          coursesTaught: ['HR Corporate Training Course', 'End-to-End Recruitment Training', 'HR Entrepreneurship Program'],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: 'An active leader always instrumental in finding solutions, maintaining a fair approach to HR practices and turning human potential into organizational excellence.',
+          certifications: ['World HRD Congress HR Leadership Awardee', 'Bharati Vidyapeeth Alumnus', 'Certified Senior HR Leader (Cluster Operations)', 'Advanced Labor Law & Statutory Compliance'],
+          linkedinUrl: 'https://www.linkedin.com/in/dpattanayak/',
         }
       }
 
@@ -464,7 +490,7 @@ export default async function CoursesPage() {
         experienceYears: 14 + (idx % 5),
         specializationTags: t.specialization ? t.specialization.split(',').map(s => s.trim()) : ['Recruitment & Sourcing', 'Talent Acquisition'],
         bio: t.bio ? t.bio.slice(0, 160) + '…' : 'Active recruitment practitioner and talent advisor with 10+ years experience.',
-        longBio: t.bio || 'Comprehensive mentoring in modern recruitment lifecycles, ATS platforms, and talent acquisition strategies.',
+        longBio: t.bio || 'Comprehensive mentoring in modern recruitment lifecycles, ATS platforms and talent acquisition strategies.',
         image: profileImg,
         rating: 4.92,
         reviewsCount: 110 + idx * 8,
@@ -993,7 +1019,7 @@ export default async function CoursesPage() {
                     Not sure which program matches your goals?
                   </h4>
                   <p style={{ fontSize: 14, color: '#94A3B8', lineHeight: 1.7, margin: 0 }}>
-                    Speak with our Senior Career Counsellor Priya for a free 15-minute profile assessment, syllabus breakdown, and placement assistance details.
+                    Speak with our Senior Career Counsellor Priya for a free 15-minute profile assessment, syllabus breakdown and placement assistance details.
                   </p>
                 </div>
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -1016,7 +1042,7 @@ export default async function CoursesPage() {
           <div className="cp-trust-grid" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', borderRight:'1px solid #E2E8F0' }}>
             {[
               { icon:ShieldCheck, color:'#1D4ED8', bg:'#EFF6FF', border:'#BFDBFE', title:'Industry-Recognised Certificate', desc:"Every graduate receives a certificate trusted by India's top companies and recruitment agencies." },
-              { icon:MessageCircle, color:'#0D9488', bg:'#F0FDFA', border:'#99F6E4', title:'Live, Hands-On Training', desc:'Practice real hiring scenarios, ATS tools, and interview techniques with live practitioner sessions.' },
+              { icon:MessageCircle, color:'#0D9488', bg:'#F0FDFA', border:'#99F6E4', title:'Live, Hands-On Training', desc:'Practice real hiring scenarios, ATS tools and interview techniques with live practitioner sessions.' },
               { icon:TrendingUp, color:'#D97706', bg:'#FFFBEB', border:'#FDE68A', title:'Placement-Focused Outcomes', desc:'95% of graduates secure a recruitment role within 90 days of completing the program.' },
             ].map(({ icon:Icon, color, bg, border, title, desc }, i) => (
               <div key={title} className="cp-trust-item" style={{ borderLeft:'1px solid #E2E8F0', borderBottom:'none' }}>
@@ -1132,7 +1158,7 @@ export default async function CoursesPage() {
                 Talk to a career counsellor — it&apos;s free.
               </h2>
               <p style={{ fontSize:16, color:'#94A3B8', lineHeight:1.85, maxWidth:520, margin:'0 auto 40px' }}>
-                Our experts will match you to the right program based on your experience, goals, and timeline. No obligation, just genuine guidance.
+                Our experts will match you to the right program based on your experience, goals and timeline. No obligation, just genuine guidance.
               </p>
 
               <div style={{ display:'flex', gap:14, justifyContent:'center', flexWrap:'wrap', marginBottom:32 }}>

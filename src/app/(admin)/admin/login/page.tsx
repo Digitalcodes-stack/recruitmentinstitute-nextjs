@@ -137,7 +137,7 @@ export default function AdminLoginPage() {
               Admin<br />Login
             </h1>
             <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.75, maxWidth: 280 }}>
-              Sign in to manage candidates, students, memberships, courses, blog content, and site-wide administrative workflows.
+              Sign in to manage candidates, students, memberships, courses, blog content and site-wide administrative workflows.
             </p>
           </div>
 

@@ -60,7 +60,7 @@ export default async function AdminTrainersPage() {
             Faculty Trainers
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
-            Instructors assigned to cohorts, live class conduction, and student coursework evaluations.
+            Instructors assigned to cohorts, live class conduction and student coursework evaluations.
           </p>
         </div>
 

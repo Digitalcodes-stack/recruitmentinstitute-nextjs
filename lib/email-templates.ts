@@ -1,7 +1,7 @@
 /**
  * Bulletproof, high-contrast email template system.
  * Designed to render flawlessly across Gmail (iOS/Android Light & Dark mode),
- * Apple Mail, Outlook, Yahoo, and Webmail clients.
+ * Apple Mail, Outlook, Yahoo and Webmail clients.
  */
 
 export interface EmailRow {

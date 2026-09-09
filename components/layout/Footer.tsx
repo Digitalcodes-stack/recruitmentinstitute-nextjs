@@ -23,7 +23,6 @@ const quickLinks = [
   { label: 'Student Membership', href: '/student-membership' },
   { label: 'Contact Us', href: '/contact' },
   { label: 'Student Login', href: '/student-login' },
-  { label: 'Candidate Login', href: '/candidate-login' },
   { label: 'Membership Login', href: '/membership-login' },
   { label: 'Trainer Login', href: '/trainer-login' },
 ]
@@ -79,7 +78,7 @@ export default function Footer() {
             </Link>
 
             <p className="footer-desc">
-              India&apos;s #1 Recruitment Training Institute. Empowering HR professionals, recruiters, and beginners with industry-leading practical training programs.
+              India&apos;s #1 Recruitment Training Institute. Empowering HR professionals, recruiters and beginners with industry-leading practical training programs.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -148,7 +147,7 @@ export default function Footer() {
             </div>
 
             <p className="footer-newsletter-desc">
-              Subscribe to get the latest HR tips, course updates, and career resources straight to your inbox.
+              Subscribe to get the latest HR tips, course updates and career resources straight to your inbox.
             </p>
 
             <form onSubmit={handleSubscribe} className="flex flex-col gap-2">

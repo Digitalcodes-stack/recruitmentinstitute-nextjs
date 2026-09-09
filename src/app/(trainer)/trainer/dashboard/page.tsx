@@ -155,7 +155,7 @@ export default async function TrainerDashboardPage() {
             </h1>
             <p style={{ fontSize: 14, color: '#94a3b8', lineHeight: 1.6 }}>
               You have <strong style={{ color: '#ffffff' }}>{activeBatches} active batches</strong> with{' '}
-              <strong style={{ color: '#ffffff' }}>{totalStudents} enrolled students</strong>. Monitor live classes, mark attendance, and grade assignments below.
+              <strong style={{ color: '#ffffff' }}>{totalStudents} enrolled students</strong>. Monitor live classes, mark attendance and grade assignments below.
             </p>
           </div>
 

@@ -292,7 +292,7 @@ export default function AdminContactsClient({
     }
     const digits = conv.caller_phone.replace(/\D/g, '')
     const target = digits.startsWith('91') ? digits : '91' + digits
-    const message = `Hello ${conv.caller_name || 'there'}! This is regarding your recent voice enquiry with our Senior Career Counsellor Priya at *Recruitment Institute Pune*. How can we assist you today with our practical HR & Recruitment courses, syllabus, and demo class details?`
+    const message = `Hello ${conv.caller_name || 'there'}! This is regarding your recent voice enquiry with our Senior Career Counsellor Priya at *Recruitment Institute Pune*. How can we assist you today with our practical HR & Recruitment courses, syllabus and demo class details?`
     window.open(`https://wa.me/${target}?text=${encodeURIComponent(message)}`, '_blank')
   }
 
@@ -681,7 +681,7 @@ export default function AdminContactsClient({
             Contact Submissions & Voice Leads
           </h2>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
-            Monitor real-time AI phone calls with Priya, booked counselling slots, and website enquiries.
+            Monitor real-time AI phone calls with Priya, booked counselling slots and website enquiries.
           </p>
         </div>
 
@@ -1109,7 +1109,7 @@ export default function AdminContactsClient({
               </h3>
               <p style={{ fontSize: 13, color: '#64748b', maxWidth: 450, margin: '0 auto 16px' }}>
                 When candidates click <strong>📞 Call Priya</strong> on the website, their voice conversations,
-                automated transcripts, and admissions notes will appear here automatically.
+                automated transcripts and admissions notes will appear here automatically.
               </p>
             </div>
           ) : (

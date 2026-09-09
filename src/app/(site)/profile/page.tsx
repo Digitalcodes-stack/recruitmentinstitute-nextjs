@@ -3,11 +3,12 @@ import { redirect } from 'next/navigation'
 import { getUserSession } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
-import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain, Phone, MapPin, FileText, Lock } from 'lucide-react'
+import { User, Mail, Shield, BookOpen, Users, LogOut, ChevronRight, Award, Briefcase, GraduationCap, ClipboardList, CalendarDays, Sparkles, Brain, Phone, MapPin, FileText, Lock, CheckCircle2 } from 'lucide-react'
 import StudentTrainingPanel from '@/components/site/StudentTrainingPanel'
 import AssignmentsPanel from '@/components/site/AssignmentsPanel'
 import BatchCountdown from '@/components/shared/BatchCountdown'
 import UserProfileClient from '@/components/site/UserProfileClient'
+import { listMyAssessments } from '@/lib/fastapiClient'
 
 export const metadata: Metadata = {
   title: 'Profile',
@@ -137,6 +138,51 @@ export default async function ProfilePage() {
           attendedCount: e.attendance.filter((a) => a.present).length,
         }))
     : []
+
+  const certificates = session.type === 'student'
+    ? await prisma.certificate.findMany({
+        where: {
+          enrollment: {
+            studentId: session.userId,
+          },
+        },
+        select: {
+          id: true,
+          certificateNo: true,
+          issuedAt: true,
+          pdfUrl: true,
+          finalScore: true,
+          enrollment: {
+            select: {
+              batchId: true,
+            },
+          },
+        },
+      })
+    : []
+
+  const certByBatchId = new Map(
+    certificates.map((c) => [
+      c.enrollment.batchId,
+      {
+        id: c.id,
+        certificateNumber: c.certificateNo,
+        issueDate: c.issuedAt,
+        pdfUrl: c.pdfUrl,
+        finalScore: c.finalScore,
+      },
+    ])
+  )
+  const certBatchIds = new Set(certificates.map((c) => c.enrollment.batchId))
+
+  let myAssessments: any[] = []
+  if (session.type === 'student') {
+    try {
+      myAssessments = await listMyAssessments()
+    } catch {
+      myAssessments = []
+    }
+  }
 
   const nextUpcomingBatch = enrollments
     .map((e) => e.batch)
@@ -322,7 +368,7 @@ export default async function ProfilePage() {
                   🎉 Congratulations! You&apos;ve completed all sessions of {c.courseTitle}
                 </h3>
                 <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.6, maxWidth: 640, marginBottom: 20 }}>
-                  You have attended all live classes. Complete your final AI-evaluated diagnostic assessment to test your mastery, unlock your verified completion certificate, and showcase your recruitment credentials.
+                  You have attended all live classes. Complete your final AI-evaluated diagnostic assessment to test your mastery, unlock your verified completion certificate and showcase your recruitment credentials.
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <Link
@@ -380,7 +426,7 @@ export default async function ProfilePage() {
                   Hello, {session.name.split(' ')[0]}!
                 </h3>
                 <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
-                  Access your courses, join the community, and explore our knowledge base below.
+                  Access your courses, join the community and explore our knowledge base below.
                 </p>
               </div>
             </div>
@@ -422,6 +468,165 @@ export default async function ProfilePage() {
                       )}
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* ── Course Completed — Final Assessment Section ── */}
+            {session.type === 'student' && completedCourses.length > 0 && (
+              <div style={{ marginBottom: 32 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                  <Sparkles style={{ width: 18, height: 18, color: '#7c3aed' }} />
+                  <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.01em' }}>
+                    Course Completed — Take Final Assessment
+                  </h3>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {completedCourses.map((c) => {
+                    const cert = certByBatchId.get(c.batchId)
+                    const hasCert = Boolean(cert)
+                    const attempt = myAssessments.find(
+                      (a: any) =>
+                        (a.courseId === c.courseId || a.course_id === c.courseId) &&
+                        a.percentage !== null &&
+                        a.percentage !== undefined
+                    )
+                    const hasTaken = Boolean(attempt)
+
+                    return (
+                      <div
+                        key={c.batchId}
+                        style={{
+                          background: 'linear-gradient(135deg, #ffffff 0%, #fbfbfe 100%)',
+                          border: '2px solid #ddd6fe',
+                          borderRadius: 20,
+                          padding: '24px',
+                          boxShadow: '0 10px 30px rgba(124, 58, 237, 0.08)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 20,
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        <div style={{ flex: '1 1 320px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: '#7c3aed', background: '#f5f3ff', border: '1px solid #ddd6fe', padding: '3px 10px', borderRadius: 999 }}>
+                              All {c.totalSessions} Sessions Complete
+                            </span>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '3px 10px', borderRadius: 999 }}>
+                              Attended {c.attendedCount}/{c.totalSessions}
+                            </span>
+                            {hasTaken && attempt && (
+                              <span style={{ fontSize: 11, fontWeight: 800, color: (attempt.percentage ?? 0) >= 60 ? '#059669' : '#d97706', background: (attempt.percentage ?? 0) >= 60 ? '#ecfdf5' : '#fffbeb', border: `1px solid ${(attempt.percentage ?? 0) >= 60 ? '#a7f3d0' : '#fde68a'}`, padding: '3px 10px', borderRadius: 999 }}>
+                                Assessment Score: {attempt.percentage}% ({(attempt.percentage ?? 0) >= 60 ? 'Passed' : 'Completed'})
+                              </span>
+                            )}
+                            {hasCert && cert && (
+                              <span style={{ fontSize: 11, fontWeight: 800, color: '#1e40af', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '3px 10px', borderRadius: 999 }}>
+                                Certificate #{cert.certificateNumber}
+                              </span>
+                            )}
+                          </div>
+                          <h4 style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginBottom: 4 }}>
+                            {c.courseTitle}
+                          </h4>
+                          <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.5, margin: 0 }}>
+                            Batch: <strong>{c.batchName}</strong>. You have completed all live sessions.
+                            {hasTaken
+                              ? ` You completed the final assessment with a score of ${attempt.percentage}%.`
+                              : ' Complete your final assessment to receive your verified completion certificate.'}
+                          </p>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          {hasCert && (
+                            <Link
+                              href="/profile/certificate"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 7,
+                                padding: '12px 20px',
+                                borderRadius: 12,
+                                background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
+                                color: '#ffffff',
+                                fontSize: 13.5,
+                                fontWeight: 700,
+                                textDecoration: 'none',
+                                boxShadow: '0 4px 12px rgba(5,150,105,0.25)',
+                              }}
+                            >
+                              <Award style={{ width: 16, height: 16 }} />
+                              View Certificate
+                            </Link>
+                          )}
+
+                          {hasTaken && attempt ? (
+                            <Link
+                              href={`/profile/assessments/${attempt.id}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 7,
+                                padding: '12px 20px',
+                                borderRadius: 12,
+                                background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                color: '#ffffff',
+                                fontSize: 13.5,
+                                fontWeight: 800,
+                                textDecoration: 'none',
+                                boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
+                              }}
+                            >
+                              <Brain style={{ width: 16, height: 16 }} />
+                              View Results
+                            </Link>
+                          ) : (
+                            <Link
+                              href={`/profile/assessments/take/${c.courseId}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 7,
+                                padding: '12px 22px',
+                                borderRadius: 12,
+                                background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+                                color: '#ffffff',
+                                fontSize: 13.5,
+                                fontWeight: 800,
+                                textDecoration: 'none',
+                                boxShadow: '0 6px 18px rgba(124,58,237,0.3)',
+                              }}
+                            >
+                              <Brain style={{ width: 16, height: 16 }} />
+                              Take Final Assessment
+                            </Link>
+                          )}
+
+                          <Link
+                            href="/profile/assessments"
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 6,
+                              padding: '11px 16px',
+                              borderRadius: 12,
+                              background: '#f8fafc',
+                              border: '1px solid #e2e8f0',
+                              color: '#475569',
+                              fontSize: 13,
+                              fontWeight: 700,
+                              textDecoration: 'none',
+                            }}
+                          >
+                            All Assessments
+                          </Link>
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -645,7 +850,7 @@ export default async function ProfilePage() {
                   <Users style={{ width: 22, height: 22, color: '#1E40AF' }} />
                 </div>
                 <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Community</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Ask questions, share insights, and connect with fellow HR professionals.</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Ask questions, share insights and connect with fellow HR professionals.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#1E40AF' }}>
                   Join Discussion <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>
@@ -656,7 +861,7 @@ export default async function ProfilePage() {
                   <BookOpen style={{ width: 22, height: 22, color: '#16A34A' }} />
                 </div>
                 <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Knowledge Base</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Explore articles, guides, and resources curated for recruitment professionals.</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>Explore articles, guides and resources curated for recruitment professionals.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#16A34A' }}>
                   Explore Now <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>
@@ -667,7 +872,7 @@ export default async function ProfilePage() {
                   <Award style={{ width: 22, height: 22, color: '#7C3AED' }} />
                 </div>
                 <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>My Courses</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View enrollment status, trainer assignment, and your live batch access.</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View enrollment status, trainer assignment and your live batch access.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#7C3AED' }}>
                   Open Dashboard <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>
@@ -679,7 +884,7 @@ export default async function ProfilePage() {
                     <Sparkles style={{ width: 22, height: 22, color: '#1E40AF' }} />
                   </div>
                   <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>AI Assessments</h4>
-                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View AI-analyzed results, personalized notes, and your study plan.</p>
+                  <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View AI-analyzed results, personalized notes and your study plan.</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#1E40AF' }}>
                     View Results <ChevronRight style={{ width: 13, height: 13 }} />
                   </div>
@@ -715,7 +920,7 @@ export default async function ProfilePage() {
                   <Award style={{ width: 22, height: 22, color: '#B45309' }} />
                 </div>
                 <h4 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', marginBottom: 6, letterSpacing: '-0.01em' }}>Course Certificate</h4>
-                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View, download, and print your official verified course completion certificate.</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.6, marginBottom: 16 }}>View, download and print your official verified course completion certificate.</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, fontWeight: 600, color: '#B45309' }}>
                   View Certificate <ChevronRight style={{ width: 13, height: 13 }} />
                 </div>

@@ -81,7 +81,7 @@ export default function RazorpayCheckoutModal({
     setErrorMessage('')
 
     if (!name.trim() || !email.trim() || !phone.trim()) {
-      setErrorMessage('Please fill in your full name, email address, and phone number.')
+      setErrorMessage('Please fill in your full name, email address and phone number.')
       return
     }
 

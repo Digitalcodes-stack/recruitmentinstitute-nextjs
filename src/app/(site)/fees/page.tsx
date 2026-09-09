@@ -113,7 +113,7 @@ export default async function FeesPage() {
                   </span>
                 </div>
                 <p className="text-xs text-sky-800 mt-1 leading-relaxed">
-                  Live instructor-led Zoom masterclasses, doubt clearing, lifetime recording access, and digital placement assistance.
+                  Live instructor-led Zoom masterclasses, doubt clearing, lifetime recording access and digital placement assistance.
                 </p>
               </div>
             </div>
@@ -130,7 +130,7 @@ export default async function FeesPage() {
                   </span>
                 </div>
                 <p className="text-xs text-amber-800 mt-1 leading-relaxed">
-                  In-person physical classroom training, daily mentor interaction, practical recruiter lab, and physical campus placement drives.
+                  In-person physical classroom training, daily mentor interaction, practical recruiter lab and physical campus placement drives.
                 </p>
               </div>
             </div>
@@ -299,7 +299,7 @@ export default async function FeesPage() {
               <div className="flex flex-col items-center gap-2">
                 <ShieldCheck className="w-10 h-10 text-brand-navy" />
                 <h4 className="font-bold text-slate-800 text-sm">Direct Online / Center Payment</h4>
-                <p className="text-xs text-slate-500">Pay securely via UPI, NetBanking, Credit Cards, or in-person at our Pune center.</p>
+                <p className="text-xs text-slate-500">Pay securely via UPI, NetBanking, Credit Cards or in-person at our Pune center.</p>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <Sparkles className="w-10 h-10 text-amber-500" />

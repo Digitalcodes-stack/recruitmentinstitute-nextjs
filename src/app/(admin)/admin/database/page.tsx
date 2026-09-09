@@ -80,7 +80,7 @@ export default async function DatabaseViewerPage({
           </div>
           <h2 className="text-2xl font-black tracking-tight text-white mb-2">Database Viewer</h2>
           <p className="text-[13px] leading-relaxed text-slate-400 max-w-xl">
-            Inspect approved local PostgreSQL tables, browse row data, and review schema structure without leaving the admin panel.
+            Inspect approved local PostgreSQL tables, browse row data and review schema structure without leaving the admin panel.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-[11px] font-medium text-slate-300">{total} rows in selected table</span>

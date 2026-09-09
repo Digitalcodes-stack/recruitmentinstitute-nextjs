@@ -343,7 +343,7 @@ export default function AdminBlogForm({ blog }: Props) {
                     value={form.customScript}
                     onChange={(e) => set('customScript', e.target.value)}
                     rows={7}
-                    placeholder={`<script>\n  // Custom tracking, analytics, or page-specific JS\n  console.log('Page loaded');\n</script>`}
+                    placeholder={`<script>\n  // Custom tracking, analytics or page-specific JS\n  console.log('Page loaded');\n</script>`}
                     style={{
                       ...inputStyle,
                       resize:      'vertical',

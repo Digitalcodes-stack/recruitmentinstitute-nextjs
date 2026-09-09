@@ -144,7 +144,7 @@ export default async function TrainerAnalyticsPage() {
           Batch Performance & Diagnostic Analytics
         </h1>
         <p style={{ fontSize: 13.5, color: '#64748b', marginTop: 4 }}>
-          Comprehensive telemetry on batch engagement, average assignment scores, attendance trends, and AI-identified weak topics.
+          Comprehensive telemetry on batch engagement, average assignment scores, attendance trends and AI-identified weak topics.
         </p>
       </div>
 

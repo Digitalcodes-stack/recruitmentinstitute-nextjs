@@ -48,7 +48,7 @@ export default async function TrainerSessionsPage({
           Live Sessions & Class Scheduler
         </h1>
         <p style={{ fontSize: 13.5, color: '#64748b', marginTop: 4 }}>
-          Schedule live lectures, launch Google Meet / Zoom rooms, manage class timings, and mark student attendance.
+          Schedule live lectures, launch Google Meet / Zoom rooms, manage class timings and mark student attendance.
         </p>
       </div>
 

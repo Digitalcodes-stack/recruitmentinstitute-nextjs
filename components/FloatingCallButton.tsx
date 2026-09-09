@@ -15,7 +15,7 @@ const COUNSELLORS = [
   },
   {
     name: 'Sneha',
-    greeting: `Hello! Sneha here from Recruitment Institute. I am calling to personally welcome you and answer any questions you might have about our courses. Our programs are designed by industry experts with real placement support. Are you looking for a full-time HR career, or perhaps building your own recruitment business? I am here to guide you step by step!`,
+    greeting: `Hello! Sneha here from Recruitment Institute. I am calling to personally welcome you and answer any questions you might have about our courses. Our programs are designed by industry experts with real placement support. Are you looking for a full-time HR career or perhaps building your own recruitment business? I am here to guide you step by step!`,
   },
   {
     name: 'Meera',
@@ -23,11 +23,11 @@ const COUNSELLORS = [
   },
   {
     name: 'Divya',
-    greeting: `Hello! I am Divya, your dedicated career counsellor at Recruitment Institute. I am so glad you are here! Our institute has been training India's top HR professionals for years, and I am here to make sure you get the best guidance. We offer Boolean search, ATS tools, sourcing strategies, and real placement support. Shall I share more details about our upcoming batches?`,
+    greeting: `Hello! I am Divya, your dedicated career counsellor at Recruitment Institute. I am so glad you are here! Our institute has been training India's top HR professionals for years and I am here to make sure you get the best guidance. We offer Boolean search, ATS tools, sourcing strategies and real placement support. Shall I share more details about our upcoming batches?`,
   },
   {
     name: 'Riya',
-    greeting: `Hi! Riya speaking from Recruitment Institute. Welcome! We are India's number one recruitment academy and I am personally reaching out to help you kickstart your HR career. Our students get placed within weeks of completing the course. I would love to understand what you are looking for. Are you interested in our online batch, offline, or our fast-track weekend program?`,
+    greeting: `Hi! Riya speaking from Recruitment Institute. Welcome! We are India's number one recruitment academy and I am personally reaching out to help you kickstart your HR career. Our students get placed within weeks of completing the course. I would love to understand what you are looking for. Are you interested in our online batch, offline or our fast-track weekend program?`,
   },
 ]
 

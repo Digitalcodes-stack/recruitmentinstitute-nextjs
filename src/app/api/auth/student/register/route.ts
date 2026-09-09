@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { hashPassword, signToken, setUserCookie } from '@/lib/auth'
+import { hashPassword, signToken, setUserCookie, clearAdminCookie } from '@/lib/auth'
 import { studentRegisterSchema } from '@/lib/validations'
 import { sendRegistrationEmail } from '@/lib/email'
 
@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
     })
 
     response.cookies.set(setUserCookie(token))
+    response.cookies.set(clearAdminCookie())
     return response
   } catch (error) {
     console.error('Student registration error:', error)

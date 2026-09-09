@@ -1,9 +1,9 @@
 /**
- * Anti-Spam, Abuse Protection, and Phone Validation for "Request a Call"
+ * Anti-Spam, Abuse Protection and Phone Validation for "Request a Call"
  * 
  * Rules enforced:
- * 1. Strict Indian mobile format (+91 followed by 10 digits starting with 6, 7, 8, or 9)
- * 2. Block fake, dummy, sequential, and repetitive phone numbers
+ * 1. Strict Indian mobile format (+91 followed by 10 digits starting with 6, 7, 8 or 9)
+ * 2. Block fake, dummy, sequential and repetitive phone numbers
  * 3. Maximum 3 call requests per phone number per hour
  * 4. Maximum 5 call requests per phone number per day
  * 5. Maximum 10 requests per IP address per hour
@@ -50,20 +50,20 @@ export function validateIndianPhoneNumber(raw: string): {
     }
   }
 
-  // Extract digits only and strip redundant prefixes e.g. 91, 0, or double 9191
+  // Extract digits only and strip redundant prefixes e.g. 91, 0 or double 9191
   let digits = raw.replace(/\D/g, '').trim()
   if (digits.startsWith('9191') && digits.length === 14) digits = digits.slice(4)
   else if (digits.startsWith('91') && digits.length === 12) digits = digits.slice(2)
   else if (digits.startsWith('0') && digits.length === 11) digits = digits.slice(1)
 
-  // Must be 10 digits starting with 6, 7, 8, or 9
+  // Must be 10 digits starting with 6, 7, 8 or 9
   if (digits.length !== 10 || !/^[6-9]/.test(digits)) {
     return {
       isValid: false,
       formatted: raw,
       raw10: '',
       display: raw,
-      error: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.',
+      error: 'Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.',
     }
   }
 

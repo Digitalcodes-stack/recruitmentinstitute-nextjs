@@ -3,6 +3,7 @@
  * declared weekly availability (Sat/Sun full day, weekdays 7-11 PM IST).
  * Run: npx tsx scripts/seed-top-trainers.ts
  */
+import 'dotenv/config'
 import { prisma } from '../lib/prisma'
 import bcrypt from 'bcryptjs'
 
@@ -19,17 +20,25 @@ async function main() {
       name: 'Brahmita Nayak',
       email: 'brahmita.nayak@institute.com',
       phone: '9870001005',
-      specialization: 'HR & Soft Skills',
-      bio: 'HR and soft-skills trainer with 15+ years of experience, having trained 1000+ professionals across recruitment and corporate HR programs.',
+      specialization: 'HR & Soft Skills Specialist',
+      bio: 'Senior HR strategist and soft-skills mentor with 22+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
       image: '/assets/images/trainers/brahmita_mam.jpg',
     },
     {
       name: 'Shesha Shhiv Mohanty',
       email: 'shesha.mohanty@institute.com',
       phone: '9870001006',
-      specialization: 'AI Transformation & Recruitment',
-      bio: 'AI transformation and recruitment trainer with 15+ years of experience, having trained 1000+ professionals across HR tech and talent acquisition.',
+      specialization: 'AI Transformation & Recruitment Specialist',
+      bio: 'AI recruitment architect and executive talent intelligence strategist with 22+ years engineering high-velocity sourcing pipelines, automated candidate discovery and tech recruiting frameworks for global enterprises.',
       image: '/assets/images/trainers/shesha_sir.jpg',
+    },
+    {
+      name: 'Debabrata Pattanayak',
+      email: 'dpattanayak@institute.com',
+      phone: '9870001007',
+      specialization: 'Executive HR Leadership & Talent Strategy',
+      bio: 'Director of Human Resources (Cluster) at The Park Hotels, Apeejay Surrendra Group with 22+ years of leadership in corporate HR strategy, organizational development and luxury hospitality talent acquisition.',
+      image: '/assets/images/trainers/debabrata_pattanayak.jpg',
     },
   ]
 

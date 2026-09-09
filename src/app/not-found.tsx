@@ -75,7 +75,7 @@ export default function NotFound() {
             color: '#64748B',
           }}
         >
-          The page you&apos;re looking for may have moved, been renamed, or no longer exists.
+          The page you&apos;re looking for may have moved, been renamed or no longer exists.
           Use the buttons below to get back to the main site.
         </p>
 

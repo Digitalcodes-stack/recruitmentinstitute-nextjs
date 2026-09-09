@@ -24,11 +24,11 @@ export default async function AdminSettingsPage() {
   if (!session || session.type !== 'admin') redirect('/admin/login')
 
   const sections = [
-    { title: 'Profile Settings', desc: 'Update admin name, email, and profile information.', icon: Users2, bg: '#eff6ff', color: '#2563eb' },
-    { title: 'Security Settings', desc: 'Manage passwords, sessions, and access protection.', icon: LockKeyhole, bg: '#fff1f2', color: '#e11d48' },
+    { title: 'Profile Settings', desc: 'Update admin name, email and profile information.', icon: Users2, bg: '#eff6ff', color: '#2563eb' },
+    { title: 'Security Settings', desc: 'Manage passwords, sessions and access protection.', icon: LockKeyhole, bg: '#fff1f2', color: '#e11d48' },
     { title: 'Role & Permissions', desc: 'Review permissions for different admin roles.', icon: ShieldCheck, bg: '#f0fdf4', color: '#16a34a' },
     { title: 'Notification Settings', desc: 'Control email and system notifications.', icon: BellRing, bg: '#fefce8', color: '#ca8a04' },
-    { title: 'Branding Settings', desc: 'Adjust colors, logo, and portal branding.', icon: Paintbrush, bg: '#faf5ff', color: '#7c3aed' },
+    { title: 'Branding Settings', desc: 'Adjust colors, logo and portal branding.', icon: Paintbrush, bg: '#faf5ff', color: '#7c3aed' },
     { title: 'System Preferences', desc: 'Tweak platform defaults and admin behavior.', icon: Laptop, bg: '#f0f9ff', color: '#0284c7' },
   ]
 
@@ -152,7 +152,7 @@ export default async function AdminSettingsPage() {
                 marginTop: 12, maxWidth: 520,
                 fontSize: 14, lineHeight: 1.8, color: '#94b8d8',
               }}>
-                Manage access, branding, notifications, and live automation from a single workspace built for daily admin operations.
+                Manage access, branding, notifications and live automation from a single workspace built for daily admin operations.
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>

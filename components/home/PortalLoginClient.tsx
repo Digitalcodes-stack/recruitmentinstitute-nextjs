@@ -53,7 +53,7 @@ export default function PortalLoginClient({
   endpoint = '/api/auth/student/login',
   title = 'Student Learning Portal',
   subtitle = 'Sign in or register to access your courses',
-  helperText = 'Sign in to access your sessions, syllabus downloads, and assessments.',
+  helperText = 'Sign in to access your sessions, syllabus downloads and assessments.',
   ctaLabel = 'Student',
   joinHref = '/student-membership',
 }: {
@@ -278,7 +278,7 @@ export default function PortalLoginClient({
                       Welcome Back, Student
                     </h2>
                     <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
-                      Enter your credentials to access your live classes, recordings, and resources.
+                      Enter your credentials to access your live classes, recordings and resources.
                     </p>
                   </div>
 
@@ -366,7 +366,7 @@ export default function PortalLoginClient({
                       Register as a Student
                     </h2>
                     <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>
-                      Instant access to course syllabi, live batch schedules, and free AI toolkits.
+                      Instant access to course syllabi, live batch schedules and free AI toolkits.
                     </p>
                   </div>
 

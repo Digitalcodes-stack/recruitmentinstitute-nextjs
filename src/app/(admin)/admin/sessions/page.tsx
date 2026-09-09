@@ -77,7 +77,7 @@ export default async function AdminSessionsPage({
             Class Sessions Hub
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
-            Coordinate Google Meet live classes, schedule recurring lectures, and inspect attendance.
+            Coordinate Google Meet live classes, schedule recurring lectures and inspect attendance.
           </p>
         </div>
 

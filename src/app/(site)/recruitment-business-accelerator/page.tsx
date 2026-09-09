@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const course = await getDynamicCourseData('entrepreneurship')
   const pageTitle = 'Recruitment Business Accelerator | Build, Launch & Scale Your Agency'
   const pageDesc =
-    'Build. Launch. Acquire Clients. Deliver. Scale. From Zero to a Profitable Recruitment Agency — Complete blueprint, legal frameworks, client acquisition engines, and hands-on founder mentoring.'
+    'Build. Launch. Acquire Clients. Deliver. Scale. From Zero to a Profitable Recruitment Agency — Complete blueprint, legal frameworks, client acquisition engines and hands-on founder mentoring.'
 
   return {
     title: `${pageTitle} | Recruitment Institute`,

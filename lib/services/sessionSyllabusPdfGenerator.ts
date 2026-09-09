@@ -212,7 +212,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
       theme: 'Deep-Dive Concept Delivery & Frameworks',
       talkingPoints: [
         `Walk through the step-by-step workflow for ${topics[0]?.title || moduleTitle}.`,
-        'Demonstrate real-time screen sharing: live Boolean strings, intake forms, or ATS pipeline configuration.',
+        'Demonstrate real-time screen sharing: live Boolean strings, intake forms or ATS pipeline configuration.',
         'Contrast junior vs. senior recruiter methods: highlight how high-performers avoid time-wasting traps.',
       ],
     },
@@ -222,7 +222,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
       talkingPoints: [
         'Execute a live mock demonstration using real candidate profiles or job descriptions.',
         'Call on 2-3 students to suggest search parameters or candidate objection responses in real time.',
-        'Emphasize compliance, candidate experience, and metric tracking (Submittal-to-Interview ratio).',
+        'Emphasize compliance, candidate experience and metric tracking (Submittal-to-Interview ratio).',
       ],
     },
     {
@@ -248,7 +248,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
     {
       concept: 'Predictive Screening & Eliminating Offer Dropouts',
       explanation:
-        'Assessing intent, compensation expectations, and competing offers during early stages ensures only high-probability candidates reach the offer table.',
+        'Assessing intent, compensation expectations and competing offers during early stages ensures only high-probability candidates reach the offer table.',
       realWorldExample:
         'Case Study: Enterprise IT services firm increased joining ratio from 68% to 89% by embedding counter-offer risk audits and transparent notice period buy-out protocols during initial screening calls.',
     },
@@ -280,7 +280,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
 
   // 7. Assessment & Discussion Points
   const assessmentQuestions = [
-    `What are the top 3 failure points when recruiters execute "${moduleTitle}", and how do you mitigate them?`,
+    `What are the top 3 failure points when recruiters execute "${moduleTitle}" and how do you mitigate them?`,
     'How do you adjust your recruitment strategy when candidate response rate drops below 15%?',
     'Explain how to measure Return on Effort (ROE) between active outbound sourcing vs. inbound portal applicants.',
     'Role-play question: How would you handle a hiring manager who insists on unrealistic candidate criteria for an urgent requisition?',
@@ -289,7 +289,7 @@ async function assembleSessionContent(sessionId: number): Promise<SessionPdfData
   // 8. Summary & Key Takeaways
   const summaryTakeaways = [
     'Consistency in execution is what separates average recruiters from top 1% executive talent specialists.',
-    'Always document your candidate communication trail, objection handling points, and submittal feedback in the ATS.',
+    'Always document your candidate communication trail, objection handling points and submittal feedback in the ATS.',
     'Complete today\'s practical assignment and submit it via your student portal before the next live session.',
   ]
 
@@ -811,7 +811,7 @@ function renderPdf(data: SessionPdfData, outputPath: string): Promise<Buffer> {
 
 /**
  * Ensures that the syllabus PDF for a session is generated and saved.
- * Returns the public URL, file path, and buffer.
+ * Returns the public URL, file path and buffer.
  */
 export async function ensureSessionSyllabusPdf(
   sessionId: number,

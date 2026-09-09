@@ -8,7 +8,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   title: 'About Us - India\'s #1 HR & Recruitment Training Institute',
   description:
-    'Learn about Recruitment Institute - Pune\'s leading HR and recruitment training academy. Our mission, vision, expert trainers, and 10+ years of transforming HR careers.',
+    'Learn about Recruitment Institute - Pune\'s leading HR and recruitment training academy. Our mission, vision, expert trainers and 10+ years of transforming HR careers.',
   keywords: 'about recruitment institute, HR training institute pune, recruitment academy india, HR experts pune',
   alternates: { canonical: `${BASE_URL}/about` },
   openGraph: {

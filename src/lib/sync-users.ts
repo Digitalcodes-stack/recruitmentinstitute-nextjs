@@ -1,5 +1,5 @@
 /**
- * Deprecated helper: The platform now strictly uses Student, Trainer, and Admin roles.
+ * Deprecated helper: The platform now strictly uses Student, Trainer and Admin roles.
  * All registrations directly create active Student records.
  */
 export async function syncApprovedCandidatesToStudents(): Promise<void> {

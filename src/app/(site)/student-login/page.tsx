@@ -14,7 +14,7 @@ export default function StudentLoginPage() {
       endpoint="/api/auth/student/login"
       title="Student Membership Login"
       subtitle="Access Your Learning Portal"
-      helperText="Sign in to access your dashboard, course materials, and student resources."
+      helperText="Sign in to access your dashboard, course materials and student resources."
       ctaLabel="Student"
       joinHref="/student-membership"
     />

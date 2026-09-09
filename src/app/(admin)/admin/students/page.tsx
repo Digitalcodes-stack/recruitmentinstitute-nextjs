@@ -80,7 +80,7 @@ export default async function AdminStudentsPage() {
             Enrolled Students
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
-            Inspect student profiles, assigned cohorts, active access status, and academic coursework.
+            Inspect student profiles, assigned cohorts, active access status and academic coursework.
           </p>
         </div>
 

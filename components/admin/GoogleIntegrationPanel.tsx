@@ -127,7 +127,7 @@ export default function GoogleIntegrationPanel({
           </div>
           <div>
             <p style={{ fontSize: 16, fontWeight: 800, color: '#ffffff', lineHeight: 1.3 }}>Google Meet Automation</p>
-            <p style={{ fontSize: 12.5, color: '#94b8d8', marginTop: 4 }}>Calendar sync, Meet generation, invitations, and reminders at a glance.</p>
+            <p style={{ fontSize: 12.5, color: '#94b8d8', marginTop: 4 }}>Calendar sync, Meet generation, invitations and reminders at a glance.</p>
           </div>
         </div>
 

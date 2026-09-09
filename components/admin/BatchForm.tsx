@@ -301,7 +301,7 @@ export default function BatchForm({ courses, trainers, batch }: Props) {
             {isEdit ? `Edit: ${batch!.name}` : 'New Batch'}
           </h2>
           <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 24 }}>
-            {isEdit ? 'Update batch schedule, trainer, or status.' : 'Create a batch — sessions will be auto-generated from the course syllabus.'}
+            {isEdit ? 'Update batch schedule, trainer or status.' : 'Create a batch — sessions will be auto-generated from the course syllabus.'}
           </p>
 
           {apiError && (

@@ -128,7 +128,7 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
   async function createSeries(e: React.FormEvent) {
     e.preventDefault()
     if (!seriesForm.title || !seriesForm.startDate || !seriesForm.startTime || !seriesForm.endTime || seriesForm.daysOfWeek.length === 0) {
-      setSeriesError('Title, start date, times, and at least one day are required')
+      setSeriesError('Title, start date, times and at least one day are required')
       return
     }
     setCreatingSeries(true)
@@ -337,7 +337,7 @@ export default function BatchDetail({ batch, enrollments, sessions, availableStu
                 <Sparkles style={{ width: 13, height: 13 }} /> Auto-Generate from Course Syllabus
               </div>
               <p style={{ fontSize: 11.5, color: '#475569', margin: 0 }}>
-                Generates one live session per module for <strong>{batch.course.title}</strong>, assigns Google Meet codes, and schedules dates across your chosen class days.
+                Generates one live session per module for <strong>{batch.course.title}</strong>, assigns Google Meet codes and schedules dates across your chosen class days.
               </p>
 
               <div>

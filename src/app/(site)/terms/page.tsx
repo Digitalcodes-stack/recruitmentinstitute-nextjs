@@ -15,14 +15,14 @@ export default function TermsPage() {
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">1. Acceptance of Terms</h2>
           <p>
-            By accessing or using the services, website, or portal of Recruitment Institute, you agree to be bound by these Terms of Service.
+            By accessing or using the services, website or portal of Recruitment Institute, you agree to be bound by these Terms of Service.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">2. Training & Certifications</h2>
           <p>
-            Course materials, assignments, and certificates are provided for personal educational use. Reproduction or commercial redistribution without prior written consent is strictly prohibited.
+            Course materials, assignments and certificates are provided for personal educational use. Reproduction or commercial redistribution without prior written consent is strictly prohibited.
           </p>
         </section>
 

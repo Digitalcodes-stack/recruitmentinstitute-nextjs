@@ -133,7 +133,7 @@ export default function TrainerLoginClient() {
             Trainer Portal Login
           </h1>
           <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.7, maxWidth: 440 }}>
-            Manage your assigned batches, sessions, and student attendance from a single dashboard.
+            Manage your assigned batches, sessions and student attendance from a single dashboard.
           </p>
         </div>
 
@@ -149,7 +149,7 @@ export default function TrainerLoginClient() {
             <div style={{ background: '#fff', borderRadius: 22, border: '1.5px solid #E2E8F0', boxShadow: '0 8px 40px rgba(15,23,42,.09)', padding: '32px 32px 36px' }}>
               <div style={{ marginBottom: 28 }}>
                 <h2 style={{ fontSize: 22, fontWeight: 900, color: '#0F172A', letterSpacing: '-.025em', margin: '0 0 6px' }}>Sign In to Your Trainer Dashboard</h2>
-                <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>Manage batches, sessions, and attendance</p>
+                <p style={{ fontSize: 13, color: '#64748B', margin: 0 }}>Manage batches, sessions and attendance</p>
               </div>
 
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>

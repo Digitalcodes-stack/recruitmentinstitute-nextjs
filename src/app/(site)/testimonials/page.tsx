@@ -70,7 +70,7 @@ export default async function TestimonialsPage() {
             </h1>
 
             <p style={{ fontSize: 17, color: '#94A3B8', lineHeight: 1.8, marginBottom: 40 }}>
-              Real stories from HR professionals, freshers, and career switchers who trained with us and built successful recruitment careers.
+              Real stories from HR professionals, freshers and career switchers who trained with us and built successful recruitment careers.
             </p>
 
             {/* Stats row */}

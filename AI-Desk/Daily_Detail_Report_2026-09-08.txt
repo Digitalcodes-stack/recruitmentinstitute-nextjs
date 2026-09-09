@@ -1,0 +1,270 @@
+================================================================================
+RECRUITMENT INSTITUTE & AI-DESK — DEEP DETAILED ENGINEERING REPORT
+Date: Tuesday, 8 September 2026
+Generated: 2026-09-08, 21:10 IST
+Target Applications: Next.js Web Application & FastAPI AI-Desk Voice Platform
+Telephony / AI Services: Gemini Live BidiGenerateContent, Plivo WebRTC / AudioStream
+GCP Project: recruitmentinstitute-501106 (Region: asia-south1)
+================================================================================
+
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Today's engineering sprint tackled complex voice AI conversational dynamics, real-time
+multilingual language matching, active listening & turn-taking algorithms, audio buffer
+interruption (barge-in), email communication design, state-to-counsellor routing,
+and full-stack responsive web enhancements.
+
+Key Problems Solved Today:
+1. Counsellor Talking Too Much / Not Listening:
+   - Eliminated long monologues and talking over the caller.
+   - Implemented strict 1–2 sentence brevity limits (15–20 words max per turn).
+   - Shortened initial greeting to a crisp 1-sentence prompt (~2–3 seconds), yielding
+     the conversational floor to the caller immediately.
+   - Tuned Gemini Live VAD (Voice Activity Detection) silence duration from 1400ms
+     down to 800ms for natural, responsive conversational cadence.
+   - Fixed audio buffer flushing so that caller interruption/barge-in immediately
+     stops AI playback in real time.
+
+2. Dynamic Real-Time Language Matching (Marathi / Hindi / English):
+   - Removed rigid system prompt directives that previously commanded Gemini to
+     "speak exclusively in one language and refuse to switch".
+   - Architected a dynamic real-time language detection and mirroring engine:
+     * Caller speaks Marathi -> AI replies in authentic, polite Marathi.
+     * Caller speaks Hindi / Hinglish -> AI replies in warm, natural Hindi.
+     * Caller speaks English -> AI replies in clear, natural Indian English.
+     * Mid-call language switches are mirrored seamlessly and instantly without commentary.
+
+3. Human-like Indian Female Counsellor Persona:
+   - Tuned Pooja Kulkarni's voice persona to sound like an authentic, empathetic,
+     educated Indian woman counsellor from Pune.
+   - Integrated natural Indian spoken conversational markers across Marathi, Hindi,
+     and English ("हो नक्कीच", "बरोबर", "जी बिल्कुल", "हाँ जी", "Sure!", "Makes sense").
+   - Strictly banned robotic AI cliches ("As an AI model", "How may I assist you?").
+
+4. Elimination of Premature Disconnect Bug:
+   - Fixed a critical flaw where words like "email" and "ईमेल" in closing phrase detection
+     caused calls to hang up prematurely whenever the counsellor mentioned emailing syllabus.
+
+5. Premium Post-Call Follow-up Email System:
+   - Built a modern, high-converting responsive HTML email template for post-call
+     follow-ups containing course highlights, personalized greetings, and next steps.
+
+6. State-Based Counsellor Mapping & UI Cleanup:
+   - Mapped all 36 Indian States/UTs to dedicated regional counsellors.
+   - Fixed Odisha mapping from Bengali to Odia.
+   - Resolved dual floating call buttons (Call Priya & Call Pooja) to show a single button.
+   - Overhauled mobile responsiveness across header, topbar, and enquiry modals.
+
+
+--------------------------------------------------------------------------------
+2. DETAILED ARCHITECTURAL & VOICE SYSTEM INVESTIGATION
+--------------------------------------------------------------------------------
+
+A. Analysis of Why the AI Counsellor Was "Mostly Talking and Not Listening":
+-----------------------------------------------------------------------------
+1. Opening Line Overload:
+   - In `gemini_bridge.py`, `_trigger_opening_line()` was transmitting a 3-sentence instruction:
+     "नमस्कार! मी रिक्रूटमेंट इन्स्टिट्यूटमधून पूजा बोलत आहे. तुम्ही आमच्या प्रॅक्टिकल
+      रिक्रूटमेंट आणि एचआर ट्रेनिंगसाठी कॉल विनंती केली होती, म्हणून मी लगेच कॉल केला आहे.
+      कसे आहात तुम्ही?"
+   - Because this greeting took 8–10 seconds to generate and speak, it sounded like a
+     pre-recorded broadcast rather than a live conversational partner.
+
+2. Lack of Strict Length Guardrails:
+   - The original system prompt detailed 7 comprehensive conversational stages
+     (Syllabus, Boolean search, ATS, Portals, Placements, FAQs, Slot booking).
+   - Without a hard constraint on sentence count, the LLM delivered 4–6 sentence
+     mini-lectures every turn, overwhelming the caller.
+
+3. VAD Silence Duration & Sensitivity Lag:
+   - `gemini_bridge.py` had configured:
+       silenceDurationMs: 1400
+       endOfSpeechSensitivity: "END_SENSITIVITY_LOW"
+   - Requiring 1.4 seconds of absolute silence before recognizing turn completion
+     caused unnatural pauses, sluggishness, and delayed responses.
+
+4. Audio Buffer Barge-in Guard Flaw:
+   - When Gemini Live flagged an interruption (`server_content.get("interrupted")`),
+     the code previously had a guard: `if self._opening_greeting_delivered:`.
+   - Because `_opening_greeting_delivered` was only set upon `turnComplete`, if the
+     caller said "Hello? Hello Pooja?" during the opening greeting, barge-in was
+     completely suppressed! The bot continued talking over the user.
+
+B. Analysis of Why Language Matching Was Broken:
+------------------------------------------------
+1. In `prompt_builder.py`, the generated prompt contained the following header:
+   "# 🚨 ABSOLUTE HIGHEST PRIORITY DIRECTIVE: MANDATORY LANGUAGE REQUIREMENT (MARATHI)
+    - YOU MUST SPEAK EXCLUSIVELY IN MARATHI FROM THE VERY FIRST WORD UNTIL THE CALL ENDS.
+    - DO NOT DEFAULT TO ENGLISH. DO NOT INTRODUCE YOURSELF IN ENGLISH.
+    - Only switch to English if the caller explicitly instructs you: 'Can you speak in English?'.
+    - Otherwise, 100% of your responses must be in Marathi."
+2. Result: Even when the candidate greeted or responded in Hindi ("हाँ जी, मुझे कोर्स के बारे में जानना है")
+   or in English ("Hello, could you explain the fee structure?"), Gemini was explicitly
+   forbidden by the system instruction from switching languages.
+
+
+--------------------------------------------------------------------------------
+3. DETAILED IMPLEMENTATION & CODE CHANGES
+--------------------------------------------------------------------------------
+
+TASK 1: VOICE PROMPT ARCHITECTURE — DYNAMIC MULTILINGUAL MATCHING
+-----------------------------------------------------------------
+- File Modified: `AI-Desk/app/services/prompt_builder.py`
+- Implemented Section: `🌐 1. CRITICAL PRIORITY: DYNAMIC REAL-TIME LANGUAGE MATCHING`
+- Detailed Rules Enforced:
+  1. Default Regional Greeting: Call commences with the assigned regional greeting
+     (e.g., Marathi for Maharashtra, Hindi for Delhi, Kannada for Karnataka).
+  2. Active Real-time Detection & Mirroring:
+     - Detects the exact language spoken by the caller from their very first utterance.
+     - Marathi spoken -> AI immediately speaks authentic, polite Marathi.
+     - Hindi / Hinglish spoken -> AI immediately speaks warm, natural Hindi.
+     - English spoken -> AI immediately speaks clear, professional Indian English.
+     - Regional languages (Tamil, Telugu, Bengali, Odia, Gujarati, etc.) -> Smoothly matched.
+  3. Seamless Mid-Conversation Switching:
+     - When the caller switches languages mid-call, the AI immediately switches on that
+       exact turn without comment (no "Sure, I will speak in Hindi now").
+  4. Industry Terminology:
+     - Allows standard recruitment terms ("HR", "ATS", "Naukri", "LinkedIn", "Boolean search",
+       "Placement", "Batch") to blend naturally into conversational flow.
+
+TASK 2: ACTIVE LISTENING & HUMAN TURN-TAKING CONSTRAINTS
+--------------------------------------------------------
+- File Modified: `AI-Desk/app/services/prompt_builder.py`
+- Implemented Section: `🎧 2. ACTIVE LISTENING & NATURAL HUMAN TURN-TAKING`
+- Key Rules Enforced:
+  1. Strict Brevity Limit: Maximum 1 to 2 short sentences per turn (15–20 words max).
+  2. Stop Talking Immediately: If caller speaks or makes a sound while AI is talking,
+     immediately cease speaking and listen attentively.
+  3. One Question at a Time: Never ask compound questions. Ask at most 1 simple question
+     and wait for the candidate's answer.
+  4. Direct, Concise Answers: Direct 1-sentence answers to questions about fees, duration,
+     or placement support.
+
+TASK 3: AUTHENTIC INDIAN FEMALE COUNSELLOR DEMEANOUR
+----------------------------------------------------
+- File Modified: `AI-Desk/app/services/prompt_builder.py`
+- Persona Specification:
+  * Name: Pooja Kulkarni (or assigned regional counsellor)
+  * Role: Senior Career Counsellor at Recruitment Institute, Pune
+  * Tone: Warm, empathetic, polite, encouraging, professional Indian woman counsellor.
+  * Conversational Markers:
+    - Marathi: "हो नक्कीच", "बरोबर", "हो, अगदी बरोबर", "अच्छा", "नक्की सांगेन", "काहीच काळजी करू नका", "कळलं मला"
+    - Hindi: "जी बिल्कुल", "हाँ जी", "अरे बिल्कुल", "अच्छा, समझ गई", "हाँ सही बात है", "बिल्कुल चिंता मत कीजिए"
+    - English / Hinglish: "Sure!", "Got it!", "Right, right", "Haan, absolutely!", "Actually...", "Don't worry at all"
+  * Natural deflection if asked if AI:
+    - Marathi: "(सहज हसत) अरे नाही नाही, मी पूजा बोलत आहे आमच्या पुणे ऑफिसमधून! काय झालं?"
+    - Hindi: "(हँसते हुए) अरे नहीं नहीं, मैं पूजा बात कर रही हूँ हमारे पुणे ऑफिस से! ऐसा क्यों लगा आपको?"
+    - English: "(laughs warmly) No, no, I'm Pooja! I'm calling directly from our Pune admissions office. What made you ask?"
+
+TASK 4: GEMINI LIVE BRIDGE REFINEMENTS & VAD TUNING
+---------------------------------------------------
+- File Modified: `AI-Desk/app/services/gemini_bridge.py`
+- Setup Message Changes:
+  * silenceDurationMs: Reduced from 1400ms to 800ms.
+  * endOfSpeechSensitivity: Changed to "END_SENSITIVITY_DEFAULT".
+  * Selected Voice: "Kore" for female counsellors (Pooja, Anjali, Sneha), "Puck" for male (Vikram).
+- Opening Greeting Changes:
+  * Replaced all long multi-sentence greeting instructions with concise 1-sentence openings:
+    - Marathi: "'नमस्कार {caller_first}! मी {inst_company}मधून {counselor} बोलतेय. कशी मदत करू शकते तुम्हाला?'"
+    - Hindi: "'नमस्ते {caller_first}! मैं {inst_company} से {counselor} बात कर रही हूँ। कैसे हैं आप?'"
+    - English: "'Hi {caller_first}! {counselor} here from {inst_company}. How are you doing today?'"
+    - Appended explicit directive: "[Say ONLY this one sentence, then STOP speaking immediately and LISTEN attentively to the caller.]"
+- Immediate Interruption (Barge-in):
+  * When `server_content.get("interrupted")` fires, sends `{"event": "clearAudio"}` immediately
+    without waiting for opening greeting completion.
+  * Flushes pending assistant text chunks to prevent stale transcripts.
+
+TASK 5: PREMATURE DISCONNECT BUG ELIMINATION
+--------------------------------------------
+- File Modified: `AI-Desk/app/services/gemini_bridge.py`
+- Bug: `closing_phrases` previously included `"email"`, `"ईमेल"`, and `"registered email"`.
+  When Pooja stated: "I will email the syllabus to your registered email", the substring
+  "email" matched, triggering `_delayed_call_hangup(delay_seconds=2.2)`!
+- Fix: Purged "email", "ईमेल", "admission request", etc. from closing trigger phrases.
+- New Trigger: Call disconnect now only occurs if the caller expressed purchase/admission intent
+  (`_closing_triggered = True`) or an explicit farewell statement is uttered
+  ("have a wonderful day", "दिवस खूप छान जावो", "आपका दिन बहुत शुभ हो").
+
+TASK 6: REFERENCE MASTER PROMPT ALIGNMENT
+-----------------------------------------
+- File Modified: `AI-Desk/app/prompts/rupali_patil_master_prompt.py`
+- Updated identity and speaking style to match the new dynamic language matching
+  and active listening architecture:
+  * Short spoken turns (max 1–2 short sentences).
+  * Real-time mirroring of Marathi, Hindi/Hinglish, and English.
+  * Seamless language switching without comment.
+  * Active listening first — never talking over the candidate.
+
+TASK 7: TEST SUITE VERIFICATION
+-------------------------------
+- File Modified: `AI-Desk/app/tests/test_prompt_builder.py`
+- Updated test assertions to validate:
+  * Dynamic multilingual matching presence (Marathi, Hindi, English).
+  * Active listening and 1-2 sentence maximum turn constraints.
+  * Strict WhatsApp prohibition (Email only).
+  * Slot booking validation and booked slot exclusion.
+  * Agent persona name overrides.
+- Test Execution: All tests passed with exit code 0.
+
+
+--------------------------------------------------------------------------------
+4. FILES MODIFIED & REPOSITORY STATE
+--------------------------------------------------------------------------------
+Files Changed:
+1. `AI-Desk/app/services/prompt_builder.py`
+   - Replaced rigid language lock with dynamic multilingual matching engine.
+   - Enforced 1–2 sentence turn brevity and active listening rules.
+   - Updated language profiles with concise 1-sentence greetings.
+
+2. `AI-Desk/app/services/gemini_bridge.py`
+   - Tuned VAD silenceDurationMs from 1400ms to 800ms.
+   - Refined opening greeting triggers to 1 short sentence across all languages.
+   - Unlocked low-latency interruption barge-in for both Plivo and WebSockets.
+   - Removed accidental "email" triggers from closing disconnect logic.
+
+3. `AI-Desk/app/prompts/rupali_patil_master_prompt.py`
+   - Updated reference coordinator prompt with dynamic language matching and active listening.
+
+4. `AI-Desk/app/tests/test_prompt_builder.py`
+   - Updated automated unit tests to verify prompt constraints and dynamic multilingual rules.
+
+5. `components/RequestCallWidget.tsx` (Earlier session)
+   - State-based counsellor and regional language mapping.
+   - Form field cleanup and strict 10-digit Indian phone normalization.
+
+6. `components/site/SiteHeader.tsx` (Earlier session)
+   - Mobile-first responsive header layout, resolved phone and membership overlaps.
+
+
+--------------------------------------------------------------------------------
+5. VERIFICATION & VALIDATION RESULTS
+--------------------------------------------------------------------------------
+1. Python Unit Tests:
+   Command: `.venv\Scripts\python.exe -m app.tests.test_prompt_builder`
+   Result: `OK: all prompt_builder self-checks passed` (Exit code: 0)
+
+2. Prompt Compilation & Generation Validation:
+   - Generated full system prompt for Pooja Kulkarni (Marathi / Maharashtra).
+   - Validated prompt length (~10.6 KB) and confirmed presence of dynamic language
+     matching rules, active listening constraints, and 1-sentence turn guidelines.
+
+3. Git Status Cleanliness:
+   - All modified files inspected and formatted cleanly.
+
+
+--------------------------------------------------------------------------------
+6. NEXT STEPS & DEPLOYMENT INSTRUCTIONS
+--------------------------------------------------------------------------------
+When ready to deploy these voice AI improvements to production Google Cloud Run:
+
+1. Deploy AI-Desk Voice Telephony Service:
+   Command:
+   gcloud builds submit --config=cloudbuild-aidesk.yaml --project=recruitmentinstitute-501106
+
+2. Deploy Next.js Web Frontend (if frontend changes are updated):
+   Command:
+   gcloud builds submit --config=cloudbuild.yaml --project=recruitmentinstitute-501106
+
+================================================================================
+END OF REPORT — RECRUITMENT INSTITUTE ENGINEERING TEAM
+================================================================================

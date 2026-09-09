@@ -453,6 +453,33 @@ export default function TrainerLayout({ trainerName, children }: Props) {
               <Plus style={{ width: 15, height: 15 }} />
               <span>Schedule Class</span>
             </Link>
+
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false)
+                logout()
+              }}
+              type="button"
+              style={{
+                marginTop: 8,
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                padding: '10px 14px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: '#dc2626',
+                background: '#fef2f2',
+                border: '1px solid #fee2e2',
+                cursor: 'pointer',
+              }}
+            >
+              <LogOut style={{ width: 15, height: 15 }} />
+              <span>Sign Out</span>
+            </button>
           </div>
         )}
       </header>

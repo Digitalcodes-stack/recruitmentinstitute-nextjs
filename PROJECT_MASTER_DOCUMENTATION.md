@@ -1,6 +1,6 @@
 # Recruitment Institute — Master System & Technical Architecture Documentation
 
-This single master documentation file provides the complete technical architecture, technology stack, AI model ecosystem, Python libraries, data models, end-to-end workflows, configuration settings, and deployment instructions for the **Recruitment Institute Platform**.
+This single master documentation file provides the complete technical architecture, technology stack, AI model ecosystem, Python libraries, data models, end-to-end workflows, configuration settings and deployment instructions for the **Recruitment Institute Platform**.
 
 ---
 
@@ -85,7 +85,7 @@ graph TB
 ```
 
 ### Architectural Principles
-1. **Separation of Concerns**: Next.js owns authentication, user session cookies, client-side rendering, public course storefront, and portal dashboards. FastAPI owns heavy compute domains: AI question generation, RAG vector searches, automated grading analytics, study plan generation, and PDF document rendering.
+1. **Separation of Concerns**: Next.js owns authentication, user session cookies, client-side rendering, public course storefront and portal dashboards. FastAPI owns heavy compute domains: AI question generation, RAG vector searches, automated grading analytics, study plan generation and PDF document rendering.
 2. **Zero-Trust Token Bridging**: Browser clients communicate exclusively with Next.js over HTTP-only secure cookies (`ri_user_token`, `ri_admin_token`, `ri_trainer_token`). Next.js server actions and API route proxies forward requests to FastAPI with standard `Authorization: Bearer <token>` headers.
 3. **Unified Single Database**: Both Prisma ORM (Next.js) and SQLAlchemy 2.0 Async (FastAPI) connect to the same PostgreSQL instance, ensuring zero data duplication and instant synchronization across services.
 
@@ -185,9 +185,9 @@ Configured through `AI_PROVIDER_FALLBACK_ORDER=local_ai,claude,openai,gemini`. W
 
 ### 3.3 RAG (Retrieval-Augmented Generation) Pipeline
 
-The RAG engine indexes recruitment curriculum modules, chapters, and lessons into vector representations:
+The RAG engine indexes recruitment curriculum modules, chapters and lessons into vector representations:
 
-1. **Document Chunking**: Lesson texts, module summaries, and knowledge base documents are chunked into 500-token segments with 50-token overlaps.
+1. **Document Chunking**: Lesson texts, module summaries and knowledge base documents are chunked into 500-token segments with 50-token overlaps.
 2. **Embedding Generation**: Text chunks are embedded using **`sentence-transformers/all-MiniLM-L6-v2`** (384-dimensional dense vectors) or **`BAAI/bge-small-en-v1.5`**.
 3. **PGVector Indexing**: Vectors are saved in the `course_content_embeddings` table with an `HNSW` (Hierarchical Navigable Small World) cosine similarity index.
 4. **Context Retrieval**: When generating assessments or notes, the top-k chunks ($k=5$) with cosine distance $< 0.35$ are fetched and provided to the prompt generator.
@@ -204,7 +204,7 @@ When an assessment is requested (`/api/v1/assessment/by-course/{course_id}`), th
    - *Screening & Interview Techniques* (STAR methodology, competency frameworks).
    - *ATS & HR Tech Operations* (Pipeline stages, Boolean filters, talent CRM).
    - *Offer Negotiation, Compliance & Onboarding*.
-4. Writes records to both `assessment_questions` and `question_bank_items` (`option_a` through `option_d`, `correct_option`, and detailed `explanation`).
+4. Writes records to both `assessment_questions` and `question_bank_items` (`option_a` through `option_d`, `correct_option` and detailed `explanation`).
 
 ---
 
@@ -218,7 +218,7 @@ When the student submits their test answers:
   - **Strong Topics**: Accuracy $\ge 70\%$
   - **Moderate Topics**: Accuracy between $40\%$ and $69\%$
   - **Weak Topics**: Accuracy $< 40\%$
-- Stores structured metadata in `ai_assessment_analysis` table under `analysis_json` (including `difficulty_breakdown`, `summary`, and raw `student_answers`).
+- Stores structured metadata in `ai_assessment_analysis` table under `analysis_json` (including `difficulty_breakdown`, `summary` and raw `student_answers`).
 
 ---
 
@@ -254,24 +254,24 @@ The FastAPI backend utilizes the following curated Python libraries defined in [
 | **`pydantic`** | `>=2.8, <3.0` | High-performance data validation and serialization based on Rust core |
 | **`pydantic-settings`** | `>=2.4, <3.0` | Environment variable parsing and type-safe configuration loading |
 | **`email-validator`** | `>=2.2, <3.0` | Robust email address validation and normalization |
-| **`python-jose[cryptography]`**| `>=3.3, <4.0` | JOSE/JWT token creation, validation, and RSA/HMAC decryption |
+| **`python-jose[cryptography]`**| `>=3.3, <4.0` | JOSE/JWT token creation, validation and RSA/HMAC decryption |
 | **`passlib[bcrypt]`** | `>=1.7, <2.0` | Secure password hashing framework |
 | **`bcrypt`** | `>=4.0, <4.1` | Native C-level bcrypt encryption backend compatible with passlib |
 | **`python-multipart`** | `>=0.0.9, <1.0`| Streaming parser for form-data and file uploads |
-| **`redis`** | `>=5.0, <6.0` | Asynchronous client for Redis cache, rate limiting, and token revocation |
+| **`redis`** | `>=5.0, <6.0` | Asynchronous client for Redis cache, rate limiting and token revocation |
 | **`httpx`** | `>=0.27, <1.0` | Full-featured async HTTP client for outbound API requests and Ollama calls |
 | **`tenacity`** | `>=8.5, <9.0` | Retrying library for building resilient fallback loops around AI calls |
 | **`celery`** | `>=5.4, <6.0` | Distributed asynchronous task queue for email dispatches and PDF tasks |
 | **`aiofiles`** | `>=24.1, <25.0` | Asynchronous file I/O operations for disk storage |
 | **`aiosmtplib`** | `>=3.0, <4.0` | Asynchronous SMTP client for dispatching email notifications |
 | **`Jinja2`** | `>=3.1, <4.0` | HTML templating engine for transactional email generation |
-| **`numpy`** | `>=1.26, <2.0` | Array operations, dot products, and vector arithmetic for RAG calculations |
+| **`numpy`** | `>=1.26, <2.0` | Array operations, dot products and vector arithmetic for RAG calculations |
 | **`reportlab`** | `>=4.2, <5.0` | Programmatic PDF canvas builder creating official assessment reports |
 | **`sentence-transformers`** | `>=3.0.0, <4.0` | PyTorch embedding generation from transformer models |
 | **`transformers`** | `>=4.40, <5.0` | HuggingFace model hub integration for NLP summarization and classification |
 | **`keybert`** | `>=0.8, <1.0` | Minimal keyword extraction leveraging transformer embeddings |
-| **`nltk`** | `>=3.9, <4.0` | Tokenization, sentence splitting, and stop-word removal utilities |
-| **`spacy`** | `>=3.7, <4.0` | Fast industrial-strength NLP, entity recognition, and POS tagging |
+| **`nltk`** | `>=3.9, <4.0` | Tokenization, sentence splitting and stop-word removal utilities |
+| **`spacy`** | `>=3.7, <4.0` | Fast industrial-strength NLP, entity recognition and POS tagging |
 | **`faiss-cpu`** | `>=1.8, <2.0` | Efficient similarity search and clustering of dense vectors |
 | **`beautifulsoup4`** | `>=4.12, <5.0`| HTML parsing and stripping for embedding course content |
 | **`pytest` & `pytest-asyncio`** | `>=8.2` / `>=0.24` | Comprehensive test runner for async unit and integration tests |

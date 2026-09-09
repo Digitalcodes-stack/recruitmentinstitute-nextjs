@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s | Recruitment Institute',
   },
   description:
-    'Recruitment Institute is India\'s #1 HR and recruitment training institute in Pune. Master end-to-end recruitment, HR skills, entrepreneurship, and corporate training with certified experts.',
+    'Recruitment Institute is India\'s #1 HR and recruitment training institute in Pune. Master end-to-end recruitment, HR skills, entrepreneurship and corporate training with certified experts.',
   keywords: [
     'recruitment training pune',
     'HR courses india',
@@ -117,7 +117,7 @@ const organizationSchema = {
         height: 80,
       },
       description:
-        'India\'s #1 HR and recruitment training institute offering end-to-end recruitment training, HR courses for beginners, entrepreneurship programs, and corporate training.',
+        'India\'s #1 HR and recruitment training institute offering end-to-end recruitment training, HR courses for beginners, entrepreneurship programs and corporate training.',
       foundingDate: '2015',
       numberOfEmployees: { '@type': 'QuantitativeValue', value: 20 },
       address: {

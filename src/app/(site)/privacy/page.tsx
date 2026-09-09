@@ -15,21 +15,21 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">1. Information We Collect</h2>
           <p>
-            We collect information you provide directly to us when registering for training programs, contacting us, or using our portals (e.g., name, email address, phone number, and educational background).
+            We collect information you provide directly to us when registering for training programs, contacting us or using our portals (e.g., name, email address, phone number and educational background).
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">2. How We Use Your Information</h2>
           <p>
-            We use the collected information to deliver courses, communicate session updates, issue certificates, and provide placement assistance.
+            We use the collected information to deliver courses, communicate session updates, issue certificates and provide placement assistance.
           </p>
         </section>
 
         <section>
           <h2 className="text-lg font-bold text-slate-900 mb-2">3. Data Security</h2>
           <p>
-            We implement industry-standard security measures to safeguard your personal data against unauthorized access, disclosure, or destruction.
+            We implement industry-standard security measures to safeguard your personal data against unauthorized access, disclosure or destruction.
           </p>
         </section>
 

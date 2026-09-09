@@ -189,7 +189,7 @@ export default function TrainerBatchesClient({ batches, initialBatchId }: Props)
                 </span>
               </div>
               <p style={{ fontSize: 12.5, color: '#64748b', marginTop: 4 }}>
-                Track student attendance rates, assignment submissions, average marks, and full contact profiles.
+                Track student attendance rates, assignment submissions, average marks and full contact profiles.
               </p>
             </div>
 

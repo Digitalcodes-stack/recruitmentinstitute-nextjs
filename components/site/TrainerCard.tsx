@@ -42,6 +42,7 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             style={{ objectFit: 'cover', objectPosition: 'top' }}
+            priority
           />
         )}
 
@@ -129,7 +130,7 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
                   whiteSpace: 'nowrap',
                 }}
               >
-                {trainer.companyEx}
+                {trainer.companyEx.replace(/^Ex-?/i, '').replace(/\|\s*Ex-?/gi, '| ').trim()}
               </span>
             </div>
           </div>

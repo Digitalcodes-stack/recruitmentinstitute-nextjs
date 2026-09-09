@@ -278,7 +278,7 @@ export default function QuestionDetailClient({ question }: Props) {
                     required
                     rows={5}
                     minLength={5}
-                    placeholder="Share your experience, best practices, or practical tips that could help..."
+                    placeholder="Share your experience, best practices or practical tips that could help..."
                     style={{
                       width: '100%', resize: 'vertical', borderRadius: '10px',
                       border: '1.5px solid #E2E8F0', background: '#F8FAFC',

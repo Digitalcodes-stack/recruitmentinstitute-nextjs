@@ -31,7 +31,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   title: 'Student Membership - Unlock Exclusive HR Career Benefits | Recruitment Institute',
   description:
-    'Join the Recruitment Institute student membership program for exclusive access to premium resources, HR community, placement support, certification, knowledge base, and industry events.',
+    'Join the Recruitment Institute student membership program for exclusive access to premium resources, HR community, placement support, certification, knowledge base and industry events.',
   alternates: { canonical: `${BASE_URL}/student-membership` },
   openGraph: {
     title: 'Student Membership - Recruitment Institute',
@@ -52,7 +52,7 @@ const defaultBenefits = [
   {
     icon: BookOpen,
     title: 'Recruiter Toolkits & Resources',
-    desc: 'Access exclusive study materials, JD templates, Boolean sourcing scripts, ATS workflows, and recruiter toolkits curated by industry experts.',
+    desc: 'Access exclusive study materials, JD templates, Boolean sourcing scripts, ATS workflows and recruiter toolkits curated by industry experts.',
     href: '/knowledge',
     color: '#1D4ED8',
     bg: '#EFF6FF',
@@ -62,7 +62,7 @@ const defaultBenefits = [
   {
     icon: Users,
     title: 'Active Recruiter Community',
-    desc: 'Connect, collaborate, and network alongside 5,000+ active HR professionals, talent acquisition leads, and recruiters across India.',
+    desc: 'Connect, collaborate and network alongside 5,000+ active HR professionals, talent acquisition leads and recruiters across India.',
     href: '/community',
     color: '#0D9488',
     bg: '#F0FDFA',
@@ -72,7 +72,7 @@ const defaultBenefits = [
   {
     icon: Briefcase,
     title: '100% Placement Support',
-    desc: 'Get dedicated placement assistance, resume optimization, mock technical interview drills, and direct referrals to hiring partners.',
+    desc: 'Get dedicated placement assistance, resume optimization, mock technical interview drills and direct referrals to hiring partners.',
     href: '/contact',
     color: '#DC2626',
     bg: '#FEF2F2',
@@ -92,7 +92,7 @@ const defaultBenefits = [
   {
     icon: Lightbulb,
     title: 'Practical Case Studies & LMS',
-    desc: 'Interactive LMS portal with chapter quizzes, live assignment submissions, real-world hiring case studies, and instructor feedback.',
+    desc: 'Interactive LMS portal with chapter quizzes, live assignment submissions, real-world hiring case studies and instructor feedback.',
     href: '/knowledge',
     color: '#D97706',
     bg: '#FFFBEB',
@@ -102,7 +102,7 @@ const defaultBenefits = [
   {
     icon: CalendarDays,
     title: 'Masterclasses & Live Webinars',
-    desc: 'Exclusive access to live webinars, weekend masterclasses with ex-Google/TCS leaders, and annual HR conclave networking sessions.',
+    desc: 'Exclusive access to live webinars, weekend masterclasses with ex-Google/TCS leaders and annual HR conclave networking sessions.',
     href: '/contact',
     color: '#059669',
     bg: '#F0FDF4',
@@ -124,7 +124,7 @@ const defaultTestimonials = [
     name: 'Rahul Mehta',
     role: 'Senior Technical Recruiter, Infosys',
     avatar: '/assets/images/team/style2/3.jpg',
-    text: 'The recruiter toolkits, JD templates, and ATS scripts saved me countless hours every week. The verifiable certificate added immense credibility on LinkedIn.',
+    text: 'The recruiter toolkits, JD templates and ATS scripts saved me countless hours every week. The verifiable certificate added immense credibility on LinkedIn.',
     rating: 5,
   },
   {
@@ -147,7 +147,7 @@ const officialCoursePlans = [
     discountTag: '25% OFF',
     period: '• 4 Weeks',
     mode: '100% Live Online Cohort',
-    desc: 'Perfect for freshers and early professionals aiming to build a solid foundation in HR operations, payroll, and compliance.',
+    desc: 'Perfect for freshers and early professionals aiming to build a solid foundation in HR operations, payroll and compliance.',
     color: '#0284C7',
     bg: '#F0F9FF',
     border: '#BAE6FD',
@@ -172,7 +172,7 @@ const officialCoursePlans = [
     discountTag: '29% OFF',
     period: '• 3 Months',
     mode: 'Live Online & Pune Classroom',
-    desc: 'Comprehensive, hands-on training covering full lifecycle recruitment, Boolean search, headhunting, and ATS workflows.',
+    desc: 'Comprehensive, hands-on training covering full lifecycle recruitment, Boolean search, headhunting and ATS workflows.',
     color: '#1E40AF',
     bg: '#EFF6FF',
     border: '#1E40AF',
@@ -198,7 +198,7 @@ const officialCoursePlans = [
     discountTag: '22% OFF',
     period: '• 6 Months',
     mode: 'Executive Blended Mentorship',
-    desc: 'Step-by-step master program to launch, scale, and monetize your own recruitment agency or HR consulting practice.',
+    desc: 'Step-by-step master program to launch, scale and monetize your own recruitment agency or HR consulting practice.',
     color: '#7C3AED',
     bg: '#FAF5FF',
     border: '#DDD6FE',
@@ -418,7 +418,7 @@ export default async function StudentMembershipPage() {
               </h1>
 
               <p style={{ fontSize: 17, color: '#94A3B8', lineHeight: 1.85, maxWidth: 490, marginBottom: 36 }}>
-                Become a member of Recruitment Institute and unlock premium resources, a thriving HR community, placement support, certification, and exclusive industry events.
+                Become a member of Recruitment Institute and unlock premium resources, a thriving HR community, placement support, certification and exclusive industry events.
               </p>
 
               {/* Highlights */}
@@ -631,7 +631,7 @@ export default async function StudentMembershipPage() {
               Choose the right program for your career.
             </h2>
             <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
-              All course enrollments include full <strong>Pro Student Membership</strong>, 100% placement support, verifiable certificate, and lifelong LMS access.
+              All course enrollments include full <strong>Pro Student Membership</strong>, 100% placement support, verifiable certificate and lifelong LMS access.
             </p>
           </div>
 
@@ -750,7 +750,7 @@ export default async function StudentMembershipPage() {
                 Looking for HR Corporate Training for your company team?
               </h3>
               <p style={{ fontSize: 14, color: '#475569', margin: 0, lineHeight: 1.6 }}>
-                Customized in-house recruiter bootcamps, executive workshops, volume hiring frameworks, and corporate team certifications.
+                Customized in-house recruiter bootcamps, executive workshops, volume hiring frameworks and corporate team certifications.
               </p>
             </div>
 
@@ -870,7 +870,7 @@ export default async function StudentMembershipPage() {
             {[
               { step: '01', icon: Users,       color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE', title: 'Register an Account',    desc: 'Sign up with your email in under 60 seconds. No credit card required to start.' },
               { step: '02', icon: BookOpen,     color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4', title: 'Choose Your Plan',       desc: 'Pick the free Starter plan or upgrade to Pro for full access to all benefits.' },
-              { step: '03', icon: TrendingUp,   color: '#059669', bg: '#F0FDF4', border: '#BBF7D0', title: 'Unlock & Accelerate',    desc: 'Access resources, join the community, attend events, and fast-track your HR career.' },
+              { step: '03', icon: TrendingUp,   color: '#059669', bg: '#F0FDF4', border: '#BBF7D0', title: 'Unlock & Accelerate',    desc: 'Access resources, join the community, attend events and fast-track your HR career.' },
             ].map(({ step, icon: Icon, color, bg, border, title, desc }) => (
               <div key={step} style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
                 {/* Icon circle */}

@@ -58,7 +58,7 @@ export default async function AdminBatchesPage() {
             Training Batches
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
-            Coordinate student cohorts, assign faculty trainers, and track live class progress.
+            Coordinate student cohorts, assign faculty trainers and track live class progress.
           </p>
         </div>
 

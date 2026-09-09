@@ -255,7 +255,7 @@ const FUTURE_BATCHES_DATA: FutureBatchBlueprint[] = [
 ]
 
 async function main() {
-  console.log('🧹 Purging all legacy batches, sessions, and child records...')
+  console.log('🧹 Purging all legacy batches, sessions and child records...')
 
   // Step 1: Delete dependent records on Batches
   try { await prisma.attendance.deleteMany({}) } catch {}

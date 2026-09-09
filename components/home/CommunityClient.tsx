@@ -200,7 +200,7 @@ export default function CommunityClient({
               </h1>
 
               <p style={{ fontSize: '17px', color: '#94A3B8', lineHeight: 1.85, maxWidth: '480px', marginBottom: '40px' }}>
-                Ask practical hiring questions, learn from recruiter discussions, and build sharper HR judgment with peers.
+                Ask practical hiring questions, learn from recruiter discussions and build sharper HR judgment with peers.
               </p>
 
               {/* Live stat pills */}
@@ -382,7 +382,7 @@ export default function CommunityClient({
                         What do you want to solve today?
                       </h2>
                       <p style={{ fontSize: '14px', color: '#64748B', lineHeight: 1.7 }}>
-                        Search past answers or post a question for sourcing, screening, and recruiter workflows.
+                        Search past answers or post a question for sourcing, screening and recruiter workflows.
                       </p>
                     </div>
                     <button
@@ -422,7 +422,7 @@ export default function CommunityClient({
                         onChange={(e) => setNewQuestion(e.target.value)}
                         required
                         rows={4}
-                        placeholder="Describe your hiring challenge, screening dilemma, or sourcing question..."
+                        placeholder="Describe your hiring challenge, screening dilemma or sourcing question..."
                         style={{
                           width: '100%', resize: 'none', borderRadius: '10px',
                           border: '1.5px solid #BFDBFE', background: 'white',
@@ -851,7 +851,7 @@ export default function CommunityClient({
                     Connect &amp; Share
                   </h3>
                   <p style={{ fontSize: '13px', color: '#94A3B8', lineHeight: 1.7, marginBottom: '20px' }}>
-                    Register to ask questions, share answers, and stay connected with Recruitment Institute learners.
+                    Register to ask questions, share answers and stay connected with Recruitment Institute learners.
                   </p>
 
                   {/* Features */}

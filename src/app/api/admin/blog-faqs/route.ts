@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   const { blogId, question, answer, sortOrder } = body
 
   if (!blogId || !question || !answer)
-    return NextResponse.json({ success: false, message: 'blogId, question, and answer are required' }, { status: 400 })
+    return NextResponse.json({ success: false, message: 'blogId, question and answer are required' }, { status: 400 })
 
   const faq = await prisma.blogFaq.create({
     data: {

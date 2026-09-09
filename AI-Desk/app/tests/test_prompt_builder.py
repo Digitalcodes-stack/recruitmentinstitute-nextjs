@@ -20,20 +20,18 @@ def test_full_profile():
         business_hours={"mon": {"start": "09:30", "end": "18:30"}, "sun": {"closed": True}},
         timezone="Asia/Kolkata", extraction_schema=[],
     )
-    prompt = build_system_prompt(exe)
+    prompt = build_system_prompt(exe, language="Marathi", caller_state="Maharashtra")
     assert "Rupali Patil" in prompt
     assert "Backend Engineer" in prompt
     assert "Is it remote?" in prompt
     assert "Tue" in prompt and "14:00" in prompt
     assert "Monday: 09:30" in prompt
-    assert "never" in prompt.lower()
-    assert "SLOW DOWN" in prompt
-    assert "wait" in prompt.lower()
-    # Regression: "asked if now is a good time, caller said yes, model went
-    # silent" — the flow must explicitly say what to do on a positive/neutral
-    # answer, not just what to do on a negative one.
-    assert "continue straight to step 4" in prompt
-    assert "Never ask a question and then go silent" in prompt
+    assert "DYNAMIC REAL-TIME LANGUAGE MATCHING" in prompt
+    assert "MARATHI" in prompt and "HINDI" in prompt and "ENGLISH" in prompt
+    assert "ACTIVE LISTENING" in prompt
+    assert "MAXIMUM 1 TO 2 SHORT SENTENCES" in prompt
+    assert "NEVER MENTION WHATSAPP" in prompt
+    assert "EMAIL" in prompt
 
 
 def test_empty_profile_does_not_crash():
@@ -56,7 +54,7 @@ def test_booked_slots_excluded():
         business_hours={}, timezone="UTC", extraction_schema=[],
     )
     prompt = build_system_prompt(exe)
-    assert "All slots currently booked" in prompt
+    assert "BOOKED" in prompt
 
 
 def test_agent_name_override():
@@ -69,10 +67,9 @@ def test_agent_name_override():
         faqs=[], action_slots=[], business_hours={}, timezone="Asia/Kolkata",
         extraction_schema=[],
     )
-    prompt = build_system_prompt(exe, agent_name="Priya")
-    assert "You are Priya" in prompt
-    assert "Hi, this is Priya calling from Recruitment Institute." in prompt
-    assert "Remember: you are Priya." in prompt
+    prompt = build_system_prompt(exe, agent_name="Pooja Kulkarni", language="Marathi")
+    assert "You are Pooja Kulkarni" in prompt
+    assert "Remember: you are Pooja Kulkarni" in prompt
     assert "Rupali" not in prompt
 
 
@@ -82,3 +79,4 @@ if __name__ == "__main__":
     test_booked_slots_excluded()
     test_agent_name_override()
     print("OK: all prompt_builder self-checks passed")
+

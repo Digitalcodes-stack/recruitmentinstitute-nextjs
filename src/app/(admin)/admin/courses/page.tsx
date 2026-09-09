@@ -174,7 +174,7 @@ export default async function AdminCoursesPage({
             Course Management
           </h1>
           <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, maxWidth: 520, margin: '4px 0 0' }}>
-            Manage category taxonomies, syllabus modules, assessments, and batch linkages.
+            Manage category taxonomies, syllabus modules, assessments and batch linkages.
           </p>
         </div>
 
@@ -868,7 +868,7 @@ export default async function AdminCoursesPage({
               Syllabus & Curriculum Directory
             </h2>
             <p style={{ fontSize: 12.5, color: '#64748b', marginTop: 4, margin: '4px 0 0' }}>
-              Each course curriculum includes structured chapters, video lectures, and downloadable resources.
+              Each course curriculum includes structured chapters, video lectures and downloadable resources.
             </p>
           </div>
 

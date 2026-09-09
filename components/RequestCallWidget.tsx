@@ -327,7 +327,7 @@ export default function RequestCallWidget() {
 
     // 2. Phone validation (10 digits, starts with 6-9)
     if (cleanPhone.length !== 10 || !/^[6-9]/.test(cleanPhone)) {
-      setErrorMessage('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.')
+      setErrorMessage('Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.')
       return
     }
 
@@ -673,7 +673,7 @@ export default function RequestCallWidget() {
                           Connect with {currentCounselor.displayName}
                         </h2>
                         <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                          Fill your details below to receive an instant callback from your regional admissions counsellor ({currentCounselor.displayName}, speaks {currentLanguage}) regarding syllabus, batches, and placement assistance.
+                          Fill your details below to receive an instant callback from your regional admissions counsellor ({currentCounselor.displayName}, speaks {currentLanguage}) regarding syllabus, batches and placement assistance.
                         </p>
                       </div>
 
@@ -900,7 +900,7 @@ export default function RequestCallWidget() {
                   <div>
                     <h4 className="text-xl font-extrabold text-white">Call Completed!</h4>
                     <p className="text-xs text-emerald-300 font-medium mt-1">
-                      Course details, syllabus, and next steps have been sent to your Email.
+                      Course details, syllabus and next steps have been sent to your Email.
                     </p>
                   </div>
 
@@ -940,7 +940,7 @@ export default function RequestCallWidget() {
                     </div>
 
                     <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
-                      Curriculum syllabus, demo class link, and batch schedules have been dispatched to your email address.
+                      Curriculum syllabus, demo class link and batch schedules have been dispatched to your email address.
                     </p>
                   </div>
 

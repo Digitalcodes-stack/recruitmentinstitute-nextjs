@@ -105,7 +105,7 @@ export default async function TrainerAttendancePage({
           Class Attendance Register
         </h1>
         <p style={{ fontSize: 13.5, color: '#64748b', marginTop: 4 }}>
-          Record student presence for conducted live classes, track online join timestamps, and maintain batch attendance logs.
+          Record student presence for conducted live classes, track online join timestamps and maintain batch attendance logs.
         </p>
       </div>
 

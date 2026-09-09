@@ -204,7 +204,7 @@ export default function AssessmentTaker({ courseId }: { courseId: number }) {
         <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#94a3b8', marginBottom: 8 }}>Assessment</p>
         <h1 style={{ fontSize: 28, fontWeight: 900, color: '#0f172a' }}>Answer All Questions</h1>
         <p style={{ fontSize: 13, color: '#64748b', marginTop: 6 }}>
-          Your AI-analyzed results, personalized notes, and study plan will be generated after you submit.
+          Your AI-analyzed results, personalized notes and study plan will be generated after you submit.
         </p>
       </div>
 

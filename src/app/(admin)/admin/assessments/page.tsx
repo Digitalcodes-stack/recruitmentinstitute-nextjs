@@ -121,7 +121,7 @@ export default async function AdminAssessmentsPage() {
                 marginTop: 12, maxWidth: 520,
                 fontSize: 14, lineHeight: 1.8, color: '#94b8d8',
               }}>
-                Duration, total marks, and the full question-and-answer bank for every course&apos;s assessment.
+                Duration, total marks and the full question-and-answer bank for every course&apos;s assessment.
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>

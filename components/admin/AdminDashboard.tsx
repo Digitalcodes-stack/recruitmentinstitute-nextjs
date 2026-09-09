@@ -197,7 +197,7 @@ export default function AdminDashboard() {
             Welcome back, Super Administrator
           </h1>
           <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 6, lineHeight: 1.5 }}>
-            Real-time telemetry across {kpis.totalStudents} students, {kpis.activeBatches} active batches, and {kpis.totalTrainers} faculty members.
+            Real-time telemetry across {kpis.totalStudents} students, {kpis.activeBatches} active batches and {kpis.totalTrainers} faculty members.
           </p>
         </div>
 
@@ -741,7 +741,7 @@ export default function AdminDashboard() {
                     Active Batch Capacity & Telemetry
                   </h2>
                   <p style={{ fontSize: 11.5, color: '#64748b', marginTop: 2, margin: 0 }}>
-                    Roster fullness, assigned faculty, and total sessions completed
+                    Roster fullness, assigned faculty and total sessions completed
                   </p>
                 </div>
               </div>

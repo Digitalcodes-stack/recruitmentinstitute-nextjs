@@ -52,7 +52,7 @@ export default async function AdminEnrollmentsPage() {
             Enrollment Review
           </div>
           <h2 style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', lineHeight: 1.2 }}>Enrollment Requests</h2>
-          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>Approve, hold, or reject student requests before trainer assignment and session access.</p>
+          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>Approve, hold or reject student requests before trainer assignment and session access.</p>
         </div>
 
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>

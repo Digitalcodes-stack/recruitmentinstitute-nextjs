@@ -117,7 +117,7 @@ export default function AdminBrochuresClient({ brochures }: Props) {
           </div>
           <h1 className="text-2xl font-black text-slate-900">Official Course Brochures & Candidate Dispatch</h1>
           <p className="text-xs text-slate-500 mt-1">
-            1-click dispatch of official course prospectuses, syllabus PDFs, and demo class invitations to candidates via Email & WhatsApp.
+            1-click dispatch of official course prospectuses, syllabus PDFs and demo class invitations to candidates via Email & WhatsApp.
           </p>
         </div>
 

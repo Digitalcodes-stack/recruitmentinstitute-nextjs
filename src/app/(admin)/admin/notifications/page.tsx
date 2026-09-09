@@ -47,7 +47,7 @@ export default async function AdminNotificationsPage() {
             Notifications
           </h2>
           <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>
-            Send and track Email, SMS, WhatsApp, Push, and In-App campaigns.
+            Send and track Email, SMS, WhatsApp, Push and In-App campaigns.
           </p>
         </div>
 

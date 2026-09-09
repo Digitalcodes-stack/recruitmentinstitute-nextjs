@@ -378,12 +378,56 @@ export default function AdminLayout({ children, title }: { children: React.React
                   Student
                 </Link>
               </div>
+
+              {/* Explicit Sign Out Button */}
+              <button
+                onClick={logout}
+                type="button"
+                style={{
+                  width: '100%',
+                  marginTop: 8,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 6,
+                  padding: '7px 10px',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#f87171',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+                title="Sign Out of Superadmin Hub"
+              >
+                <LogOut style={{ width: 13, height: 13 }} />
+                <span>Sign Out</span>
+              </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
               <Link href="/trainer/dashboard" title="Switch to Trainer Portal" style={{ color: '#93c5fd' }}>
                 <Presentation style={{ width: 16, height: 16 }} />
               </Link>
+              <button
+                onClick={logout}
+                type="button"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#f87171',
+                  cursor: 'pointer',
+                  padding: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+                title="Sign Out"
+              >
+                <LogOut style={{ width: 16, height: 16 }} />
+              </button>
             </div>
           )}
         </div>
@@ -925,6 +969,35 @@ export default function AdminLayout({ children, title }: { children: React.React
                   ))}
                 </div>
               ))}
+
+              {/* Mobile Drawer Sign Out */}
+              <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    logout()
+                  }}
+                  type="button"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    padding: '10px 14px',
+                    borderRadius: 8,
+                    fontSize: 13.5,
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    background: '#dc2626',
+                    border: 'none',
+                    cursor: 'pointer',
+                  }}
+                >
+                  <LogOut style={{ width: 15, height: 15 }} />
+                  <span>Sign Out</span>
+                </button>
+              </div>
             </div>
           </div>
           <div style={{ flex: 1 }} onClick={() => setMobileMenuOpen(false)} />

@@ -51,8 +51,8 @@ async function main() {
   console.log('✅  Course Categories seeded')
 
   const sampleCourses = [
-    { id: 1, title: 'End-to-End Recruitment & Talent Acquisition', description: 'Comprehensive training for recruiters covering sourcing, screening, interview processes, ATS tools, and offer management.', categoryId: 1, totalStudents: 120 },
-    { id: 2, title: 'HR Fundamentals & Operations Certification', description: 'Practical hands-on certification course on HR operations, payroll, compliance, and employee lifecycle.', categoryId: 2, totalStudents: 85 },
+    { id: 1, title: 'End-to-End Recruitment & Talent Acquisition', description: 'Comprehensive training for recruiters covering sourcing, screening, interview processes, ATS tools and offer management.', categoryId: 1, totalStudents: 120 },
+    { id: 2, title: 'HR Fundamentals & Operations Certification', description: 'Practical hands-on certification course on HR operations, payroll, compliance and employee lifecycle.', categoryId: 2, totalStudents: 85 },
     { id: 3, title: 'HR Consultancy & Staffing Entrepreneurship', description: 'Blueprint to start and scale your own recruitment agency or HR consultancy firm from scratch.', categoryId: 3, totalStudents: 45 },
     { id: 4, title: 'Executive Corporate Leadership & HR Strategy', description: 'Customized high-impact corporate training for HR business partners and talent managers.', categoryId: 4, totalStudents: 60 },
   ]
@@ -166,8 +166,8 @@ async function main() {
       { question: 'Is there a corporate package discount?',               answer: 'Yes, groups of 5 or more get up to 20% off on the standard fee.',                          categoryId: 4 },
       { question: 'Are classes online or offline?',                       answer: 'We offer both modes — online live sessions and in-person classroom training.',              categoryId: null },
       { question: 'What is the refund policy?',                           answer: 'Full refund within 7 days of enrollment. 50% refund up to 15 days. No refund thereafter.', categoryId: null },
-      { question: 'Do you provide placement assistance?',                 answer: 'Yes. We offer resume support, mock interviews, and job referrals through our hiring network.', categoryId: 4 },
-      { question: 'Will I get course material after enrollment?',         answer: 'Yes. Every learner gets structured study material, templates, and practice worksheets.',     categoryId: 2 },
+      { question: 'Do you provide placement assistance?',                 answer: 'Yes. We offer resume support, mock interviews and job referrals through our hiring network.', categoryId: 4 },
+      { question: 'Will I get course material after enrollment?',         answer: 'Yes. Every learner gets structured study material, templates and practice worksheets.',     categoryId: 2 },
       { question: 'Can I speak to a counsellor before joining?',          answer: 'Absolutely. Our counselling team helps you pick the right HR path before enrollment.',        categoryId: null },
       { question: 'Is the certificate industry recognised?',              answer: 'Yes. Certificates are designed to be shareable on LinkedIn and accepted by hiring partners.', categoryId: 5 },
     ],
@@ -191,18 +191,18 @@ async function main() {
   await prisma.knowledgeItem.createMany({
     skipDuplicates: true,
     data: [
-      { question: 'What is Boolean Search in recruitment?',         answer: 'Boolean search uses AND, OR, NOT operators to refine candidate searches on LinkedIn and job portals.',                addedBy: 'Admin', date: '2024-01-10' },
-      { question: 'What is an ATS (Applicant Tracking System)?',   answer: 'ATS is software that automates the hiring process — parsing resumes, scheduling interviews, and tracking candidates.', addedBy: 'Admin', date: '2024-01-15' },
+      { question: 'What is Boolean Search in recruitment?',         answer: 'Boolean search uses AND Or, NOT operators to refine candidate searches on LinkedIn and job portals.',                addedBy: 'Admin', date: '2024-01-10' },
+      { question: 'What is an ATS (Applicant Tracking System)?',   answer: 'ATS is software that automates the hiring process — parsing resumes, scheduling interviews and tracking candidates.', addedBy: 'Admin', date: '2024-01-15' },
       { question: 'How do you calculate time-to-hire?',            answer: 'Time-to-hire = number of days from job opening to offer accepted. Industry average is 23–38 days.',                   addedBy: 'Admin', date: '2024-02-01' },
       { question: 'What is the STAR interview method?',            answer: 'STAR = Situation, Task, Action, Result. It structures behavioral interview questions for consistent evaluation.',       addedBy: 'Admin', date: '2024-02-10' },
-      { question: 'What is employer branding?',                    answer: 'Employer branding is how a company markets itself to potential employees — culture, benefits, values, and reputation.',addedBy: 'Admin', date: '2024-03-01' },
+      { question: 'What is employer branding?',                    answer: 'Employer branding is how a company markets itself to potential employees — culture, benefits, values and reputation.',addedBy: 'Admin', date: '2024-03-01' },
       { question: 'What is the difference between CV and resume?', answer: 'A CV is a comprehensive career document (2+ pages). A resume is a concise 1-page summary tailored to a specific role.',addedBy: 'Admin', date: '2024-03-15' },
       { question: 'What is headhunting?',                          answer: 'Headhunting is proactively identifying and approaching high-calibre passive candidates who are not actively job-hunting.',addedBy: 'Admin', date: '2024-04-01' },
-      { question: 'How to write an effective job description?',    answer: 'Include: job title, responsibilities, required qualifications, skills, compensation range, and company culture notes.',  addedBy: 'Admin', date: '2024-04-15' },
+      { question: 'How to write an effective job description?',    answer: 'Include: job title, responsibilities, required qualifications, skills, compensation range and company culture notes.',  addedBy: 'Admin', date: '2024-04-15' },
       { question: 'What is a sourcing pipeline?',                  answer: 'A sourcing pipeline is a structured list of candidates at different engagement stages, helping recruiters move faster and stay organized.', addedBy: 'Admin', date: '2024-05-01' },
-      { question: 'Why are candidate personas useful?',            answer: 'Candidate personas clarify the kind of talent you need, making sourcing, screening, and communication more consistent.', addedBy: 'Admin', date: '2024-05-10' },
-      { question: 'What is employer value proposition (EVP)?',     answer: 'EVP is the unique combination of compensation, growth, culture, and purpose that makes candidates choose your company.', addedBy: 'Admin', date: '2024-05-20' },
-      { question: 'How do recruiters reduce time-to-hire?',         answer: 'By improving JD quality, pre-building talent pools, automating scheduling, and aligning interview feedback quickly.', addedBy: 'Admin', date: '2024-06-01' },
+      { question: 'Why are candidate personas useful?',            answer: 'Candidate personas clarify the kind of talent you need, making sourcing, screening and communication more consistent.', addedBy: 'Admin', date: '2024-05-10' },
+      { question: 'What is employer value proposition (EVP)?',     answer: 'EVP is the unique combination of compensation, growth, culture and purpose that makes candidates choose your company.', addedBy: 'Admin', date: '2024-05-20' },
+      { question: 'How do recruiters reduce time-to-hire?',         answer: 'By improving JD quality, pre-building talent pools, automating scheduling and aligning interview feedback quickly.', addedBy: 'Admin', date: '2024-06-01' },
     ],
   })
   console.log('✅  Knowledge Base seeded')
@@ -216,9 +216,9 @@ async function main() {
     await prisma.answer.createMany({
       skipDuplicates: true,
       data: [
-        { questionId: existingQs[0].id, userId: uid2, answer: 'A talent acquisition interview is a structured meeting to assess whether a candidate fits a specific role and company culture. It focuses on skills, experience, and cultural alignment.' },
+        { questionId: existingQs[0].id, userId: uid2, answer: 'A talent acquisition interview is a structured meeting to assess whether a candidate fits a specific role and company culture. It focuses on skills, experience and cultural alignment.' },
         { questionId: existingQs[1]?.id ?? existingQs[0].id, userId: uid2, answer: 'Talent acquisition is strategic — it builds long-term pipelines and workforce planning. Recruiting is tactical — filling open positions quickly.' },
-        { questionId: existingQs[2]?.id ?? existingQs[0].id, userId: uid2, answer: 'Strong communication, active listening, data analysis for sourcing metrics, proficiency in ATS tools, and the ability to build relationships with both candidates and hiring managers.' },
+        { questionId: existingQs[2]?.id ?? existingQs[0].id, userId: uid2, answer: 'Strong communication, active listening, data analysis for sourcing metrics, proficiency in ATS tools and the ability to build relationships with both candidates and hiring managers.' },
       ],
     })
     console.log('✅  Q&A Answers seeded')
@@ -267,7 +267,7 @@ async function main() {
       { author: 'Vivek Singh',     title: 'Corporate batch was excellent',      description: 'Our entire L&D team attended the corporate training. The trainer was energetic and the content was highly relevant to our industry.', rating: 5, image: '/assets/images/team/style1/6.jpg', isActive: true },
       { author: 'Nisha Jain',      title: 'Great online learning experience',   description: 'Live sessions are well-structured and interactive. Even online, I felt like I was in a classroom. The study materials are very comprehensive.', rating: 4, image: '/assets/images/team/style2/1.jpg', isActive: false },
       { author: 'Karan Mehta',     title: 'Would recommend to everyone',        description: 'This institute genuinely cares about student outcomes. They followed up even 2 months after the course to check on my placement status.', rating: 5, image: '/assets/images/team/style2/2.jpg', isActive: true },
-      { author: 'Shweta Rao',      title: 'Supportive learning environment',     description: 'The counsellors, trainers, and community support made it easy to stay consistent and finish the program.', rating: 5, image: '/assets/images/team/style2/3.jpg', isActive: true },
+      { author: 'Shweta Rao',      title: 'Supportive learning environment',     description: 'The counsellors, trainers and community support made it easy to stay consistent and finish the program.', rating: 5, image: '/assets/images/team/style2/3.jpg', isActive: true },
       { author: 'Mohit Jain',      title: 'Strong practical focus',              description: 'I liked that every concept was tied to actual hiring workflows, not just theory.', rating: 5, image: '/assets/images/team/style2/4.jpg', isActive: true },
     ],
   })
@@ -277,12 +277,12 @@ async function main() {
   await prisma.service.createMany({
     skipDuplicates: true,
     data: [
-      { title: 'Recruitment Training',      slug: 'recruitment-training',    description: 'Comprehensive training for aspiring recruiters and HR professionals. Learn sourcing, screening, closing, and onboarding workflows.', image: '/assets/images/services/home6/icon/1.png', isActive: true, sortOrder: 1 },
+      { title: 'Recruitment Training',      slug: 'recruitment-training',    description: 'Comprehensive training for aspiring recruiters and HR professionals. Learn sourcing, screening, closing and onboarding workflows.', image: '/assets/images/services/home6/icon/1.png', isActive: true, sortOrder: 1 },
       { title: 'Corporate HR Solutions',    slug: 'corporate-hr-solutions',  description: 'End-to-end HR consulting for corporates - from workforce planning to mass hiring campaigns and L&D programs.', image: '/assets/images/services/home6/icon/2.png', isActive: true, sortOrder: 2 },
       { title: 'Placement Assistance',      slug: 'placement-assistance',    description: 'We connect trained candidates with hiring partners across India. Our placement support is built around real job readiness.', image: '/assets/images/services/home6/icon/3.png', isActive: true, sortOrder: 3 },
       { title: 'Online Certification',      slug: 'online-certification',    description: 'Flexible online certification courses that fit your schedule. Industry-recognized certificates to boost your resume.', image: '/assets/images/services/home6/icon/4.png', isActive: true, sortOrder: 4 },
-      { title: 'HR Consulting',             slug: 'hr-consulting',           description: 'Strategic HR consulting for startups and SMEs - hiring strategy, compensation benchmarking, and policy creation.', image: '/assets/images/about/icon/1.png', isActive: true, sortOrder: 5 },
-      { title: 'Interview Preparation',     slug: 'interview-preparation',   description: 'Intensive interview preparation workshops covering mock interviews, body language, and domain-specific question banks.', image: '/assets/images/about/icon/2.png', isActive: true, sortOrder: 6 },
+      { title: 'HR Consulting',             slug: 'hr-consulting',           description: 'Strategic HR consulting for startups and SMEs - hiring strategy, compensation benchmarking and policy creation.', image: '/assets/images/about/icon/1.png', isActive: true, sortOrder: 5 },
+      { title: 'Interview Preparation',     slug: 'interview-preparation',   description: 'Intensive interview preparation workshops covering mock interviews, body language and domain-specific question banks.', image: '/assets/images/about/icon/2.png', isActive: true, sortOrder: 6 },
     ],
   })
   console.log('✅  Services seeded')
@@ -306,13 +306,13 @@ async function main() {
       title:       'Why Choose Us?',
       subtitle:    '10,000+ Placements | 98% Satisfaction | 50+ Expert Trainers',
       image:       '/assets/images/about/home13/about.png',
-      description: 'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships, and lifetime placement support. Our trainers are active HR professionals - not just academics.',
+      description: 'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships and lifetime placement support. Our trainers are active HR professionals - not just academics.',
     },
     {
       title:       'Hands-On Learning',
       subtitle:    'Practice with Real Workflows',
       image:       '/assets/images/about/home5/about-main.png',
-      description: 'Every learner gets practical exposure to sourcing, screening, interview preparation, and HR operations so the transition to work feels natural.',
+      description: 'Every learner gets practical exposure to sourcing, screening, interview preparation and HR operations so the transition to work feels natural.',
     },
   ]
   for (const section of extraAboutSections) {
@@ -351,7 +351,7 @@ async function main() {
     { name: 'Suresh Bansal',   email: 'suresh.bansal@institute.com',   phone: '9870001001', specialization: 'Recruitment & Sourcing', bio: 'Certified recruiter trainer with 12+ years in talent acquisition across IT and BFSI sectors.' },
     { name: 'Priti Shah',      email: 'priti.shah@institute.com',      phone: '9870001002', specialization: 'Learning & Development',  bio: 'L&D specialist focused on building structured onboarding and upskilling programs for HR teams.' },
     { name: 'Rohit Malhotra',  email: 'rohit.malhotra@institute.com',  phone: '9870001003', specialization: 'Entrepreneurship & HR',    bio: 'Startup mentor and HR leader who has scaled people functions for three early-stage companies.' },
-    { name: 'Vivek Srivastava',email: 'vivek.srivastava@institute.com',phone: '9870001004', specialization: 'Corporate Training',       bio: 'Corporate trainer specializing in mass hiring, interview panels, and HR analytics workshops.' },
+    { name: 'Vivek Srivastava',email: 'vivek.srivastava@institute.com',phone: '9870001004', specialization: 'Corporate Training',       bio: 'Corporate trainer specializing in mass hiring, interview panels and HR analytics workshops.' },
   ]
   const trainers: Awaited<ReturnType<typeof prisma.trainer.upsert>>[] = []
   for (const t of trainerSeeds) {

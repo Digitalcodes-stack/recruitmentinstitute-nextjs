@@ -5,13 +5,13 @@ export default function Head() {
       <title>End-to-End Recruitment Training in Pune | Recruitment Institute</title>
       <meta
         name="description"
-        content="Learn the complete recruitment lifecycle with practical sourcing, screening, interviewing, and hiring skills."
+        content="Learn the complete recruitment lifecycle with practical sourcing, screening, interviewing and hiring skills."
       />
       <link rel="canonical" href={`${base}/end-to-end-recruitment-training`} />
       <meta property="og:title" content="End-to-End Recruitment Training in Pune" />
       <meta
         property="og:description"
-        content="Practical recruitment training covering sourcing, screening, interviewing, ATS tools, and hiring workflows."
+        content="Practical recruitment training covering sourcing, screening, interviewing, ATS tools and hiring workflows."
       />
       <meta property="og:url" content={`${base}/end-to-end-recruitment-training`} />
       <meta property="og:type" content="website" />
@@ -19,7 +19,7 @@ export default function Head() {
       <meta name="twitter:title" content="End-to-End Recruitment Training in Pune" />
       <meta
         name="twitter:description"
-        content="Practical recruitment training covering sourcing, screening, interviewing, ATS tools, and hiring workflows."
+        content="Practical recruitment training covering sourcing, screening, interviewing, ATS tools and hiring workflows."
       />
     </>
   )

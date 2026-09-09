@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyPassword, signToken, setAdminCookie } from '@/lib/auth'
+import { verifyPassword, signToken, setAdminCookie, clearUserCookie, isLegacyMd5Hash, hashPassword } from '@/lib/auth'
 import { adminLoginSchema } from '@/lib/validations'
 
 export async function POST(req: NextRequest) {
@@ -25,6 +25,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'Invalid email or password' }, { status: 401 })
     }
 
+    // Auto-upgrade legacy MD5 password to secure bcrypt hash
+    if (isLegacyMd5Hash(admin.password)) {
+      try {
+        const bcryptHash = await hashPassword(password)
+        await prisma.adminUser.update({
+          where: { id: admin.id },
+          data: { password: bcryptHash },
+        })
+        console.log(`[Admin Login] Upgraded legacy MD5 hash to bcrypt for admin ID ${admin.id} (${admin.email})`)
+      } catch (upgradeErr) {
+        console.error('[Admin Login] Failed to auto-upgrade legacy MD5 hash:', upgradeErr)
+      }
+    }
+
     const token = signToken({
       userId: admin.id,
       email: admin.email,
@@ -41,6 +55,7 @@ export async function POST(req: NextRequest) {
 
     const cookieOpts = setAdminCookie(token)
     response.cookies.set(cookieOpts)
+    response.cookies.set(clearUserCookie())
 
     return response
   } catch (error) {

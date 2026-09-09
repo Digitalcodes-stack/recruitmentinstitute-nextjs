@@ -5,7 +5,7 @@ export default function Head() {
       <title>HR Entrepreneurship Program in Pune | Recruitment Institute</title>
       <meta
         name="description"
-        content="Build an HR consulting or recruitment business with mentorship, client acquisition, pricing, and agency setup guidance."
+        content="Build an HR consulting or recruitment business with mentorship, client acquisition, pricing and agency setup guidance."
       />
       <link rel="canonical" href={`${base}/hr-entrepreneurship-program`} />
       <meta property="og:title" content="HR Entrepreneurship Program in Pune" />

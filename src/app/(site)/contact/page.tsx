@@ -6,7 +6,7 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 export const metadata: Metadata = {
   title: 'Contact Us - Recruitment Institute Pune',
   description:
-    'Contact Recruitment Institute in Pune for HR course enquiries, admissions guidance, and batch details. Call +91 7385204165 or email support@recruitmentinstitute.in.',
+    'Contact Recruitment Institute in Pune for HR course enquiries, admissions guidance and batch details. Call +91 7385204165 or email support@recruitmentinstitute.in.',
   keywords: 'contact recruitment institute, HR course enquiry pune, admissions recruitment training',
   alternates: { canonical: `${BASE_URL}/contact` },
   openGraph: {

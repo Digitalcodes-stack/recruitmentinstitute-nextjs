@@ -217,7 +217,7 @@ export default async function AdminFinancePage() {
                 marginTop: 12, maxWidth: 520,
                 fontSize: 14, lineHeight: 1.8, color: '#94b8d8',
               }}>
-                Track course fees, invoices, installment plans, payments, and refunds from one structured dashboard.
+                Track course fees, invoices, installment plans, payments and refunds from one structured dashboard.
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>

@@ -60,6 +60,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
       // Experience
       if (selectedExperience !== 'ALL') {
         const yrs = t.experienceYears
+        if (selectedExperience === '20+' && yrs < 20) return false
         if (selectedExperience === '15+' && yrs < 15) return false
         if (selectedExperience === '10-15' && (yrs < 10 || yrs > 15)) return false
         if (selectedExperience === '5-10' && (yrs < 5 || yrs > 10)) return false
@@ -175,6 +176,7 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
               }}
             >
               <option value="ALL">All Experience</option>
+              <option value="20+">20+ Years</option>
               <option value="15+">15+ Years</option>
               <option value="10-15">10–15 Years</option>
               <option value="5-10">5–10 Years</option>
@@ -365,9 +367,35 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
                   </p>
 
                   {activeTrainer.companyEx && (
-                    <p style={{ fontSize: '12px', color: '#94A3B8', fontFamily: 'monospace', fontWeight: 600, margin: 0 }}>
-                      {activeTrainer.companyEx}
+                    <p style={{ fontSize: '12px', color: '#94A3B8', fontFamily: 'monospace', fontWeight: 600, margin: '0 0 6px' }}>
+                      {activeTrainer.companyEx.replace(/^Ex-?/i, '').replace(/\|\s*Ex-?/gi, '| ').trim()}
                     </p>
+                  )}
+
+                  {activeTrainer.linkedinUrl && (
+                    <a
+                      href={activeTrainer.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
+                        background: '#0A66C2',
+                        color: '#FFFFFF',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        width: 'fit-content',
+                      }}
+                    >
+                      <svg style={{ width: '12px', height: '12px', fill: 'currentColor' }} viewBox="0 0 24 24">
+                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.64 1.64 0 1 0-.02-3.28 1.64 1.64 0 0 0 .02 3.28m1.39 9.74v-8.37H5.07v8.37h2.78Z"/>
+                      </svg>
+                      <span>LinkedIn Profile</span>
+                    </a>
                   )}
                 </div>
               </div>

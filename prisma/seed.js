@@ -136,14 +136,14 @@ async function run() {
 
   // ── 9. KNOWLEDGE BASE ─────────────────────────────────────────────────────
   n = await ins('knowledge_items', ['question','answer','added_by','date','updated_at'], [
-    { question:'What is Boolean Search in recruitment?',         answer:'Boolean search uses AND, OR, NOT operators to refine candidate searches on LinkedIn and job portals.',                                     added_by:'Admin', date:'2024-01-10', updated_at:now },
-    { question:'What is an ATS (Applicant Tracking System)?',   answer:'ATS automates hiring — parsing resumes, scheduling interviews, and tracking candidates through the pipeline.',                             added_by:'Admin', date:'2024-01-15', updated_at:now },
+    { question:'What is Boolean Search in recruitment?',         answer:'Boolean search uses AND Or, NOT operators to refine candidate searches on LinkedIn and job portals.',                                     added_by:'Admin', date:'2024-01-10', updated_at:now },
+    { question:'What is an ATS (Applicant Tracking System)?',   answer:'ATS automates hiring — parsing resumes, scheduling interviews and tracking candidates through the pipeline.',                             added_by:'Admin', date:'2024-01-15', updated_at:now },
     { question:'How do you calculate time-to-hire?',            answer:'Time-to-hire = days from job opening to offer accepted. Industry average is 23–38 days.',                                                  added_by:'Admin', date:'2024-02-01', updated_at:now },
     { question:'What is the STAR interview method?',            answer:'STAR = Situation, Task, Action, Result. It structures behavioral questions for consistent candidate evaluation.',                           added_by:'Admin', date:'2024-02-10', updated_at:now },
-    { question:'What is employer branding?',                    answer:'How a company markets itself to potential employees — culture, benefits, values, and reputation.',                                          added_by:'Admin', date:'2024-03-01', updated_at:now },
+    { question:'What is employer branding?',                    answer:'How a company markets itself to potential employees — culture, benefits, values and reputation.',                                          added_by:'Admin', date:'2024-03-01', updated_at:now },
     { question:'What is the difference between CV and resume?', answer:'A CV is a comprehensive career document (2+ pages). A resume is a concise 1-page summary tailored to a specific role.',                   added_by:'Admin', date:'2024-03-15', updated_at:now },
     { question:'What is headhunting?',                          answer:'Proactively identifying and approaching high-calibre passive candidates who are not actively job-hunting.',                                 added_by:'Admin', date:'2024-04-01', updated_at:now },
-    { question:'How to write an effective job description?',    answer:'Include: job title, responsibilities, required qualifications, skills, compensation range, and company culture details.',                  added_by:'Admin', date:'2024-04-15', updated_at:now },
+    { question:'How to write an effective job description?',    answer:'Include: job title, responsibilities, required qualifications, skills, compensation range and company culture details.',                  added_by:'Admin', date:'2024-04-15', updated_at:now },
   ])
   console.log(`✅  Knowledge Base: ${n} inserted`)
 
@@ -155,11 +155,11 @@ async function run() {
     const uid2 = uRes.rows[1].id
     const qids = qRes.rows.map((r) => r.id)
     n = await ins('answers', ['question_id','user_id','answer'], [
-      { question_id:qids[0], user_id:uid2, answer:'A talent acquisition interview is a structured meeting to assess whether a candidate fits a role and company culture. It focuses on skills, experience, and cultural alignment.' },
+      { question_id:qids[0], user_id:uid2, answer:'A talent acquisition interview is a structured meeting to assess whether a candidate fits a role and company culture. It focuses on skills, experience and cultural alignment.' },
       { question_id:qids[1]??qids[0], user_id:uid2, answer:'Talent acquisition is strategic — it builds long-term pipelines and workforce planning. Recruiting is tactical — filling open positions quickly.' },
-      { question_id:qids[2]??qids[0], user_id:uid2, answer:'Strong communication, active listening, data analysis, proficiency in ATS tools, and ability to build relationships with both candidates and hiring managers.' },
-      { question_id:qids[3]??qids[0], user_id:uid1, answer:'Reflect on the specific case, identify what broke down (timeline, assessment, or communication), and explain the corrective action you took.' },
-      { question_id:qids[4]??qids[0], user_id:uid2, answer:'I look for relevant experience, employment gaps, career progression consistency, keyword alignment with the JD, and formatting quality.' },
+      { question_id:qids[2]??qids[0], user_id:uid2, answer:'Strong communication, active listening, data analysis, proficiency in ATS tools and ability to build relationships with both candidates and hiring managers.' },
+      { question_id:qids[3]??qids[0], user_id:uid1, answer:'Reflect on the specific case, identify what broke down (timeline, assessment or communication) and explain the corrective action you took.' },
+      { question_id:qids[4]??qids[0], user_id:uid2, answer:'I look for relevant experience, employment gaps, career progression consistency, keyword alignment with the JD and formatting quality.' },
     ])
     console.log(`✅  Q&A Answers:    ${n} inserted`)
   }
@@ -204,12 +204,12 @@ async function run() {
 
   // ── 14. SERVICES ──────────────────────────────────────────────────────────
   n = await ins('services', ['title','title_url','description','status','sort_order','updated_at'], [
-    { title:'Recruitment Training',   title_url:'recruitment-training',   description:'Comprehensive training for aspiring recruiters. Learn sourcing, screening, and closing techniques from active industry professionals.',  status:true, sort_order:1, updated_at:now },
-    { title:'Corporate HR Solutions', title_url:'corporate-hr-solutions', description:'End-to-end HR consulting for corporates — workforce planning, mass hiring campaigns, and L&D programs tailored to your team.',         status:true, sort_order:2, updated_at:now },
+    { title:'Recruitment Training',   title_url:'recruitment-training',   description:'Comprehensive training for aspiring recruiters. Learn sourcing, screening and closing techniques from active industry professionals.',  status:true, sort_order:1, updated_at:now },
+    { title:'Corporate HR Solutions', title_url:'corporate-hr-solutions', description:'End-to-end HR consulting for corporates — workforce planning, mass hiring campaigns and L&D programs tailored to your team.',         status:true, sort_order:2, updated_at:now },
     { title:'Placement Assistance',   title_url:'placement-assistance',   description:'We connect trained candidates with top recruiters across India. Our placement cell has an 85%+ success rate since inception.',         status:true, sort_order:3, updated_at:now },
     { title:'Online Certification',   title_url:'online-certification',   description:'Flexible online certification courses that fit your schedule. Industry-recognized certificates to boost your resume instantly.',        status:true, sort_order:4, updated_at:now },
-    { title:'HR Consulting',          title_url:'hr-consulting',          description:'Strategic HR consulting for startups and SMEs — hiring strategy, compensation benchmarking, and policy creation.',                    status:true, sort_order:5, updated_at:now },
-    { title:'Interview Preparation',  title_url:'interview-preparation',  description:'Intensive interview prep workshops: mock interviews, body language coaching, and domain-specific question banks.',                    status:true, sort_order:6, updated_at:now },
+    { title:'HR Consulting',          title_url:'hr-consulting',          description:'Strategic HR consulting for startups and SMEs — hiring strategy, compensation benchmarking and policy creation.',                    status:true, sort_order:5, updated_at:now },
+    { title:'Interview Preparation',  title_url:'interview-preparation',  description:'Intensive interview prep workshops: mock interviews, body language coaching and domain-specific question banks.',                    status:true, sort_order:6, updated_at:now },
   ])
   console.log(`✅  Services:       ${n} inserted`)
 
@@ -220,7 +220,7 @@ async function run() {
   )
   n = await ins('about_us', ['title','title1','description','updated_at'], [
     { title:'Our Mission', title1:'Empowering Every Talent', description:'Our mission is to democratize recruitment knowledge across India. We believe every individual deserves world-class training. With 10,000+ graduates, we are building the largest HR talent community in India.', updated_at:now },
-    { title:'Why Choose Us?', title1:'10,000+ Placements | 98% Satisfaction', description:'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships, and lifetime placement support. Our trainers are active HR professionals — not just academics.', updated_at:now },
+    { title:'Why Choose Us?', title1:'10,000+ Placements | 98% Satisfaction', description:'Recruitment Institute stands apart because of our practitioner-led curriculum, industry partnerships and lifetime placement support. Our trainers are active HR professionals — not just academics.', updated_at:now },
   ])
   console.log(`✅  About Us:       updated + ${n} new sections`)
 

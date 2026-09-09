@@ -225,7 +225,7 @@ export default function SessionForm({
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="What will students learn in this session? Provide agenda, prerequisites, or preparation notes..."
+            placeholder="What will students learn in this session? Provide agenda, prerequisites or preparation notes..."
             rows={2}
             style={{ ...inputStyle, resize: 'vertical' }}
           />

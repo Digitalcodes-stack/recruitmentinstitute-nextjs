@@ -4,7 +4,7 @@ This repository now includes a dedicated FastAPI scaffold under `services/fastap
 
 ## Boundaries
 
-- Next.js remains the frontend and current shared backend for auth, CMS, and existing training pages.
+- Next.js remains the frontend and current shared backend for auth, CMS and existing training pages.
 - FastAPI is reserved for new domain-heavy workflows:
   - LMS APIs
   - placement portal
@@ -44,7 +44,7 @@ services/fastapi-backend/
 ## Delivered Scaffold
 
 - Async FastAPI app with health check and versioned routers
-- JWT login, refresh, and current-user endpoints
+- JWT login, refresh and current-user endpoints
 - SQLAlchemy models for service-owned tables
 - Alembic initial migration
 - Repository and service layers

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyPassword, signToken, setUserCookie } from '@/lib/auth'
+import { verifyPassword, signToken, setUserCookie, clearAdminCookie } from '@/lib/auth'
 import { trainerLoginSchema } from '@/lib/validations'
 
 export async function POST(req: NextRequest) {
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     })
 
     response.cookies.set(setUserCookie(token))
+    response.cookies.set(clearAdminCookie())
     return response
   } catch (error) {
     console.error('Trainer login error:', error)

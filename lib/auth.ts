@@ -15,12 +15,32 @@ function getJwtSecret(): string {
 const ADMIN_COOKIE = 'ri_admin_token'
 const USER_COOKIE = 'ri_user_token'
 
+import crypto from 'crypto'
+
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, 12)
 }
 
+export function isLegacyMd5Hash(hash: string): boolean {
+  return typeof hash === 'string' && hash.length === 32 && /^[0-9a-f]{32}$/i.test(hash)
+}
+
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash)
+  if (!password || !hash) return false
+
+  if (hash.startsWith('$2')) {
+    return bcrypt.compare(password, hash)
+  }
+
+  // Check 32-character hexadecimal MD5 hash
+  if (isLegacyMd5Hash(hash)) {
+    const md5Hash = crypto.createHash('md5').update(password).digest('hex')
+    if (md5Hash.toLowerCase() === hash.toLowerCase()) {
+      return true
+    }
+  }
+
+  return bcrypt.compare(password, hash).catch(() => false)
 }
 
 export function signToken(payload: AuthSession, expiresIn = '7d'): string {

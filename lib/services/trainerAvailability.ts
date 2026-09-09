@@ -71,7 +71,7 @@ export async function findAvailableTrainers(
   return ranked
 }
 
-/** Picks the single best trainer for a schedule, or null if nobody is available. */
+/** Picks the single best trainer for a schedule or null if nobody is available. */
 export async function pickBestTrainer(
   requirement: ScheduleRequirement,
   opts: { specialization?: string | null } = {},

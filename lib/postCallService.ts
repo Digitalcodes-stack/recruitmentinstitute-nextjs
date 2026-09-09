@@ -97,18 +97,18 @@ export function generatePostCallWhatsAppText(payload: PostCallPayload): string {
 
 Thank you for speaking with *${counselor}* (${COUNSELOR_ROLE}) from *Recruitment Institute*.
 
-As promised during our call, here are your requested course details, key curriculum highlights, and next steps:${slotSection}${notesSection}
+As promised during our call, here are your requested course details, key curriculum highlights and next steps:${slotSection}${notesSection}
 
 ━━━━━━━━━━━━━━━━━━━━━
 📚 *PROGRAM OVERVIEW*
 *${programTitle}*
-Designed for freshers, HR aspirants, and working professionals looking to break into high-paying Talent Acquisition & Recruitment roles.
+Designed for freshers, HR aspirants and working professionals looking to break into high-paying Talent Acquisition & Recruitment roles.
 
 ✨ *KEY BENEFITS & PRACTICAL MODULES:*
 • Live Sourcing on LinkedIn Recruiter, Naukri, Shine & Portals
 • Advanced Boolean Search Mastery & Talent Pipeline Mapping
 • Complete ATS Lifecycle, Screening, Interviewing & Offer Negotiation
-• Payroll, Compensation & Benefits, and Statutory Compliances
+• Payroll, Compensation & Benefits and Statutory Compliances
 • 100% Placement Assistance with 500+ Hiring Partner Companies
 • Industry Recognized Certification & Lifetime Career Community Access
 
@@ -335,7 +335,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                 Thank you for speaking with me today. It was a pleasure discussing your background and learning more about your professional goals in Talent Acquisition and Human Resources.
               </p>
               <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.65; color: #334155;">
-                As promised during our consultation call, here is your comprehensive consultation summary, core curriculum highlights, and actionable next steps for the <strong>${programTitle}</strong>.
+                As promised during our consultation call, here is your comprehensive consultation summary, core curriculum highlights and actionable next steps for the <strong>${programTitle}</strong>.
               </p>
 
               <!-- Program Snapshot Card -->
@@ -388,7 +388,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                         🔍 Live Portal Mastery (LinkedIn Recruiter &amp; Naukri)
                       </div>
                       <div style="font-size: 13px; line-height: 1.5; color: #475569;">
-                        Hands-on sourcing on active portals. Master keyword search, advanced filters, candidate outreach messaging, and recruitment analytics.
+                        Hands-on sourcing on active portals. Master keyword search, advanced filters, candidate outreach messaging and recruitment analytics.
                       </div>
                     </td>
                   </tr>
@@ -402,7 +402,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                         ⚡ Advanced Boolean Sourcing &amp; Talent Mapping
                       </div>
                       <div style="font-size: 13px; line-height: 1.5; color: #475569;">
-                        Formulate high-precision search strings (AND, OR, NOT, X-Ray) to uncover hidden, passive candidate pools across Google and GitHub.
+                        Formulate high-precision search strings (AND Or, NOT, X-Ray) to uncover hidden, passive candidate pools across Google and GitHub.
                       </div>
                     </td>
                   </tr>
@@ -416,7 +416,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                         📋 Full ATS Lifecycle &amp; Salary Negotiation
                       </div>
                       <div style="font-size: 13px; line-height: 1.5; color: #475569;">
-                        End-to-end recruitment management: resume screening, structured interview coordination, CTC benchmarking, and counter-offer handling.
+                        End-to-end recruitment management: resume screening, structured interview coordination, CTC benchmarking and counter-offer handling.
                       </div>
                     </td>
                   </tr>
@@ -430,7 +430,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                         ⚖️ HR Operations, Compliance &amp; Payroll Basics
                       </div>
                       <div style="font-size: 13px; line-height: 1.5; color: #475569;">
-                        Core operational HR skills: statutory compliances (PF, ESIC, Gratuity, Bonus), payroll structures, and standard onboarding documentation.
+                        Core operational HR skills: statutory compliances (PF, ESIC, Gratuity, Bonus), payroll structures and standard onboarding documentation.
                       </div>
                     </td>
                   </tr>
@@ -444,7 +444,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                         🎯 100% Dedicated Placement Assistance
                       </div>
                       <div style="font-size: 13px; line-height: 1.5; color: #475569;">
-                        One-on-one resume overhaul, LinkedIn profile makeover, rigorous mock interviews with Senior HR Directors, and direct hiring partner referrals.
+                        One-on-one resume overhaul, LinkedIn profile makeover, rigorous mock interviews with Senior HR Directors and direct hiring partner referrals.
                       </div>
                     </td>
                   </tr>
@@ -468,7 +468,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                           <td style="padding-left: 10px;">
                             <div style="font-size: 14px; font-weight: 700; color: #1e3a8a;">Review the Full Curriculum &amp; Batch Schedules</div>
                             <div style="font-size: 13px; color: #2563eb; margin-top: 2px;">
-                              Explore week-by-week practical projects, module breakdowns, and real recruiter case studies.
+                              Explore week-by-week practical projects, module breakdowns and real recruiter case studies.
                             </div>
                           </td>
                         </tr>
@@ -508,7 +508,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                           <td style="padding-left: 10px;">
                             <div style="font-size: 14px; font-weight: 700; color: #1e3a8a;">Attend Your Free Live Demo Session</div>
                             <div style="font-size: 13px; color: #2563eb; margin-top: 2px;">
-                              Join our practical walkthrough session, interact with our mentor, and get your questions answered.
+                              Join our practical walkthrough session, interact with our mentor and get your questions answered.
                             </div>
                           </td>
                         </tr>
@@ -537,7 +537,7 @@ export function renderCandidatePostCallEmailHtml(payload: PostCallPayload): stri
                 <tr>
                   <td>
                     <div style="font-size: 15px; line-height: 1.6; color: #334155; margin-bottom: 16px;">
-                      If you have any questions regarding batch timings, fee installments, or career transitions, feel free to reply directly to this email or reach out to our team anytime.
+                      If you have any questions regarding batch timings, fee installments or career transitions, feel free to reply directly to this email or reach out to our team anytime.
                     </div>
                     <div style="font-size: 14px; color: #475569;">Warm regards,</div>
                     <div style="font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px;">${counselor}</div>
@@ -668,7 +668,7 @@ export async function sendPostCallAdminAlert(payload: PostCallPayload): Promise<
     title: 'Phone Consultation Completed',
     subtitle: `${cleanName} completed call with ${counselor}`,
     introText: `
-      A candidate has concluded a phone consultation call. Automated course details, next steps, and helpful links have been dispatched to the candidate's WhatsApp and Email.
+      A candidate has concluded a phone consultation call. Automated course details, next steps and helpful links have been dispatched to the candidate's WhatsApp and Email.
     `,
     rows,
     actionButton: {

@@ -2,7 +2,7 @@ import 'dotenv/config'
 import { prisma } from '../lib/prisma'
 
 async function main() {
-  console.log('Updating trainer bios, quotes, and specializations in database...')
+  console.log('Updating trainer bios, quotes and specializations in database...')
 
   // 1. Brahmita Nayak
   const brahmita = await prisma.trainer.updateMany({
@@ -14,7 +14,7 @@ async function main() {
     },
     data: {
       specialization: 'HR & Soft Skills Specialist',
-      bio: 'Senior HR strategist and soft-skills mentor with 15+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
+      bio: 'Senior HR strategist and soft-skills mentor with 22+ years transforming professionals into high-impact talent partners through practical corporate HR operations and behavioral communication mastery.',
     },
   })
   console.log('Updated Brahmita rows:', brahmita.count)
@@ -29,10 +29,26 @@ async function main() {
     },
     data: {
       specialization: 'AI Transformation & Recruitment Specialist',
-      bio: 'AI recruitment architect and executive talent intelligence strategist with 16+ years engineering high-velocity sourcing pipelines, automated candidate discovery, and tech recruiting frameworks for global enterprises.',
+      bio: 'AI recruitment architect and executive talent intelligence strategist with 22+ years engineering high-velocity sourcing pipelines, automated candidate discovery and tech recruiting frameworks for global enterprises.',
     },
   })
   console.log('Updated Shesha rows:', shesha.count)
+
+  // 3. Debabrata Pattanayak
+  const debabrata = await prisma.trainer.updateMany({
+    where: {
+      OR: [
+        { email: 'dpattanayak@institute.com' },
+        { name: { contains: 'Debabrata', mode: 'insensitive' } },
+        { name: { contains: 'Pattanayak', mode: 'insensitive' } },
+      ],
+    },
+    data: {
+      specialization: 'Director of Human Resources (Cluster)',
+      bio: 'Cluster Director of Human Resources at The Park Hotels, Apeejay Surrendra Group with 22+ years of leadership in corporate HR operations, ethical people management and strategic talent acquisition.',
+    },
+  })
+  console.log('Updated Debabrata rows:', debabrata.count)
 }
 
 main()

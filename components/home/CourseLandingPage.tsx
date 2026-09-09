@@ -39,17 +39,17 @@ export default function CourseLandingPage({
     {
       id: 1,
       question: 'Who is this course suitable for?',
-      answer: 'This program is ideal for college graduates, career transitioners, early-stage HR professionals, and anyone aiming to master corporate recruiting pipelines.',
+      answer: 'This program is ideal for college graduates, career transitioners, early-stage HR professionals and anyone aiming to master corporate recruiting pipelines.',
     },
     {
       id: 2,
       question: 'Will I get practical exposure or only theoretical concepts?',
-      answer: 'Our training is 100% practical. You will construct actual Boolean search strings, navigate mock Applicant Tracking Systems (ATS), and practice active LinkedIn sourcing.',
+      answer: 'Our training is 100% practical. You will construct actual Boolean search strings, navigate mock Applicant Tracking Systems (ATS) and practice active LinkedIn sourcing.',
     },
     {
       id: 3,
       question: 'Is placement support provided upon completion?',
-      answer: 'Yes, we provide resume review sessions, mock interviews, and share your profile with partner agencies and corporate recruitment teams across major industries.',
+      answer: 'Yes, we provide resume review sessions, mock interviews and share your profile with partner agencies and corporate recruitment teams across major industries.',
     },
     {
       id: 4,

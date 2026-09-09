@@ -243,12 +243,12 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       duration: 'Weeks 1–2',
       badge: 'Build Foundation',
       summary:
-        'Select your high-margin recruitment domain, structure profitable commercial models, incorporate your legal entity, and set up rock-solid contracts.',
+        'Select your high-margin recruitment domain, structure profitable commercial models, incorporate your legal entity and set up rock-solid contracts.',
       highlights: [
-        'Evaluating high-billing sectors: IT, BFSI, Healthcare, Executive Search, and Remote Global Staffing.',
+        'Evaluating high-billing sectors: IT, BFSI, Healthcare, Executive Search and Remote Global Staffing.',
         'Entity incorporation: Sole Proprietorship vs LLP vs Private Limited for recruitment consultancies.',
-        'GST, MSME (Udyam), current bank accounts, and invoice tax accounting.',
-        'Drafting ironclad Master Services Agreements (MSAs), fee schedules, and candidate replacement clauses.',
+        'GST, MSME (Udyam), current bank accounts and invoice tax accounting.',
+        'Drafting ironclad Master Services Agreements (MSAs), fee schedules and candidate replacement clauses.',
       ],
     },
     {
@@ -257,12 +257,12 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       duration: 'Weeks 3–4',
       badge: 'Deploy Tech',
       summary:
-        'Deploy modern agency technology stacks, configure an enterprise ATS, set up recruiter email domains, and build your candidate sourcing engine.',
+        'Deploy modern agency technology stacks, configure an enterprise ATS, set up recruiter email domains and build your candidate sourcing engine.',
       highlights: [
-        'Configuring Zoho Recruit, Recruit CRM, or Ceipal for candidate pipelines and client tracking.',
-        'Setting up Google Workspace, professional domain emails, and high-deliverability DNS records.',
+        'Configuring Zoho Recruit, Recruit CRM or Ceipal for candidate pipelines and client tracking.',
+        'Setting up Google Workspace, professional domain emails and high-deliverability DNS records.',
         'Cost-effective job portal subscriptions & shared CV database strategies.',
-        'Standard Operating Procedures (SOPs) for candidate intake, screening, and submission profiles.',
+        'Standard Operating Procedures (SOPs) for candidate intake, screening and submission profiles.',
       ],
     },
     {
@@ -271,9 +271,9 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       duration: 'Weeks 5–8',
       badge: 'Acquire Clients',
       summary:
-        'Build a predictable pipeline of corporate clients using LinkedIn Sales Navigator, automated cold email sequences, and high-converting phone discovery calls.',
+        'Build a predictable pipeline of corporate clients using LinkedIn Sales Navigator, automated cold email sequences and high-converting phone discovery calls.',
       highlights: [
-        'Mapping corporate CHROs, VP HRs, and Talent Acquisition Heads on LinkedIn.',
+        'Mapping corporate CHROs, VP HRs and Talent Acquisition Heads on LinkedIn.',
         'Writing 3-touch cold email sequences that deliver 40%+ open rates and 12%+ reply rates.',
         'Cold calling scripts and objection handling for corporate gatekeepers and HR leaders.',
         'Running client discovery meetings and positioning your agency as a high-value specialist.',
@@ -285,13 +285,13 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       duration: 'Weeks 9–14',
       badge: 'Deliver & Collect',
       summary:
-        'Negotiate favorable recruitment commercials (8.33% to 15%+), sign client MSAs, deliver shortlisted candidates in 48 hours, and collect invoices rapidly.',
+        'Negotiate favorable recruitment commercials (8.33% to 15%+), sign client MSAs, deliver shortlisted candidates in 48 hours and collect invoices rapidly.',
       highlights: [
         'Commercial negotiation tactics: Securing 8.33%–15% fees and 30-day payment credit terms.',
         'Winning upfront retainer mandates and exclusive recruitment searches.',
         'Executing high-velocity 48-hour candidate delivery with personalized candidate pitch briefs.',
-        'Managing post-offer engagement to prevent counter-offers, dropouts, and delayed joinings.',
-        'Automated invoice dispatch, receivables follow-ups, and Day Sales Outstanding (DSO) management.',
+        'Managing post-offer engagement to prevent counter-offers, dropouts and delayed joinings.',
+        'Automated invoice dispatch, receivables follow-ups and Day Sales Outstanding (DSO) management.',
       ],
     },
     {
@@ -300,13 +300,13 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       duration: 'Weeks 15–24+',
       badge: 'Scale to ₹1 Cr+',
       summary:
-        'Transition from a solo founder to an agency leader. Hire freelance and full-time recruiters, implement commission scorecards, and scale to multiple verticals.',
+        'Transition from a solo founder to an agency leader. Hire freelance and full-time recruiters, implement commission scorecards and scale to multiple verticals.',
       highlights: [
-        'Hiring freelance vs full-time recruiters: Sourcing, testing, and interview rubrics.',
+        'Hiring freelance vs full-time recruiters: Sourcing, testing and interview rubrics.',
         'Designing aggressive commission structures and weekly recruiter KPI scorecards.',
         'Building executive recruitment MIS dashboards in Excel and Looker Studio.',
-        'Expanding into high-margin verticals, retained executive search, and annual RPO accounts.',
-        'Managing cash flow, working capital, and executing the 12-month ₹1 Crore ARR roadmap.',
+        'Expanding into high-margin verticals, retained executive search and annual RPO accounts.',
+        'Managing cash flow, working capital and executing the 12-month ₹1 Crore ARR roadmap.',
       ],
     },
   ]
@@ -314,8 +314,8 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
   // FAQs
   const faqs = [
     {
-      q: 'Which plan should I choose: Launch, Accelerator, or Mastery?',
-      a: 'Plan 2 (Accelerator, ₹75,000 – ₹99,000) is our flagship and most recommended program for over 80% of founders. It provides 6 months of weekly business reviews, 1-to-1 mentoring, deal negotiation support, ATS implementation, and hands-on handholding until you can run your recruitment agency autonomously. If you only need initial 8-week setup guidance, Plan 1 (Launch, ₹29,999 – ₹39,999) is ideal. For high-growth founders seeking deep 1-to-1 consulting, P&L audits, and direct WhatsApp founder hotline access, choose Plan 3 (Mastery, ₹1.50L – ₹2.50L / yr).',
+      q: 'Which plan should I choose: Launch, Accelerator or Mastery?',
+      a: 'Plan 2 (Accelerator, ₹75,000 – ₹99,000) is our flagship and most recommended program for over 80% of founders. It provides 6 months of weekly business reviews, 1-to-1 mentoring, deal negotiation support, ATS implementation and hands-on handholding until you can run your recruitment agency autonomously. If you only need initial 8-week setup guidance, Plan 1 (Launch, ₹29,999 – ₹39,999) is ideal. For high-growth founders seeking deep 1-to-1 consulting, P&L audits and direct WhatsApp founder hotline access, choose Plan 3 (Mastery, ₹1.50L – ₹2.50L / yr).',
     },
     {
       q: 'Why are prices shown in ranges rather than fixed amounts?',
@@ -327,11 +327,11 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
     },
     {
       q: 'Are government company incorporation and registration fees included in the program range?',
-      a: 'No. Government incorporation and statutory filing fees (such as MCA, Stamp Duty, GST, Trademark, or MSME official fees) are paid directly to government portals or your CA and are separate. We provide complete step-by-step guidance and template documentation.',
+      a: 'No. Government incorporation and statutory filing fees (such as MCA, Stamp Duty, GST, Trademark or MSME official fees) are paid directly to government portals or your CA and are separate. We provide complete step-by-step guidance and template documentation.',
     },
     {
       q: 'What contracts and legal templates are provided in the accelerator?',
-      a: 'You receive our complete, battle-tested legal repository: Master Services Agreements (MSAs), commercial rate cards (8.33% to 20%), candidate replacement policy clauses, non-disclosure agreements (NDAs), consultant engagement agreements, and corporate invoice templates.',
+      a: 'You receive our complete, battle-tested legal repository: Master Services Agreements (MSAs), commercial rate cards (8.33% to 20%), candidate replacement policy clauses, non-disclosure agreements (NDAs), consultant engagement agreements and corporate invoice templates.',
     },
     {
       q: 'How long does it typically take to acquire the first paying corporate client?',
@@ -339,11 +339,11 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
     },
     {
       q: 'How does the commercial negotiation support work in Plan 2 (Accelerator)?',
-      a: 'When an enterprise client requests your commercial terms, our senior mentors personally review your proposal, advise on fee percentages (8.33% to 15%), review payment credit terms, and join pre-negotiation prep calls so you never undercharge or sign unfavorable terms.',
+      a: 'When an enterprise client requests your commercial terms, our senior mentors personally review your proposal, advise on fee percentages (8.33% to 15%), review payment credit terms and join pre-negotiation prep calls so you never undercharge or sign unfavorable terms.',
     },
     {
       q: 'Do I need a large capital investment or an office to start?',
-      a: 'No! A recruitment consultancy is one of the highest margin, lowest capex businesses you can launch. You only need a laptop, phone, professional email, and an internet connection. Most founders operate 100% remotely with near-zero overhead.',
+      a: 'No! A recruitment consultancy is one of the highest margin, lowest capex businesses you can launch. You only need a laptop, phone, professional email and an internet connection. Most founders operate 100% remotely with near-zero overhead.',
     },
   ]
 
@@ -415,7 +415,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             {/* Sub-headline */}
             <p className="text-slate-600 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl font-normal">
               From Zero to a Profitable Recruitment Agency — The comprehensive blueprint, ironclad legal frameworks, 
-              predictable B2B corporate client acquisition engines, and hands-on founder mentoring to scale past ₹1 Crore ARR.
+              predictable B2B corporate client acquisition engines and hands-on founder mentoring to scale past ₹1 Crore ARR.
             </p>
 
             {/* Proof Badges Grid */}
@@ -486,7 +486,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             </h2>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
               Recruitment is one of the highest margin, lowest capital businesses in existence. 
-              You monetize specialized domain knowledge, recruitment frameworks, and executive networks.
+              You monetize specialized domain knowledge, recruitment frameworks and executive networks.
             </p>
           </div>
 
@@ -509,7 +509,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               <h3 className="text-lg font-bold text-slate-900 mb-2">Near-Zero Capital Expenditure</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 No physical inventory or expensive commercial leases. 
-                Start with your laptop, phone, professional email, and an ATS pipeline. Operate 100% remotely.
+                Start with your laptop, phone, professional email and an ATS pipeline. Operate 100% remotely.
               </p>
             </div>
 
@@ -520,7 +520,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               <h3 className="text-lg font-bold text-slate-900 mb-2">Compounding Scalability</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
                 Scale from a solo founder to an agency with commission-based recruiters. 
-                Add high-margin RPO contracts, executive headhunting, and expand into global cross-border hiring.
+                Add high-margin RPO contracts, executive headhunting and expand into global cross-border hiring.
               </p>
             </div>
           </div>
@@ -728,7 +728,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               Detailed Plan Comparison
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              A transparent breakdown of capabilities, deliverables, and mentoring intensity across all 3 accelerator tiers.
+              A transparent breakdown of capabilities, deliverables and mentoring intensity across all 3 accelerator tiers.
             </p>
           </div>
 
@@ -1051,7 +1051,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               The Complete Agency IP Toolkit
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              Every founder receives our proprietary repository of commercial contracts, cold pitch scripts, and ATS blueprints.
+              Every founder receives our proprietary repository of commercial contracts, cold pitch scripts and ATS blueprints.
             </p>
           </div>
 
@@ -1062,7 +1062,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">Legal Contracts & MSAs</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Battle-tested Master Services Agreements, 90-day replacement clauses, commercial rate cards, and NDAs.
+                Battle-tested Master Services Agreements, 90-day replacement clauses, commercial rate cards and NDAs.
               </p>
             </div>
 
@@ -1082,7 +1082,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">ATS Setup Blueprints</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Plug-and-play candidate submission formats, recruiter workflow stages, and email trigger automations.
+                Plug-and-play candidate submission formats, recruiter workflow stages and email trigger automations.
               </p>
             </div>
 
@@ -1092,7 +1092,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               </div>
               <h3 className="font-bold text-slate-900 text-base mb-2">Recruiter Hiring Kits</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Recruiter interview assessment rubrics, commission structure calculators, and daily activity scorecards.
+                Recruiter interview assessment rubrics, commission structure calculators and daily activity scorecards.
               </p>
             </div>
           </div>
@@ -1115,8 +1115,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                 </h2>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
                   We don't leave you with generic recorded videos. In <strong>Plan 2 (Accelerator)</strong>, our mentors 
-                  join your deal prep sessions, review your corporate client proposals, analyze your candidate pipelines, 
-                  and guide you until you can independently manage operations.
+                  join your deal prep sessions, review your corporate client proposals, analyze your candidate pipelines and guide you until you can independently manage operations.
                 </p>
                 <div className="pt-2">
                   <button
@@ -1160,7 +1159,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
               Frequently Asked Questions
             </h2>
             <p className="text-slate-600 text-sm sm:text-base">
-              Everything you need to know about program structure, pricing ranges, legal compliance, and commercial guidance.
+              Everything you need to know about program structure, pricing ranges, legal compliance and commercial guidance.
             </p>
           </div>
 

@@ -78,5 +78,5 @@ All of these routes returned successfully:
 ## Recommendation
 
 - Fix or remove the `/sitemap-blogs.xml` reference so `robots.txt` and the sitemap set are consistent.
-- If you want a stricter responsive QA pass, run a browser-based viewport audit on the homepage, About page, and floating chat widget.
+- If you want a stricter responsive QA pass, run a browser-based viewport audit on the homepage, About page and floating chat widget.
 

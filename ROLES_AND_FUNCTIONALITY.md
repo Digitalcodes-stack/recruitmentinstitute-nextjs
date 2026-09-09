@@ -1,6 +1,6 @@
 # Recruitment Institute — System Roles and Functionality Guide
 
-This guide outlines the system roles, access levels, step-by-step user journeys, and functionality mappings across the Recruitment Institute Next.js application.
+This guide outlines the system roles, access levels, step-by-step user journeys and functionality mappings across the Recruitment Institute Next.js application.
 
 ---
 
@@ -10,10 +10,10 @@ The platform supports four primary user groups with distinct access privileges:
 
 | Role | Access Scope | Primary Actions |
 |---|---|---|
-| **Admin** | Site-wide Administrator | User and core entity management, curriculum building, admissions, lead tracking, and content moderation. |
-| **Trainer** | Assigned Batches | Class scheduling, meeting link generation (auto-sync or manual), session updates, student progress tracking, and attendance management. |
-| **Student** | Enrolled Batches | Accessing course materials (LMS), attending live sessions, submitting assignments, taking AI assessments, and peer-to-peer discussions. |
-| **Visitor / Candidate** | Public Pages | Browsing courses/blogs, submitting lead forms, and registering for candidate memberships. |
+| **Admin** | Site-wide Administrator | User and core entity management, curriculum building, admissions, lead tracking and content moderation. |
+| **Trainer** | Assigned Batches | Class scheduling, meeting link generation (auto-sync or manual), session updates, student progress tracking and attendance management. |
+| **Student** | Enrolled Batches | Accessing course materials (LMS), attending live sessions, submitting assignments, taking AI assessments and peer-to-peer discussions. |
+| **Visitor / Candidate** | Public Pages | Browsing courses/blogs, submitting lead forms and registering for candidate memberships. |
 
 ---
 
@@ -25,16 +25,16 @@ The platform supports four primary user groups with distinct access privileges:
 - Redirects to `/admin` dashboard.
 
 ### Step 2: Dashboard Overview
-- View aggregated statistics: Total Students, Batches, Active Trainers, Courses, and Pending Enrollments.
+- View aggregated statistics: Total Students, Batches, Active Trainers, Courses and Pending Enrollments.
 - View recent leads and inquiry counts.
 
 ### Step 3: Course & Curriculum Management
-- **Course Administration**: Create, edit, and delete courses. Specify categories, title, description, and pricing structure.
+- **Course Administration**: Create, edit and delete courses. Specify categories, title, description and pricing structure.
 - **LMS Builder**: Build educational paths under each course:
   - Create **Modules** (structural themes).
   - Create **Chapters** within modules.
   - Create **Topics** within chapters.
-  - Upload **Lessons** (supports Video URLs, PDFs, PPTs, or custom text instructions) and attach downloadable resources.
+  - Upload **Lessons** (supports Video URLs, PDFs, PPTs or custom text instructions) and attach downloadable resources.
 
 ### Step 4: Batch & Trainer Allocation
 - Define **Batches** for a specific course (specify mode: Online/Offline/Hybrid, start date, capacity limit).
@@ -58,20 +58,20 @@ The platform supports four primary user groups with distinct access privileges:
 - Log in with credentials to access `/trainer/sessions`.
 
 ### Step 2: Dashboard & Batch Directory
-- View allocated batches, course directories, and student enrollment counts.
+- View allocated batches, course directories and student enrollment counts.
 - View upcoming classes and calendar items.
 
 ### Step 3: Session Scheduling (Manual & Auto Google Sync)
 - **Schedule Session**:
-  - Fill out: Session Title, Date, Start Time, End Time, and Description.
-  - (Optional) Paste a custom **Meeting Link** (e.g., Zoom, Teams, or external Google Meet link).
+  - Fill out: Session Title, Date, Start Time, End Time and Description.
+  - (Optional) Paste a custom **Meeting Link** (e.g., Zoom, Teams or external Google Meet link).
   - Save the session.
 - **Automated Sync (if configured)**:
   - If a meeting link is omitted and Google Credentials are set in the system, a background job is queued (`sync_calendar_event`).
-  - The job syncs with Google Calendar API, schedules the event, creates a Google Meet link, and updates the database record automatically.
+  - The job syncs with Google Calendar API, schedules the event, creates a Google Meet link and updates the database record automatically.
 
 ### Step 4: Session Modifications & Cancellations
-- **Edit Session**: Adjust titles, timings, dates, or manually update/override the meeting link.
+- **Edit Session**: Adjust titles, timings, dates or manually update/override the meeting link.
 - **Cancel Session**: Change status to `CANCELLED`. This action triggers a background job to:
   - Remove scheduled items from the Google Calendar sync.
   - Send an automated email notification blast to all enrolled students.
@@ -89,18 +89,18 @@ The platform supports four primary user groups with distinct access privileges:
 - Redirects to the student dashboard (`/profile`).
 
 ### Step 2: Dashboard & Class Attendance
-- View current enrolled batches, batch details, and active trainers.
+- View current enrolled batches, batch details and active trainers.
 - Track attendance rate: Automatically calculated percentage of past sessions marked "Present".
 - **Join Live Class**: Under **Upcoming Sessions**, if the class is live/scheduled and the trainer has set a link, click **Join Class** (directs the student to the meet room). If no link is generated yet, displays **Link pending**.
 
 ### Step 3: Learning Management System (LMS)
 - Access course curriculums via `/profile/courses/[id]`.
-- Navigate through modules, chapters, and lessons.
-- Play video lectures, read lesson notes, and download study resources.
+- Navigate through modules, chapters and lessons.
+- Play video lectures, read lesson notes and download study resources.
 - Tracks progression dynamically.
 
 ### Step 4: Assignment Submissions
-- View assigned tasks, homework, and deadlines under the **My Assignments** widget.
+- View assigned tasks, homework and deadlines under the **My Assignments** widget.
 - Download assignment templates.
 - Upload completed files and add comments.
 - View scores and grading feedback returned by the trainer.
@@ -109,12 +109,12 @@ The platform supports four primary user groups with distinct access privileges:
 - Once the curriculum is completed, unlock the **Final Assessment**.
 - Initiate the assessment to answer questions.
 - **AI Grading**: The system automatically evaluates responses against target parameters.
-- View progress bars, grading percentages, and download structured **PDF Assessment Reports**.
+- View progress bars, grading percentages and download structured **PDF Assessment Reports**.
 
 ### Step 6: Peer-to-Peer Community Forum
 - Access `/community` page.
 - Post recruitment and sourcing questions.
-- Search for topics, answer peer queries, and read threads.
+- Search for topics, answer peer queries and read threads.
 
 ---
 

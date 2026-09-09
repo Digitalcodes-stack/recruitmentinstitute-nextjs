@@ -49,7 +49,7 @@ function resolveDuration(courseName: string, categoryName: string, existingDurat
 }
 
 async function main() {
-  console.log('Fetching all courses, categories, and fees from database...')
+  console.log('Fetching all courses, categories and fees from database...')
 
   const [categories, courses, courseFees] = await Promise.all([
     prisma.courseCategory.findMany({ orderBy: { id: 'asc' } }),
@@ -63,7 +63,7 @@ async function main() {
     }),
   ])
 
-  console.log(`Found ${categories.length} categories, ${courses.length} courses, and ${courseFees.length} fee schedule records.`)
+  console.log(`Found ${categories.length} categories, ${courses.length} courses and ${courseFees.length} fee schedule records.`)
 
   // Sheet 1: Master Course Schedule with Fees & Durations (Matches /admin/fees & courses)
   const masterSheetData = courseFees.map((fee, index) => {

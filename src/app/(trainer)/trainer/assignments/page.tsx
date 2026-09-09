@@ -90,7 +90,7 @@ export default async function TrainerAssignmentsPage({
           Batch Assignments & Grading Portal
         </h1>
         <p style={{ fontSize: 13.5, color: '#64748b', marginTop: 4 }}>
-          Create and assign coursework, review student submission files, grade work out of 100, and provide constructive feedback.
+          Create and assign coursework, review student submission files, grade work out of 100 and provide constructive feedback.
         </p>
       </div>
 

@@ -52,7 +52,7 @@ export async function releaseAssessmentForPresentStudents(
     return { skipped: true, assessmentId: existing.fastapiAssessmentId, moduleName: existing.moduleName, studentsReleased: count }
   }
 
-  // ── Load session with module, batch, and attendance ──────────────────────
+  // ── Load session with module, batch and attendance ──────────────────────
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
     include: {

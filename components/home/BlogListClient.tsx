@@ -170,7 +170,7 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
             </span>
           </h1>
           <p style={{ fontSize: 16, color: '#94A3B8', lineHeight: 1.85, maxWidth: 580 }}>
-            Practical hiring strategy, retention ideas, sourcing guidance, and HR operations thinking for modern teams.
+            Practical hiring strategy, retention ideas, sourcing guidance and HR operations thinking for modern teams.
           </p>
         </div>
 
@@ -375,7 +375,7 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
                   </div>
                   <h3 style={{ fontSize: 18, fontWeight: 900, color: '#fff', lineHeight: 1.25, letterSpacing: '-.02em', margin: '0 0 10px' }}>Advance Your HR Skills</h3>
                   <p style={{ fontSize: 13, color: '#94A3B8', lineHeight: 1.75, margin: '0 0 20px' }}>
-                    Join practical HR and recruitment programs built around real sourcing, screening, interviewing, and negotiation workflows.
+                    Join practical HR and recruitment programs built around real sourcing, screening, interviewing and negotiation workflows.
                   </p>
                   <Link href="/courses" style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

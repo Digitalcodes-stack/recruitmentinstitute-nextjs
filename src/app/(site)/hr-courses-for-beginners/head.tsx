@@ -5,7 +5,7 @@ export default function Head() {
       <title>HR Courses for Beginners in Pune | Recruitment Institute</title>
       <meta
         name="description"
-        content="Start your HR career with beginner-friendly training covering HR fundamentals, recruitment basics, and practical hiring skills."
+        content="Start your HR career with beginner-friendly training covering HR fundamentals, recruitment basics and practical hiring skills."
       />
       <link rel="canonical" href={`${base}/hr-courses-for-beginners`} />
       <meta property="og:title" content="HR Courses for Beginners in Pune" />

@@ -33,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ ass
   const body = (await req.json()) as QuestionBankItemInput
 
   if (!body.topic_name || !body.question_text || !body.correct_option) {
-    return NextResponse.json({ success: false, message: 'topic_name, question_text, and correct_option are required' }, { status: 400 })
+    return NextResponse.json({ success: false, message: 'topic_name, question_text and correct_option are required' }, { status: 400 })
   }
 
   try {

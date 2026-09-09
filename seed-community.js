@@ -39,9 +39,9 @@ const questions = [
   },
   {
     userIdx: 2,
-    question: 'What is the difference between talent acquisition and recruitment, and why does it matter?',
+    question: 'What is the difference between talent acquisition and recruitment and why does it matter?',
     answers: [
-      { userIdx: 4, answer: 'Recruitment is transactional — filling an open role. Talent acquisition is strategic — building pipelines, employer branding, and long-term workforce planning. The distinction matters when you\'re pitching your role in an HR interview.' },
+      { userIdx: 4, answer: 'Recruitment is transactional — filling an open role. Talent acquisition is strategic — building pipelines, employer branding and long-term workforce planning. The distinction matters when you\'re pitching your role in an HR interview.' },
       { userIdx: 1, answer: 'TA looks at future needs too. A TA specialist builds relationships with passive candidates even when there are no open roles. Recruiter usually acts on reactive requisitions.' },
     ]
   },
@@ -50,14 +50,14 @@ const questions = [
     question: 'How do you write a strong cold outreach message to a passive candidate on LinkedIn?',
     answers: [
       { userIdx: 5, answer: 'Keep it under 4 lines. Lead with what makes the role interesting for THEM, not what your company needs. Example: "Hi [Name], your background in backend scaling at [Company] caught my eye — we\'re building something similar at [Startup]. Would love to share details if you\'re open to a conversation."' },
-      { userIdx: 0, answer: 'Personalisation is key. Reference their specific project, award, or post. Generic InMails get ignored. Mention a mutual connection or shared interest when possible.' },
+      { userIdx: 0, answer: 'Personalisation is key. Reference their specific project, award or post. Generic InMails get ignored. Mention a mutual connection or shared interest when possible.' },
     ]
   },
   {
     userIdx: 4,
-    question: 'What ATS platforms are most commonly used by Indian companies, and which one should I learn first?',
+    question: 'What ATS platforms are most commonly used by Indian companies and which one should I learn first?',
     answers: [
-      { userIdx: 2, answer: 'In India, the most common ones are Keka, Darwinbox, GreytHR, and Zoho Recruit for mid-market. For enterprise, Workday and SAP SuccessFactors are popular. I\'d recommend starting with Zoho Recruit — it has a free tier and is widely used.' },
+      { userIdx: 2, answer: 'In India, the most common ones are Keka, Darwinbox, GreytHR and Zoho Recruit for mid-market. For enterprise, Workday and SAP SuccessFactors are popular. I\'d recommend starting with Zoho Recruit — it has a free tier and is widely used.' },
       { userIdx: 6, answer: 'Naukri RMS (iRecruit) is also very popular among staffing firms. If you\'re targeting a specific company, check their LinkedIn job posts — they often mention the ATS in the JD.' },
     ]
   },
@@ -81,14 +81,14 @@ const questions = [
     userIdx: 7,
     question: 'How do I calculate the cost-per-hire metric and why is it important for HR reporting?',
     answers: [
-      { userIdx: 1, answer: 'Cost-per-hire = (Internal recruiting costs + External recruiting costs) / Total hires in a period. Include job portal fees, agency commissions, referral bonuses, recruiter salaries, and interview time. It\'s key for budget planning and showing HR ROI.' },
+      { userIdx: 1, answer: 'Cost-per-hire = (Internal recruiting costs + External recruiting costs) / Total hires in a period. Include job portal fees, agency commissions, referral bonuses, recruiter salaries and interview time. It\'s key for budget planning and showing HR ROI.' },
     ]
   },
   {
     userIdx: 0,
-    question: 'What questions should I never ask during a candidate interview, and why?',
+    question: 'What questions should I never ask during a candidate interview and why?',
     answers: [
-      { userIdx: 5, answer: 'Avoid questions about marital status, religion, caste, pregnancy plans, or age — these are discriminatory and can expose the company to legal liability. Stick to competency-based questions tied directly to the job requirements.' },
+      { userIdx: 5, answer: 'Avoid questions about marital status, religion, caste, pregnancy plans or age — these are discriminatory and can expose the company to legal liability. Stick to competency-based questions tied directly to the job requirements.' },
       { userIdx: 2, answer: 'Also avoid leading questions like "You\'re okay with night shifts, right?" which put the candidate in an awkward spot. Ask openly: "This role involves rotational shifts — is that something that works for you?"' },
     ]
   },
@@ -117,7 +117,7 @@ const questions = [
   },
   {
     userIdx: 2,
-    question: 'What is the role of an HR generalist vs an HR business partner, and which path should I choose?',
+    question: 'What is the role of an HR generalist vs an HR business partner and which path should I choose?',
     answers: [
       { userIdx: 4, answer: 'An HR generalist handles end-to-end HR operations: hiring, payroll, compliance, L&D, exits. An HRBP is more strategic — they partner with business leaders to align people strategy with business goals. If you enjoy operations, start as a generalist. If you love strategy and consulting, aim for HRBP.' },
     ]
@@ -126,7 +126,7 @@ const questions = [
     userIdx: 7,
     question: 'How do you handle a candidate who accepts an offer but doesn\'t show up on the joining date?',
     answers: [
-      { userIdx: 5, answer: 'This is called a "no-show" and it\'s every recruiter\'s nightmare. Prevent it by: staying in touch between offer and joining, sending a pre-joining engagement email, checking in on the last working day at the previous company, and having a backup candidate ready for critical roles.' },
+      { userIdx: 5, answer: 'This is called a "no-show" and it\'s every recruiter\'s nightmare. Prevent it by: staying in touch between offer and joining, sending a pre-joining engagement email, checking in on the last working day at the previous company and having a backup candidate ready for critical roles.' },
       { userIdx: 2, answer: 'Build rapport during the notice period. A weekly WhatsApp check-in goes a long way. If you sense the candidate is wavering, loop in the hiring manager early — a call from a future manager can seal the deal better than anything you can do.' },
     ]
   },
@@ -135,7 +135,7 @@ const questions = [
     question: 'What are the key differences between working in an HR consultancy vs an in-house HR team?',
     answers: [
       { userIdx: 0, answer: 'In a consultancy: fast pace, multiple clients, strong sourcing skills, performance pressure, great exposure to different industries. In-house: deeper relationships, broader HR scope (not just recruitment), more stability, slower career progression sometimes. Most experienced recruiters recommend starting in a consultancy to build speed and sourcing skills.' },
-      { userIdx: 6, answer: 'I started in consultancy and moved in-house after 2 years. The consultancy experience was invaluable — I learned to manage candidates, clients, timelines, and rejections all at once. In-house feels slower but you understand the full employee lifecycle.' },
+      { userIdx: 6, answer: 'I started in consultancy and moved in-house after 2 years. The consultancy experience was invaluable — I learned to manage candidates, clients, timelines and rejections all at once. In-house feels slower but you understand the full employee lifecycle.' },
     ]
   },
 ]

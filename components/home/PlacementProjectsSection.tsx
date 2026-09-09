@@ -7,7 +7,7 @@ const TESTS = [
     color: '#0369A1',
     bg: '#EFF6FF',
     border: '#BFDBFE',
-    desc: 'Assess logical reasoning, verbal ability, and numerical aptitude to benchmark your readiness before entering the job market.',
+    desc: 'Assess logical reasoning, verbal ability and numerical aptitude to benchmark your readiness before entering the job market.',
     skills: ['Logical Reasoning', 'Verbal Ability', 'Numerical Aptitude'],
   },
   {
@@ -16,7 +16,7 @@ const TESTS = [
     color: '#7C3AED',
     bg: '#F5F3FF',
     border: '#DDD6FE',
-    desc: 'Practical evaluation of core HR knowledge — recruitment lifecycle, sourcing techniques, screening methods, and ATS tools.',
+    desc: 'Practical evaluation of core HR knowledge — recruitment lifecycle, sourcing techniques, screening methods and ATS tools.',
     skills: ['Recruitment Concepts', 'Sourcing Techniques', 'ATS & Screening'],
   },
 ]

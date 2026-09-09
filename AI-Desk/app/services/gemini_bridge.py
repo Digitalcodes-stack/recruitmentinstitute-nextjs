@@ -138,7 +138,7 @@ class VoiceChatSession:
         else:
             selected_voice = "Kore"
 
-        logger.info("Sending Gemini Live setup configuration (model=%s, voice=%s, temp=0.65, silence=1400ms)...",
+        logger.info("Sending Gemini Live setup configuration (model=%s, voice=%s, temp=0.65, silence=800ms)...",
                     settings.GEMINI_LIVE_MODEL, selected_voice)
         await self._gemini_ws.send(json.dumps({
             "setup": {
@@ -159,8 +159,8 @@ class VoiceChatSession:
                 "outputAudioTranscription": {},
                 "realtimeInputConfig": {
                     "automaticActivityDetection": {
-                        "endOfSpeechSensitivity": "END_SENSITIVITY_LOW",
-                        "silenceDurationMs": 1400,
+                        "endOfSpeechSensitivity": "END_SENSITIVITY_DEFAULT",
+                        "silenceDurationMs": 800,
                     },
                 },
             },
@@ -177,6 +177,8 @@ class VoiceChatSession:
         Gemini Live speaks in response to a turn.
         We instruct Gemini in the EXACT language selected by the user to guarantee
         that the very first generated sentence is in that language with natural human warmth.
+        CRITICAL: The opening line is strictly 1 short sentence so the AI finishes in ~2-3 seconds
+        and immediately yields the floor to listen to the caller.
         """
         lang = self.language or "English"
         caller = self.caller_name if (self.caller_name and self.caller_name.lower() not in ("candidate", "caller", "user", "visitor", "")) else "Candidate"
@@ -186,83 +188,71 @@ class VoiceChatSession:
 
         if lang == "Marathi":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN MARATHI (मराठी). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
-                f"कॉल नुकताच सुरू झाला आहे. तुम्ही {counselor} आहात आणि {inst_company} मधून बोलत आहात. "
-                f"कॉलवर {caller_first} आहेत. त्यांना अत्यंत आपुलकीने आणि सहजपणे नमस्कार करा: "
-                f"'नमस्कार {caller_first}! मी रिक्रूटमेंट इन्स्टिट्यूटमधून {counselor} बोलत आहे. तुम्ही आमच्या प्रॅक्टिकल रिक्रूटमेंट ट्रेनिंगसाठी कॉल विनंती केली होती, म्हणून मी लगेच कॉल केला आहे. कसे आहात तुम्ही?'"
+                f"[CRITICAL: Speak ONLY 1 short, warm sentence in natural spoken Marathi (मराठी) like a real Indian counsellor. "
+                f"Say ONLY this one sentence, then STOP speaking immediately and LISTEN attentively to the caller.]\n"
+                f"'नमस्कार {caller_first}! मी {inst_company}मधून {counselor} बोलतेय. कशी मदत करू शकते तुम्हाला?'"
             )
         elif lang == "Hindi":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN HINDI (हिंदी). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
-                f"कॉल अभी कनेक्ट हुआ है। आप {counselor} हैं और {inst_company} से बात कर रही हैं। "
-                f"कॉल पर {caller_first} हैं। उन्हें तुरंत गर्मजोशी और सहज भाव से हिंदी में ग्रीट करें: "
-                f"'नमस्ते {caller_first}! मैं रिक्रूटमेंट इंस्टीट्यूट से {counselor} बात कर रही हूँ। आपने हमारे प्रैक्टिकल रिक्रूटमेंट ट्रेनिंग कोर्स के लिए कॉल रिक्वेस्ट की थी, इसलिए मैंने आपको तुरंत कॉल किया है। कैसे हैं आप?'"
+                f"[CRITICAL: Speak ONLY 1 short, warm sentence in natural spoken Hindi (हिंदी) like a real Indian counsellor. "
+                f"Say ONLY this one sentence, then STOP speaking immediately and LISTEN attentively to the caller.]\n"
+                f"'नमस्ते {caller_first}! मैं {inst_company} से {counselor} बात कर रही हूँ। कैसे हैं आप?'"
             )
         elif lang == "Odia":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN ODIA (ଓଡ଼ିଆ). Sound completely like a real Indian counsellor talking on the phone, warm and natural.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Odia right now: "
-                f"'ନମସ୍କାର {caller_first}! ମୁଁ {inst_company}ରୁ {counselor} କହୁଛି। ଆପଣ ଆମର ପ୍ରାକ୍ଟିକାଲ ରିକ୍ରୁଟମେଣ୍ଟ ଟ୍ରେନିଂ ପାଇଁ କଲ୍ ରିକ୍ୱେଷ୍ଟ କରିଥିଲେ, ସେଥିପାଇଁ ମୁଁ ତୁରନ୍ତ କଲ୍ କରିଛି। କେମିତି ଅଛନ୍ତି?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Odia (ଓଡ଼ିଆ). Then STOP speaking and LISTEN.]\n"
+                f"'ନମସ୍କାର {caller_first}! ମୁଁ {inst_company}ରୁ {counselor} କହୁଛି। କେମିତି ଅଛନ୍ତି?'"
             )
         elif lang == "Assamese":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN ASSAMESE (অসমীয়া). Sound completely like a real Indian counsellor talking on the phone.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Assamese right now: "
-                f"'নমস্কাৰ {caller_first}! মই {inst_company}ৰ পৰা {counselor} কৈছোঁ। আপুনি আমাৰ প্ৰেক্টিকেল ৰিক্ৰুটমেণ্ট ট্ৰেনিং বাবে কল অনুৰোধ কৰিছিল, সেইবাবে তৎক্ষণাৎ কল কৰিলোঁ। কেনে আছে আপুনি?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Assamese (অসমীয়া). Then STOP speaking and LISTEN.]\n"
+                f"'নমস্কাৰ {caller_first}! মই {inst_company}ৰ পৰা {counselor} কৈছোঁ। কেনে আছে আপুনি?'"
             )
         elif lang == "Konkani":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN KONKANI (कोंकणी). Sound completely like a real person.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly in natural spoken Konkani right now: "
-                f"'नमस्कार {caller_first}! हांव {inst_company} कडल्यान {counselor} उलयतां. तुमी कॉल विनंती केल्ली, देखून हांवें रोकडोच कॉल केला. कशे आसात तुमी?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Konkani (कोंकणी). Then STOP speaking and LISTEN.]\n"
+                f"'नमस्कार {caller_first}! हांव {inst_company} कडल्यान {counselor} उलयतां. कशे आसात तुमी?'"
             )
         elif lang == "Tamil":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN TAMIL (தமிழ்). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Tamil right now: "
-                f"'வணக்கம் {caller_first}! நான் {inst_company}லிருந்து {counselor} பேசுகிறேன். நீங்கள் கேட்டிருந்த படி உடனே அழைத்துள்ளேன். எப்படி இருக்கிறீர்கள்?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Tamil (தமிழ்). Then STOP speaking and LISTEN.]\n"
+                f"'வணக்கம் {caller_first}! நான் {inst_company}லிருந்து {counselor} பேசுகிறேன். எப்படி இருக்கிறீர்கள்?'"
             )
         elif lang == "Telugu":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN TELUGU (తెలుగు). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Telugu right now: "
-                f"'నమస్కారం {caller_first}! నేను {inst_company} నుండి {counselor} మాట్లాడుతున్నాను. మీరు కోరిన ప్రకారం వెంటనే కాల్ చేశాను. ఎలా ఉన్నారు?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Telugu (తెలుగు). Then STOP speaking and LISTEN.]\n"
+                f"'నమస్కారం {caller_first}! నేను {inst_company} నుండి {counselor} మాట్లాడుతున్నాను. ఎలా ఉన్నారు?'"
             )
         elif lang == "Kannada":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN KANNADA (ಕನ್ನಡ). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Kannada right now: "
-                f"'ನಮಸ್ಕಾರ {caller_first}! ನಾನು {inst_company}ಯಿಂದ {counselor} ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ. ನೀವು ವಿನಂತಿಸಿದಂತೆ ತಕ್ಷಣ ಕರೆ ಮಾಡಿದ್ದೇನೆ. ಹೇಗಿದ್ದೀರಿ?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Kannada (ಕನ್ನಡ). Then STOP speaking and LISTEN.]\n"
+                f"'ನಮಸ್ಕಾರ {caller_first}! ನಾನು {inst_company}ಯಿಂದ {counselor} ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ. ಹೇಗಿದ್ದೀರಿ?'"
             )
         elif lang == "Bengali":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN BENGALI (বাংলা). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Bengali right now: "
-                f"'নমস্কার {caller_first}! আমি {inst_company} থেকে {counselor} বলছি। আপনি রিকোয়েস্ট করেছিলেন তাই এখনই ফোন করলাম। কেমন আছেন?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Bengali (বাংলা). Then STOP speaking and LISTEN.]\n"
+                f"'নমস্কার {caller_first}! আমি {inst_company} থেকে {counselor} বলছি। কেমন আছেন?'"
             )
         elif lang == "Gujarati":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN GUJARATI (ગુજરાતી). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Gujarati right now: "
-                f"'નમસ્તે {caller_first}! હું {inst_company}માંથી {counselor} વાત કરું છું. તમે કૉલ રિક્વેસ્ટ કરી હતી એટલે તરત જ કૉલ કર્યો છે. કેમ છો?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Gujarati (ગુજરાતી). Then STOP speaking and LISTEN.]\n"
+                f"'નમસ્તે {caller_first}! હું {inst_company}માંથી {counselor} વાત કરું છું. કેમ છો?'"
             )
         elif lang == "Malayalam":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN MALAYALAM (മലയാളം). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Malayalam right now: "
-                f"'നമസ്കാരം {caller_first}! ഞാൻ {inst_company}യിൽ നിന്ന് {counselor} സംസാരിക്കുന്നു. താങ്കൾ ആവശ്യപ്പെട്ടതനുസരിച്ച് വിളിച്ചതാണ്. സുഖമാണോ?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Malayalam (മലയാളം). Then STOP speaking and LISTEN.]\n"
+                f"'നമസ്കാരം {caller_first}! ഞാൻ {inst_company}യിൽ നിന്ന് {counselor} സംസാരിക്കുന്നു. സുഖമാണോ?'"
             )
         elif lang == "Punjabi":
             instruction = (
-                f"[CRITICAL: YOU MUST SPEAK ONLY IN NATURAL SPOKEN PUNJABI (ਪੰਜਾਬੀ). Sound like a real person, not an AI.]\n"
-                f"The phone call just connected with {caller_first}. Greet warmly and naturally in spoken Punjabi right now: "
-                f"'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ {caller_first}! ਮੈਂ {inst_company} ਤੋਂ {counselor} ਬੋਲ ਰਹੀ ਹਾਂ। ਤੁਸੀਂ ਕਾਲ ਰਿਕਵੈਸਟ ਕੀਤੀ ਸੀ, ਇਸ ਲਈ ਮੈਂ ਫ਼ੋਨ ਕੀਤਾ ਹੈ। ਕਿਵੇਂ ਹੋ ਤੁਸੀਂ?'"
+                f"[CRITICAL: Speak ONLY 1 short sentence in natural spoken Punjabi (ਪੰਜਾਬੀ). Then STOP speaking and LISTEN.]\n"
+                f"'ਸਤਿ ਸ੍ਰੀ ਅਕਾਲ {caller_first}! ਮੈਂ {inst_company} ਤੋਂ {counselor} ਬੋਲ ਰਹੀ ਹਾਂ। ਕਿਵੇਂ ਹੋ ਤੁਸੀਂ?'"
             )
         else:
             instruction = (
-                f"[CRITICAL: Speak in natural Indian English with a warm, genuine, human tone. Never sound like a robotic assistant or reading a script.]\n"
-                f"The phone call has just connected with {caller_first}. Greet them warmly and naturally right now: "
-                f"'Hi {caller_first}! {counselor} here from Recruitment Institute. You requested a callback regarding our practical recruitment training, so I called you right away. How are you doing today?'"
+                f"[CRITICAL: Speak ONLY 1 short, warm sentence in natural Indian English like a real Indian woman counsellor. "
+                f"Say ONLY this one sentence, then STOP speaking immediately and LISTEN attentively to the caller.]\n"
+                f"'Hi {caller_first}! {counselor} here from {inst_company}. How are you doing today?'"
             )
 
         logger.info("Triggering Gemini Live opening greeting for %s in %s: %s", self.caller_name, lang, instruction[:150])
@@ -369,16 +359,13 @@ class VoiceChatSession:
 
             server_content = event.get("serverContent", {})
 
-            # Low-latency Barge-in / interruption: clear Plivo audio buffer when user interrupts
-            if server_content.get("interrupted") and self.is_plivo:
-                if self._opening_greeting_delivered:
-                    logger.info("⚡ Caller barge-in detected: sending clearAudio to Plivo buffer")
-                    try:
-                        await self.client_ws.send_text(json.dumps({"event": "clearAudio"}))
-                    except Exception:
-                        pass
-                else:
-                    logger.info("🛡️ Guarding opening greeting: ignoring premature line-noise barge-in")
+            # Low-latency Barge-in / interruption: immediately clear audio playback buffer when caller interrupts
+            if server_content.get("interrupted"):
+                logger.info("⚡ Caller barge-in / interruption detected: clearing audio playback buffer")
+                try:
+                    await self.client_ws.send_text(json.dumps({"event": "clearAudio"}))
+                except Exception:
+                    pass
 
             model_turn = server_content.get("modelTurn", {})
             for part in model_turn.get("parts", []):
@@ -448,24 +435,20 @@ class VoiceChatSession:
                     self._opening_greeting_delivered = True
                     pending_assistant = ""
                     asst_lower = asst_turn.lower()
-                    # Detect closing sentence or if closing was already triggered
-                    closing_phrases = [
+                    # Detect closing sentence only if closing was triggered or explicit farewell was spoken
+                    farewell_phrases = [
                         # English
-                        "admission request", "consultation request", "registered email", "have a great day", "have a wonderful day",
-                        "enrollment details will be sent", "sent directly to your registered email",
+                        "have a great day", "have a wonderful day", "thank you for calling",
                         # Hindi
-                        "admission request register kar liya", "admission request note kar liya",
-                        "registered email par", "shubh ho", "turant bheji ja rahi",
+                        "आपका दिन बहुत शुभ हो", "दिन बहुत शुभ हो", "शुभ दिन",
                         # Marathi
-                        "नोंदवून घेतली", "ईमेलवर लगेच", "दिवस खूप छान जावो", "अधिकृत पेमेंट", "नावनोंदणी लिंक",
+                        "दिवस खूप छान जावो", "मनःपूर्वक धन्यवाद",
                         # Multilingual
-                        "பதிவு செய்துள்ளேன்", "నమోదు చేసాను", "ನೋಂದಾಯಿಸಿದ್ದೇನೆ",
-                        "নথিভুক্ত করেছি", "નોંધી લીધી છે", "രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്", "ਦਰਜ ਕਰ ਲਈ",
-                        "email", "ईमेल",
+                        "நல்ல நாளாக அமையட்டும்", "మీ రోజు శుభం కావాలి", "ಶುಭ ದಿನ", "দিনটি শুভ হোক",
                     ]
-                    if self._closing_triggered or any(cp in asst_lower for cp in closing_phrases):
+                    if self._closing_triggered or any(fp in asst_lower for fp in farewell_phrases):
                         if not self._hangup_task:
-                            logger.info("🛑 Single closing sentence completed. Scheduling clean call hangup in 2.2s.")
+                            logger.info("🛑 Closing sentence delivered. Scheduling clean call hangup in 2.2s.")
                             self._hangup_task = asyncio.create_task(self._delayed_call_hangup(delay_seconds=2.2))
 
     async def _delayed_call_hangup(self, delay_seconds: float = 2.2):

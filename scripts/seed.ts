@@ -57,11 +57,11 @@ async function main() {
     create: {
       title: 'Welcome to Recruitment Institute Blog',
       slug: 'welcome-to-recruitment-institute-blog',
-      content: '<p>Welcome to the Recruitment Institute blog! Here you will find expert articles on HR, recruitment strategies, career development, and industry insights.</p><p>Stay tuned for regular updates from our expert trainers and HR professionals.</p>',
+      content: '<p>Welcome to the Recruitment Institute blog! Here you will find expert articles on HR, recruitment strategies, career development and industry insights.</p><p>Stay tuned for regular updates from our expert trainers and HR professionals.</p>',
       author: 'Recruitment Institute',
       isPublished: true,
       metaTitle: 'Welcome to Recruitment Institute Blog',
-      metaDescription: 'Expert articles on HR, recruitment strategies, and career development.',
+      metaDescription: 'Expert articles on HR, recruitment strategies and career development.',
     },
     update: {},
   })
@@ -72,7 +72,7 @@ async function main() {
     where: { id: 1 },
     create: {
       question: 'What is End-to-End Recruitment?',
-      answer: 'End-to-End Recruitment refers to the complete process of hiring — from identifying a vacancy and creating a job description to sourcing candidates, screening, interviewing, making an offer, and onboarding the new employee.',
+      answer: 'End-to-End Recruitment refers to the complete process of hiring — from identifying a vacancy and creating a job description to sourcing candidates, screening, interviewing, making an offer and onboarding the new employee.',
       addedBy: 'Recruitment Institute',
     },
     update: {},

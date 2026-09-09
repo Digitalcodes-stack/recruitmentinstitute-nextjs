@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     absolute: 'Recruitment Business Accelerator | Recruitment Institute',
   },
   description:
-    'Master HR and recruitment skills with expert-led courses. End-to-end recruitment training, HR for beginners, entrepreneurship programs, and corporate training in Pune.',
+    'Master HR and recruitment skills with expert-led courses. End-to-end recruitment training, HR for beginners, entrepreneurship programs and corporate training in Pune.',
   keywords: 'recruitment business accelerator, recruitment training pune, HR courses, end to end recruitment, recruitment institute',
   openGraph: {
     title: 'Recruitment Business Accelerator | Recruitment Institute',

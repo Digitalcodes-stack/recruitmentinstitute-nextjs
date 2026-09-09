@@ -126,7 +126,7 @@ export default function SiteStatsSettingsPanel({ initialStats, autoSuggestions }
                 Global Site Statistics & Counters
               </h2>
               <p style={{ fontSize: 13, color: '#64748b', margin: '3px 0 0 0' }}>
-                Control the 4 key highlight stats shown on the Homepage, About page, Modals, and across the entire platform.
+                Control the 4 key highlight stats shown on the Homepage, About page, Modals and across the entire platform.
               </p>
             </div>
           </div>

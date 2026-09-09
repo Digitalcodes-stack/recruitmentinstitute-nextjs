@@ -138,7 +138,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'JD & Intake Formulation',
       subtitle: 'From Client Brief to Ironclad Persona',
       description:
-        'Deconstruct unstructured hiring manager briefs into comprehensive Candidate Personas, Competency Matrices, and high-converting, bias-free Job Descriptions in under 90 seconds.',
+        'Deconstruct unstructured hiring manager briefs into comprehensive Candidate Personas, Competency Matrices and high-converting, bias-free Job Descriptions in under 90 seconds.',
       tools: ['ChatGPT-4o', 'Claude 3.5 Sonnet', 'Intake Prompt Chaining'],
       output: 'Full JD + Competency Rubric + Qualifying Pre-Screening Questions',
       metric: '85% Faster Requisition Intake',
@@ -148,7 +148,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'Boolean & X-Ray Sourcing',
       subtitle: 'Uncover Passive High-Caliber Talent',
       description:
-        'Generate multi-layered Boolean strings, Google X-Ray scripts, and synonym taxonomies across LinkedIn, GitHub, Behance, and conference rosters to find top 5% passive candidates before competitors.',
+        'Generate multi-layered Boolean strings, Google X-Ray scripts and synonym taxonomies across LinkedIn, GitHub, Behance and conference rosters to find top 5% passive candidates before competitors.',
       tools: ['Google X-Ray Engine', 'Boolean AI Generator', 'LinkedIn AI Search'],
       output: '10 Custom Boolean Strings + Alternative Skill Taxonomy',
       metric: '4x Greater Sourcing Reach',
@@ -158,7 +158,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'Resume Screening & Scoring',
       subtitle: 'Objective Skill-Gap & Match Matrix',
       description:
-        'Run deep resume vs JD compatibility audits, calculate weighted skill-match percentages, flag career trajectory inconsistencies, and build executive candidate submission memos with human oversight.',
+        'Run deep resume vs JD compatibility audits, calculate weighted skill-match percentages, flag career trajectory inconsistencies and build executive candidate submission memos with human oversight.',
       tools: ['AI Resume Rankers', 'Skill-Gap Audit Models', 'Human-in-the-Loop Safeguards'],
       output: 'Shortlist Evaluation Scorecards & Rejection Justifications',
       metric: '60% Reduction in Screening Hours',
@@ -168,7 +168,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'Hyper-Personalized Outreach',
       subtitle: 'Multichannel Messaging that Converts',
       description:
-        'Craft hyper-personalized 5-stage outreach sequences tailored to each candidate’s career background across LinkedIn InMail, Cold Email, and WhatsApp that skyrocket response rates.',
+        'Craft hyper-personalized 5-stage outreach sequences tailored to each candidate’s career background across LinkedIn InMail, Cold Email and WhatsApp that skyrocket response rates.',
       tools: ['LinkedIn InMail AI Copilot', 'Multi-Touch Drip Sequences', 'WhatsApp Workflows'],
       output: 'Complete 5-Stage Candidate Communication Matrix',
       metric: '3x Higher Candidate Reply Rate',
@@ -178,7 +178,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'Competency & STAR Interviews',
       subtitle: 'Structured Evaluation with Zero Bias',
       description:
-        'Generate calibrated STAR (Situation, Task, Action, Result) behavioral questions, scenario drills, and weighted 1–5 scoring rubrics to help hiring managers make confident, standardized hiring decisions.',
+        'Generate calibrated STAR (Situation, Task, Action, Result) behavioral questions, scenario drills and weighted 1–5 scoring rubrics to help hiring managers make confident, standardized hiring decisions.',
       tools: ['STAR Behavioral Framework', 'Calibration Rubrics', 'Take-Home Prompts'],
       output: '30 Tailored Interview Questions + Panel Scorecards',
       metric: 'Zero-Bias Standardized Feedback',
@@ -188,7 +188,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       title: 'MIS & Daily Ops Automation',
       subtitle: 'Turn Chores into Auto-Piloted Systems',
       description:
-        'Automate recruitment MIS spreadsheets, generate instant meeting summaries, create SOPs, and build a personalized Daily Recruiter Operating System powered by no-code AI webhooks.',
+        'Automate recruitment MIS spreadsheets, generate instant meeting summaries, create SOPs and build a personalized Daily Recruiter Operating System powered by no-code AI webhooks.',
       tools: ['Zapier / Make.com', 'Google Sheets AI', 'Voice-to-Text Meeting Summaries'],
       output: 'Executive C-Suite Dashboard & Daily Automated Agenda',
       metric: '10+ Hours Saved Every Week',
@@ -296,9 +296,8 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
               lineHeight: 1.65,
             }}
           >
-            Don&apos;t let AI replace you — let AI upgrade you into the <strong>top 1%</strong> of high-speed recruiters.
-            Learn prompt engineering, Boolean & X-Ray AI sourcing, automated resume screening,
-            and no-code recruitment pipelines in 4 practical weeks.
+            Don&apos;t let AI replace you <Sparkles style={{ width: 16, height: 16, color: '#F59E0B', display: 'inline-block', verticalAlign: '-2px', margin: '0 6px' }} /> let AI upgrade you into the <strong>top 1%</strong> of high performing recruiters.
+            Learn prompt engineering, Boolean & X-Ray AI sourcing, automated resume screening and no code recruitment pipelines in 4 practical weeks.
           </p>
 
           {/* Trust Badges Row */}
@@ -589,21 +588,21 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
                 {(pricingMode === 'online'
                   ? [
-                      '8 Live Interactive Masterclasses (Zoom evenings, 16+ Hours)',
-                      'Lifetime access to recordings, updates, and LMS modules',
-                      'Full 50+ Recruiter Prompt Library & Cheat Sheets repository',
-                      '14 Capstone Playbook Deliverables with mentor evaluation',
-                      'Verifiable Certified AI Recruitment Professional credential',
-                      'Direct WhatsApp Mastermind access with faculty & peers',
-                    ]
+                    '8 Live Interactive Masterclasses (Zoom evenings, 16+ Hours)',
+                    'Lifetime access to recordings, updates and LMS modules',
+                    'Full 50+ Recruiter Prompt Library & Cheat Sheets repository',
+                    '14 Capstone Playbook Deliverables with mentor evaluation',
+                    'Verifiable Certified AI Recruitment Professional credential',
+                    'Direct WhatsApp Mastermind access with faculty & peers',
+                  ]
                   : [
-                      'In-Person Classroom Masterclasses at Pune Center',
-                      'Direct live lab guidance & personalized prompt engineering drills',
-                      '1-on-1 resume, career strategy & agency launch consultation',
-                      'Physical printed toolkit binder + hardcopy embossed certificate',
-                      'Complete online LMS recordings & digital prompt library access',
-                      'Networking high tea sessions with corporate HR leaders & founders',
-                    ]
+                    'In-Person Classroom Masterclasses at Pune Center',
+                    'Direct live lab guidance & personalized prompt engineering drills',
+                    '1-on-1 resume, career strategy & agency launch consultation',
+                    'Physical printed toolkit binder + hardcopy embossed certificate',
+                    'Complete online LMS recordings & digital prompt library access',
+                    'Networking high tea sessions with corporate HR leaders & founders',
+                  ]
                 ).map((feat, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                     <CheckCircle2 style={{ width: 17, height: 17, color: '#2563EB', flexShrink: 0, marginTop: 2 }} />
@@ -1304,7 +1303,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                 Certified AI Recruitment Professional (CAIRP)
               </h3>
               <p style={{ fontSize: 14.5, color: '#64748B', lineHeight: 1.6, marginBottom: 18 }}>
-                Every graduate earns a verifiable credential recognized by hiring organizations, staffing firms, and executive search teams.
+                Every graduate earns a verifiable credential recognized by hiring organizations, staffing firms and executive search teams.
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 24 }}>
@@ -1363,7 +1362,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                   YOUR NAME HERE
                 </h5>
                 <p style={{ fontSize: 11, color: '#475569', lineHeight: 1.4, margin: '0 auto 10px', maxWidth: 300 }}>
-                  has demonstrated rigorous mastery of Generative AI, Sourcing Automations, and Prompt Engineering in the flagship program
+                  has demonstrated rigorous mastery of Generative AI, Sourcing Automations and Prompt Engineering in the flagship program
                 </p>
                 <span style={{ fontSize: 12.5, fontWeight: 800, color: '#0F172A', display: 'block' }}>
                   Certified AI Recruitment Professional
@@ -1419,7 +1418,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
               Frequently Asked Questions
             </h2>
             <p style={{ fontSize: 15, color: '#64748B', margin: 0 }}>
-              Everything you need to know about the curriculum, schedule, tools, and certification.
+              Everything you need to know about the curriculum, schedule, tools and certification.
             </p>
           </div>
 

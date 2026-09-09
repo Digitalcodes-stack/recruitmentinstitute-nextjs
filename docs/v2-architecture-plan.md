@@ -2,7 +2,7 @@
 
 Architecture & sprint plan for extending the existing Next.js 16 / React 19 / Prisma / PostgreSQL
 platform into a full training ERP. This document **extends** the current system — it does not
-replace `(site)`, `(admin)`, auth, or the 25 existing models. New models reuse existing
+replace `(site)`, `(admin)`, auth or the 25 existing models. New models reuse existing
 `AdminUser`, `Student`, `Candidate` rather than introducing parallel user tables.
 
 ## How this reconciles with `Implementation Plan recruitment.pdf`
@@ -25,7 +25,7 @@ hosting. Its 15 modules map onto this plan as follows — nothing in V1 is rebui
 | reports | Phase 2/15 — reuses existing `/admin/dashboard` chart pattern |
 
 So the sequencing below treats **Phase 0–2 as the V1 MVP** (manual Meet links, email reminders,
-no AI — buildable now, free-tier friendly), and Phases 4+ as explicitly optional automation/AI
+no AI — buildable now, free-tier friendly) and Phases 4+ as explicitly optional automation/AI
 layers added later behind the same data model.
 
 ---
@@ -688,7 +688,7 @@ lib/integrations/
 
 Every feature in Phases 4–14 is written against the interface, not the vendor SDK. Selecting
 `manual`/`noop` providers via env var means the whole platform — including session scheduling,
-reminders, and even "AI notes" (manually entered by trainer as a fallback) — works today with
+reminders and even "AI notes" (manually entered by trainer as a fallback) — works today with
 zero paid accounts, matching the PDF's V1 constraint. Flipping a single env var turns on real
 automation once credentials exist.
 
