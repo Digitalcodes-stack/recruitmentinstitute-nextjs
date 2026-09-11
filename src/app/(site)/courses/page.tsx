@@ -413,7 +413,7 @@ export default async function CoursesPage() {
   // Map DB Trainers — with distinct rich profiles, quotes and bios
   let formattedTrainers: TrainerItem[] = []
   if (rawDbTrainers && rawDbTrainers.length > 0) {
-    const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka']
+    const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka', 'Saurav Dey']
     const sortedDbTrainers = [...rawDbTrainers].sort((a, b) => {
       const ai = TOP_TRAINERS.indexOf(a.name)
       const bi = TOP_TRAINERS.indexOf(b.name)
@@ -549,6 +549,48 @@ export default async function CoursesPage() {
           quote: 'Mastering end-to-end talent sourcing and recruiter productivity transforms candidate quality and hiring turnaround.',
           certifications: ['Corporate Talent Acquisition Professional', 'Recruitment & Talent Sourcing Practitioner', 'IT & Technology Recruitment Professional'],
           linkedinUrl: 'https://www.linkedin.com/in/tukunakumarlenka/',
+        }
+      }
+
+      const isSaurav = lower.includes('saurav') || lower.includes('dey')
+      if (isSaurav) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'Head HR & People Management Professional | HR Strategy | Talent Acquisition | People & Culture',
+          experienceYears: 10,
+          specializationTags: [
+            'Talent Acquisition & Recruitment Strategy',
+            'End-to-End Recruitment Process',
+            'HR Operations & Best Practices',
+            'HR Strategy & Workforce Planning',
+            'People & Culture',
+          ],
+          bio: t.bio || 'Experienced HR professional with a strong background in People & Culture, HR Strategy, Talent Acquisition and HR Operations with 10+ years of senior-level HR leadership.',
+          longBio: `Saurav Dey is an experienced HR professional with a strong background in People & Culture, HR Strategy, Talent Acquisition and HR Operations. His professional experience includes senior-level HR responsibilities, with a focus on building people-centric workplaces, strengthening HR processes and supporting organisational growth.\n\nAs a trainer, Saurav brings practical industry perspectives to the classroom, helping HR professionals and recruiters understand how effective people practices, structured hiring and employee engagement contribute to business performance.`,
+          image: (t.image && t.image.trim() !== '') ? t.image : '/assets/images/trainers/saurav_dey.jpg',
+          companyEx: 'Head HR & People Management Professional | HR Strategy | Talent Acquisition',
+          rating: 4.97,
+          reviewsCount: 134,
+          studentsMentored: 1150,
+          coursesTaught: [
+            'Talent Acquisition & Recruitment Strategy',
+            'End-to-End Recruitment Training',
+            'HR Corporate Training Course',
+            'Recruitment Business Accelerator',
+          ],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: 'Effective people practices, structured hiring and employee engagement are the true drivers of business performance.',
+          certifications: [
+            'Head HR & People Management Professional',
+            'Professional Development & Academic Credentials',
+            'MBA / Management Education',
+            'Strategic HR & Talent Acquisition Practitioner',
+          ],
+          linkedinUrl: 'https://www.linkedin.com/in/saurav-dey-bb5bb1157/',
         }
       }
 

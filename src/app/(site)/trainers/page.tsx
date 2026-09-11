@@ -62,7 +62,7 @@ function initialsAvatar(name: string) {
 
 export default async function TrainersPage() {
   const dbTrainers = await prisma.trainer.findMany({ where: { isActive: true }, orderBy: { id: 'asc' } })
-  const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka']
+  const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka', 'Saurav Dey']
   dbTrainers.sort((a, b) => {
     const ai = TOP_TRAINERS.indexOf(a.name)
     const bi = TOP_TRAINERS.indexOf(b.name)
@@ -81,6 +81,7 @@ export default async function TrainersPage() {
     const isDebabrata = lower.includes('debabrata') || lower.includes('pattanayak') || lower.includes('dpattanayak')
     const isRahul = lower.includes('rahul') || lower.includes('limaye')
     const isTukuna = lower.includes('tukuna') || lower.includes('lenka')
+    const isSaurav = lower.includes('saurav') || lower.includes('dey')
 
     let baseDesignation = t.specialization || 'Recruitment & HR Faculty'
     let baseExp = 15
@@ -254,6 +255,46 @@ export default async function TrainersPage() {
         'Corporate Hiring & Recruitment Specialist',
       ]
       baseCourses = ['End-to-End Recruitment Training', 'AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist']
+    } else if (isSaurav) {
+      baseDesignation = 'Head HR & People Management Professional | HR Strategy | Talent Acquisition | People & Culture'
+      baseExp = 10
+      baseCompanyEx = 'Head HR & People Management Professional | HR Strategy | Talent Acquisition | People & Culture'
+      baseLinkedin = 'https://www.linkedin.com/in/saurav-dey-bb5bb1157/'
+      baseQuote = 'Effective people practices, structured hiring and engaged cultures are the true drivers of business performance.'
+      baseBio = 'Experienced HR professional with a strong background in People & Culture, HR Strategy, Talent Acquisition and HR Operations with 10+ years of senior-level HR leadership.'
+      baseLongBio = `Executive Background\n\nSaurav Dey is an experienced HR professional with a strong background in People & Culture, HR Strategy, Talent Acquisition and HR Operations. His professional experience includes senior-level HR responsibilities, with a focus on building people-centric workplaces, strengthening HR processes and supporting organisational growth.\n\nAs a trainer, Saurav brings practical industry perspectives to the classroom, helping HR professionals and recruiters understand how effective people practices, structured hiring and employee engagement contribute to business performance.`
+      baseImage = (t.image && t.image.trim() !== '') ? t.image : '/assets/images/trainers/saurav_dey.jpg'
+      baseRating = 4.97
+      baseReviews = 134
+      baseStudents = 1150
+      baseTags = [
+        'Talent Acquisition & Recruitment Strategy',
+        'End-to-End Recruitment Process',
+        'HR Operations & Best Practices',
+        'HR Strategy & Workforce Planning',
+        'People & Culture',
+        'Employee Engagement & Retention',
+        'Leadership & People Management',
+        'HR Business Partnering',
+        'Candidate Experience',
+        'Hiring & Interview Management',
+        'Recruitment Negotiation & Stakeholder Management',
+        'Building High-Performance Teams',
+        'Practical HR Case Studies & Industry Practices',
+      ]
+      baseCerts = [
+        'Head HR & People Management Professional',
+        'Professional Development & Academic Credentials',
+        'MBA / Management Education',
+        'Strategic HR & Talent Acquisition Practitioner',
+        'People & Culture Strategy Specialist',
+      ]
+      baseCourses = [
+        'Talent Acquisition & Recruitment Strategy',
+        'End-to-End Recruitment Training',
+        'HR Corporate Training Course',
+        'Recruitment Business Accelerator',
+      ]
     }
 
     const sanitizeText = (val: string) => val.replace(/Director Senior HR/g, 'Director HR')
