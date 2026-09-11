@@ -10,6 +10,7 @@ import {
   Users,
   Award,
   MessageCircle,
+  ExternalLink,
 } from 'lucide-react'
 import { TrainerItem } from '@/types/training'
 import TrainerCard from './TrainerCard'
@@ -466,19 +467,83 @@ export default function TrainersListClient({ initialTrainers }: TrainersListClie
               </div>
 
               {/* Certifications & Credentials */}
-              {activeTrainer.certifications && activeTrainer.certifications.length > 0 && (
+              {((activeTrainer.certifications && activeTrainer.certifications.length > 0) || activeTrainer.accreditationHighlight) && (
                 <div>
                   <h4 style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.1em', color: '#94A3B8', margin: '0 0 10px' }}>
                     Certifications &amp; Accreditations
                   </h4>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    {activeTrainer.certifications.map((cert, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#334155', fontWeight: 600, fontSize: '12.5px' }}>
-                        <Award style={{ width: '14px', height: '14px', color: '#2563EB', flexShrink: 0 }} />
-                        <span>{cert}</span>
+
+                  {/* Highlight Box */}
+                  {activeTrainer.accreditationHighlight && (
+                    <div
+                      style={{
+                        marginBottom: '14px',
+                        padding: '14px 16px',
+                        borderRadius: '14px',
+                        background: 'linear-gradient(135deg, #EFF6FF 0%, #F0FDFA 100%)',
+                        border: '1px solid #BFDBFE',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            padding: '2px 8px',
+                            borderRadius: '6px',
+                            background: '#1D4ED8',
+                            color: '#FFFFFF',
+                            fontSize: '10px',
+                            fontWeight: 800,
+                            letterSpacing: '.06em',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Highlight
+                        </span>
+                        <span style={{ fontSize: '11px', fontWeight: 800, color: '#1E40AF', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                          International Recognition
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                      <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: '#1E293B', lineHeight: 1.5 }}>
+                        {activeTrainer.accreditationHighlight.text}
+                      </p>
+                      {activeTrainer.accreditationHighlight.link && (
+                        <a
+                          href={activeTrainer.accreditationHighlight.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            color: '#2563EB',
+                            textDecoration: 'none',
+                            marginTop: '2px',
+                          }}
+                        >
+                          <span>{activeTrainer.accreditationHighlight.linkLabel || 'Verify Credential on ICC Club'}</span>
+                          <ExternalLink style={{ width: '13px', height: '13px' }} />
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  {activeTrainer.certifications && activeTrainer.certifications.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
+                      {activeTrainer.certifications.map((cert, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#334155', fontWeight: 600, fontSize: '12.5px' }}>
+                          <Award style={{ width: '14px', height: '14px', color: '#2563EB', flexShrink: 0 }} />
+                          <span>{cert}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

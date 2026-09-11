@@ -32,11 +32,18 @@ const newTrainers = [
         'Career & Leadership Coaching',
       ],
       certifications: [
-        'Business Growth Strategist',
-        'Technology Transformation Consultant',
-        'Recruitment Business Mentor',
-        'Corporate Trainer & Coach',
+        'Business & Technology Consultant',
+        'Corporate Trainer & Business Coach',
+        'Recruitment & Staffing Professional',
+        'Business Growth & Sales Strategist',
+        'Management & Strategic Planning Consultant',
+        'Career Development Coach',
       ],
+      accreditationHighlight: {
+        text: 'Professionally recognised by the International Career Counsellors’ Club.',
+        link: 'https://www.iccclub.org/MemberDetail.php?id=ICMIEIN2401407',
+        linkLabel: 'Verify Credential on ICC Club',
+      },
       coursesTaught: [
         'HR Corporate Training Course',
         'HR Entrepreneurship Program',

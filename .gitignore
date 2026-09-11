@@ -46,4 +46,5 @@ __pycache__/
 *.py[cod]
 *.log
 Daily_Detail_Report*.txt
+public/uploads/
 

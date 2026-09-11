@@ -52,6 +52,11 @@ export interface TrainerItem {
   linkedinUrl?: string
   quote?: string
   certifications?: string[]
+  accreditationHighlight?: {
+    text: string
+    link?: string
+    linkLabel?: string
+  }
 }
 
 export interface UpcomingBatchesProps {

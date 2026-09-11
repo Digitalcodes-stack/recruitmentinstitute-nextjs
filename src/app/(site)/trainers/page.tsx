@@ -92,6 +92,7 @@ export default async function TrainersPage() {
     let baseTags = t.specialization ? t.specialization.split(',').map((s) => s.trim()) : ['Recruitment & HR']
     let baseCerts = ['Recruitment Institute Certified Faculty']
     let baseCourses = ['End-to-End Recruitment Training']
+    let baseAccreditationHighlight: { text: string; link?: string; linkLabel?: string } | undefined = undefined
     let baseImage = t.image || initialsAvatar(t.name)
     let baseRating = 4.98
     let baseReviews = 140
@@ -196,7 +197,19 @@ export default async function TrainersPage() {
         'Process Optimisation',
         'Career & Leadership Coaching',
       ]
-      baseCerts = ['Business Growth Strategist', 'Technology Transformation Consultant', 'Recruitment Business Mentor', 'Corporate Trainer & Coach']
+      baseCerts = [
+        'Business & Technology Consultant',
+        'Corporate Trainer & Business Coach',
+        'Recruitment & Staffing Professional',
+        'Business Growth & Sales Strategist',
+        'Management & Strategic Planning Consultant',
+        'Career Development Coach',
+      ]
+      baseAccreditationHighlight = {
+        text: 'Professionally recognised by the International Career Counsellors’ Club.',
+        link: 'https://www.iccclub.org/MemberDetail.php?id=ICMIEIN2401407',
+        linkLabel: 'Verify Credential on ICC Club',
+      }
       baseCourses = ['HR Corporate Training Course', 'HR Entrepreneurship Program', 'Recruitment Business Accelerator', 'End-to-End Recruitment Training']
     } else if (isTukuna) {
       baseDesignation = 'Talent Acquisition & Recruitment Professional | Corporate Hiring & Sourcing Specialist | Recruitment Coach'
@@ -255,6 +268,7 @@ export default async function TrainersPage() {
       certifications: (Array.isArray(pj.certifications) && pj.certifications.length > 0)
         ? pj.certifications
         : baseCerts,
+      accreditationHighlight: pj.accreditationHighlight || baseAccreditationHighlight,
       coursesTaught: (Array.isArray(pj.coursesTaught) && pj.coursesTaught.length > 0)
         ? pj.coursesTaught
         : baseCourses,

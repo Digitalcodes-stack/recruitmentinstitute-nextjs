@@ -183,9 +183,33 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
           </p>
 
           {/* 2-Line Bio */}
-          <p style={{ fontSize: '12.5px', color: '#64748B', lineHeight: 1.6, height: '40px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', marginBottom: '14px', fontWeight: 500 }}>
+          <p style={{ fontSize: '12.5px', color: '#64748B', lineHeight: 1.6, height: '40px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', marginBottom: '12px', fontWeight: 500 }}>
             {trainer.bio}
           </p>
+
+          {/* Accreditation Highlight Badge */}
+          {trainer.accreditationHighlight && (
+            <div style={{ marginBottom: '10px' }}>
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  padding: '3px 10px',
+                  borderRadius: '8px',
+                  background: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  color: '#1D4ED8',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                }}
+              >
+                <CheckCircle style={{ width: '12px', height: '12px', color: '#2563EB', flexShrink: 0 }} />
+                <span>ICC Club Recognized Coach</span>
+              </span>
+            </div>
+          )}
 
           {/* Specialization Tags */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
