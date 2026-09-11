@@ -16,6 +16,7 @@ import {
   X,
   Plus,
   ChevronDown,
+  User,
 } from 'lucide-react'
 
 interface Props {
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
   { href: '/trainer/attendance', label: 'Attendance', icon: UserCheck },
   { href: '/trainer/assignments', label: 'Assignments', icon: ClipboardCheck },
   { href: '/trainer/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/trainer/profile', label: 'My Profile', icon: User },
 ]
 
 export default function TrainerLayout({ trainerName, children }: Props) {
@@ -332,6 +334,25 @@ export default function TrainerLayout({ trainerName, children }: Props) {
                   >
                     <CalendarDays style={{ width: 14, height: 14, color: '#64748b' }} />
                     <span>My Sessions</span>
+                  </Link>
+                  <Link
+                    href="/trainer/profile"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      padding: '8px 12px',
+                      borderRadius: 6,
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      color: '#2563eb',
+                      textDecoration: 'none',
+                    }}
+                    className="dropdown-item"
+                  >
+                    <User style={{ width: 14, height: 14, color: '#2563eb' }} />
+                    <span>Edit Faculty Profile</span>
                   </Link>
                   <div style={{ height: 1, background: '#f1f5f9', margin: '4px 0' }} />
                   <button

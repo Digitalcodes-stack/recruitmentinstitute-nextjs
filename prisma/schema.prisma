@@ -448,6 +448,7 @@ model Trainer {
   bio            String?               @db.VarChar(2000)
   image          String?
   isActive       Boolean               @default(true) @map("status")
+  profileJson    Json?                 @default("{}") @map("profile_json")
   timezone       String                @default("Asia/Kolkata")
   createdAt      DateTime              @default(now()) @map("created_at")
   updatedAt      DateTime              @updatedAt @map("updated_at")

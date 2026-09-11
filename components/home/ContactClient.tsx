@@ -101,7 +101,7 @@ export default function ContactClient() {
           </div>
 
           <h1 style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 800, color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '16px' }}>
-            Contact Recruitment Institute
+            Contact Recruitment Institute in Pune
           </h1>
           <p style={{ fontSize: '17px', color: '#94A3B8', lineHeight: 1.75, maxWidth: '520px' }}>
             Have a question about our courses, batch timings or admissions? Our admissions team responds within 30 minutes during working hours.

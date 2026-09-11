@@ -3,6 +3,8 @@ import HomePage from '@/components/home/HomePage'
 import { prisma } from '@/lib/prisma'
 import { getSiteStats } from '@/lib/site-stats'
 
+import { generateWebPageJsonLd } from '@/lib/seo'
+
 function stripHtml(input: string) {
   return input
     .replace(/<br\s*\/?>/gi, ' ')
@@ -18,15 +20,51 @@ function stripHtml(input: string) {
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Recruitment Business Accelerator | Recruitment Institute',
+    absolute: 'Recruitment Training Institute in India & Pune | Recruitment Institute',
   },
   description:
-    'Master HR and recruitment skills with expert-led courses. End-to-end recruitment training, HR for beginners, entrepreneurship programs and corporate training in Pune.',
-  keywords: 'recruitment business accelerator, recruitment training pune, HR courses, end to end recruitment, recruitment institute',
+    'Learn recruitment, talent acquisition, sourcing, ATS, AI recruitment and HR skills with practical training from industry experts. Join online or Pune recruitment courses with certification and career support.',
+  keywords: [
+    'Recruitment Training Institute in India',
+    'Recruitment Training Institute in Pune',
+    'Recruitment Training in Pune',
+    'Recruitment Course in Pune',
+    'Recruitment Training Course',
+    'Recruitment Course',
+    'Recruitment Certification Course',
+    'HR Recruitment Course',
+    'Recruiter Training Course',
+    'Talent Acquisition Course',
+    'AI Recruitment Course',
+    'Corporate Recruitment Training',
+    'Recruitment Institute',
+  ],
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in',
+  },
   openGraph: {
-    title: 'Recruitment Business Accelerator | Recruitment Institute',
-    description: 'Master HR and recruitment skills with expert-led courses.',
+    title: 'Recruitment Training Institute in India & Pune | Recruitment Institute',
+    description:
+      'Learn recruitment, talent acquisition, sourcing, ATS, AI recruitment and HR skills with practical training from industry experts. Join online or Pune recruitment courses with certification and career support.',
     url: 'https://recruitmentinstitute.in',
+    siteName: 'Recruitment Institute',
+    locale: 'en_IN',
+    type: 'website',
+    images: [
+      {
+        url: 'https://recruitmentinstitute.in/assets/images/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Recruitment Training Institute in India & Pune - Recruitment Institute',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Recruitment Training Institute in India & Pune | Recruitment Institute',
+    description:
+      'Learn recruitment, talent acquisition, sourcing, ATS, AI recruitment and HR skills with practical training from industry experts. Join online or Pune recruitment courses with certification and career support.',
+    images: ['https://recruitmentinstitute.in/assets/images/og-default.jpg'],
   },
 }
 
@@ -220,5 +258,22 @@ export default async function Page() {
     return item
   })
 
-  return <HomePage courses={courses} stats={dynamicStats} testimonials={testimonialData} services={serviceData} experts={expertData} clients={clientData} />
+  const webPageJsonLd = generateWebPageJsonLd()
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
+      <HomePage
+        courses={courses}
+        stats={dynamicStats}
+        testimonials={testimonialData}
+        services={serviceData}
+        experts={expertData}
+        clients={clientData}
+      />
+    </>
+  )
 }

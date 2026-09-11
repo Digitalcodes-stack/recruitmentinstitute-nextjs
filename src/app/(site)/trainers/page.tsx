@@ -62,7 +62,7 @@ function initialsAvatar(name: string) {
 
 export default async function TrainersPage() {
   const dbTrainers = await prisma.trainer.findMany({ where: { isActive: true }, orderBy: { id: 'asc' } })
-  const TOP_TRAINERS = ['Brahmita Nayak', 'Shesha Shhiv Mohanty', 'Debabrata Pattanayak']
+  const TOP_TRAINERS = ['Brahmita Nayak', 'Shesha Shhiv Mohanty', 'Debabrata Pattanayak', 'Rahul Limaye', 'Tukuna Kumar Lenka']
   dbTrainers.sort((a, b) => {
     const ai = TOP_TRAINERS.indexOf(a.name)
     const bi = TOP_TRAINERS.indexOf(b.name)
@@ -79,6 +79,8 @@ export default async function TrainersPage() {
     const isBrahmita = lower.includes('brahmita')
     const isShesha = lower.includes('shesha') || lower.includes('shhiv') || lower.includes('mohanty')
     const isDebabrata = lower.includes('debabrata') || lower.includes('pattanayak') || lower.includes('dpattanayak')
+    const isRahul = lower.includes('rahul') || lower.includes('limaye')
+    const isTukuna = lower.includes('tukuna') || lower.includes('lenka')
 
     let baseDesignation = t.specialization || 'Recruitment & HR Faculty'
     let baseExp = 15
@@ -172,6 +174,65 @@ export default async function TrainersPage() {
       ]
       baseCerts = ['Director HR & Talent Acquisition Leader', 'Recruitment & Leadership Mentor', 'Hospitality Industry HR Awardee', 'Strategic Talent & Executive Hiring']
       baseCourses = ['HR Corporate Training Course', 'End-to-End Recruitment Training', 'HR Entrepreneurship Program']
+    } else if (isRahul) {
+      baseDesignation = 'Business Growth & Transformation Strategy Consultant | Scaling Startups & Enterprises | Career Coach'
+      baseExp = 30
+      baseCompanyEx = 'Business Growth & Transformation Strategy Consultant | Scaling Startups & Enterprises | Career Coach'
+      baseLinkedin = ''
+      baseQuote = 'Combining technology, business strategy and human psychology to catalyze growth and transformation.'
+      baseBio = 'Business & Technology Consultant, Corporate Trainer and Business Growth Strategist with 30+ years of professional experience.'
+      baseLongBio = `Rahul Limaye is a Business & Technology Consultant, Corporate Trainer and Business Growth Strategist with 30+ years of professional experience across Sales & Business Development, Recruitment, Technology, Business Analysis, Product Management, Strategic Planning and Management Consulting.\n\nHe has worked across diverse industries including IT, Healthcare, Manufacturing, Retail, Supply Chain & Logistics, Banking & Finance, Recruitment, Travel & Tourism, BPO/KPO/RPO, Education, Construction and Agriculture & Food. His experience includes building business practices, developing client relationships, driving sales growth, improving processes and supporting organisations through technology adoption and business transformation.\n\nRahul brings particularly relevant experience in Recruitment & Staffing, including leadership roles in recruitment and staffing businesses. His professional journey includes experience with Persistent Systems, Creative Vision & Endeavour Systems and Talent Bricks HR Services, along with extensive business development and consulting experience.\n\nAs a trainer and business coach, Rahul focuses on helping professionals, recruiters, entrepreneurs and business leaders develop practical capabilities in business growth, recruitment, sales strategy, client acquisition, technology adoption, process optimisation and leadership.\n\nHis approach combines technology, business strategy and human psychology, reflected in his professional positioning as a "Smile Catalyst".`
+      baseImage = t.image || initialsAvatar(t.name)
+      baseRating = 4.98
+      baseReviews = 162
+      baseStudents = 1350
+      baseTags = [
+        'Business Growth Strategy',
+        'Startup & Enterprise Scaling',
+        'Recruitment & Staffing Leadership',
+        'Sales Strategy & Client Acquisition',
+        'Operational Excellence',
+        'Technology Adoption',
+        'Process Optimisation',
+        'Career & Leadership Coaching',
+      ]
+      baseCerts = ['Business Growth Strategist', 'Technology Transformation Consultant', 'Recruitment Business Mentor', 'Corporate Trainer & Coach']
+      baseCourses = ['HR Corporate Training Course', 'HR Entrepreneurship Program', 'Recruitment Business Accelerator', 'End-to-End Recruitment Training']
+    } else if (isTukuna) {
+      baseDesignation = 'Talent Acquisition & Recruitment Professional | Corporate Hiring & Sourcing Specialist | Recruitment Coach'
+      baseExp = 15
+      baseCompanyEx = 'Talent Acquisition & Recruitment Professional | Associated with Capgemini / Capgemini Engineering'
+      baseLinkedin = 'https://www.linkedin.com/in/tukunakumarlenka/'
+      baseQuote = 'Mastering end-to-end talent sourcing and recruiter productivity transforms candidate quality and hiring turnaround.'
+      baseBio = 'Talent Acquisition & Recruitment Professional with corporate hiring experience at Capgemini / Capgemini Engineering across IT & Technology hiring.'
+      baseLongBio = `Talent Acquisition & Recruitment Professional with corporate hiring experience.\n\nAssociated with Capgemini / Capgemini Engineering in talent acquisition and recruitment activities.\n\nExperience in IT/Technology Recruitment and Talent Sourcing.\n\nHands-on exposure to end-to-end recruitment and candidate sourcing.\n\nExperience supporting hiring requirements across multiple technology roles and skill areas.\n\nPractical understanding of corporate recruitment processes, stakeholder coordination and hiring delivery.\n\nIndustry-oriented perspective on recruiter performance, candidate quality and hiring turnaround.`
+      baseImage = t.image || initialsAvatar(t.name)
+      baseRating = 4.96
+      baseReviews = 125
+      baseStudents = 1100
+      baseTags = [
+        'Talent Acquisition & Recruitment',
+        'IT & Technology Recruitment',
+        'End-to-End Recruitment',
+        'Candidate Sourcing & Screening',
+        'LinkedIn Recruitment & Talent Sourcing',
+        'Recruitment Pipeline Management',
+        'Technical Hiring',
+        'Candidate Engagement',
+        'Interview Coordination',
+        'Hiring Manager Coordination',
+        'Recruitment Operations',
+        'Corporate Recruitment Practices',
+        'Recruitment Metrics & Delivery',
+        'Recruiter Productivity & Performance',
+      ]
+      baseCerts = [
+        'Corporate Talent Acquisition Professional',
+        'Recruitment & Talent Sourcing Practitioner',
+        'IT & Technology Recruitment Professional',
+        'Corporate Hiring & Recruitment Specialist',
+      ]
+      baseCourses = ['End-to-End Recruitment Training', 'AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist']
     }
 
     const sanitizeText = (val: string) => val.replace(/Director Senior HR/g, 'Director HR')

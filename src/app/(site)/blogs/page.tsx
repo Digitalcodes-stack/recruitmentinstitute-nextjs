@@ -18,23 +18,42 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const filtered = page > 1 || Boolean(search)
 
   return {
-    title: 'Blog - HR & Recruitment Insights',
+    title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
     description:
-      'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
+      'Read expert recruitment training guides, Boolean search tips, ATS tutorials, talent acquisition strategies, and career insights from Recruitment Institute Pune.',
+    keywords: [
+      'Recruitment Training Guides',
+      'HR blog india',
+      'recruitment strategies',
+      'talent acquisition trends',
+      'recruiter tips',
+      'boolean search guides',
+      'HR career advice',
+      'Recruitment Institute blog',
+    ],
     alternates: { canonical: `${BASE_URL}/blogs` },
     robots: filtered ? { index: false, follow: true } : { index: true, follow: true },
     openGraph: {
-      title: 'Blog - HR & Recruitment Insights',
+      title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
       description:
-        'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
+        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute Pune.',
       url: `${BASE_URL}/blogs`,
       type: 'website',
+      images: [
+        {
+          url: `${BASE_URL}/assets/images/og-blog.jpg`,
+          width: 1200,
+          height: 630,
+          alt: 'Recruitment Institute Blog',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Blog - HR & Recruitment Insights',
+      title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
       description:
-        'Read expert articles on HR, recruitment strategies, career tips and industry insights from Recruitment Institute.',
+        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute Pune.',
+      images: [`${BASE_URL}/assets/images/og-blog.jpg`],
     },
   }
 }

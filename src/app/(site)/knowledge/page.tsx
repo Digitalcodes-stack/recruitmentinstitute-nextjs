@@ -8,10 +8,48 @@ import {
   TrendingUp, Award, Phone, ArrowRight,
 } from 'lucide-react'
 
+import { generateFaqJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
+
 export const metadata: Metadata = {
-  title: 'HR & Recruitment Knowledge Base | Recruitment Institute',
+  title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
   description:
-    'Browse 36+ expert answers on HR workflows, boolean search, ATS tools, LinkedIn sourcing, salary benchmarking and recruitment career advice.',
+    'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and practical recruiter resources from Recruitment Institute Pune.',
+  keywords: [
+    'Recruitment Training Guide',
+    'recruitment interview FAQs',
+    'HR knowledge base',
+    'recruitment Q&A pune',
+    'boolean search tips',
+    'ATS workflows',
+    'talent acquisition FAQ',
+    'recruiter career questions',
+    'Recruitment Institute',
+  ],
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in/knowledge',
+  },
+  openGraph: {
+    title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
+    description:
+      'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and practical recruiter resources from Recruitment Institute Pune.',
+    url: 'https://recruitmentinstitute.in/knowledge',
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Recruitment Training Guide & FAQs - Recruitment Institute',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
+    description:
+      'Access expert recruitment training guides, interview FAQs, Boolean search tips, and ATS workflows.',
+    images: [DEFAULT_OG_IMAGE],
+  },
 }
 
 export const revalidate = 3600
@@ -66,8 +104,22 @@ export default async function KnowledgePage({ searchParams }: Props) {
   const pages         = buildPaginationPages(pagination.page, pagination.totalPages)
   const startIdx      = (page - 1) * limit
 
+  const faqJsonLd = generateFaqJsonLd(displayItems)
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Knowledge Base', url: '/knowledge' },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <style>{`
         body { font-family: 'Poppins', sans-serif; }
 
@@ -138,11 +190,10 @@ export default async function KnowledgePage({ searchParams }: Props) {
                 <Lightbulb style={{ width: 13, height: 13 }} /> HR Knowledge Hub
               </div>
               <h1 style={{ fontSize: 'clamp(34px,4vw,56px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.08, letterSpacing: '-.04em', marginBottom: 18 }}>
-                Your Complete{' '}
+                Recruitment Training{' '}
                 <span style={{ background: 'linear-gradient(120deg,#1D4ED8,#7C3AED)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                  HR & Recruitment
+                  Guide &amp; FAQs
                 </span>
-                <br />Knowledge Base
               </h1>
               <p style={{ fontSize: 17, color: '#475569', lineHeight: 1.85, maxWidth: 500, marginBottom: 36 }}>
                 Expert answers on boolean search, ATS tools, LinkedIn sourcing, salary benchmarking, interview techniques and your HR career path.

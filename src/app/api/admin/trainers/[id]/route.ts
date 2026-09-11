@@ -13,12 +13,22 @@ const updateSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().optional(),
+  profileJson: z.record(z.string(), z.any()).optional(),
+  designation: z.string().optional(),
+  experienceYears: z.coerce.number().optional(),
+  companyEx: z.string().optional(),
+  linkedinUrl: z.string().optional(),
+  quote: z.string().optional(),
+  longBio: z.string().optional(),
+  specializationTags: z.array(z.string()).optional(),
+  certifications: z.array(z.string()).optional(),
+  coursesTaught: z.array(z.string()).optional(),
   availability: z.array(trainerAvailabilitySlotSchema).optional(),
 })
 
 const trainerSelect = {
   id: true, name: true, email: true, phone: true, specialization: true,
-  bio: true, image: true, isActive: true, createdAt: true,
+  bio: true, image: true, isActive: true, profileJson: true, createdAt: true,
   availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
 } as const
 
@@ -49,9 +59,59 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!validated.success)
     return NextResponse.json({ success: false, errors: validated.error.flatten().fieldErrors }, { status: 400 })
 
-  const { password, availability, ...rest } = validated.data
-  const data = password ? { ...rest, password: await hashPassword(password) } : rest
   const trainerId = parseInt(id)
+  const existing = await prisma.trainer.findUnique({
+    where: { id: trainerId },
+    select: { profileJson: true },
+  })
+  const existingProfile = (existing?.profileJson && typeof existing.profileJson === 'object')
+    ? (existing.profileJson as Record<string, any>)
+    : {}
+
+  const {
+    password,
+    availability,
+    profileJson: incomingProfileJson,
+    designation,
+    experienceYears,
+    companyEx,
+    linkedinUrl,
+    quote,
+    longBio,
+    specializationTags,
+    certifications,
+    coursesTaught,
+    ...rest
+  } = validated.data
+
+  const mergedProfile: Record<string, any> = {
+    ...existingProfile,
+    ...(incomingProfileJson || {}),
+  }
+
+  if (designation !== undefined) mergedProfile.designation = designation.trim()
+  if (experienceYears !== undefined) mergedProfile.experienceYears = experienceYears
+  if (companyEx !== undefined) mergedProfile.companyEx = companyEx.trim()
+  if (linkedinUrl !== undefined) mergedProfile.linkedinUrl = linkedinUrl.trim()
+  if (quote !== undefined) mergedProfile.quote = quote.trim()
+  if (longBio !== undefined) mergedProfile.longBio = longBio.trim()
+  if (rest.bio !== undefined) mergedProfile.bio = rest.bio.trim()
+  if (specializationTags !== undefined) mergedProfile.specializationTags = specializationTags
+  if (certifications !== undefined) mergedProfile.certifications = certifications
+  if (coursesTaught !== undefined) mergedProfile.coursesTaught = coursesTaught
+
+  const data: any = {
+    ...rest,
+    profileJson: mergedProfile,
+  }
+
+  if (designation && !rest.specialization) {
+    data.specialization = designation.trim()
+  }
+
+  if (password) {
+    data.password = await hashPassword(password)
+  }
 
   // Availability has no stable per-slot identity from the client — replace the whole set.
   const trainer = await prisma.$transaction(async (tx) => {

@@ -176,9 +176,9 @@ export default function AboutClient({ sections, testimonials = [], stats }: Prop
               </div>
 
               <h1 style={{ fontSize: 'clamp(34px,4.5vw,58px)', fontWeight: 800, color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '24px' }}>
-                Building Confident<br />
-                <span style={{ color: '#60A5FA' }}>Recruiters</span> for<br />
-                Modern Hiring Teams
+                About Recruitment Institute:<br />
+                <span style={{ color: '#60A5FA' }}>#1 Recruitment Training</span><br />
+                in Pune &amp; India
               </h1>
 
               <p style={{ fontSize: '17px', color: '#94A3B8', lineHeight: 1.8, maxWidth: '500px', marginBottom: '36px' }}>

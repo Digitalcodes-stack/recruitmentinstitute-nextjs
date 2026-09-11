@@ -13,6 +13,15 @@ const createSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().default(true),
+  designation: z.string().optional(),
+  experienceYears: z.coerce.number().optional(),
+  companyEx: z.string().optional(),
+  linkedinUrl: z.string().optional(),
+  quote: z.string().optional(),
+  longBio: z.string().optional(),
+  specializationTags: z.array(z.string()).optional(),
+  certifications: z.array(z.string()).optional(),
+  coursesTaught: z.array(z.string()).optional(),
   availability: z.array(trainerAvailabilitySlotSchema).optional(),
 })
 
@@ -51,10 +60,38 @@ export async function POST(req: NextRequest) {
   if (existing)
     return NextResponse.json({ success: false, errors: { email: ['A trainer with this email already exists'] } }, { status: 400 })
 
-  const { password, availability, ...rest } = validated.data
+  const {
+    password,
+    availability,
+    designation,
+    experienceYears,
+    companyEx,
+    linkedinUrl,
+    quote,
+    longBio,
+    specializationTags,
+    certifications,
+    coursesTaught,
+    ...rest
+  } = validated.data
+
+  const profileJson: Record<string, any> = {}
+  if (designation) profileJson.designation = designation.trim()
+  if (experienceYears !== undefined) profileJson.experienceYears = experienceYears
+  if (companyEx) profileJson.companyEx = companyEx.trim()
+  if (linkedinUrl) profileJson.linkedinUrl = linkedinUrl.trim()
+  if (quote) profileJson.quote = quote.trim()
+  if (longBio) profileJson.longBio = longBio.trim()
+  if (rest.bio) profileJson.bio = rest.bio.trim()
+  if (specializationTags) profileJson.specializationTags = specializationTags
+  if (certifications) profileJson.certifications = certifications
+  if (coursesTaught) profileJson.coursesTaught = coursesTaught
+
   const trainer = await prisma.trainer.create({
     data: {
       ...rest,
+      specialization: rest.specialization || designation || '',
+      profileJson,
       password: await hashPassword(password),
       availability: availability?.length ? { create: availability } : undefined,
     },

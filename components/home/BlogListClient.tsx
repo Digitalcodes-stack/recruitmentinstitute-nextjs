@@ -137,7 +137,7 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
       <section style={{ background: 'linear-gradient(130deg,#060D1C 0%,#0B1629 40%,#0E1F3A 72%,#071120 100%)', position: 'relative', overflow: 'hidden', minHeight: 320, display: 'flex', alignItems: 'center' }}>
         {/* Background image */}
         <div className="absolute inset-0" style={{ zIndex: 0 }}>
-          <Image src="/assets/images/blog/inner/8.jpg" alt="" fill priority sizes="100vw"
+          <Image src="/assets/images/blog/inner/8.jpg" alt="Recruitment Institute Insights and Guides" fill priority sizes="100vw"
             style={{ objectFit: 'cover', opacity: .18 }} />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg,rgba(6,13,28,.97) 0%,rgba(11,22,41,.9) 55%,rgba(14,31,58,.8) 100%)' }} />
         </div>
@@ -164,9 +164,9 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
           </div>
 
           <h1 style={{ fontSize: 'clamp(30px,4vw,56px)', fontWeight: 900, color: '#fff', lineHeight: 1.1, letterSpacing: '-.035em', marginBottom: 18, maxWidth: 780 }}>
-            HR &amp; Recruitment{' '}
+            Recruitment Training{' '}
             <span style={{ background: 'linear-gradient(120deg,#60A5FA 0%,#5EEAD4 55%,#FCD34D 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Blog
+              Insights, Guides &amp; Playbooks
             </span>
           </h1>
           <p style={{ fontSize: 16, color: '#94A3B8', lineHeight: 1.85, maxWidth: 580 }}>
@@ -365,7 +365,7 @@ export default function BlogListClient({ blogs, recentBlogs, pagination, search 
 
               {/* Promo CTA */}
               <div style={{ borderRadius: 18, background: 'linear-gradient(130deg,#0B1629,#0F172A)', border: '1px solid rgba(255,255,255,.07)', overflow: 'hidden', position: 'relative', boxShadow: '0 8px 40px rgba(15,23,42,.18)' }}>
-                <Image src="/assets/images/bg/course-contact-bg.jpg" alt="" fill sizes="360px"
+                <Image src="/assets/images/bg/course-contact-bg.jpg" alt="Recruitment Institute Admissions Guidance Pune" fill sizes="360px"
                   style={{ objectFit: 'cover', opacity: .15 }} />
                 {/* Top gradient line */}
                 <div aria-hidden style={{ height: 2, background: 'linear-gradient(90deg,#1D4ED8,#D97706,#14B8A6)', position: 'relative', zIndex: 1 }} />

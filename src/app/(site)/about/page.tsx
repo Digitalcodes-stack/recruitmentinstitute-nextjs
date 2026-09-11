@@ -6,21 +6,21 @@ import { getSiteStats } from '@/lib/site-stats'
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'About Us - India\'s #1 HR & Recruitment Training Institute',
+  title: 'About Us - Recruitment Training Institute in Pune & India | Recruitment Institute',
   description:
-    'Learn about Recruitment Institute - Pune\'s leading HR and recruitment training academy. Our mission, vision, expert trainers and 10+ years of transforming HR careers.',
-  keywords: 'about recruitment institute, HR training institute pune, recruitment academy india, HR experts pune',
+    'Learn about Recruitment Institute - Pune\'s premier recruitment training institute. Our mission, expert faculty, live simulation labs, and 10+ years of transforming HR careers.',
+  keywords: 'Recruitment Training Institute in Pune, about recruitment institute, HR training institute pune, recruitment academy india, HR experts pune, Recruitment Institute',
   alternates: { canonical: `${BASE_URL}/about` },
   openGraph: {
-    title: 'About Recruitment Institute - HR Training Academy in Pune',
-    description: 'India\'s premier recruitment training institute. 5,000+ alumni, 95% placement rate, expert industry trainers.',
+    title: 'About Us - Recruitment Training Institute in Pune & India | Recruitment Institute',
+    description: 'India\'s premier recruitment training institute in Pune. 5,000+ alumni, 95% placement rate, expert industry trainers.',
     url: `${BASE_URL}/about`,
     type: 'website',
     images: [{ url: `${BASE_URL}/assets/images/og-about.jpg`, width: 1200, height: 630, alt: 'About Recruitment Institute' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Recruitment Institute',
+    title: 'About Us - Recruitment Training Institute in Pune & India | Recruitment Institute',
     description: 'India\'s premier HR and recruitment training academy in Pune.',
   },
 }

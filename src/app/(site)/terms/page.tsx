@@ -3,6 +3,13 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Terms of Service | Recruitment Institute',
   description: 'Terms of Service and conditions for Recruitment Institute courses and portals.',
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in/terms',
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
 }
 
 export default function TermsPage() {

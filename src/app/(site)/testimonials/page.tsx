@@ -3,9 +3,46 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { Star, Quote, ChevronRight, Users, Award, TrendingUp } from 'lucide-react'
 
+import { generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
+
 export const metadata: Metadata = {
-  title: 'Student Testimonials - Recruitment Institute',
-  description: 'Read what our alumni say about their HR and recruitment training experience at Recruitment Institute, Pune.',
+  title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+  description:
+    'Read real student reviews and alumni placement success stories from Recruitment Institute Pune. 95% placement rate, corporate HR transitions, and verified testimonials.',
+  keywords: [
+    'Recruitment Course Reviews Pune',
+    'recruitment institute reviews',
+    'HR course testimonials pune',
+    'recruitment course placements',
+    'recruitment institute student feedback',
+    'HR alumni placement reviews',
+    'Recruitment Institute',
+  ],
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in/testimonials',
+  },
+  openGraph: {
+    title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+    description:
+      'Read real student reviews and alumni placement success stories from Recruitment Institute Pune. 95% placement rate, corporate HR transitions, and verified testimonials.',
+    url: 'https://recruitmentinstitute.in/testimonials',
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Recruitment Course Reviews & Placements - Recruitment Institute Pune',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+    description:
+      'Read real student reviews and alumni placement success stories from Recruitment Institute Pune.',
+    images: [DEFAULT_OG_IMAGE],
+  },
 }
 
 export const revalidate = 3600
@@ -36,8 +73,17 @@ export default async function TestimonialsPage() {
     ? (testimonials.reduce((s, t) => s + (t.rating || 5), 0) / totalCount).toFixed(1)
     : '5.0'
 
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Testimonials', url: '/testimonials' },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* ── Hero ── */}
       <div style={{ background: 'linear-gradient(135deg,#0F172A 0%,#1a2744 60%,#0F172A 100%)', padding: '80px 0 100px', position: 'relative', overflow: 'hidden' }}>
         {/* dot grid */}
@@ -63,9 +109,9 @@ export default async function TestimonialsPage() {
             </div>
 
             <h1 style={{ fontSize: 'clamp(34px,4.5vw,56px)', fontWeight: 900, color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 20 }}>
-              What Our Alumni{' '}
+              Recruitment Course Reviews &amp;{' '}
               <span style={{ background: 'linear-gradient(135deg,#60A5FA,#818CF8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Say
+                Success Stories
               </span>
             </h1>
 

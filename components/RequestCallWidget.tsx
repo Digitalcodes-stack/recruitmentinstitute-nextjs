@@ -38,7 +38,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Pooja Kulkarni',
     displayName: 'Pooja',
     role: 'Senior Career Counsellor',
-    photo: '/desk/avatars/priya_counselor.jpg',
+    photo: '/assets/images/counselors/pooja_kulkarni.jpg',
     institute: 'Recruitment Institute',
     experience: '8+ Yrs Exp',
     badge: 'Senior Counsellor',
@@ -49,7 +49,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Vikram Joshi',
     displayName: 'Vikram',
     role: 'Director of Career Counselling',
-    photo: '/assets/images/trainers/vikram_joshi.jpg',
+    photo: '/assets/images/counselors/vikram_joshi.jpg',
     institute: 'Recruitment Institute',
     experience: '12+ Yrs Exp',
     badge: 'Counselling Head',
@@ -60,7 +60,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Anjali Patil',
     displayName: 'Anjali',
     role: 'Lead Admissions Advisor',
-    photo: '/assets/images/trainers/snehal_patil.jpg',
+    photo: '/assets/images/counselors/anjali_patil.jpg',
     institute: 'Recruitment Institute',
     experience: '7+ Yrs Exp',
     badge: 'Admissions Lead',
@@ -71,7 +71,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Sneha Deshmukh',
     displayName: 'Sneha',
     role: 'Senior Talent Acquisition Mentor',
-    photo: '/assets/images/trainers/priyanka_kulkarni.jpg',
+    photo: '/assets/images/counselors/sneha_deshmukh.jpg',
     institute: 'Recruitment Institute',
     experience: '6+ Yrs Exp',
     badge: 'TA Mentor',
@@ -82,7 +82,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Meera Rao',
     displayName: 'Meera',
     role: 'Executive Career Strategist',
-    photo: '/assets/images/team/style2/6.jpg',
+    photo: '/assets/images/counselors/meera_rao.jpg',
     institute: 'Recruitment Institute',
     experience: '10+ Yrs Exp',
     badge: 'Placement Director',
@@ -93,7 +93,7 @@ export const COUNSELORS: Counselor[] = [
     name: 'Riya Joshi',
     displayName: 'Riya',
     role: 'Corporate Career Counsellor',
-    photo: '/assets/images/trainers/ananya_roy.jpg',
+    photo: '/assets/images/counselors/riya_joshi.jpg',
     institute: 'Recruitment Institute',
     experience: '5+ Yrs Exp',
     badge: 'Career Counsellor',
@@ -205,7 +205,7 @@ export default function RequestCallWidget() {
       if (e?.detail?.counselor) {
         const foundIdx = COUNSELORS.findIndex(
           (c) => c.name.toLowerCase().includes(e.detail.counselor.toLowerCase()) ||
-                 c.displayName.toLowerCase().includes(e.detail.counselor.toLowerCase())
+            c.displayName.toLowerCase().includes(e.detail.counselor.toLowerCase())
         )
         if (foundIdx !== -1) setSelectedCounselorIndex(foundIdx)
       }
@@ -381,7 +381,7 @@ export default function RequestCallWidget() {
 
   const handleCallExecutive = () => {
     if (typeof (window as any).aidtOpenTalk === 'function') {
-      ;(window as any).aidtOpenTalk({
+      ; (window as any).aidtOpenTalk({
         name: currentCounselor.name,
         avatar_url: currentCounselor.photo,
       })
@@ -504,7 +504,7 @@ export default function RequestCallWidget() {
               {/* ── STATE: IDLE (Form View with Prominent Hero Photo) ── */}
               {state === 'idle' && (
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-5 lg:gap-8 items-stretch">
-                  
+
                   {/* MOBILE VIEW ONLY: Compact Executive Counsellor Banner (< md) */}
                   <div className="md:hidden flex flex-col gap-2.5 bg-slate-900/90 rounded-2xl p-3 border border-slate-800 shadow-lg">
                     <div className="flex items-center gap-3">
@@ -541,11 +541,10 @@ export default function RequestCallWidget() {
                           key={c.id}
                           type="button"
                           onClick={() => setSelectedCounselorIndex(idx)}
-                          className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-semibold shrink-0 transition-all ${
-                            idx === selectedCounselorIndex
+                          className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-semibold shrink-0 transition-all ${idx === selectedCounselorIndex
                               ? 'bg-indigo-600 text-white shadow-sm'
                               : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
-                          }`}
+                            }`}
                         >
                           <span className="relative w-4 h-4 rounded-full overflow-hidden inline-block">
                             <Image src={c.photo} alt={c.displayName} fill className="object-cover" />
@@ -558,7 +557,7 @@ export default function RequestCallWidget() {
 
                   {/* DESKTOP & TABLET LEFT COLUMN: Significantly Larger & Prominent Counsellor Photo Showcase (>= md) */}
                   <div className="hidden md:flex md:col-span-5 lg:col-span-5 flex-col items-center justify-between bg-gradient-to-b from-slate-900/95 via-slate-900 to-indigo-950/50 rounded-2xl p-4 sm:p-5 border border-slate-800/90 shadow-2xl relative">
-                    
+
                     {/* Top Photo Frame: Significantly Larger Portrait Showcase */}
                     <div className="w-full flex flex-col items-center">
                       <div className="relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-full aspect-[4/5] sm:h-72 md:h-80 lg:h-[340px] rounded-2xl overflow-hidden shadow-2xl border-2 border-indigo-400/50 ring-4 ring-indigo-500/20 bg-slate-800 group transition-all duration-300">
@@ -629,18 +628,16 @@ export default function RequestCallWidget() {
                                 setSelectedCounselorIndex(idx)
                               }}
                               title={`${c.name} (${c.primaryLanguage}) — ${c.role}`}
-                              className={`group relative flex flex-col items-center gap-1 p-1 rounded-xl transition-all duration-200 cursor-pointer ${
-                                isSelected
+                              className={`group relative flex flex-col items-center gap-1 p-1 rounded-xl transition-all duration-200 cursor-pointer ${isSelected
                                   ? 'bg-indigo-950/80 ring-2 ring-indigo-400 shadow-lg shadow-indigo-500/30'
                                   : 'opacity-65 hover:opacity-100 hover:bg-slate-800/60'
-                              }`}
+                                }`}
                             >
                               <div
-                                className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 transition-all ${
-                                  isSelected
+                                className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border-2 transition-all ${isSelected
                                     ? 'border-indigo-400 ring-2 ring-indigo-500/50 scale-105'
                                     : 'border-slate-700 group-hover:border-slate-500'
-                                }`}
+                                  }`}
                               >
                                 <Image
                                   src={c.photo}
@@ -651,9 +648,8 @@ export default function RequestCallWidget() {
                                 />
                               </div>
                               <span
-                                className={`text-[10px] font-semibold tracking-tight transition-colors ${
-                                  isSelected ? 'text-indigo-300' : 'text-slate-400 group-hover:text-slate-200'
-                                }`}
+                                className={`text-[10px] font-semibold tracking-tight transition-colors ${isSelected ? 'text-indigo-300' : 'text-slate-400 group-hover:text-slate-200'
+                                  }`}
                               >
                                 {c.displayName}
                               </span>

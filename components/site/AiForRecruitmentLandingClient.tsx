@@ -274,7 +274,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
               margin: '0 auto 20px',
             }}
           >
-            From Job Description to Joining:{' '}
+            AI Recruitment Course:{' '}
             <span
               style={{
                 background: 'linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #0284C7 100%)',
@@ -282,7 +282,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              Master AI-Powered Recruitment
+              AI for Talent Acquisition
             </span>
           </h1>
 

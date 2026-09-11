@@ -31,22 +31,22 @@ import {
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'HR & Recruitment Training Courses in Pune - All Programs',
+  title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
   description:
-    'Explore recruitment and HR training programs at Recruitment Institute Pune. End-to-end recruitment, HR basics, entrepreneurship and corporate training.',
-  keywords: 'HR courses pune, recruitment training programs, end to end recruitment, HR entrepreneurship, corporate HR training',
+    'Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.',
+  keywords: 'Recruitment Training Courses, HR courses pune, recruitment training programs, talent acquisition course, HR certification course pune, recruitment institute pune',
   alternates: { canonical: `${BASE_URL}/courses` },
   openGraph: {
-    title: 'HR & Recruitment Courses in Pune - Recruitment Institute',
-    description: "India's #1 recruitment training institute. Expert programs for every career stage.",
+    title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
+    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
     url: `${BASE_URL}/courses`,
     type: 'website',
-    images: [{ url: `${BASE_URL}/assets/images/og-courses.jpg`, width: 1200, height: 630, alt: 'HR Training Courses at Recruitment Institute' }],
+    images: [{ url: `${BASE_URL}/assets/images/og-courses.jpg`, width: 1200, height: 630, alt: 'Recruitment Training Courses at Recruitment Institute' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'HR & Recruitment Courses in Pune - Recruitment Institute',
-    description: "India's #1 recruitment training institute. Expert programs for every career stage.",
+    title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
+    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
   },
 }
 
@@ -620,10 +620,9 @@ export default async function CoursesPage() {
               </div>
 
               <h1 style={{ fontSize:'clamp(32px,4vw,58px)', fontWeight:900, color:'#fff', lineHeight:1.07, letterSpacing:'-.04em', marginBottom:22 }}>
-                India&apos;s Leading{' '}
                 <span style={{ background:'linear-gradient(120deg,#F87171 0%,#FBBF24 40%,#38BDF8 80%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
-                  Recruitment Training
-                </span>{' '}Programs
+                  Recruitment Training Courses
+                </span>{' '}in India &amp; Pune
               </h1>
 
               <p style={{ fontSize:17, color:'#94A3B8', lineHeight:1.85, maxWidth:530, marginBottom:36 }}>

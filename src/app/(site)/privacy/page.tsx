@@ -3,6 +3,13 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Privacy Policy | Recruitment Institute',
   description: 'Privacy Policy and data protection terms for Recruitment Institute.',
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in/privacy',
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
 }
 
 export default function PrivacyPage() {

@@ -24,6 +24,7 @@ export default function ImageUploadField({
   required,
 }: Props) {
   const [uploading, setUploading] = useState(false)
+  const [imgError, setImgError] = useState(false)
   const ref = useRef<HTMLInputElement>(null)
 
   const upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,14 +106,15 @@ export default function ImageUploadField({
       </div>
 
       {/* preview */}
-      {resolvedSrc && (
-        <div style={{ marginTop: 10, position: 'relative', display: 'inline-block', width: previewShape === 'circle' ? 64 : '100%' }}>
+      {resolvedSrc && !imgError && (
+        <div style={{ marginTop: 10, position: 'relative', display: 'inline-block', width: previewShape === 'circle' ? 72 : '100%' }}>
           <img
             src={resolvedSrc}
             alt="preview"
+            onError={() => setImgError(true)}
             style={previewShape === 'circle' ? {
-              width: 64, height: 64, borderRadius: '50%', objectFit: 'cover',
-              border: '2.5px solid #e2e8f0', display: 'block',
+              width: 72, height: 72, borderRadius: '50%', objectFit: 'cover',
+              border: '2.5px solid #3b82f6', display: 'block', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
             } : {
               width: '100%', height: 140, objectFit: 'cover', borderRadius: 10,
               border: '1.5px solid #e2e8f0', display: 'block',
@@ -121,16 +123,30 @@ export default function ImageUploadField({
           <button
             type="button"
             onClick={() => onChange('')}
+            title="Remove photo"
             style={{
               position: 'absolute', top: previewShape === 'circle' ? -4 : 6,
               right: previewShape === 'circle' ? -4 : 6,
               width: 22, height: 22, borderRadius: '50%',
-              background: 'rgba(15,23,42,0.65)', border: 'none',
+              background: 'rgba(15,23,42,0.75)', border: 'none',
               cursor: 'pointer', display: 'flex', alignItems: 'center',
               justifyContent: 'center', color: '#fff',
             }}
           >
             <X style={{ width: 11, height: 11 }} />
+          </button>
+        </div>
+      )}
+
+      {resolvedSrc && imgError && (
+        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 10, background: '#fef2f2', border: '1px solid #fecaca', fontSize: 12, color: '#b91c1c' }}>
+          <span>Image preview unavailable. Click <strong>Browse</strong> to upload a new photo.</span>
+          <button
+            type="button"
+            onClick={() => { setImgError(false); onChange(''); }}
+            style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontWeight: 700, textDecoration: 'underline' }}
+          >
+            Clear
           </button>
         </div>
       )}

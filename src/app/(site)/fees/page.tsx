@@ -3,14 +3,42 @@ import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { Check, MessageSquare, ArrowRight, ShieldCheck, Tag, Monitor, Building2, Sparkles, HelpCircle } from 'lucide-react'
 
+import { generateFaqJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
+
 export const metadata: Metadata = {
-  title: 'Course Fees & Pricing - Online (50% OFF) & Classroom (10% OFF)',
-  description: 'Transparent tuition fees for all Recruitment Institute courses. Save 50% on live interactive online batches or 10% on classroom programs in Pune.',
+  title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+  description:
+    'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online. Up to 50% discount on interactive live batches with placement support.',
+  keywords: [
+    'Recruitment Course Fees Pune',
+    'recruitment course fees',
+    'HR training cost pune',
+    'talent acquisition course fees',
+    'HR course EMI options',
+    'Recruitment Institute pricing',
+  ],
   alternates: { canonical: 'https://recruitmentinstitute.in/fees' },
+  openGraph: {
+    title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+    description:
+      'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online. Up to 50% discount on interactive live batches with placement support.',
+    url: 'https://recruitmentinstitute.in/fees',
+    type: 'website',
+    images: [
+      {
+        url: DEFAULT_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Recruitment Course Fees in Pune - Recruitment Institute',
+      },
+    ],
+  },
   twitter: {
     card: 'summary_large_image',
-    title: 'Course Fees & Pricing - Online (50% OFF) & Classroom (10% OFF)',
-    description: 'Transparent tuition fees for all Recruitment Institute courses. Save 50% on online batches and 10% on classroom programs in Pune.',
+    title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+    description:
+      'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online.',
+    images: [DEFAULT_OG_IMAGE],
   },
 }
 
@@ -74,13 +102,45 @@ export default async function FeesPage() {
     console.error('Failed to load database fees:', err)
   }
 
+  const feesFaqJsonLd = generateFaqJsonLd([
+    {
+      question: 'Are there flexible EMI options for tuition fees?',
+      answer: 'Yes, split your tuition across 3 to 6 monthly installments with zero hidden surcharges.',
+    },
+    {
+      question: 'What payment methods are accepted?',
+      answer: 'Pay securely via UPI, NetBanking, Credit Cards or in-person at our Pune center.',
+    },
+    {
+      question: 'What is the discount for online vs classroom batches?',
+      answer: 'Save 50% on live interactive online batches or 10% on classroom programs in Pune.',
+    },
+    {
+      question: 'Is placement assistance included in the fee?',
+      answer: 'Yes, 100% placement assistance, resume optimization, and mock interviews are included across all flagship courses.',
+    },
+  ])
+
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Course Fees', url: '/fees' },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(feesFaqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Breadcrumb Header */}
       <div className="relative bg-gradient-to-br from-slate-950 via-[#131b31] to-brand-bg-dark text-white py-16 overflow-hidden border-b border-slate-900">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#e0e0e0_1px,transparent_1px)] [background-size:20px_20px]" />
         <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight text-white">Course Fees & Modes</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight text-white">Recruitment Course Fees &amp; Training Modes in Pune</h1>
           <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider flex gap-2 items-center">
             <Link href="/" className="hover:text-brand-red transition-colors">Home</Link>
             <span>/</span>

@@ -18,9 +18,10 @@ import type { DynamicCourseData } from '@/lib/services/courseDataService'
 
 interface Props {
   course: DynamicCourseData
+  h1Title?: string
 }
 
-export default function DynamicCourseLandingClient({ course }: Props) {
+export default function DynamicCourseLandingClient({ course, h1Title }: Props) {
   const [openModule, setOpenModule] = useState<number | null>(0)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [enquiryOpen, setEnquiryOpen] = useState(false)
@@ -84,7 +85,7 @@ export default function DynamicCourseLandingClient({ course }: Props) {
 
               {/* Title */}
               <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.15]">
-                {course.title}
+                {h1Title || course.title}
               </h1>
 
               {/* Short Description (Clean & Concise) */}

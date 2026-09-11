@@ -256,17 +256,15 @@ export default function HomePage({
             <div className="hero-left">
               <div className="hero-eyebrow">
                 <span className="hero-eyebrow-dot" />
-                <span className="hero-eyebrow-text">India&apos;s #1 Recruitment Academy</span>
+                <span className="hero-eyebrow-text">Premier Recruitment Training Academy</span>
               </div>
 
-              <div>
-                <h1 className="hero-h1">Launch Your</h1>
-                <h1 className="hero-h1--gradient">HR &amp; Recruitment</h1>
-                <h1 className="hero-h1">Career Today.</h1>
-              </div>
+              <h1 className="hero-h1">
+                Recruitment Training for <span className="hero-h1--gradient">Career &amp; Professional Growth</span>
+              </h1>
 
               <p className="hero-sub">
-                India&apos;s most practical recruitment training — boolean search, ATS tools, sourcing strategy and real placement support. From freshers to entrepreneurs.
+                Practical recruitment training programs from foundation to leadership — including Recruitment Career Starter, Professional Recruitment Specialist, Corporate Recruitment, and AI for Recruitment with real placement support.
               </p>
 
               <div className="hero-chips">

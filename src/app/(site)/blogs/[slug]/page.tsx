@@ -40,15 +40,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const blog = await prisma.blog.findUnique({ where: { slug } })
   if (!blog) return { title: 'Blog Post Not Found' }
   const topicImage = getBlogTopicImage(blog.title, blog.slug, blog.id)
+  const fullImageUrl = topicImage.startsWith('http') ? topicImage : `https://recruitmentinstitute.in${topicImage}`
+
   return {
     title: blog.metaTitle || blog.title,
     description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
-    keywords: blog.metaKeywords || undefined,
-    alternates: { canonical: blog.canonicalUrl || `/blogs/${slug}` },
+    keywords: blog.metaKeywords ? blog.metaKeywords.split(',').map((k) => k.trim()) : undefined,
+    alternates: { canonical: blog.canonicalUrl || `https://recruitmentinstitute.in/blogs/${slug}` },
     openGraph: {
       title: blog.metaTitle || blog.title,
       description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
-      images: [topicImage],
+      url: `https://recruitmentinstitute.in/blogs/${slug}`,
+      type: 'article',
+      publishedTime: new Date(blog.createdAt).toISOString(),
+      modifiedTime: new Date(blog.updatedAt || blog.createdAt).toISOString(),
+      images: [
+        {
+          url: fullImageUrl,
+          width: 1200,
+          height: 630,
+          alt: blog.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.metaTitle || blog.title,
+      description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
+      images: [fullImageUrl],
     },
   }
 }
@@ -102,8 +121,58 @@ export default async function BlogDetailPage({ params }: Props) {
     })),
   } : null
 
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: stripHtml(blog.content).slice(0, 160),
+    image: [featuredSrc.startsWith('http') ? featuredSrc : `https://recruitmentinstitute.in${featuredSrc}`],
+    datePublished: new Date(blog.createdAt).toISOString(),
+    dateModified: new Date(blog.updatedAt || blog.createdAt).toISOString(),
+    author: {
+      '@type': 'Person',
+      name: blog.author || 'Editorial Team, Recruitment Institute',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Recruitment Institute',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://recruitmentinstitute.in/assets/images/recruitment_insti_final_02.png',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://recruitmentinstitute.in/blogs/${blog.slug}`,
+    },
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://recruitmentinstitute.in' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://recruitmentinstitute.in/blogs' },
+      { '@type': 'ListItem', position: 3, name: blog.title, item: `https://recruitmentinstitute.in/blogs/${blog.slug}` },
+    ],
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <style>{`
         /* Breadcrumb */
         .bd-crumb { color: #94A3B8; text-decoration: none; font-size: 12px; font-weight: 600; transition: color .18s; }

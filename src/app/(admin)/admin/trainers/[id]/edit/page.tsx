@@ -17,7 +17,7 @@ export default async function EditTrainerPage({ params }: Props) {
     where: { id: parseInt(id) },
     select: {
       id: true, name: true, email: true, phone: true, specialization: true,
-      bio: true, image: true, isActive: true,
+      bio: true, image: true, isActive: true, profileJson: true,
       availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
     },
   })

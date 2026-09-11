@@ -3,12 +3,19 @@ import { prisma } from '@/lib/prisma'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
-// Course landing pages - high-priority, manually maintained
+// Course landing pages - high-priority, practitioner-led programs
 const coursePages = [
   { url: `${BASE_URL}/end-to-end-recruitment-training`, priority: 0.95 },
   { url: `${BASE_URL}/hr-courses-for-beginners`, priority: 0.95 },
   { url: `${BASE_URL}/hr-entrepreneurship-program`, priority: 0.95 },
   { url: `${BASE_URL}/hr-corporate-training-course`, priority: 0.95 },
+  { url: `${BASE_URL}/corporate-recruitment-training`, priority: 0.95 },
+  { url: `${BASE_URL}/professional-recruitment-specialist`, priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-career-starter`, priority: 0.95 },
+  { url: `${BASE_URL}/advanced-recruitment-ta-masterclass`, priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-business-growth-consulting`, priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-business-accelerator`, priority: 0.95 },
+  { url: `${BASE_URL}/ai-for-recruitment`, priority: 0.95 },
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -23,10 +30,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
-      url: `${BASE_URL}/about`,
+      url: `${BASE_URL}/trainers`,
       lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.8,
+      changeFrequency: 'daily',
+      priority: 0.9,
     },
     {
       url: `${BASE_URL}/courses`,
@@ -35,10 +42,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/contact`,
+      url: `${BASE_URL}/testimonials`,
       lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${BASE_URL}/blogs`,
@@ -47,28 +54,40 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     },
     {
+      url: `${BASE_URL}/fees`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${BASE_URL}/about`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/knowledge`,
       lastModified: now,
       changeFrequency: 'weekly',
-      priority: 0.7,
+      priority: 0.75,
     },
     {
       url: `${BASE_URL}/community`,
       lastModified: now,
       changeFrequency: 'daily',
-      priority: 0.65,
+      priority: 0.7,
+    },
+    {
+      url: `${BASE_URL}/contact`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.7,
     },
     {
       url: `${BASE_URL}/student-membership`,
       lastModified: now,
       changeFrequency: 'monthly',
       priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/fees`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.7,
     },
   ]
 
