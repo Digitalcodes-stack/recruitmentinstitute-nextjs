@@ -106,8 +106,8 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       note: 'Note: Actual government / legal filing fees are separate.',
     },
     {
-      id: 'accelerator',
-      name: 'Plan 2 — Incubator and Accelerator',
+      id: 'incubator',
+      name: 'Plan 2 — Incubator',
       badge: '⭐ HERO • MOST POPULAR & RECOMMENDED',
       badgeBg: 'bg-amber-400 text-slate-950 font-black shadow-sm',
       tagline: 'The complete 6-month hands-on incubator to close clients and scale agency revenue',
@@ -116,7 +116,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       priceSubtitle: 'Range based on 1-to-1 deal review depth & delivery support',
       bestFor: 'Founders who want active deal guidance, proposal reviews & full operational handholding',
       isHero: true,
-      ctaText: 'Apply for Plan 2 (Incubator and Accelerator) →',
+      ctaText: 'Apply for Plan 2 (Incubator) →',
       ctaStyle: 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/30 transform hover:-translate-y-0.5',
       features: [
         'Everything included in Plan 1 (Launch) PLUS:',
@@ -142,8 +142,8 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       note: 'Guaranteed hands-on handholding until you can independently operate your recruitment firm.',
     },
     {
-      id: 'mastery',
-      name: 'Plan 3 — Business Mastery',
+      id: 'accelerator',
+      name: 'Plan 3 — Accelerator',
       badge: '🔴 ENTERPRISE & ADVISORY',
       badgeBg: 'bg-rose-50 text-rose-700 border-rose-200',
       tagline: 'Deep 1-to-1 consulting for serious entrepreneurs scaling past ₹1 Cr+ ARR',
@@ -152,10 +152,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       priceSubtitle: 'Annual bespoke 1-to-1 founder advisory & P&L consulting',
       bestFor: 'Serious entrepreneurs building multi-recruiter enterprise staffing firms',
       isHero: false,
-      ctaText: 'Apply for Plan 3 (Mastery)',
+      ctaText: 'Apply for Plan 3 (Accelerator)',
       ctaStyle: 'bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-300 hover:border-slate-400',
       features: [
-        'Everything in Plan 2 (Incubator and Accelerator) PLUS:',
+        'Everything in Plan 2 (Incubator) PLUS:',
         'Weekly 1-to-1 private founder strategy call',
         'Bespoke enterprise sales strategy',
         'Large corporate client acquisition support',
@@ -314,8 +314,8 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
   // FAQs
   const faqs = [
     {
-      q: 'Which plan should I choose: Launch, Accelerator or Mastery?',
-      a: 'Plan 2 (Accelerator, ₹75,000 – ₹99,000) is our flagship and most recommended program for over 80% of founders. It provides 6 months of weekly business reviews, 1-to-1 mentoring, deal negotiation support, ATS implementation and hands-on handholding until you can run your recruitment agency autonomously. If you only need initial 8-week setup guidance, Plan 1 (Launch, ₹29,999 – ₹39,999) is ideal. For high-growth founders seeking deep 1-to-1 consulting, P&L audits and direct WhatsApp founder hotline access, choose Plan 3 (Mastery, ₹1.50L – ₹2.50L / yr).',
+      q: 'Which plan should I choose: Launch, Incubator or Accelerator?',
+      a: 'Plan 2 (Incubator, ₹75,000 – ₹99,000) is our flagship and most recommended program for over 80% of founders. It provides 6 months of weekly business reviews, 1-to-1 mentoring, deal negotiation support, ATS implementation and hands-on handholding until you can run your recruitment agency autonomously. If you only need initial 8-week setup guidance, Plan 1 (Launch, ₹29,999 – ₹39,999) is ideal. For high-growth founders seeking deep 1-to-1 consulting, P&L audits and direct WhatsApp founder hotline access, choose Plan 3 (Accelerator, ₹1.50L – ₹2.50L / yr).',
     },
     {
       q: 'Why are prices shown in ranges rather than fixed amounts?',
@@ -338,7 +338,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       a: 'Founders who diligently implement our LinkedIn B2B outbound workflows and cold email sequences typically secure their first discovery meetings within Weeks 3–4 and close their first signed client agreement within 6–8 weeks.',
     },
     {
-      q: 'How does the commercial negotiation support work in Plan 2 (Accelerator)?',
+      q: 'How does the commercial negotiation support work in Plan 2 (Incubator)?',
       a: 'When an enterprise client requests your commercial terms, our senior mentors personally review your proposal, advise on fee percentages (8.33% to 15%), review payment credit terms and join pre-negotiation prep calls so you never undercharge or sign unfavorable terms.',
     },
     {
@@ -367,10 +367,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             Applications Open • Limited to 15 Agency Founders per Cohort
           </span>
           <button
-            onClick={() => openEnrollModal('Plan 2 — Accelerator (₹75,000 – ₹99,000)')}
+            onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
             className="text-amber-400 hover:text-amber-300 underline font-bold cursor-pointer transition-colors"
           >
-            Apply for Accelerator (Plan 2) →
+            Apply for Incubator (Plan 2) →
           </button>
         </div>
       </div>
@@ -541,7 +541,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             </h2>
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               Transparent investment ranges tailored to your growth stage. 
-              <strong> Plan 2 (Incubator and Accelerator)</strong> is the highly recommended choice for founders aiming for full operational independence.
+              <strong> Plan 2 (Incubator)</strong> is the highly recommended choice for founders aiming for full operational independence.
             </p>
           </div>
 
@@ -747,11 +747,11 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                     <div className="text-[11px] font-medium text-slate-500">8 Wks • ₹29,999 – ₹39,999</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-slate-950 w-1/5 bg-amber-50 border-x-2 border-amber-400">
-                    Plan 2: Incubator and Accelerator
+                    Plan 2: Incubator
                     <div className="text-[11px] font-black text-amber-700">Recommended • ₹75,000 – ₹99,000</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-rose-800 w-1/5 bg-slate-100/60">
-                    Plan 3: Mastery
+                    Plan 3: Accelerator
                     <div className="text-[11px] font-medium text-slate-500">12 Mo • ₹1.50L – ₹2.50L / yr</div>
                   </th>
                 </tr>
@@ -821,10 +821,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
 
           <div className="text-center mt-10">
             <button
-              onClick={() => openEnrollModal('Plan 2 — Accelerator (₹75,000 – ₹99,000)')}
+              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
               className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm tracking-wide shadow-lg shadow-slate-900/10 transition-all cursor-pointer"
             >
-              Get Started with Plan 2 (Accelerator)
+              Get Started with Plan 2 (Incubator)
             </button>
           </div>
         </div>
@@ -1008,7 +1008,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                       ₹{feePerPlacement.toLocaleString('en-IN')}
                     </div>
                     <div className="text-[11px] text-emerald-700 font-semibold mt-0.5">
-                      1 placement completely covers the Plan 2 (Accelerator) fee range!
+                      1 placement completely covers the Plan 2 (Incubator) fee range!
                     </div>
                   </div>
 
@@ -1114,7 +1114,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                   Learn Directly From Leaders Who Scaled Multi-Crore Agencies
                 </h2>
                 <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                  We don't leave you with generic recorded videos. In <strong>Plan 2 (Accelerator)</strong>, our mentors 
+                  We don't leave you with generic recorded videos. In <strong>Plan 2 (Incubator)</strong>, our mentors 
                   join your deal prep sessions, review your corporate client proposals, analyze your candidate pipelines and guide you until you can independently manage operations.
                 </p>
                 <div className="pt-2">
@@ -1210,10 +1210,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => openEnrollModal('Plan 2 — Incubator and Accelerator (₹75,000 – ₹99,000)')}
+              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-base tracking-wide shadow-xl shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
-              Apply for Plan 2 (Incubator and Accelerator) →
+              Apply for Plan 2 (Incubator) →
             </button>
             <a
               href="#pricing-tiers"
@@ -1240,11 +1240,11 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                 Hero Recommendation
               </div>
               <div className="text-sm font-extrabold text-slate-900">
-                Plan 2 — Incubator and Accelerator (6 Months)
+                Plan 2 — Incubator (6 Months)
               </div>
             </div>
             <div className="sm:hidden">
-              <div className="text-xs font-bold text-slate-900">Plan 2 — Incubator and Accelerator</div>
+              <div className="text-xs font-bold text-slate-900">Plan 2 — Incubator</div>
               <div className="text-xs font-black text-amber-600">₹75,000 – ₹99,000</div>
             </div>
           </div>
@@ -1256,10 +1256,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             </div>
 
             <button
-              onClick={() => openEnrollModal('Plan 2 — Incubator and Accelerator (₹75,000 – ₹99,000 | Sticky Bar)')}
+              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000 | Sticky Bar)')}
               className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-md transition-all whitespace-nowrap cursor-pointer"
             >
-              Apply for Incubator & Accelerator →
+              Apply for Incubator →
             </button>
           </div>
         </div>
