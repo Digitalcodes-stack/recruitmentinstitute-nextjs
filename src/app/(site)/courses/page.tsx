@@ -31,22 +31,22 @@ import {
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
+  title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
   description:
-    'Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.',
-  keywords: 'Recruitment Training Courses, HR courses pune, recruitment training programs, talent acquisition course, HR certification course pune, recruitment institute pune',
+    'Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.',
+  keywords: 'Recruitment Training Courses, HR courses, recruitment training programs, talent acquisition course, HR certification course, recruitment institute',
   alternates: { canonical: `${BASE_URL}/courses` },
   openGraph: {
-    title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
-    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
+    title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
+    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
     url: `${BASE_URL}/courses`,
     type: 'website',
     images: [{ url: `${BASE_URL}/assets/images/og-courses.jpg`, width: 1200, height: 630, alt: 'Recruitment Training Courses at Recruitment Institute' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recruitment Training Courses & Programs in Pune | Recruitment Institute',
-    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute Pune. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
+    title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
+    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
   },
 }
 
@@ -157,7 +157,26 @@ const COURSE_META: Record<string, {
     ctaText: 'Apply / Enquire',
   },
   'entrepreneurship': {
-    tagline: 'Entrepreneurship',
+    tagline: 'Recruitment Business Accelerator',
+    badge: 'Agency Track',
+    badgeColor: '#D97706',
+    badgeBg: 'rgba(217,119,6,.15)',
+    badgeBorder: 'rgba(217,119,6,.35)',
+    accent: '#D97706',
+    accentLight: '#FFFBEB',
+    accentBorder: '#FDE68A',
+    accentGlow: 'rgba(217,119,6,.2)',
+    gradient: 'linear-gradient(135deg,#78350F,#D97706,#B45309)',
+    icon: '🚀',
+    tags: ['8 Weeks', 'Business Setup', 'Client Acquisition'],
+    highlight: 'Build ₹1Cr+ Agency',
+    image: '/assets/images/courses/style4/4.jpg',
+    duration: '8 Weeks',
+    mode: 'Blended Cohort',
+    ctaText: 'Book Free Business Call',
+  },
+  'recruitment-business-accelerator': {
+    tagline: 'Recruitment Business Accelerator',
     badge: 'Agency Track',
     badgeColor: '#D97706',
     badgeBg: 'rgba(217,119,6,.15)',
@@ -394,9 +413,19 @@ export default async function CoursesPage() {
   // Map DB Trainers — with distinct rich profiles, quotes and bios
   let formattedTrainers: TrainerItem[] = []
   if (rawDbTrainers && rawDbTrainers.length > 0) {
-    formattedTrainers = rawDbTrainers.map((t, idx) => {
+    const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka']
+    const sortedDbTrainers = [...rawDbTrainers].sort((a, b) => {
+      const ai = TOP_TRAINERS.indexOf(a.name)
+      const bi = TOP_TRAINERS.indexOf(b.name)
+      if (ai === -1 && bi === -1) return 0
+      if (ai === -1) return 1
+      if (bi === -1) return -1
+      return ai - bi
+    })
+    formattedTrainers = sortedDbTrainers.map((t, idx) => {
       const lower = t.name.toLowerCase()
       const isBrahmita = lower.includes('brahmita')
+      const isRahul = lower.includes('rahul') || lower.includes('limaye')
       const isShesha = lower.includes('shesha') || lower.includes('shhiv') || lower.includes('mohanty')
 
       if (isBrahmita) {
@@ -420,6 +449,30 @@ export default async function CoursesPage() {
           featured: true,
           quote: 'Mastering empathy, structured interviewing and candidate psychology turns fresh recruiters into boardroom-ready talent partners.',
           certifications: ['SHRM Certified Professional (SHRM-CP)', 'Certified Behavioral Interviewer', 'Master Corporate Soft Skills Coach'],
+        }
+      }
+
+      if (isRahul) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'Business Growth & Transformation Strategy Consultant | Scaling Startups & Enterprises | Career Coach',
+          experienceYears: 30,
+          specializationTags: ['Recruitment & Talent Acquisition', 'Recruitment Business Development', 'Staffing & Recruitment Agency Management', 'Client Acquisition & Relationship Management'],
+          bio: t.bio || 'Business & Technology Consultant, Corporate Trainer and Business Growth Strategist with 30+ years of professional experience across Sales & BD, Recruitment, Technology, and Management Consulting.',
+          longBio: 'Rahul Limaye is a Business & Technology Consultant, Corporate Trainer and Business Growth Strategist with 30+ years of professional experience across Sales & BD, Recruitment, Technology, and Management Consulting.',
+          image: t.image || '/assets/images/trainers/rajesh_sharma.jpg',
+          companyEx: 'Business Growth & Transformation Strategy Consultant | Scaling Startups & Enterprises | Career Coach',
+          rating: 4.98,
+          reviewsCount: 162,
+          studentsMentored: 1350,
+          coursesTaught: ['HR Corporate Training Course', 'Recruitment Business Accelerator', 'End-to-End Recruitment Training', 'AI for Recruitment'],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: 'Combining technology, business strategy and human psychology to catalyze growth and transformation.',
+          certifications: ['Business & Technology Consultant', 'Corporate Trainer & Business Coach', 'Recruitment & Staffing Professional', 'Business Growth & Sales Strategist'],
         }
       }
 
@@ -473,6 +526,32 @@ export default async function CoursesPage() {
         }
       }
 
+      const isTukuna = lower.includes('tukuna') || lower.includes('lenka')
+      if (isTukuna) {
+        return {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          phone: t.phone || undefined,
+          designation: 'Talent Acquisition & Recruitment Professional | Associated with Capgemini / Capgemini Engineering',
+          experienceYears: 15,
+          specializationTags: ['Talent Acquisition & Recruitment', 'IT & Technology Recruitment', 'End-to-End Recruitment', 'Candidate Sourcing & Screening'],
+          bio: t.bio || 'Talent Acquisition & Recruitment Professional with corporate hiring experience at Capgemini / Capgemini Engineering across IT & Technology hiring.',
+          longBio: t.bio || 'Talent Acquisition & Recruitment Professional with corporate hiring experience at Capgemini / Capgemini Engineering across IT & Technology hiring and talent sourcing.',
+          image: (t.image && t.image.trim() !== '') ? t.image : '/assets/images/trainers/tukuna_kumar_lenka.jpg',
+          companyEx: 'Talent Acquisition & Recruitment Professional | Associated with Capgemini / Capgemini Engineering',
+          rating: 4.96,
+          reviewsCount: 125,
+          studentsMentored: 1100,
+          coursesTaught: ['End-to-End Recruitment Training', 'AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist'],
+          modes: ['Online', 'Offline', 'Hybrid'],
+          featured: true,
+          quote: 'Mastering end-to-end talent sourcing and recruiter productivity transforms candidate quality and hiring turnaround.',
+          certifications: ['Corporate Talent Acquisition Professional', 'Recruitment & Talent Sourcing Practitioner', 'IT & Technology Recruitment Professional'],
+          linkedinUrl: 'https://www.linkedin.com/in/tukunakumarlenka/',
+        }
+      }
+
       const isFemale =
         lower.includes('priya') ||
         lower.includes('priti') ||
@@ -523,12 +602,16 @@ export default async function CoursesPage() {
     const onlineFinal = Number(matchedFee?.onlineFinal || Math.round(basePrice * 0.5))
     const offlineFinal = Number(matchedFee?.offlineFinal || Math.round(basePrice * 0.9))
 
+    const isAccelerator = cat.slug === 'entrepreneurship' || cat.slug === 'recruitment-business-accelerator' || cat.name?.toLowerCase().includes('entrepreneur')
+    const finalTitle = isAccelerator ? 'Recruitment Business Accelerator' : (meta.tagline ?? linkedCourse?.title ?? cat.name)
+    const finalMeta = isAccelerator ? { ...meta, tagline: 'Recruitment Business Accelerator' } : meta
+
     return {
       index,
       slug: cat.slug,
       route: getCourseRoute(cat.slug),
-      name: cat.name,
-      title: meta.tagline ?? linkedCourse?.title ?? cat.name,
+      name: isAccelerator ? 'Recruitment Business Accelerator' : cat.name,
+      title: finalTitle,
       description: description.slice(0, 200) + (description.length > 200 ? '…' : ''),
       enrolled: linkedCourse ? `${Number(linkedCourse.totalStudents).toLocaleString('en-IN')}+` : '500+',
       rating: avgRating,
@@ -536,7 +619,7 @@ export default async function CoursesPage() {
       duration,
       onlinePrice: onlineFinal,
       offlinePrice: offlineFinal,
-      meta,
+      meta: finalMeta,
     }
   })
 
@@ -622,7 +705,7 @@ export default async function CoursesPage() {
               <h1 style={{ fontSize:'clamp(32px,4vw,58px)', fontWeight:900, color:'#fff', lineHeight:1.07, letterSpacing:'-.04em', marginBottom:22 }}>
                 <span style={{ background:'linear-gradient(120deg,#F87171 0%,#FBBF24 40%,#38BDF8 80%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>
                   Recruitment Training Courses
-                </span>{' '}in India &amp; Pune
+                </span>{' '}in India
               </h1>
 
               <p style={{ fontSize:17, color:'#94A3B8', lineHeight:1.85, maxWidth:530, marginBottom:36 }}>
@@ -712,30 +795,6 @@ export default async function CoursesPage() {
           </div>
         </div>
       </section>
-
-      {/* ── UPCOMING BATCHES SECTION ────────────────────────────────── */}
-      <UpcomingBatches
-        batches={formattedBatches}
-        title="Upcoming Batches"
-        subtitle="Limited seats • Live Online + Offline options • New batches every month"
-      />
-
-      {/* ── LIVE & UPCOMING SESSIONS ─────────────────────────────────── */}
-      <LiveAndUpcomingSessions
-        sessions={rawSessions.map((s): SessionListItem => ({
-          id: s.id,
-          title: s.title,
-          sessionDate: s.sessionDate.toISOString(),
-          startTime: s.startTime.toISOString(),
-          endTime: s.endTime.toISOString(),
-          isLive: s.status === 'LIVE' || (s.startTime <= now && s.endTime >= now),
-          meetLink: s.meetLink,
-          batchName: s.batch.name,
-          courseTitle: s.batch.course.title,
-          trainerName: s.trainer.name,
-          trainerImage: s.trainer.image,
-        }))}
-      />
 
       {/* ── COURSE CARDS ────────────────────────────────────────────── */}
       <section id="programs" style={{ background:'#F8FAFC', padding:'72px 0 96px' }}>
@@ -1034,6 +1093,30 @@ export default async function CoursesPage() {
           )}
         </div>
       </section>
+
+      {/* ── UPCOMING BATCHES SECTION ────────────────────────────────── */}
+      <UpcomingBatches
+        batches={formattedBatches}
+        title="Upcoming Batches"
+        subtitle="Limited seats • Live Online + Offline options • New batches every month"
+      />
+
+      {/* ── LIVE & UPCOMING SESSIONS ─────────────────────────────────── */}
+      <LiveAndUpcomingSessions
+        sessions={rawSessions.map((s): SessionListItem => ({
+          id: s.id,
+          title: s.title,
+          sessionDate: s.sessionDate.toISOString(),
+          startTime: s.startTime.toISOString(),
+          endTime: s.endTime.toISOString(),
+          isLive: s.status === 'LIVE' || (s.startTime <= now && s.endTime >= now),
+          meetLink: s.meetLink,
+          batchName: s.batch.name,
+          courseTitle: s.batch.course.title,
+          trainerName: s.trainer.name,
+          trainerImage: s.trainer.image,
+        }))}
+      />
 
       {/* ── TRUST BAR ────────────────────────────────────────────────── */}
       <section style={{ background:'#fff', borderTop:'1px solid #E2E8F0', borderBottom:'1px solid #E2E8F0' }}>

@@ -39,15 +39,13 @@ const courses = [
     icon: <GraduationCap className="w-5 h-5" />,
     iconStyle: { color: '#2563EB', background: '#EFF6FF' },
   },
-  /*
   {
-    label: 'HR Entrepreneurship Program',
-    description: 'Launch and grow your own recruitment agency',
-    href: '/hr-entrepreneurship-program',
+    label: 'Recruitment Business Accelerator',
+    description: 'Launch, scale & grow your own recruitment agency business',
+    href: '/recruitment-business-accelerator',
     icon: <Award className="w-5 h-5" />,
     iconStyle: { color: '#059669', background: '#ECFDF5' },
   },
-  */
   {
     label: 'HR Corporate Training',
     description: 'Upskill your internal hiring team with custom modules',

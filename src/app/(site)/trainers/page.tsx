@@ -62,7 +62,7 @@ function initialsAvatar(name: string) {
 
 export default async function TrainersPage() {
   const dbTrainers = await prisma.trainer.findMany({ where: { isActive: true }, orderBy: { id: 'asc' } })
-  const TOP_TRAINERS = ['Brahmita Nayak', 'Shesha Shhiv Mohanty', 'Debabrata Pattanayak', 'Rahul Limaye', 'Tukuna Kumar Lenka']
+  const TOP_TRAINERS = ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka']
   dbTrainers.sort((a, b) => {
     const ai = TOP_TRAINERS.indexOf(a.name)
     const bi = TOP_TRAINERS.indexOf(b.name)
@@ -227,7 +227,7 @@ export default async function TrainersPage() {
       baseQuote = 'Mastering end-to-end talent sourcing and recruiter productivity transforms candidate quality and hiring turnaround.'
       baseBio = 'Talent Acquisition & Recruitment Professional with corporate hiring experience at Capgemini / Capgemini Engineering across IT & Technology hiring.'
       baseLongBio = `Talent Acquisition & Recruitment Professional with corporate hiring experience.\n\nAssociated with Capgemini / Capgemini Engineering in talent acquisition and recruitment activities.\n\nExperience in IT/Technology Recruitment and Talent Sourcing.\n\nHands-on exposure to end-to-end recruitment and candidate sourcing.\n\nExperience supporting hiring requirements across multiple technology roles and skill areas.\n\nPractical understanding of corporate recruitment processes, stakeholder coordination and hiring delivery.\n\nIndustry-oriented perspective on recruiter performance, candidate quality and hiring turnaround.`
-      baseImage = t.image || initialsAvatar(t.name)
+      baseImage = (t.image && t.image.trim() !== '') ? t.image : '/assets/images/trainers/tukuna_kumar_lenka.jpg'
       baseRating = 4.96
       baseReviews = 125
       baseStudents = 1100

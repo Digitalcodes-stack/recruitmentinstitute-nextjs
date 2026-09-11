@@ -10,7 +10,7 @@ const courseLinks = [
   { label: 'AI for Recruitment (Flagship)', href: '/ai-for-recruitment' },
   { label: 'End-to-End Recruitment Training', href: '/end-to-end-recruitment-training' },
   { label: 'HR Courses for Beginners', href: '/hr-courses-for-beginners' },
-  // { label: 'HR Entrepreneurship Program', href: '/hr-entrepreneurship-program' },
+  { label: 'Recruitment Business Accelerator', href: '/recruitment-business-accelerator' },
   { label: 'HR Corporate Training Course', href: '/hr-corporate-training-course' },
   { label: 'View All Courses', href: '/courses' },
 ]

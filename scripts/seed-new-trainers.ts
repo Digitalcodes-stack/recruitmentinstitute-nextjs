@@ -69,7 +69,7 @@ const newTrainers = [
     phone: '9870001012',
     specialization: 'Talent Acquisition & Recruitment Professional | Corporate Hiring & Sourcing Specialist | Recruitment Coach',
     bio: 'Talent Acquisition & Recruitment Professional with corporate hiring experience at Capgemini / Capgemini Engineering across IT & Technology hiring and talent sourcing.',
-    image: '',
+    image: '/assets/images/trainers/tukuna_kumar_lenka.jpg',
     profileJson: {
       designation: 'Talent Acquisition & Recruitment Professional | Corporate Hiring & Sourcing Specialist | Recruitment Coach',
       companyEx: 'Talent Acquisition & Recruitment Professional | Associated with Capgemini / Capgemini Engineering',
@@ -130,9 +130,11 @@ async function seedToDb(connectionString: string, label: string) {
         const id = existing.rows[0].id
         await pool.query(
           `UPDATE trainers 
-           SET name = $1, specialization = $2, bio = $3, profile_json = $4::jsonb, status = true, updated_at = NOW()
-           WHERE id = $5`,
-          [t.name, t.specialization, t.bio, JSON.stringify(t.profileJson), id]
+           SET name = $1, specialization = $2, bio = $3, profile_json = $4::jsonb, 
+               image = CASE WHEN $5 <> '' THEN $5 ELSE image END,
+               status = true, updated_at = NOW()
+           WHERE id = $6`,
+          [t.name, t.specialization, t.bio, JSON.stringify(t.profileJson), t.image, id]
         )
         console.log(`[${label}] Updated ${t.name} (id: ${id})`)
       } else {
