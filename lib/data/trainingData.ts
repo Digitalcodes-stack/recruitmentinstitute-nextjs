@@ -66,9 +66,9 @@ export const DEFAULT_TRAINERS: TrainerItem[] = [
   {
     id: 3,
     name: 'Debabrata Pattanayak',
-    designation: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
-    companyEx: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
-    experienceYears: 22,
+    designation: 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
+    companyEx: 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
+    experienceYears: 24,
     specializationTags: [
       'HR & Recruitment Fundamentals',
       'Talent Acquisition',
@@ -80,7 +80,7 @@ export const DEFAULT_TRAINERS: TrainerItem[] = [
       'Time & Performance Management',
       'Corporate HR Practices',
     ],
-    bio: 'Senior HR & Talent Acquisition Leader bringing 22+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
+    bio: 'Director HR & Talent Acquisition Leader bringing 24+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
     longBio: `Learn Recruitment from someone who understands hiring from the leadership side.\n\nDeba brings extensive professional experience in HR, talent management, leadership and organizational hiring, with strong exposure to real-world recruitment requirements.\n\nHis experience in the hospitality sector gives learners an opportunity to understand recruitment beyond resumes — including business requirements, people management, leadership hiring, candidate evaluation and workforce needs.\n\nHe is also actively involved in hiring and talent identification and has been recognized for his contribution to the hospitality industry.\n\nDebabrata's LinkedIn profile demonstrates active involvement in hiring, leadership and HR-related professional activities, including recruitment for finance, sales and hospitality leadership positions.`,
     image: '/assets/images/trainers/debabrata_pattanayak.jpg',
     rating: 4.97,
@@ -90,7 +90,7 @@ export const DEFAULT_TRAINERS: TrainerItem[] = [
     modes: ['Online', 'Offline', 'Hybrid'],
     featured: true,
     quote: 'Recruitment is not just about filling a position. It is about finding the right person for the right business need.',
-    certifications: ['Senior HR & Talent Acquisition Leader', 'Recruitment & Leadership Mentor', 'Hospitality Industry HR Awardee', 'Strategic Talent & Executive Hiring'],
+    certifications: ['Director HR & Talent Acquisition Leader', 'Recruitment & Leadership Mentor', 'Hospitality Industry HR Awardee', 'Strategic Talent & Executive Hiring'],
     linkedinUrl: 'https://www.linkedin.com/in/dpattanayak/',
   },
   {

@@ -59,7 +59,7 @@ const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Courses', href: '/courses', children: courses },
-  { label: 'Trainers', href: '/trainers' },
+  { label: 'Trainer & Business Coach', href: '/trainers' },
   { label: 'Knowledge', href: '/knowledge' },
   { label: 'Blog', href: '/blogs' },
   { label: 'Contact', href: '/contact' },

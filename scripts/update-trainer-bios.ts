@@ -45,8 +45,8 @@ async function main() {
       ],
     },
     data: {
-      specialization: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
-      bio: 'Senior HR & Talent Acquisition Leader bringing 22+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
+      specialization: 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
+      bio: 'Director HR & Talent Acquisition Leader bringing 24+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
     },
   })
   console.log('Updated Debabrata rows:', debabrata.count)

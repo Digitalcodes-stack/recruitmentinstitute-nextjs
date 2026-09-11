@@ -11,16 +11,46 @@ import { prisma } from '@/lib/prisma'
 import { TrainerItem } from '@/types/training'
 
 export const metadata: Metadata = {
-  title: 'Meet Our Expert HR & Recruitment Faculty in Pune | Recruitment Institute',
+  title: 'Expert Trainer & Business Coach: Recruitment & HR Training in India | Recruitment Institute',
   description:
-    'Learn directly from top Talent Acquisition leaders, Headhunters and HR Directors from Google, Amazon, Microsoft, TCS and McKinsey. 100% practitioner-led mentorship.',
+    'Meet our expert recruitment trainers, business coaches, and talent acquisition faculty in India. 100% practitioner-led mentorship by senior corporate HR leaders and headhunters.',
   keywords: [
+    'Expert Trainer & Business Coach',
+    'Recruitment & HR Training in India',
+    'Recruitment Training in Pune',
+    'Recruitment Training Institute in Pune',
     'HR trainers Pune',
     'Recruitment faculty',
     'Talent acquisition mentors',
     'Corporate HR mentors India',
     'Executive search trainers',
+    'Recruitment Institute',
   ],
+  alternates: {
+    canonical: 'https://recruitmentinstitute.in/trainers',
+  },
+  openGraph: {
+    title: 'Expert Trainer & Business Coach: Recruitment & HR Training in India | Recruitment Institute',
+    description:
+      'Meet our expert recruitment trainers, business coaches, and talent acquisition faculty in India. 100% practitioner-led mentorship by senior corporate HR leaders and headhunters.',
+    url: 'https://recruitmentinstitute.in/trainers',
+    type: 'website',
+    images: [
+      {
+        url: 'https://recruitmentinstitute.in/assets/images/trainers/shesha_shhiv_mohanty.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Expert Trainer & Business Coach - Recruitment Institute',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Expert Trainer & Business Coach: Recruitment & HR Training in India | Recruitment Institute',
+    description:
+      'Meet our expert recruitment trainers, business coaches, and talent acquisition faculty in India. 100% practitioner-led mentorship by senior corporate HR leaders and headhunters.',
+    images: ['https://recruitmentinstitute.in/assets/images/trainers/shesha_shhiv_mohanty.jpg'],
+  },
 }
 
 /** Neutral initials avatar for trainers with no photo on file — never guess a stock photo for a real person. */
@@ -42,138 +72,137 @@ export default async function TrainersPage() {
     return ai - bi
   })
 
-  // Real faculty on record, mapped with distinct rich profiles
+  // Real faculty on record, mapped with distinct rich profiles and dynamic profileJson updates
   const liveTrainers: TrainerItem[] = dbTrainers.map((t) => {
+    const pj = (t.profileJson && typeof t.profileJson === 'object') ? (t.profileJson as Record<string, any>) : {}
     const lower = t.name.toLowerCase()
     const isBrahmita = lower.includes('brahmita')
     const isShesha = lower.includes('shesha') || lower.includes('shhiv') || lower.includes('mohanty')
     const isDebabrata = lower.includes('debabrata') || lower.includes('pattanayak') || lower.includes('dpattanayak')
 
+    let baseDesignation = t.specialization || 'Recruitment & HR Faculty'
+    let baseExp = 15
+    let baseCompanyEx = 'Recruitment Institute'
+    let baseLinkedin = ''
+    let baseQuote = 'Great recruiters connect business goals with human potential to build world-class teams.'
+    let baseBio = t.bio || 'Experienced recruitment and HR practitioner at Recruitment Institute.'
+    let baseLongBio = t.bio || 'Experienced recruitment and HR practitioner at Recruitment Institute.'
+    let baseTags = t.specialization ? t.specialization.split(',').map((s) => s.trim()) : ['Recruitment & HR']
+    let baseCerts = ['Recruitment Institute Certified Faculty']
+    let baseCourses = ['End-to-End Recruitment Training']
+    let baseImage = t.image || initialsAvatar(t.name)
+    let baseRating = 4.98
+    let baseReviews = 140
+    let baseStudents = 1200
+
     if (isBrahmita) {
-      return {
-        id: 100000 + t.id,
-        name: t.name,
-        email: t.email,
-        phone: t.phone ?? undefined,
-        designation: 'Recruitment & HR Transformation Expert',
-        experienceYears: 22,
-        specializationTags: [
-          'End-to-End Recruitment & Talent Acquisition',
-          'Corporate & MNC Hiring',
-          'Recruitment & Staffing Business Setup',
-          'Recruitment Consulting',
-          'Client & Candidate Management',
-          'HR & Recruitment Transformation',
-          'Recruiter Leadership & Team Building',
-          'AI & Future of Recruitment',
-        ],
-        bio: 'Talent Acquisition Leader, Recruitment Business Mentor and Corporate & MNC Hiring Specialist with 22+ years empowering professionals and entrepreneurs to build structured, scalable recruitment practices.',
-        longBio: `Talent Acquisition Leader | Recruitment Business Mentor | Corporate & MNC Hiring Specialist\n\nBrahmita Nayak is an experienced HR and Recruitment professional with deep expertise in end-to-end talent acquisition, corporate & MNC recruitment, staffing and recruitment consulting.\n\nShe brings practical industry knowledge across the complete recruitment lifecycle — from understanding client requirements and sourcing talent to screening, selection, closure and recruitment operations.\n\nHer expertise also extends to setting up and strengthening recruitment consulting and staffing businesses, helping professionals and entrepreneurs build structured, scalable recruitment practices.\n\nLearn from experience. Build recruitment excellence. Transform the way you hire.\n\nBrahmita Nayak — Empowering Recruiters, HR Professionals & Recruitment Entrepreneurs to build stronger careers and businesses.`,
-        image: t.image || '/assets/images/trainers/brahmita_mam.jpg',
-        companyEx: 'Talent Acquisition Leader | Recruitment Business Mentor | Corporate & MNC Hiring Specialist',
-        rating: 4.98,
-        reviewsCount: 146,
-        studentsMentored: 1400,
-        coursesTaught: ['End-to-End Recruitment Training', 'HR Corporate Training Course', 'HR Courses for Beginners', 'Recruitment Business Accelerator'],
-        modes: ['Online', 'Offline', 'Hybrid'],
-        featured: true,
-        quote: 'Learn from experience. Build recruitment excellence. Transform the way you hire.',
-        certifications: ['Talent Acquisition Leader', 'Corporate & MNC Recruitment Consultant', 'Recruitment Business Mentor', 'HR Transformation Expert'],
-        linkedinUrl: 'https://www.linkedin.com/in/brahmita/',
-      }
+      baseDesignation = 'Recruitment & HR Transformation Expert'
+      baseExp = 22
+      baseCompanyEx = 'Talent Acquisition Leader | Recruitment Business Mentor | Corporate & MNC Hiring Specialist'
+      baseLinkedin = 'https://www.linkedin.com/in/brahmita/'
+      baseQuote = 'Learn from experience. Build recruitment excellence. Transform the way you hire.'
+      baseBio = 'Talent Acquisition Leader, Recruitment Business Mentor and Corporate & MNC Hiring Specialist with 22+ years empowering professionals and entrepreneurs to build structured, scalable recruitment practices.'
+      baseLongBio = `Talent Acquisition Leader | Recruitment Business Mentor | Corporate & MNC Hiring Specialist\n\nBrahmita Nayak is an experienced HR and Recruitment professional with deep expertise in end-to-end talent acquisition, corporate & MNC recruitment, staffing and recruitment consulting.\n\nShe brings practical industry knowledge across the complete recruitment lifecycle — from understanding client requirements and sourcing talent to screening, selection, closure and recruitment operations.\n\nHer expertise also extends to setting up and strengthening recruitment consulting and staffing businesses, helping professionals and entrepreneurs build structured, scalable recruitment practices.\n\nLearn from experience. Build recruitment excellence. Transform the way you hire.\n\nBrahmita Nayak — Empowering Recruiters, HR Professionals & Recruitment Entrepreneurs to build stronger careers and businesses.`
+      baseImage = '/assets/images/trainers/brahmita_nayak_faculty.jpg'
+      baseRating = 4.98
+      baseReviews = 146
+      baseStudents = 1400
+      baseTags = [
+        'End-to-End Recruitment & Talent Acquisition',
+        'Corporate & MNC Hiring',
+        'Recruitment & Staffing Business Setup',
+        'Recruitment Consulting',
+        'Client & Candidate Management',
+        'HR & Recruitment Transformation',
+        'Recruiter Leadership & Team Building',
+        'AI & Future of Recruitment',
+      ]
+      baseCerts = ['Talent Acquisition Leader', 'Corporate & MNC Recruitment Consultant', 'Recruitment Business Mentor', 'HR Transformation Expert']
+      baseCourses = ['End-to-End Recruitment Training', 'HR Corporate Training Course', 'HR Courses for Beginners', 'Recruitment Business Accelerator']
+    } else if (isShesha) {
+      baseDesignation = 'AI Transformation & Recruitment Specialist | Startup & Business Growth Strategist'
+      baseExp = 22
+      baseCompanyEx = 'AI Business Transformation Consultant | Startup Builder & Growth Strategist'
+      baseLinkedin = 'https://www.linkedin.com/in/sheshamohanty/'
+      baseQuote = "AI will not replace recruiters. Recruiters who know how to use AI will outperform recruiters who don't."
+      baseBio = 'AI Business Transformation Consultant, Startup Builder and Growth Strategist bridging the gap between traditional recruitment and AI-powered recruitment.'
+      baseLongBio = `The future of recruitment belongs to recruiters who know how to use AI.\n\nShesha brings extensive experience across IT, business transformation, recruitment, consulting, technology and AI.\n\nHis LinkedIn profile describes him as an AI Business Transformation Consultant, Startup Builder and Growth Strategist, with active work and thought leadership around recruitment, AI and the future of work.\n\nAt Recruitment Institute, his focus is to bridge the gap between traditional recruitment and AI-powered recruitment.`
+      baseImage = '/assets/images/trainers/shesha_shhiv_mohanty.jpg'
+      baseRating = 4.99
+      baseReviews = 158
+      baseStudents = 1550
+      baseTags = [
+        'AI in Recruitment',
+        'Generative AI for Recruiters',
+        'AI-Powered Sourcing',
+        'Boolean Search',
+        'Recruitment Automation',
+        'Candidate Screening',
+        'AI-Assisted Recruitment Operations',
+        'Recruitment Business Development',
+        'Recruitment Agency Setup',
+        'Client Acquisition',
+        'Recruitment Entrepreneurship',
+        'HR Technology & Future of Work',
+      ]
+      baseCerts = ['AI Business Transformation Consultant', 'Master AI Talent Architect', 'Generative AI for Recruiters', 'Advanced Boolean & AI-Powered Sourcing']
+      baseCourses = ['AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist', 'HR Entrepreneurship Program']
+    } else if (isDebabrata) {
+      baseDesignation = 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor'
+      baseExp = 24
+      baseCompanyEx = 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor'
+      baseLinkedin = 'https://www.linkedin.com/in/dpattanayak/'
+      baseQuote = 'Recruitment is not just about filling a position. It is about finding the right person for the right business need.'
+      baseBio = 'Director HR & Talent Acquisition Leader bringing 24+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.'
+      baseLongBio = `Learn Recruitment from someone who understands hiring from the leadership side.\n\nDeba brings extensive professional experience in HR, talent management, leadership and organizational hiring, with strong exposure to real-world recruitment requirements.\n\nHis experience in the hospitality sector gives learners an opportunity to understand recruitment beyond resumes — including business requirements, people management, leadership hiring, candidate evaluation and workforce needs.\n\nHe is also actively involved in hiring and talent identification and has been recognized for his contribution to the hospitality industry.\n\nDebabrata's LinkedIn profile demonstrates active involvement in hiring, leadership and HR-related professional activities, including recruitment for finance, sales and hospitality leadership positions.`
+      baseImage = '/assets/images/trainers/debabrata_pattanayak_faculty.jpg'
+      baseRating = 4.97
+      baseReviews = 138
+      baseStudents = 1250
+      baseTags = [
+        'HR & Recruitment Fundamentals',
+        'Talent Acquisition',
+        'Leadership Hiring',
+        'Candidate Evaluation',
+        'Hiring Strategy',
+        'HR Communication',
+        'People Management',
+        'Time & Performance Management',
+        'Corporate HR Practices',
+      ]
+      baseCerts = ['Director HR & Talent Acquisition Leader', 'Recruitment & Leadership Mentor', 'Hospitality Industry HR Awardee', 'Strategic Talent & Executive Hiring']
+      baseCourses = ['HR Corporate Training Course', 'End-to-End Recruitment Training', 'HR Entrepreneurship Program']
     }
 
-    if (isShesha) {
-      return {
-        id: 100000 + t.id,
-        name: t.name,
-        email: t.email,
-        phone: t.phone ?? undefined,
-        designation: 'AI Transformation & Recruitment Specialist | Startup & Business Growth Strategist',
-        experienceYears: 22,
-        specializationTags: [
-          'AI in Recruitment',
-          'Generative AI for Recruiters',
-          'AI-Powered Sourcing',
-          'Boolean Search',
-          'Recruitment Automation',
-          'Candidate Screening',
-          'AI-Assisted Recruitment Operations',
-          'Recruitment Business Development',
-          'Recruitment Agency Setup',
-          'Client Acquisition',
-          'Recruitment Entrepreneurship',
-          'HR Technology & Future of Work',
-        ],
-        bio: 'AI Business Transformation Consultant, Startup Builder and Growth Strategist bridging the gap between traditional recruitment and AI-powered recruitment.',
-        longBio: `The future of recruitment belongs to recruiters who know how to use AI.\n\nShesha brings extensive experience across IT, business transformation, recruitment, consulting, technology and AI.\n\nHis LinkedIn profile describes him as an AI Business Transformation Consultant, Startup Builder and Growth Strategist, with active work and thought leadership around recruitment, AI and the future of work.\n\nAt Recruitment Institute, his focus is to bridge the gap between traditional recruitment and AI-powered recruitment.`,
-        image: t.image || '/assets/images/trainers/shesha_sir.jpg',
-        companyEx: 'AI Business Transformation Consultant | Startup Builder & Growth Strategist',
-        rating: 4.99,
-        reviewsCount: 158,
-        studentsMentored: 1550,
-        coursesTaught: ['AI for Recruitment', 'Corporate Recruitment Training', 'Professional Recruitment Specialist', 'HR Entrepreneurship Program'],
-        modes: ['Online', 'Offline', 'Hybrid'],
-        featured: true,
-        quote: "AI will not replace recruiters. Recruiters who know how to use AI will outperform recruiters who don't.",
-        certifications: ['AI Business Transformation Consultant', 'Master AI Talent Architect', 'Generative AI for Recruiters', 'Advanced Boolean & AI-Powered Sourcing'],
-        linkedinUrl: 'https://www.linkedin.com/in/sheshamohanty/',
-      }
-    }
-
-    if (isDebabrata) {
-      return {
-        id: 100000 + t.id,
-        name: t.name,
-        email: t.email,
-        phone: t.phone ?? undefined,
-        designation: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
-        experienceYears: 22,
-        specializationTags: [
-          'HR & Recruitment Fundamentals',
-          'Talent Acquisition',
-          'Leadership Hiring',
-          'Candidate Evaluation',
-          'Hiring Strategy',
-          'HR Communication',
-          'People Management',
-          'Time & Performance Management',
-          'Corporate HR Practices',
-        ],
-        bio: 'Senior HR & Talent Acquisition Leader bringing 22+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
-        longBio: `Learn Recruitment from someone who understands hiring from the leadership side.\n\nDeba brings extensive professional experience in HR, talent management, leadership and organizational hiring, with strong exposure to real-world recruitment requirements.\n\nHis experience in the hospitality sector gives learners an opportunity to understand recruitment beyond resumes — including business requirements, people management, leadership hiring, candidate evaluation and workforce needs.\n\nHe is also actively involved in hiring and talent identification and has been recognized for his contribution to the hospitality industry.\n\nDebabrata's LinkedIn profile demonstrates active involvement in hiring, leadership and HR-related professional activities, including recruitment for finance, sales and hospitality leadership positions.`,
-        image: t.image || '/assets/images/trainers/debabrata_pattanayak.jpg',
-        companyEx: 'Senior HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
-        rating: 4.97,
-        reviewsCount: 138,
-        studentsMentored: 1250,
-        coursesTaught: ['HR Corporate Training Course', 'End-to-End Recruitment Training', 'HR Entrepreneurship Program'],
-        modes: ['Online', 'Offline', 'Hybrid'],
-        featured: true,
-        quote: 'Recruitment is not just about filling a position. It is about finding the right person for the right business need.',
-        certifications: ['Senior HR & Talent Acquisition Leader', 'Recruitment & Leadership Mentor', 'Hospitality Industry HR Awardee', 'Strategic Talent & Executive Hiring'],
-        linkedinUrl: 'https://www.linkedin.com/in/dpattanayak/',
-      }
-    }
+    const sanitizeText = (val: string) => val.replace(/Director Senior HR/g, 'Director HR')
 
     return {
       id: 100000 + t.id,
       name: t.name,
       email: t.email,
       phone: t.phone ?? undefined,
-      designation: t.specialization || 'Faculty Trainer',
-      experienceYears: 15,
-      specializationTags: t.specialization ? t.specialization.split(',').map((s) => s.trim()) : ['Recruitment & HR'],
-      bio: t.bio || 'Experienced recruitment and HR practitioner at Recruitment Institute.',
-      longBio: t.bio || 'Experienced recruitment and HR practitioner at Recruitment Institute.',
-      image: t.image || initialsAvatar(t.name),
-      rating: 5,
-      reviewsCount: 50,
-      studentsMentored: 1000,
-      coursesTaught: ['End-to-End Recruitment Training'],
+      designation: sanitizeText(pj.designation || t.specialization || baseDesignation),
+      experienceYears: typeof pj.experienceYears === 'number' ? pj.experienceYears : baseExp,
+      companyEx: sanitizeText(pj.companyEx || baseCompanyEx),
+      linkedinUrl: pj.linkedinUrl || baseLinkedin,
+      quote: pj.quote || baseQuote,
+      bio: sanitizeText(pj.bio || t.bio || baseBio),
+      longBio: sanitizeText(pj.longBio || baseLongBio),
+      specializationTags: (Array.isArray(pj.specializationTags) && pj.specializationTags.length > 0)
+        ? pj.specializationTags
+        : baseTags,
+      certifications: (Array.isArray(pj.certifications) && pj.certifications.length > 0)
+        ? pj.certifications
+        : baseCerts,
+      coursesTaught: (Array.isArray(pj.coursesTaught) && pj.coursesTaught.length > 0)
+        ? pj.coursesTaught
+        : baseCourses,
+      image: t.image || pj.image || baseImage,
+      rating: typeof pj.rating === 'number' ? pj.rating : baseRating,
+      reviewsCount: typeof pj.reviewsCount === 'number' ? pj.reviewsCount : baseReviews,
+      studentsMentored: typeof pj.studentsMentored === 'number' ? pj.studentsMentored : baseStudents,
       modes: ['Online', 'Offline', 'Hybrid'],
       featured: true,
-      quote: 'Great recruiters connect business goals with human potential to build world-class teams.',
     }
   })
 
@@ -217,9 +246,9 @@ export default async function TrainersPage() {
 
             {/* Main Headline */}
             <h1 style={{ fontSize: 'clamp(30px, 4vw, 50px)', fontWeight: 900, color: '#FFFFFF', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 16px' }}>
-              Learn Directly From Active{' '}
+              Expert Trainer &amp; Business Coach:{' '}
               <span style={{ color: '#E63946' }}>
-                Talent Leaders
+                Recruitment &amp; HR Training in India
               </span>
             </h1>
 

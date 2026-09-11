@@ -36,8 +36,8 @@ async function main() {
       name: 'Debabrata Pattanayak',
       email: 'dpattanayak@institute.com',
       phone: '9870001007',
-      specialization: 'Executive HR Leadership & Talent Strategy',
-      bio: 'Director of Human Resources (Cluster) at The Park Hotels, Apeejay Surrendra Group with 22+ years of leadership in corporate HR strategy, organizational development and luxury hospitality talent acquisition.',
+      specialization: 'Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor',
+      bio: 'Director HR & Talent Acquisition Leader bringing 24+ years of real-world hiring expertise across organizational leadership, people management and corporate recruitment.',
       image: '/assets/images/trainers/debabrata_pattanayak.jpg',
     },
   ]
