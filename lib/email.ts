@@ -1035,3 +1035,89 @@ export async function sendSessionSyllabusPdfEmail(data: {
     }),
   })
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 11. NEWSLETTER & SUBSCRIBER UPDATES
+// ─────────────────────────────────────────────────────────────────────────────
+export async function sendSubscriberWelcomeEmail(data: { email: string }) {
+  const rows: EmailRow[] = [
+    { label: 'Subscriber Email', value: data.email, isEmail: true },
+    { label: 'Subscription Status', value: 'Active • Confirmed', isHighlight: true },
+    { label: 'Active Programs', value: 'Recruitment Business Accelerator, AI for Recruitment, End-to-End Training' },
+    { label: 'Training Delivery', value: 'Live Interactive Sessions + 1-on-1 Mentoring' },
+    { label: 'Direct Hotline', value: '+91 7385204165', isPhone: true },
+    { label: 'Official Support', value: 'support@recruitmentinstitute.in', isEmail: true },
+  ]
+
+  const updatesContentHtml = `
+    Hi there,<br/><br/>
+    Thank you for subscribing to <strong>Recruitment Institute Updates</strong>! 🎉<br/><br/>
+    You are now connected with India's #1 Recruitment Training Institute. All future announcements, new batch schedules, webinar invites, HR blogs, and career resources will be sent directly to <strong>${data.email}</strong>.<br/><br/>
+    <strong>Featured Programs & Current Cohorts:</strong><br/>
+    • <strong>Recruitment Business Accelerator</strong>: 3-tier agency incubation for entrepreneurs launching independent recruitment consultancies (Plan 1: Launch, Plan 2: Incubator, Plan 3: Accelerator).<br/>
+    • <strong>AI for Recruitment (Flagship)</strong>: Master AI sourcing, automated screening, Boolean strings, and ChatGPT workflows for recruiters.<br/>
+    • <strong>End-to-End Recruitment Training</strong>: Complete 360-degree lifecycle from client requisition to candidate onboard.<br/>
+    • <strong>HR Courses for Beginners</strong>: Foundational recruitment processes, portal sourcing, and communication skills.<br/>
+    • <strong>Free Knowledge Base & Playbooks</strong>: Access practical frameworks, legal agreement templates, and industry insights.<br/><br/>
+    Feel free to reply directly to this email or chat with our team on WhatsApp anytime you need guidance!
+  `
+
+  await sendMail({
+    from: FROM,
+    to: data.email,
+    subject: `Welcome to Recruitment Institute! Your latest updates & resources 🚀`,
+    html: renderExecutiveEmailHtml({
+      badgeText: '✓ Subscription Confirmed',
+      badgeBg: '#eff6ff',
+      badgeColor: '#1d4ed8',
+      badgeBorder: '#bfdbfe',
+      title: 'Welcome to Recruitment Institute Updates',
+      subtitle: 'HR, Talent Acquisition & Recruitment Agency Insights',
+      introText: updatesContentHtml,
+      rows,
+      actionButton: {
+        text: 'Explore All Courses & Programs →',
+        url: 'https://recruitmentinstitute.in/courses',
+        color: '#2563eb',
+      },
+      secondaryButton: {
+        text: 'Chat on WhatsApp',
+        url: 'https://wa.me/917385204165?text=Hello%2C%20I%20subscribed%20to%20Recruitment%20Institute%20updates',
+      },
+      footerNote: `You are receiving this email because ${data.email} subscribed to updates on recruitmentinstitute.in. All updates and resources will be delivered here.`,
+    }),
+  })
+}
+
+export async function sendSubscriberAdminAlert(data: { email: string; ipAddress?: string }) {
+  const rows: EmailRow[] = [
+    { label: 'Subscriber Email', value: data.email, isEmail: true, isHighlight: true },
+    { label: 'Subscribed At', value: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) },
+    { label: 'Source', value: 'Footer "Stay Updated" Form' },
+    ...(data.ipAddress ? [{ label: 'IP Address', value: data.ipAddress, isMonospace: true }] : []),
+  ]
+
+  await sendMail({
+    from: FROM,
+    to: ADMIN_EMAIL,
+    cc: getEmailCC(),
+    replyTo: data.email,
+    subject: `📬 New Newsletter Subscriber: ${data.email}`,
+    html: renderExecutiveEmailHtml({
+      badgeText: 'New Subscriber Joined',
+      badgeBg: '#f0fdf4',
+      badgeColor: '#15803d',
+      badgeBorder: '#bbf7d0',
+      title: 'New Subscriber Registered',
+      subtitle: 'Added to active newsletter list',
+      introText: `A new user has subscribed to receive updates and news from Recruitment Institute:`,
+      rows,
+      actionButton: {
+        text: 'View All Subscribers in Admin →',
+        url: 'https://recruitmentinstitute.in/admin/subscribers',
+        color: '#059669',
+      },
+      footerNote: `Automated alert delivered to administrators (${ADMIN_EMAIL}, ${getEmailCC()}).`,
+    }),
+  })
+}

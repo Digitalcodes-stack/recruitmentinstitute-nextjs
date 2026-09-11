@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { newsletterSchema } from '@/lib/validations'
+import { sendSubscriberWelcomeEmail, sendSubscriberAdminAlert } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,14 +19,40 @@ export async function POST(req: NextRequest) {
     if (existing) {
       if (!existing.isActive) {
         await prisma.subscriber.update({ where: { email }, data: { isActive: true } })
-        return NextResponse.json({ success: true, message: 'Subscription reactivated' })
       }
-      return NextResponse.json({ success: false, message: 'Email already subscribed' }, { status: 409 })
+
+      // Re-send latest updates to the subscriber
+      try {
+        await Promise.allSettled([
+          sendSubscriberWelcomeEmail({ email }),
+          sendSubscriberAdminAlert({ email, ipAddress: ip }),
+        ])
+      } catch (emailErr) {
+        console.error('Error dispatching subscriber updates email:', emailErr)
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'All latest updates and resources have been sent to your email!',
+      })
     }
 
     await prisma.subscriber.create({ data: { email, ipAddress: ip } })
 
-    return NextResponse.json({ success: true, message: 'Subscribed successfully' })
+    // Dispatch welcome email with all course updates & resources directly to subscriber + admin alert
+    try {
+      await Promise.allSettled([
+        sendSubscriberWelcomeEmail({ email }),
+        sendSubscriberAdminAlert({ email, ipAddress: ip }),
+      ])
+    } catch (emailErr) {
+      console.error('Error dispatching new subscriber emails:', emailErr)
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Subscribed successfully! All updates have been sent to your email.',
+    })
   } catch (error) {
     console.error('Subscribe API error:', error)
     return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 })
