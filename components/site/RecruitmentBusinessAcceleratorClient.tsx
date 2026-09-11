@@ -107,7 +107,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
     },
     {
       id: 'accelerator',
-      name: 'Plan 2 — Accelerator',
+      name: 'Plan 2 — Incubator and Accelerator',
       badge: '⭐ HERO • MOST POPULAR & RECOMMENDED',
       badgeBg: 'bg-amber-400 text-slate-950 font-black shadow-sm',
       tagline: 'The complete 6-month hands-on incubator to close clients and scale agency revenue',
@@ -116,7 +116,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       priceSubtitle: 'Range based on 1-to-1 deal review depth & delivery support',
       bestFor: 'Founders who want active deal guidance, proposal reviews & full operational handholding',
       isHero: true,
-      ctaText: 'Apply for Plan 2 (Accelerator) →',
+      ctaText: 'Apply for Plan 2 (Incubator and Accelerator) →',
       ctaStyle: 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black shadow-lg shadow-amber-400/30 transform hover:-translate-y-0.5',
       features: [
         'Everything included in Plan 1 (Launch) PLUS:',
@@ -155,7 +155,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
       ctaText: 'Apply for Plan 3 (Mastery)',
       ctaStyle: 'bg-white hover:bg-slate-50 text-slate-900 border-2 border-slate-300 hover:border-slate-400',
       features: [
-        'Everything in Plan 2 (Accelerator) PLUS:',
+        'Everything in Plan 2 (Incubator and Accelerator) PLUS:',
         'Weekly 1-to-1 private founder strategy call',
         'Bespoke enterprise sales strategy',
         'Large corporate client acquisition support',
@@ -541,7 +541,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             </h2>
             <p className="text-slate-600 text-base sm:text-lg leading-relaxed">
               Transparent investment ranges tailored to your growth stage. 
-              <strong> Plan 2 (Accelerator)</strong> is the highly recommended choice for founders aiming for full operational independence.
+              <strong> Plan 2 (Incubator and Accelerator)</strong> is the highly recommended choice for founders aiming for full operational independence.
             </p>
           </div>
 
@@ -747,7 +747,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                     <div className="text-[11px] font-medium text-slate-500">8 Wks • ₹29,999 – ₹39,999</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-slate-950 w-1/5 bg-amber-50 border-x-2 border-amber-400">
-                    Plan 2: Accelerator
+                    Plan 2: Incubator and Accelerator
                     <div className="text-[11px] font-black text-amber-700">Recommended • ₹75,000 – ₹99,000</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-rose-800 w-1/5 bg-slate-100/60">
@@ -1210,10 +1210,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => openEnrollModal('Plan 2 — Accelerator (₹75,000 – ₹99,000)')}
+              onClick={() => openEnrollModal('Plan 2 — Incubator and Accelerator (₹75,000 – ₹99,000)')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-base tracking-wide shadow-xl shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
-              Apply for Plan 2 (Accelerator) →
+              Apply for Plan 2 (Incubator and Accelerator) →
             </button>
             <a
               href="#pricing-tiers"
@@ -1240,11 +1240,11 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                 Hero Recommendation
               </div>
               <div className="text-sm font-extrabold text-slate-900">
-                Plan 2 — Accelerator (6 Months)
+                Plan 2 — Incubator and Accelerator (6 Months)
               </div>
             </div>
             <div className="sm:hidden">
-              <div className="text-xs font-bold text-slate-900">Plan 2 — Accelerator</div>
+              <div className="text-xs font-bold text-slate-900">Plan 2 — Incubator and Accelerator</div>
               <div className="text-xs font-black text-amber-600">₹75,000 – ₹99,000</div>
             </div>
           </div>
@@ -1256,10 +1256,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             </div>
 
             <button
-              onClick={() => openEnrollModal('Plan 2 — Accelerator (₹75,000 – ₹99,000 | Sticky Bar)')}
+              onClick={() => openEnrollModal('Plan 2 — Incubator and Accelerator (₹75,000 – ₹99,000 | Sticky Bar)')}
               className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-md transition-all whitespace-nowrap cursor-pointer"
             >
-              Apply for Accelerator →
+              Apply for Incubator & Accelerator →
             </button>
           </div>
         </div>
