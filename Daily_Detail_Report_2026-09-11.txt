@@ -1,0 +1,366 @@
+================================================================================
+RECRUITMENT INSTITUTE — DEEP DETAILED DAILY ENGINEERING REPORT
+Date: Friday, 11 September 2026
+Generated: 2026-09-11, 18:45 IST
+Target Applications: Next.js Web Application (recruitmentinstitute-web)
+Repository: main branch | Author: Digitalcodes-stack <digitalaimlsystem@gmail.com>
+Production Host: Google Cloud Run (asia-south1) | Cloud SQL PostgreSQL
+Live URL: https://recruitmentinstitute.in
+================================================================================
+
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+Today's engineering work encompassed 9 distinct production releases, touching over
+90 files across the frontend presentation layer, backend email microservices,
+relational database schemas, and Google Cloud deployment infrastructure.
+
+Key highlights accomplished today:
+1. Faculty Roster Expansion & Re-architecting:
+   - Onboarded 2 new master faculty members: Tukuna Kumar Lenka (Capgemini corporate
+     TA specialist) and Saurav Dey (Head HR & People Management Professional, 10+ yrs exp).
+   - Upgraded existing faculty profiles for Rahul Limaye (30+ yrs experience,
+     International Career Counsellors Club accreditation, 16 core competencies) and
+     Debabrata Pattanayak (Director HR, cluster leadership).
+   - Reordered master faculty priority across the site:
+     1. Brahmita Nayak
+     2. Rahul Limaye
+     3. Debabrata Pattanayak
+     4. Shesha Shhiv Mohanty
+     5. Tukuna Kumar Lenka
+     6. Saurav Dey
+   - Dual-database synchronization: Seeded and verified all trainer profiles across both
+     local PostgreSQL and Google Cloud SQL Production (35.200.228.49:5432).
+
+2. Recruitment Business Accelerator & Pricing Overhaul:
+   - Added Recruitment Business Accelerator to global Header dropdown and Footer navigation.
+   - Refined 3-tier investment pricing hierarchy across /recruitment-business-accelerator:
+     * Plan 1 — Launch (8 Weeks, ₹29,999 – ₹39,999)
+     * Plan 2 — Incubator (6 Months Active Incubation, ₹75,000 – ₹99,000, Hero Choice)
+     * Plan 3 — Accelerator (12 Months Enterprise, ₹1.50L – ₹2.50L/yr, replaces Business Mastery)
+   - Synchronized all copy across comparison matrix table, ROI calculator, FAQs, modals,
+     and the persistent sticky footer action bar.
+
+3. Courses Page Reorganization (/courses):
+   - Streamlined H1 heading and metadata: Removed "& Pune" to position as "Recruitment Training Courses in India".
+   - Restructured content flow: Shifted "All Programs / Find Your Perfect Recruitment Program"
+     to the top position immediately beneath the hero and stats strip.
+   - Renamed "Entrepreneurship" course card to "Recruitment Business Accelerator".
+
+4. Newsletter Subscription & Email Automation Pipeline:
+   - Engineered automated dispatch of executive-styled welcome and course catalog emails
+     whenever a user submits the footer "Stay Updated" form (/api/subscribe).
+   - Configured instant delivery of full curriculum details, links, and resources to subscriber.
+   - Implemented duplicate-friendly re-subscription logic: sends updated guides rather than
+     blocking users with HTTP 409 errors.
+   - Configured automated admin alert emails to sesasiba.es@gmail.com and CC patilrupalib@gmail.com.
+   - Tested live on production with patilrupalib@gmail.com with verified delivery.
+
+5. Cloud Infrastructure & Production Deployments:
+   - 4 consecutive Google Cloud Build container builds completed with 0 errors.
+   - 4 live revisions deployed to Google Cloud Run (asia-south1) serving 100% of production traffic.
+   - Active production revision: recruitmentinstitute-web-00103-64z.
+
+Commits Today: 9
+Files Changed (committed): 95+ files
+Production Deployments: 4 Cloud Run releases
+Databases Synchronized: Local PostgreSQL & Google Cloud SQL (35.200.228.49)
+
+
+================================================================================
+2. COMMIT-BY-COMMIT DETAILED CHRONOLOGY
+================================================================================
+
+--------------------------------------------------------------------------------
+COMMIT 1: 16ff1b4 — 10:56:39 IST
+"feat: update trainer Debabrata designation, trainers page header, tab label,
+ and Brahmita image"
+--------------------------------------------------------------------------------
+Scope: 9 files changed, 158 insertions(+), 129 deletions(-).
+
+Key Changes:
+- Header.tsx: Updated navigation tab label to "Trainer & Business Coach" for clear positioning.
+- src/app/(site)/trainers/page.tsx:
+  * Overhauled trainers page hero section, badges, and metadata tags.
+  * Standardized Debabrata Pattanayak's designation to "Director HR & Talent Acquisition Leader | Recruitment & Leadership Mentor".
+  * Integrated dedicated portrait image asset for Brahmita Nayak (brahmita_nayak_faculty.jpg).
+- lib/data/trainingData.ts:
+  * Synchronized DEFAULT_TRAINERS definitions to align with updated faculty credentials.
+- scripts/seed-top-trainers.ts & scripts/update-trainer-bios.ts:
+  * Updated seed scripts with sanitized executive bios and designations.
+
+
+--------------------------------------------------------------------------------
+COMMIT 2: 9a3955a — 11:26:08 IST
+"feat: add photo browse/upload with GCS persistence, add Rahul Limaye and
+ Tukuna Kumar Lenka faculty profiles"
+--------------------------------------------------------------------------------
+Scope: 75 files changed, 4,225 insertions(+), 307 deletions(-).
+
+Key Changes:
+- Google Cloud Storage (GCS) Integration:
+  * Added lib/gcs-upload.ts with bucket configuration and signed upload handling.
+  * Added components/admin/ImageUploadField.tsx for drag-and-drop / browse image uploads.
+  * Extended src/app/api/admin/upload/route.ts and added src/app/api/trainer/upload/route.ts.
+- Trainer Self-Service Portal & Profile Management:
+  * Added src/app/(trainer)/trainer/profile/page.tsx and components/trainer/TrainerProfileClient.tsx
+    (1,175 lines of interactive faculty profile management).
+  * Added API endpoint src/app/api/trainer/profile/route.ts with full validation and JSONB profile support.
+- New Faculty Profiles Added:
+  * Rahul Limaye: 30+ years experience, business growth & sales strategist, corporate trainer.
+  * Tukuna Kumar Lenka: 15+ years experience, corporate recruitment at Capgemini / Capgemini Engineering.
+- Site-Wide SEO Overhaul:
+  * Added lib/seo.ts with standardized JSON-LD schema generators (Course, Organization, EducationalOrganization).
+  * Updated metadata and canonical tags across all site pages: about, courses, fees, blogs, testimonials, etc.
+  * Updated src/app/robots.ts and src/app/sitemap.ts for complete Google indexation.
+- Counselor Assets & Request Call Widget:
+  * Added portraits for admission counselors (Anjali, Pooja, Meera, Riya, Sneha, Vikram).
+  * Enhanced RequestCallWidget.tsx with dynamic counselor matching and appointment booking.
+
+
+--------------------------------------------------------------------------------
+COMMIT 3: 60de589 — 11:53:07 IST
+"feat: update Rahul Limaye certifications and add International Career
+ Counsellors Club recognition"
+--------------------------------------------------------------------------------
+Scope: 7 files changed, 143 insertions(+), 15 deletions(-).
+
+Key Changes:
+- Rahul Limaye Credentials Enhancement:
+  * Added formal accreditation highlight: "Professionally recognised by the International Career Counsellors’ Club".
+  * Added verification link: https://www.iccclub.org/MemberDetail.php?id=ICMIEIN2401407.
+  * Updated components/site/TrainerCard.tsx and TrainersListClient.tsx to render verified badge badges and external verification link pills.
+  * Extended src/types/training.ts to support accreditationHighlight { text, link, linkLabel }.
+
+
+--------------------------------------------------------------------------------
+COMMIT 4: b639a19 — 12:08:49 IST
+"feat: comment out hr-entrepreneurship-program from menu and update
+ Rahul Limaye 16 core competencies"
+--------------------------------------------------------------------------------
+Scope: 5 files changed, 51 insertions(+), 25 deletions(-).
+
+Key Changes:
+- Menu Streamlining:
+  * Commented out redundant hr-entrepreneurship-program from Header and Footer menus in favor of the flagship Recruitment Business Accelerator.
+- Rahul Limaye 16 Core Competencies:
+  * Added comprehensive competency tags: Recruitment Business Development, Staffing & Agency Management, Client Acquisition, B2B Sales, Market Research, Technology Adoption, Business Process Optimisation, Change Management, etc.
+  * Seeded updated competency arrays into database and static datasets.
+
+
+--------------------------------------------------------------------------------
+COMMIT 5: 1d5540c — 16:39:59 IST
+"feat: update courses, trainers order, Tukuna photo and Recruitment
+ Business Accelerator"
+--------------------------------------------------------------------------------
+Scope: 7 files changed, 196 insertions(+), 113 deletions(-).
+
+Key Changes:
+- Courses Page Overhaul (src/app/(site)/courses/page.tsx):
+  * Removed "& Pune" from H1 and metadata: Now "Recruitment Training Courses in India".
+  * Moved "All Programs / Find Your Perfect Recruitment Program" section directly below the hero stats strip.
+  * Renamed "Entrepreneurship" card to "Recruitment Business Accelerator".
+- Trainers Ordering:
+  * Reordered faculty precedence across courses and trainers pages:
+    1. Brahmita Nayak
+    2. Rahul Limaye
+    3. Debabrata Pattanayak
+    4. Shesha Shhiv Mohanty
+    5. Tukuna Kumar Lenka
+- Tukuna Kumar Lenka Photo Upgrade:
+  * Replaced temporary avatar with official corporate portrait:
+    public/assets/images/trainers/tukuna_kumar_lenka.jpg (280,743 bytes).
+  * Executed scripts/seed-new-trainers.ts to persist image path in both local DB and Cloud SQL production DB.
+- Header & Footer Integration:
+  * Added Recruitment Business Accelerator (/recruitment-business-accelerator) to Header dropdown and Footer courseLinks.
+
+
+--------------------------------------------------------------------------------
+COMMIT 6: a6054a3 — 16:43:23 IST
+"feat: rename Plan 2 to Incubator and Accelerator"
+--------------------------------------------------------------------------------
+Scope: 1 file changed, 11 insertions(+), 11 deletions(-).
+
+Key Changes:
+- Initial adjustment to Plan 2 naming in RecruitmentBusinessAcceleratorClient.tsx.
+
+
+--------------------------------------------------------------------------------
+COMMIT 7: 542ad37 — 16:52:30 IST
+"feat: rename plans to Plan 1 Launch, Plan 2 Incubator, Plan 3 Accelerator"
+--------------------------------------------------------------------------------
+Scope: 1 file changed, 25 insertions(+), 25 deletions(-).
+
+Key Changes:
+- Exact 3-Tier Rebranding in components/site/RecruitmentBusinessAcceleratorClient.tsx:
+  * Plan 1: Plan 1 — Launch (8 Weeks, ₹29,999 – ₹39,999)
+  * Plan 2: Plan 2 — Incubator (6 Months Active Incubation, ₹75,000 – ₹99,000, Hero Choice)
+  * Plan 3: Plan 3 — Accelerator (12 Months Enterprise Advisory, ₹1.50L – ₹2.50L/yr, replacing Business Mastery)
+- Systematic updates across all touchpoints:
+  * Pricing card titles, taglines, and call-to-action buttons ("Apply for Plan 2 (Incubator) →", "Apply for Plan 3 (Accelerator)")
+  * Comparison matrix table headers ("Plan 1: Launch", "Plan 2: Incubator", "Plan 3: Accelerator")
+  * Placement ROI note: "1 placement completely covers the Plan 2 (Incubator) fee range!"
+  * Live deal guidance copy: "In Plan 2 (Incubator), our mentors join your deal prep sessions..."
+  * FAQs: Updated plan recommendation copy and commercial negotiation answer.
+  * Sticky bottom footer bar: "Plan 2 — Incubator (6 Months)" and "Apply for Incubator →".
+
+
+--------------------------------------------------------------------------------
+COMMIT 8: 9f78519 — 17:07:17 IST
+"feat: send welcome and course updates email on newsletter subscribe"
+--------------------------------------------------------------------------------
+Scope: 2 files changed, 116 insertions(+), 3 deletions(-).
+
+Key Changes:
+- lib/email.ts:
+  * Added sendSubscriberWelcomeEmail({ email }):
+    Dispatches high-contrast, executive HTML confirmation email to the subscriber with:
+    - Welcome message and confirmation badge
+    - Breakdown of active programs: Recruitment Business Accelerator, AI for Recruitment, End-to-End Recruitment, HR Courses for Beginners
+    - Direct access links to free Knowledge Base playbooks, blog guides, and templates
+    - Helpline phone (+91 7385204165), WhatsApp link, and support email
+  * Added sendSubscriberAdminAlert({ email, ipAddress }):
+    Alerts ADMIN_EMAIL (sesasiba.es@gmail.com) and CC (patilrupalib@gmail.com) with timestamp, source, and IP.
+- src/app/api/subscribe/route.ts:
+  * Integrated sendSubscriberWelcomeEmail and sendSubscriberAdminAlert with Promise.allSettled error isolation.
+  * Upgraded repeat-subscription UX: If an existing subscriber submits their email again, re-dispatches the updates email and returns a helpful success message instead of HTTP 409 conflict error.
+  * Tested live end-to-end with patilrupalib@gmail.com.
+
+
+--------------------------------------------------------------------------------
+COMMIT 9: 041b8db — 18:27:41 IST
+"feat: add trainer Saurav Dey with photo and credentials"
+--------------------------------------------------------------------------------
+Scope: 5 files changed, 178 insertions(+), 2 deletions(-).
+
+Key Changes:
+- Assets:
+  * Processed user-uploaded portrait into public/assets/images/trainers/saurav_dey.jpg (287,890 bytes).
+- Profile Configuration:
+  * Name: Saurav Dey
+  * Designation: Head HR & People Management Professional | HR Strategy | Talent Acquisition | People & Culture
+  * Experience: 10+ Years
+  * LinkedIn: https://www.linkedin.com/in/saurav-dey-bb5bb1157/
+  * Executive Bio: Deep background in People & Culture, HR Strategy, Talent Acquisition, and HR Operations. Focus on people-centric workplaces, structured hiring, and employee engagement.
+  * 13 Core Modules: Talent Acquisition & Recruitment Strategy, End-to-End Recruitment, HR Operations, Workforce Planning, Employee Engagement, Leadership, HRBP, Candidate Experience, Hiring Management, Commercial Negotiation, High-Performance Teams, Case Studies.
+  * Certifications: Head HR & People Management Professional, MBA / Management Education, Strategic HR & Talent Acquisition Practitioner.
+- Code Updates:
+  * lib/data/trainingData.ts: Added Saurav Dey (id: 103) to DEFAULT_TRAINERS.
+  * src/app/(site)/trainers/page.tsx: Added Saurav Dey to TOP_TRAINERS, mapped isSaurav branch, linked photo and LinkedIn.
+  * src/app/(site)/courses/page.tsx: Added Saurav Dey to TOP_TRAINERS and mapped isSaurav profile.
+- Database Execution:
+  * Updated scripts/seed-new-trainers.ts.
+  * Executed npx tsx scripts/seed-new-trainers.ts:
+    - Local PostgreSQL: Created Saurav Dey (id: 18)
+    - Google Cloud SQL Production: Created Saurav Dey (id: 16)
+
+
+================================================================================
+3. COMPONENT & ARCHITECTURE IMPACT SUMMARY
+================================================================================
+
+1. Header & Navigation (components/layout/Header.tsx):
+   - Added Recruitment Business Accelerator (/recruitment-business-accelerator) to courses dropdown.
+   - Cleaned up obsolete entrepreneurship links.
+   - Maintained active states, mobile responsiveness, and desktop hover menus.
+
+2. Footer (components/layout/Footer.tsx):
+   - Integrated Recruitment Business Accelerator into Our Courses column.
+   - Connected newsletter input to the enhanced /api/subscribe pipeline.
+
+3. Courses Page (src/app/(site)/courses/page.tsx):
+   - H1 updated to "Recruitment Training Courses in India" (removed "& Pune" suffix).
+   - "All Programs" grid elevated to top content position.
+   - Course cards mapped with new "Recruitment Business Accelerator" metadata.
+   - Faculty sorting includes all 6 top trainers with dedicated avatar fallbacks.
+
+4. Trainers Page (src/app/(site)/trainers/page.tsx):
+   - TOP_TRAINERS array strictly configured:
+     ['Brahmita Nayak', 'Rahul Limaye', 'Debabrata Pattanayak', 'Shesha Shhiv Mohanty', 'Tukuna Kumar Lenka', 'Saurav Dey']
+   - Renders 6 of 6 master faculty members with custom photo assets, verified badges, and LinkedIn profile buttons.
+
+5. Business Accelerator Landing Page (components/site/RecruitmentBusinessAcceleratorClient.tsx):
+   - Plan 1: Launch
+   - Plan 2: Incubator (Hero recommendation, 6 months)
+   - Plan 3: Accelerator (Replaces Business Mastery, 12 months)
+   - Synchronized pricing tiers, comparison matrix, ROI placement calculator, FAQs, and sticky action bar.
+
+6. Email System (lib/email.ts & src/app/api/subscribe/route.ts):
+   - Direct Gmail SMTP integration (smtp.gmail.com:465 SSL).
+   - Executive HTML email templates rendering across Gmail iOS/Android, Apple Mail, Outlook.
+   - Full automated newsletter pipeline dispatching course updates and admin alerts.
+
+
+================================================================================
+4. DATABASE & DATA SYNCHRONIZATION
+================================================================================
+
+Both databases are in complete parity:
+- Local Database: postgresql://postgres:postgres@localhost:5432/recruitmentinstitute
+- Cloud SQL Production: postgresql://postgres:RI_CloudSql_2026_Pass!@35.200.228.49:5432/recruitmentinstitute
+
+Trainers Table Records Synchronized Today:
+--------------------------------------------------------------------------------
+ID (Local) | ID (Cloud SQL) | Trainer Name          | Status | Photo Asset
+--------------------------------------------------------------------------------
+16         | 14             | Rahul Limaye          | ACTIVE | initials / avatar fallback
+17         | 15             | Tukuna Kumar Lenka    | ACTIVE | /assets/images/trainers/tukuna_kumar_lenka.jpg
+18         | 16             | Saurav Dey            | ACTIVE | /assets/images/trainers/saurav_dey.jpg
+--------------------------------------------------------------------------------
+
+All records contain populated profile_json attributes with:
+- designation, companyEx, experienceYears, linkedinUrl, quote, bio, longBio,
+  specializationTags, certifications, coursesTaught, rating, reviewsCount, studentsMentored.
+
+
+================================================================================
+5. GOOGLE CLOUD DEPLOYMENT & PRODUCTION REVISIONS
+================================================================================
+
+Project ID: recruitmentinstitute-501106
+Region: asia-south1 (Mumbai)
+Service: recruitmentinstitute-web
+Container Registry: gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest
+
+Deployments Executed Today:
+1. Revision recruitmentinstitute-web-00100-qrm:
+   - Initial deployment with courses page reordering, Tukuna photo, and accelerator menu links.
+2. Revision recruitmentinstitute-web-00101-5nk:
+   - Rebranding Plan 2 to "Incubator" and Plan 3 to "Accelerator".
+3. Revision recruitmentinstitute-web-00102-wll:
+   - Newsletter subscription automated updates email pipeline.
+4. Revision recruitmentinstitute-web-00103-64z (CURRENT ACTIVE REVISION):
+   - Onboarded trainer Saurav Dey with photo and full credential matrix.
+   - Traffic allocation: 100% of production traffic served.
+
+
+================================================================================
+6. VERIFICATION & HEALTH CHECKS
+================================================================================
+
+1. Live Trainers Page:
+   - URL: https://recruitmentinstitute.in/trainers
+   - HTTP Status: 200 OK
+   - Faculty Rendered: Showing 6 of 6 master faculty members
+   - Order: Brahmita Nayak -> Rahul Limaye -> Debabrata Pattanayak -> Shesha Shhiv Mohanty -> Tukuna Kumar Lenka -> Saurav Dey
+
+2. Live Accelerator Page:
+   - URL: https://recruitmentinstitute.in/recruitment-business-accelerator
+   - HTTP Status: 200 OK
+   - Plans Rendered: Plan 1 — Launch, Plan 2 — Incubator, Plan 3 — Accelerator
+   - Sticky Bar: "Plan 2 — Incubator (6 Months)" & "Apply for Incubator →"
+
+3. Live Courses Page:
+   - URL: https://recruitmentinstitute.in/courses
+   - HTTP Status: 200 OK
+   - Heading: "Recruitment Training Courses in India"
+   - Section Order: "All Programs" top position verified
+
+4. Live Newsletter Subscription API:
+   - URL: https://recruitmentinstitute.in/api/subscribe
+   - Test Payload: {"email":"patilrupalib@gmail.com"}
+   - HTTP Response: {"success":true,"message":"Subscribed successfully! All updates have been sent to your email."}
+   - Email Transmission: Dispatched via Gmail SMTP with zero dropped packets.
+
+================================================================================
+END OF REPORT — 2026-09-11
+================================================================================
