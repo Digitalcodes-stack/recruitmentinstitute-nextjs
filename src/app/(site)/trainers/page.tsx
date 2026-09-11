@@ -188,14 +188,22 @@ export default async function TrainersPage() {
       baseReviews = 162
       baseStudents = 1350
       baseTags = [
+        'Recruitment & Talent Acquisition',
+        'Recruitment Business Development',
+        'Staffing & Recruitment Agency Management',
+        'Client Acquisition & Relationship Management',
+        'B2B Sales & Business Development',
+        'Sales Strategy & Revenue Growth',
         'Business Growth Strategy',
-        'Startup & Enterprise Scaling',
-        'Recruitment & Staffing Leadership',
-        'Sales Strategy & Client Acquisition',
-        'Operational Excellence',
-        'Technology Adoption',
-        'Process Optimisation',
-        'Career & Leadership Coaching',
+        'Market Research & Competitive Analysis',
+        'Strategic Planning & Business Consulting',
+        'Business Process Optimisation',
+        'Technology Adoption & Digital Transformation',
+        'Business Analysis & Product Management',
+        'Leadership & Team Management',
+        'Entrepreneurship & Business Building',
+        'Career Development & Coaching',
+        'Change Management & Performance Management',
       ]
       baseCerts = [
         'Business & Technology Consultant',
@@ -210,7 +218,7 @@ export default async function TrainersPage() {
         link: 'https://www.iccclub.org/MemberDetail.php?id=ICMIEIN2401407',
         linkLabel: 'Verify Credential on ICC Club',
       }
-      baseCourses = ['HR Corporate Training Course', 'HR Entrepreneurship Program', 'Recruitment Business Accelerator', 'End-to-End Recruitment Training']
+      baseCourses = ['HR Corporate Training Course', 'Recruitment Business Accelerator', 'End-to-End Recruitment Training', 'AI for Recruitment']
     } else if (isTukuna) {
       baseDesignation = 'Talent Acquisition & Recruitment Professional | Corporate Hiring & Sourcing Specialist | Recruitment Coach'
       baseExp = 15
