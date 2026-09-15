@@ -292,10 +292,14 @@ registerProcessor('mic-processor', MicProcessor);";
 
         function setupWsHandlers(activeWs) {
           activeWs.onmessage = function (event) {
-            if (typeof event.data === "string") return;
+            if (typeof event.data === "string") {
+              console.log("[ai-desk] Text frame from server:", event.data);
+              return;
+            }
 
             var playAudio = function (arrayBuf) {
               if (playbackCtx.state === "suspended") playbackCtx.resume();
+              console.log("[ai-desk] Received audio from Priya (" + arrayBuf.byteLength + " bytes)");
               var pcm16 = new Int16Array(arrayBuf);
               var float32 = new Float32Array(pcm16.length);
               for (var i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;
@@ -316,7 +320,8 @@ registerProcessor('mic-processor', MicProcessor);";
             }
           };
 
-          activeWs.onerror = function () {
+          activeWs.onerror = function (err) {
+            console.error("[ai-desk] WebSocket error:", err, "readyState=" + activeWs.readyState);
             if (!opened && isLocal && wsBase !== defaultCloudRunBase) {
               console.warn("[ai-desk] Local backend (" + wsBase + ") unavailable. Retrying with Cloud Run fallback...");
               try { activeWs.close(); } catch (_) {}
@@ -332,7 +337,8 @@ registerProcessor('mic-processor', MicProcessor);";
             statusEl.textContent = "Connection error.";
           };
 
-          activeWs.onclose = function () {
+          activeWs.onclose = function (ev) {
+            console.log("[ai-desk] WebSocket closed: code=" + ev.code + " reason=" + ev.reason + " wasClean=" + ev.wasClean);
             statusEl.textContent = "Call ended.";
             dotEl.classList.remove("live");
           };

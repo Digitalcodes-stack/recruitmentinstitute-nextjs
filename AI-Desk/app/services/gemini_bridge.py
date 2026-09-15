@@ -159,7 +159,6 @@ class VoiceChatSession:
                 "outputAudioTranscription": {},
                 "realtimeInputConfig": {
                     "automaticActivityDetection": {
-                        "endOfSpeechSensitivity": "END_SENSITIVITY_DEFAULT",
                         "silenceDurationMs": 800,
                     },
                 },
@@ -356,6 +355,8 @@ class VoiceChatSession:
             if self._closed:
                 break
             event = json.loads(raw)
+            if not event.get("serverContent"):
+                logger.info("Gemini Live event (no serverContent): %s", list(event.keys()))
 
             server_content = event.get("serverContent", {})
 
@@ -388,6 +389,7 @@ class VoiceChatSession:
                                     },
                                 }))
                     else:
+                        logger.info("🔊 Sending %d bytes of Gemini audio to browser", len(pcm24k))
                         await self.client_ws.send_bytes(pcm24k)
 
             output_chunk = server_content.get("outputTranscription", {}).get("text")

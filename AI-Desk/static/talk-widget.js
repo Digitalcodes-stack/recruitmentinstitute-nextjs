@@ -296,6 +296,7 @@ registerProcessor('mic-processor', MicProcessor);";
 
             var playAudio = function (arrayBuf) {
               if (playbackCtx.state === "suspended") playbackCtx.resume();
+              console.log("[ai-desk] Received audio from Priya (" + arrayBuf.byteLength + " bytes)");
               var pcm16 = new Int16Array(arrayBuf);
               var float32 = new Float32Array(pcm16.length);
               for (var i = 0; i < pcm16.length; i++) float32[i] = pcm16[i] / 32768;

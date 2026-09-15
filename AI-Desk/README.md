@@ -12,7 +12,7 @@ DigitalAIML (Pune)**, built for [Rupali Patil](mailto:digitalaimlsystem@gmail.co
 
 - **Backend**: Python 3.12+, FastAPI (async)
 - **DB**: PostgreSQL + SQLAlchemy 2.0 (async) + Alembic
-- **Voice AI**: Gemini Live (`gemini-3.1-flash-live-preview`) over its `BidiGenerateContent` WebSocket
+- **Voice AI**: Gemini Live (`gemini-2.5-flash-native-audio-latest`) over its `BidiGenerateContent` WebSocket
 - **Auth**: JWT (email + password)
 - **Admin UI**: single static HTML/JS page (`static/index.html`), no build step — includes a 🎙️ **Talk** button that opens a live mic conversation with an executive
 - **Deploy**: Docker + docker-compose
@@ -210,7 +210,7 @@ See `.env.example` for the full list.
 |---|---|
 | `DATABASE_URL` | Postgres connection (asyncpg driver) |
 | `GEMINI_API_KEY` | Gemini Live API access — see "Getting a Gemini API key" above |
-| `GEMINI_LIVE_MODEL` | Live API model name (default `gemini-3.1-flash-live-preview`) |
+| `GEMINI_LIVE_MODEL` | Live API model name (default `gemini-2.5-flash-native-audio-latest`) |
 | `JWT_SECRET` | Sign/verify auth tokens — change in production |
 
 ## Tests

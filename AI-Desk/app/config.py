@@ -5,6 +5,7 @@ to hand-roll an os.environ wrapper.
 """
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -27,7 +28,14 @@ class Settings(BaseSettings):
 
     # --- Gemini Live ---
     GEMINI_API_KEY: str = ""
-    GEMINI_LIVE_MODEL: str = "gemini-3.1-flash-live-preview"
+    GEMINI_LIVE_MODEL: str = "gemini-2.5-flash-native-audio-latest"
+
+    @field_validator("GEMINI_API_KEY", mode="after")
+    @classmethod
+    def _strip_api_key(cls, v: str) -> str:
+        # A stray trailing newline in the secret (e.g. from `echo` piping into
+        # Secret Manager) breaks the httpx request header (LocalProtocolError).
+        return v.strip()
 
     # --- Email (SMTP — e.g. Gmail with an App Password) ---
     SMTP_HOST: str = "smtp.gmail.com"
