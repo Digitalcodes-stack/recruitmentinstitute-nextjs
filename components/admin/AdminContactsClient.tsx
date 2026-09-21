@@ -32,8 +32,11 @@ import {
   Send,
   Copy,
   Share2,
+  FileSpreadsheet,
+  Download,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import * as XLSX from 'xlsx'
 
 interface ContactSubmission {
   id: number
@@ -106,6 +109,7 @@ export default function AdminContactsClient({
   const [searchQuery, setSearchQuery] = useState('')
   const [slotFilter, setSlotFilter] = useState<'all' | 'booked' | 'available'>('all')
   const [updatingSlotIndex, setUpdatingSlotIndex] = useState<number | null>(null)
+  const [exportingExcel, setExportingExcel] = useState(false)
   
   // New Slot Modal
   const [newSlotModalOpen, setNewSlotModalOpen] = useState(false)
@@ -256,6 +260,132 @@ export default function AdminContactsClient({
 
   const bookedSlots = (voiceData.slots || []).filter((s) => s.is_booked)
   const availableSlots = (voiceData.slots || []).filter((s) => !s.is_booked)
+
+  const handleExportToExcel = () => {
+    setExportingExcel(true)
+    try {
+      const wb = XLSX.utils.book_new()
+
+      // 1. Web Enquiries
+      const enquiriesData = initialContacts.map((c, idx) => ({
+        '#': idx + 1,
+        'Lead ID': c.id,
+        'Date & Time (IST)': c.createdAt
+          ? new Date(c.createdAt).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+          : '',
+        'Candidate Name': c.name || '',
+        'Email Address': c.email || '',
+        'Mobile Number': c.mobile || '',
+        'Message / Inquiry Details': c.message || '',
+      }))
+      const wsEnquiries = XLSX.utils.json_to_sheet(
+        enquiriesData.length ? enquiriesData : [{ Status: 'No web enquiries recorded' }]
+      )
+      wsEnquiries['!cols'] = [
+        { wch: 5 },
+        { wch: 10 },
+        { wch: 22 },
+        { wch: 25 },
+        { wch: 30 },
+        { wch: 18 },
+        { wch: 80 },
+      ]
+      XLSX.utils.book_append_sheet(wb, wsEnquiries, 'Web Enquiries')
+
+      // 2. AI Voice Leads
+      const voiceDataList = (voiceData.conversations || []).map((conv, idx) => {
+        const startedStr = conv.started_at
+          ? new Date(conv.started_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+          : ''
+        const durationFormatted = conv.duration_seconds
+          ? `${Math.floor(conv.duration_seconds / 60)}m ${conv.duration_seconds % 60}s`
+          : '0s'
+        const transcriptText = (conv.transcript || [])
+          .map((t) => `${t.role === 'assistant' ? 'Priya (AI)' : 'Caller'}: ${t.text}`)
+          .join('\n')
+
+        return {
+          '#': idx + 1,
+          'Call ID': conv.id || '',
+          'Date & Time (IST)': startedStr,
+          'Caller Name': conv.caller_name || '',
+          'Phone Number': conv.caller_phone || '',
+          'Email Address': conv.caller_email || '',
+          Duration: durationFormatted,
+          'Duration (Sec)': conv.duration_seconds || 0,
+          Disposition: conv.extracted_data?.disposition || '',
+          'Interest Level': conv.extracted_data?.interest_level || '',
+          'Booked Demo Slot': conv.extracted_data?.interview_slot_booked || '',
+          'Preferred Course': conv.extracted_data?.preferred_course || '',
+          'Candidate Background': conv.extracted_data?.candidate_background || '',
+          'Office Notes': conv.extracted_data?.key_notes_for_office || '',
+          'Full Transcript': transcriptText,
+        }
+      })
+      const wsVoice = XLSX.utils.json_to_sheet(
+        voiceDataList.length ? voiceDataList : [{ Status: 'No voice calls recorded' }]
+      )
+      wsVoice['!cols'] = [
+        { wch: 5 },
+        { wch: 20 },
+        { wch: 22 },
+        { wch: 25 },
+        { wch: 18 },
+        { wch: 30 },
+        { wch: 12 },
+        { wch: 14 },
+        { wch: 20 },
+        { wch: 16 },
+        { wch: 25 },
+        { wch: 30 },
+        { wch: 30 },
+        { wch: 40 },
+        { wch: 100 },
+      ]
+      XLSX.utils.book_append_sheet(wb, wsVoice, 'AI Voice Leads')
+
+      // 3. Demo & Counselling Slots
+      const slotsDataList = (voiceData.slots || []).map((slot, idx) => ({
+        '#': idx + 1,
+        Date: slot.date || '',
+        'Slot Label': slot.label || '',
+        'Time Range': `${slot.start_time || ''} - ${slot.end_time || ''}`,
+        Status: slot.is_booked ? 'BOOKED' : 'AVAILABLE',
+        'Booked By Name': slot.booked_by_name || '',
+        'Booked By Phone': slot.booked_by_phone || '',
+        'Booked By Email': slot.booked_by_email || '',
+        'Booked At': slot.booked_at
+          ? new Date(slot.booked_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+          : '',
+      }))
+      const wsSlots = XLSX.utils.json_to_sheet(
+        slotsDataList.length ? slotsDataList : [{ Status: 'No slots configured' }]
+      )
+      wsSlots['!cols'] = [
+        { wch: 5 },
+        { wch: 14 },
+        { wch: 25 },
+        { wch: 16 },
+        { wch: 14 },
+        { wch: 25 },
+        { wch: 18 },
+        { wch: 30 },
+        { wch: 22 },
+      ]
+      XLSX.utils.book_append_sheet(wb, wsSlots, 'Counselling Slots')
+
+      const today = new Date().toISOString().split('T')[0]
+      XLSX.writeFile(wb, `recruitment_institute_contacts_and_leads_${today}.xlsx`)
+      toast.success(
+        `Exported ${initialContacts.length} web enquiries & ${voiceData.conversations?.length || 0} voice leads to Excel!`
+      )
+    } catch (err: any) {
+      console.error('Export Excel failed:', err)
+      toast.error('Failed to export to Excel: ' + (err.message || 'Unknown error'))
+    } finally {
+      setExportingExcel(false)
+    }
+  }
 
   const handleSendToAdminWhatsApp = (conv: VoiceConversation) => {
     const caller = conv.caller_name || 'Candidate'
@@ -687,6 +817,29 @@ export default function AdminContactsClient({
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
           <button
+            onClick={handleExportToExcel}
+            disabled={exportingExcel}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: '#059669',
+              color: '#fff',
+              border: '1px solid #047857',
+              padding: '8px 14px',
+              borderRadius: 10,
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 5px rgba(5, 150, 105, 0.25)',
+              transition: 'all 0.15s ease',
+            }}
+            title="Export all Web Enquiries, AI Voice Leads & Counselling Slots to Excel (.xlsx)"
+          >
+            <FileSpreadsheet style={{ width: 14, height: 14 }} />
+            {exportingExcel ? 'Exporting...' : 'Export to Excel'}
+          </button>
+          <button
             onClick={fetchVoiceLeads}
             disabled={loadingVoice}
             style={{
@@ -1013,42 +1166,68 @@ export default function AdminContactsClient({
           </button>
         </div>
 
-        {/* Filter / Search input */}
-        <div style={{ position: 'relative', minWidth: 240, flexGrow: 1, maxWidth: 360 }}>
-          <Search
+        {/* Filter / Search input & Toolbar Export */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', minWidth: 220, flexGrow: 1, maxWidth: 340 }}>
+            <Search
+              style={{
+                position: 'absolute',
+                left: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: 14,
+                height: 14,
+                color: '#94a3b8',
+              }}
+            />
+            <input
+              type="text"
+              placeholder={
+                activeTab === 'voice'
+                  ? 'Search calls by candidate, phone, notes...'
+                  : activeTab === 'slots'
+                  ? 'Filter slots...'
+                  : 'Search enquiries...'
+              }
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '8px 12px 8px 34px',
+                fontSize: 13,
+                borderRadius: 10,
+                border: '1px solid #cbd5e1',
+                outline: 'none',
+                background: '#f8fafc',
+                color: '#1e293b',
+              }}
+            />
+          </div>
+
+          <button
+            onClick={handleExportToExcel}
+            disabled={exportingExcel}
             style={{
-              position: 'absolute',
-              left: 12,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 14,
-              height: 14,
-              color: '#94a3b8',
-            }}
-          />
-          <input
-            type="text"
-            placeholder={
-              activeTab === 'voice'
-                ? 'Search calls by candidate, phone, notes...'
-                : activeTab === 'slots'
-                ? 'Filter slots...'
-                : 'Search enquiries...'
-            }
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              boxSizing: 'border-box',
-              padding: '8px 12px 8px 34px',
-              fontSize: 13,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              background: '#059669',
+              color: '#fff',
+              border: '1px solid #047857',
+              padding: '8px 12px',
               borderRadius: 10,
-              border: '1px solid #cbd5e1',
-              outline: 'none',
-              background: '#f8fafc',
-              color: '#1e293b',
+              fontSize: 12,
+              fontWeight: 700,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              boxShadow: '0 1px 3px rgba(5, 150, 105, 0.2)',
             }}
-          />
+            title="Export all records to Excel (.xlsx)"
+          >
+            <Download style={{ width: 13, height: 13 }} />
+            Export Excel
+          </button>
         </div>
       </div>
 

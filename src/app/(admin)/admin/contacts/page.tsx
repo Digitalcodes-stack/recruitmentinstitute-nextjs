@@ -10,7 +10,6 @@ export default async function AdminContactsPage() {
 
   const contacts = await prisma.contactSubmission.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 100,
   })
 
   return (
