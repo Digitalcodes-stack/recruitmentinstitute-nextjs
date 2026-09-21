@@ -62,15 +62,49 @@ async function verifyAdminJwt(token: string): Promise<any | null> {
   return null
 }
 
+export function getBaseOrigin(req: NextRequest): string {
+  // 1. Explicit production / environment URL
+  if (
+    process.env.NEXT_PUBLIC_SITE_URL &&
+    !process.env.NEXT_PUBLIC_SITE_URL.includes('localhost') &&
+    !process.env.NEXT_PUBLIC_SITE_URL.includes('0.0.0.0')
+  ) {
+    return process.env.NEXT_PUBLIC_SITE_URL
+  }
+
+  // 2. Derive from reverse-proxy headers (Cloud Run, Nginx, Cloudflare, etc.)
+  const forwardedHost = req.headers.get('x-forwarded-host')
+  const host = forwardedHost || req.headers.get('host') || req.nextUrl.host
+  const forwardedProto = req.headers.get('x-forwarded-proto')
+
+  if (host && !host.includes('0.0.0.0')) {
+    // If running in local development
+    if (host.includes('localhost') || host.includes('127.0.0.1')) {
+      const proto = forwardedProto || 'http'
+      return `${proto}://${host}`
+    }
+    // For live production host (e.g., recruitmentinstitute.in)
+    const proto = forwardedProto || 'https'
+    return `${proto}://${host}`
+  }
+
+  // 3. Fallbacks
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL
+  }
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL
+  }
+  if (process.env.NODE_ENV === 'production') {
+    return 'https://recruitmentinstitute.in'
+  }
+
+  return 'http://localhost:3000'
+}
+
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
-
-  // Determine safe base origin to avoid 0.0.0.0 issues
-  const host = req.headers.get('x-forwarded-host') || req.headers.get('host') || req.nextUrl.host
-  let baseOrigin = req.nextUrl.origin
-  if (baseOrigin.includes('0.0.0.0') || (host && host.includes('0.0.0.0'))) {
-    baseOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  }
+  const baseOrigin = getBaseOrigin(req)
 
   // ── 1. Admin Route Protection ─────────────────────────────────────────────
   const isAdminPage = pathname.startsWith('/admin')
