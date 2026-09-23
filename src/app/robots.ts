@@ -25,8 +25,6 @@ export default function robots(): MetadataRoute.Robots {
           '/thank-you',
           '/privacy',
           '/terms',
-          '/_next/',
-          '/static/',
         ],
       },
       // Block known web scrapers from training data

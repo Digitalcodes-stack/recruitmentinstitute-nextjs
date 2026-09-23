@@ -5,17 +5,17 @@ const BASE_URL = 'https://recruitmentinstitute.in'
 
 // Course landing pages - high-priority, practitioner-led programs
 const coursePages = [
-  { url: `${BASE_URL}/end-to-end-recruitment-training`, priority: 0.95 },
-  { url: `${BASE_URL}/hr-courses-for-beginners`, priority: 0.95 },
-  { url: `${BASE_URL}/hr-entrepreneurship-program`, priority: 0.95 },
-  { url: `${BASE_URL}/hr-corporate-training-course`, priority: 0.95 },
-  { url: `${BASE_URL}/corporate-recruitment-training`, priority: 0.95 },
-  { url: `${BASE_URL}/professional-recruitment-specialist`, priority: 0.95 },
-  { url: `${BASE_URL}/recruitment-career-starter`, priority: 0.95 },
-  { url: `${BASE_URL}/advanced-recruitment-ta-masterclass`, priority: 0.95 },
-  { url: `${BASE_URL}/recruitment-business-growth-consulting`, priority: 0.95 },
-  { url: `${BASE_URL}/recruitment-business-accelerator`, priority: 0.95 },
-  { url: `${BASE_URL}/ai-for-recruitment`, priority: 0.95 },
+  { url: `${BASE_URL}/end-to-end-recruitment-training`, tag: 'degree_tag', priority: 0.95 },
+  { url: `${BASE_URL}/hr-courses-for-beginners`, tag: 'certification_tag', priority: 0.95 },
+  { url: `${BASE_URL}/hr-entrepreneurship-program`, tag: 'entrepreneur_tag', priority: 0.95 },
+  { url: `${BASE_URL}/hr-corporate-training-course`, tag: 'corporate_traning_tag', priority: 0.95 },
+  { url: `${BASE_URL}/corporate-recruitment-training`, tag: 'corporate', priority: 0.95 },
+  { url: `${BASE_URL}/professional-recruitment-specialist`, tag: 'for-professionals', priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-career-starter`, tag: 'for-freshers', priority: 0.95 },
+  { url: `${BASE_URL}/advanced-recruitment-ta-masterclass`, tag: 'senior-professionals', priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-business-growth-consulting`, tag: 'business-consulting', priority: 0.95 },
+  { url: `${BASE_URL}/recruitment-business-accelerator`, tag: 'entrepreneurship', priority: 0.95 },
+  { url: `${BASE_URL}/ai-for-recruitment`, tag: 'ai-for-recruitment', priority: 0.95 },
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -91,10 +91,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Course landing pages
+  // Fetch real database updatedAt timestamps for courses
+  const courseDates: Record<string, Date> = {}
+  try {
+    const dbCourses = await prisma.course.findMany({
+      select: {
+        updatedAt: true,
+        createdAt: true,
+        category: { select: { slug: true } },
+      },
+    })
+    for (const c of dbCourses) {
+      if (c.category?.slug) {
+        courseDates[c.category.slug] = c.updatedAt ?? c.createdAt ?? now
+      }
+    }
+  } catch {
+    // Database fallback
+  }
+
+  // Course landing pages with database lastModified
   const courseEntries: MetadataRoute.Sitemap = coursePages.map((c) => ({
     url: c.url,
-    lastModified: now,
+    lastModified: courseDates[c.tag] || now,
     changeFrequency: 'monthly' as const,
     priority: c.priority,
   }))

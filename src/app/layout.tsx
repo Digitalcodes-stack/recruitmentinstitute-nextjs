@@ -60,6 +60,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
+    alternateLocale: ['en_US', 'en_GB', 'en_AE'],
     url: BASE_URL,
     siteName: 'Recruitment Institute',
     title: 'Recruitment Institute - HR & Recruitment Training in Pune, India',
@@ -95,8 +96,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    // Add your Google Search Console verification token here
-    // google: 'your-google-verification-token',
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || 'google-site-verification-recruitmentinstitute',
   },
 }
 
