@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { getDynamicCourseData } from '@/lib/services/courseDataService'
 import DynamicCourseLandingClient from '@/components/site/DynamicCourseLandingClient'
-import { generateCourseJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
+import { generateCoursePageSchemaGraph, DEFAULT_OG_IMAGE } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -55,22 +55,20 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HrEntrepreneurshipPage() {
   const course = await getDynamicCourseData('entrepreneur_tag')
   const pageH1 = 'HR Entrepreneurship Program in India'
-  const courseJsonLd = generateCourseJsonLd(course, SLUG, course.image || DEFAULT_OG_IMAGE, pageH1)
-  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
-    { name: 'Home', url: '/' },
-    { name: 'Courses', url: '/courses' },
-    { name: pageH1, url: `/${SLUG}` },
-  ])
+  const schemaGraph = generateCoursePageSchemaGraph({
+    course,
+    slug: SLUG,
+    pageH1,
+    image: course.image || DEFAULT_OG_IMAGE,
+    isProgram: true,
+    credentialAwarded: 'Certified Recruitment Agency Founder / Director',
+  })
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaGraph) }}
       />
       <DynamicCourseLandingClient course={course} h1Title={pageH1} />
     </>

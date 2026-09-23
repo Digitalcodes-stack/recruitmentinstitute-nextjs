@@ -51,10 +51,14 @@ const contactSchema = {
     },
     {
       '@type': 'LocalBusiness',
+      '@id': `${BASE_URL}/#localbusiness`,
       name: 'Recruitment Institute',
+      image: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
       url: BASE_URL,
       telephone: '+91-7385204165',
       email: 'support@recruitmentinstitute.in',
+      priceRange: '₹₹',
+      parentOrganization: { '@id': `${BASE_URL}/#organization` },
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Recruitment Institute',
@@ -62,6 +66,11 @@ const contactSchema = {
         addressRegion: 'Maharashtra',
         postalCode: '411001',
         addressCountry: 'IN',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 18.5204,
+        longitude: 73.8567,
       },
       openingHoursSpecification: [
         { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },

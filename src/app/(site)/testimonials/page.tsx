@@ -74,16 +74,65 @@ export default async function TestimonialsPage() {
     ? (testimonials.reduce((s, t) => s + (t.rating || 5), 0) / totalCount).toFixed(1)
     : '5.0'
 
-  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
-    { name: 'Home', url: '/' },
-    { name: 'Testimonials', url: '/testimonials' },
-  ])
+  const testimonialsSchema = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': 'https://recruitmentinstitute.in/testimonials#webpage',
+        url: 'https://recruitmentinstitute.in/testimonials',
+        name: 'Recruitment Course Reviews & Placements in India | Recruitment Institute',
+        description: 'Read real student reviews and alumni placement success stories from Recruitment Institute in India.',
+        isPartOf: { '@id': 'https://recruitmentinstitute.in/#website' },
+        breadcrumb: { '@id': 'https://recruitmentinstitute.in/testimonials#breadcrumb' },
+        inLanguage: 'en-IN',
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://recruitmentinstitute.in/testimonials#breadcrumb',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://recruitmentinstitute.in' },
+          { '@type': 'ListItem', position: 2, name: 'Testimonials', item: 'https://recruitmentinstitute.in/testimonials' },
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        '@id': 'https://recruitmentinstitute.in/testimonials#reviews',
+        name: 'Student & Alumni Reviews',
+        numberOfItems: testimonials.length,
+        itemListElement: testimonials.map((t, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: t.author || 'Alumni Member',
+            },
+            reviewBody: t.description,
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: t.rating || 5,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            itemReviewed: {
+              '@type': 'EducationalOrganization',
+              '@id': 'https://recruitmentinstitute.in/#organization',
+              name: 'Recruitment Institute',
+              url: 'https://recruitmentinstitute.in',
+            },
+          },
+        })),
+      },
+    ],
+  }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(testimonialsSchema) }}
       />
       {/* ── Hero ── */}
       <div style={{ background: 'linear-gradient(135deg,#0F172A 0%,#1a2744 60%,#0F172A 100%)', padding: '80px 0 100px', position: 'relative', overflow: 'hidden' }}>

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { getDynamicCourseData } from '@/lib/services/courseDataService'
 import RecruitmentBusinessAcceleratorClient from '@/components/site/RecruitmentBusinessAcceleratorClient'
-import { BASE_URL } from '@/lib/seo'
+import { BASE_URL, generateCoursePageSchemaGraph } from '@/lib/seo'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -62,106 +62,36 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RecruitmentBusinessAcceleratorPage() {
   const course = await getDynamicCourseData('entrepreneurship')
   const pageH1 = 'Recruitment Business Accelerator in India'
-  const courseUrl = `${BASE_URL}/${SLUG}`
   const ogImage = 'https://recruitmentinstitute.in/assets/images/courses/style4/4.jpg'
 
-  const schemaGraph = {
-    '@context': 'https://schema.org',
-    '@graph': [
+  const schemaGraph = generateCoursePageSchemaGraph({
+    course,
+    slug: SLUG,
+    pageH1,
+    image: ogImage,
+    isProgram: true,
+    credentialAwarded: 'Certified Recruitment Agency Founder / Director',
+    customPriceTiers: [
       {
-        '@type': ['Course', 'EducationalOccupationalProgram'],
-        '@id': `${courseUrl}#program`,
-        name: pageH1,
-        description:
-          course.description ||
-          'Build, launch, acquire clients, deliver, and scale your recruitment consultancy firm with comprehensive legal frameworks, B2B sales engines, and founder mentoring.',
-        url: courseUrl,
-        image: ogImage,
-        courseCode: SLUG,
-        educationalCredentialAwarded: 'Certified Recruitment Agency Founder / Director',
-        provider: {
-          '@type': 'EducationalOrganization',
-          '@id': `${BASE_URL}/#organization`,
-          name: 'Recruitment Institute',
-          url: BASE_URL,
-          logo: `${BASE_URL}/assets/images/logo.png`,
-        },
-        hasCourseInstance: [
-          {
-            '@type': 'CourseInstance',
-            name: 'Plan 1 — Launch (8 Weeks Foundation)',
-            courseMode: 'Online',
-            courseWorkload: '8 Weeks Intensive',
-            offers: {
-              '@type': 'Offer',
-              price: '29999',
-              priceCurrency: 'INR',
-              availability: 'https://schema.org/InStock',
-              validFrom: '2026-01-01',
-              url: courseUrl,
-            },
-          },
-          {
-            '@type': 'CourseInstance',
-            name: 'Plan 2 — Incubator (6 Months Hero Incubation)',
-            courseMode: 'Blended',
-            courseWorkload: '6 Months',
-            offers: {
-              '@type': 'Offer',
-              price: '75000',
-              priceCurrency: 'INR',
-              availability: 'https://schema.org/InStock',
-              validFrom: '2026-01-01',
-              url: courseUrl,
-            },
-          },
-          {
-            '@type': 'CourseInstance',
-            name: 'Plan 3 — Accelerator (12 Months Enterprise Advisory)',
-            courseMode: 'Blended',
-            courseWorkload: '12 Months',
-            offers: {
-              '@type': 'Offer',
-              price: '150000',
-              priceCurrency: 'INR',
-              availability: 'https://schema.org/InStock',
-              validFrom: '2026-01-01',
-              url: courseUrl,
-            },
-          },
-        ],
+        name: 'Plan 1 — Launch (8 Weeks Foundation)',
+        mode: 'Online',
+        workload: '8 Weeks Intensive',
+        price: '29999',
       },
       {
-        '@type': 'BreadcrumbList',
-        '@id': `${courseUrl}#breadcrumb`,
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
-          { '@type': 'ListItem', position: 2, name: 'Courses', item: `${BASE_URL}/courses` },
-          { '@type': 'ListItem', position: 3, name: pageH1, item: courseUrl },
-        ],
+        name: 'Plan 2 — Incubator (6 Months Hero Incubation)',
+        mode: 'Blended',
+        workload: '6 Months',
+        price: '75000',
       },
       {
-        '@type': ['EducationalOrganization', 'Organization'],
-        '@id': `${BASE_URL}/#organization`,
-        name: 'Recruitment Institute',
-        url: BASE_URL,
-        logo: `${BASE_URL}/assets/images/logo.png`,
-        description:
-          'India\'s premier HR and recruitment training institute offering entrepreneurship accelerators, recruitment agency training, and recruiter career programs.',
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: 'Pune',
-          addressRegion: 'Maharashtra',
-          addressCountry: 'IN',
-        },
-        sameAs: [
-          'https://www.linkedin.com/company/recruitment-institute',
-          'https://www.facebook.com/recruitmentinstitute',
-          'https://www.instagram.com/recruitmentinstitute',
-        ],
+        name: 'Plan 3 — Accelerator (12 Months Enterprise Advisory)',
+        mode: 'Blended',
+        workload: '12 Months',
+        price: '150000',
       },
     ],
-  }
+  })
 
   return (
     <>

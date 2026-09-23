@@ -100,24 +100,28 @@ export const metadata: Metadata = {
   },
 }
 
-// Organization + WebSite + LocalBusiness JSON-LD
+// Organization + EducationalOrganization + LocalBusiness + WebSite JSON-LD
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'Organization',
+      '@type': ['Organization', 'EducationalOrganization'],
       '@id': `${BASE_URL}/#organization`,
       name: 'Recruitment Institute',
-      alternateName: ['RI', 'Recruitment Institute Pune'],
+      alternateName: ['RI', 'Recruitment Institute Pune', 'RecruitmentInstitute.in'],
       url: BASE_URL,
       logo: {
         '@type': 'ImageObject',
+        '@id': `${BASE_URL}/#logo`,
         url: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
+        contentUrl: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
         width: 300,
         height: 80,
+        caption: 'Recruitment Institute Logo',
       },
+      image: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
       description:
-        'India\'s #1 HR and recruitment training institute offering end-to-end recruitment training, HR courses for beginners, entrepreneurship programs and corporate training.',
+        'India\'s #1 HR and recruitment training institute in Pune offering end-to-end recruitment training, AI for recruitment, recruitment business accelerator, corporate training, and job placement assistance.',
       foundingDate: '2015',
       numberOfEmployees: { '@type': 'QuantitativeValue', value: 20 },
       address: {
@@ -133,6 +137,13 @@ const organizationSchema = {
           '@type': 'ContactPoint',
           telephone: '+91-7385204165',
           contactType: 'customer service',
+          areaServed: 'IN',
+          availableLanguage: ['English', 'Hindi', 'Marathi'],
+        },
+        {
+          '@type': 'ContactPoint',
+          telephone: '+91-7385204165',
+          contactType: 'admissions',
           areaServed: 'IN',
           availableLanguage: ['English', 'Hindi', 'Marathi'],
         },
@@ -155,10 +166,160 @@ const organizationSchema = {
         '@type': 'OfferCatalog',
         name: 'HR & Recruitment Training Programs',
         itemListElement: [
-          { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'End-to-End Recruitment Training' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'HR Courses for Beginners' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'HR Entrepreneurship Program' } },
-          { '@type': 'Offer', itemOffered: { '@type': 'Course', name: 'HR Corporate Training Course' } },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'End-to-End Recruitment Training',
+              description: 'Master the full recruitment lifecycle, sourcing techniques, ATS screening, interviewing, and corporate hiring.',
+              url: `${BASE_URL}/end-to-end-recruitment-training`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'HR Courses for Beginners',
+              description: 'Job-oriented recruitment training course designed for freshers, graduates, and professionals transitioning into HR.',
+              url: `${BASE_URL}/hr-courses-for-beginners`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Recruitment Business Accelerator',
+              description: 'Comprehensive business launch and scaling program for recruitment entrepreneurs and staffing agency founders.',
+              url: `${BASE_URL}/recruitment-business-accelerator`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'AI for Recruitment',
+              description: 'Hands-on training in modern AI recruiting tools, automated candidate sourcing workflows, and talent intelligence.',
+              url: `${BASE_URL}/ai-for-recruitment`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Professional Recruitment Specialist',
+              description: 'Advanced recruitment certification covering IT & non-IT hiring, headhunting, Boolean search, and client management.',
+              url: `${BASE_URL}/professional-recruitment-specialist`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Advanced Recruitment & TA Masterclass',
+              description: 'Strategic talent acquisition masterclass for senior recruiters covering executive search and leadership hiring.',
+              url: `${BASE_URL}/advanced-recruitment-ta-masterclass`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Recruitment Career Starter',
+              description: 'Career starter course offering practical recruiter training, live candidate sourcing, and 100% placement support.',
+              url: `${BASE_URL}/recruitment-career-starter`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'HR Corporate Training Course',
+              description: 'Custom corporate training for enterprise HR and talent acquisition teams to boost hiring speed and quality.',
+              url: `${BASE_URL}/hr-corporate-training-course`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Corporate Recruitment Training',
+              description: 'Upskilling enterprise hiring managers and recruiters with modern sourcing methodologies and structured interviewing.',
+              url: `${BASE_URL}/corporate-recruitment-training`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'HR Entrepreneurship Program',
+              description: 'Step-by-step program to build, launch, and grow a profitable recruitment consulting firm in India.',
+              url: `${BASE_URL}/hr-entrepreneurship-program`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Course',
+              name: 'Recruitment Business Growth Consulting',
+              description: 'Strategic growth consulting and operational advisory for staffing and recruitment agency owners.',
+              url: `${BASE_URL}/recruitment-business-growth-consulting`,
+              provider: {
+                '@type': 'Organization',
+                name: 'Recruitment Institute',
+                sameAs: BASE_URL,
+              },
+            },
+          },
         ],
       },
       aggregateRating: {
@@ -170,29 +331,14 @@ const organizationSchema = {
       },
     },
     {
-      '@type': 'EducationalOrganization',
-      '@id': `${BASE_URL}/#educationalorg`,
-      name: 'Recruitment Institute',
-      url: BASE_URL,
-      description: 'Premier HR and recruitment training academy in Pune, India',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Pune',
-        addressRegion: 'Maharashtra',
-        addressCountry: 'IN',
-      },
-      telephone: '+91-7385204165',
-      email: 'support@recruitmentinstitute.in',
-    },
-    {
       '@type': 'LocalBusiness',
       '@id': `${BASE_URL}/#localbusiness`,
       name: 'Recruitment Institute',
       image: `${BASE_URL}/assets/images/recruitment_insti_final_02.png`,
-      '@context': 'https://schema.org',
       url: BASE_URL,
       telephone: '+91-7385204165',
       priceRange: '₹₹',
+      parentOrganization: { '@id': `${BASE_URL}/#organization` },
       address: {
         '@type': 'PostalAddress',
         streetAddress: 'Recruitment Institute',
@@ -222,8 +368,9 @@ const organizationSchema = {
       '@id': `${BASE_URL}/#website`,
       url: BASE_URL,
       name: 'Recruitment Institute',
-      description: 'India\'s #1 HR and Recruitment Training Institute',
+      description: 'India\'s #1 HR and Recruitment Training Institute in Pune',
       publisher: { '@id': `${BASE_URL}/#organization` },
+      inLanguage: 'en-IN',
       potentialAction: {
         '@type': 'SearchAction',
         target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}/blogs?s={search_term_string}` },

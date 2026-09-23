@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { getBlogTopicImage, getRecentPostImage } from '@/lib/blog-images'
 import RawHtmlScript from '@/components/RawHtmlScript'
+import { generateBlogPostingJsonLd } from '@/lib/seo'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -121,31 +122,16 @@ export default async function BlogDetailPage({ params }: Props) {
     })),
   } : null
 
-  const blogPostingSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: blog.title,
-    description: stripHtml(blog.content).slice(0, 160),
-    image: [featuredSrc.startsWith('http') ? featuredSrc : `https://recruitmentinstitute.in${featuredSrc}`],
-    datePublished: new Date(blog.createdAt).toISOString(),
-    dateModified: new Date(blog.updatedAt || blog.createdAt).toISOString(),
-    author: {
-      '@type': 'Person',
-      name: blog.author || 'Editorial Team, Recruitment Institute',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Recruitment Institute',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://recruitmentinstitute.in/assets/images/recruitment_insti_final_02.png',
-      },
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://recruitmentinstitute.in/blogs/${blog.slug}`,
-    },
-  }
+  const blogPostingSchema = generateBlogPostingJsonLd({
+    title: blog.title,
+    content: blog.content,
+    slug: blog.slug,
+    createdAt: blog.createdAt,
+    updatedAt: blog.updatedAt,
+    author: blog.author,
+    image: featuredSrc,
+    metaDescription: blog.metaDescription,
+  })
 
   const breadcrumbSchema = {
     '@context': 'https://schema.org',
@@ -683,33 +669,6 @@ export default async function BlogDetailPage({ params }: Props) {
           )}
         </div>
       </section>
-
-      {/* JSON-LD: BlogPosting */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'BlogPosting',
-          headline: blog.title,
-          description: blog.metaDescription || stripHtml(blog.content).substring(0, 160),
-          author: { '@type': 'Person', name: blog.author || 'Recruitment Institute' },
-          datePublished: blog.publishedAt || blog.createdAt.toISOString(),
-          dateModified: blog.updatedAt.toISOString(),
-          image: `https://recruitmentinstitute.in${featuredSrc}`,
-          url: `https://recruitmentinstitute.in/blogs/${blog.slug}`,
-          publisher: {
-            '@type': 'Organization',
-            name: 'Recruitment Institute',
-            url: 'https://recruitmentinstitute.in',
-            logo: { '@type': 'ImageObject', url: 'https://recruitmentinstitute.in/assets/images/logo.png' },
-          },
-          mainEntityOfPage: { '@type': 'WebPage', '@id': `https://recruitmentinstitute.in/blogs/${blog.slug}` },
-        }),
-      }} />
-
-      {/* JSON-LD: FAQPage */}
-      {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      )}
 
       {/* Custom scripts from DB */}
       {blog.schemaScript && (

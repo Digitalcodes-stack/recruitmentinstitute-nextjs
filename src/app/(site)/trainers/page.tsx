@@ -334,38 +334,61 @@ export default async function TrainersPage() {
   // Only show DB trainers (no static fallback trainers)
   const allTrainers = liveTrainers
 
-  const jsonLd = {
+  const trainersSchema = {
     '@context': 'https://schema.org',
-    '@type': 'EducationalOrganization',
-    name: 'Recruitment Institute Faculty',
-    description: 'Expert Recruitment & HR Faculty from top global companies.',
-    url: 'https://recruitmentinstitute.in/trainers',
-    employee: allTrainers.map((t) => ({
-      '@type': 'Person',
-      name: t.name,
-      jobTitle: t.designation,
-      worksFor: {
-        '@type': 'Organization',
-        name: t.companyEx || 'Recruitment Institute',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': 'https://recruitmentinstitute.in/trainers#webpage',
+        url: 'https://recruitmentinstitute.in/trainers',
+        name: 'Faculty & Expert Trainers | Recruitment Institute Pune',
+        description: 'Meet our master HR and recruitment faculty at Recruitment Institute. 100% industry practitioners with 10-30+ years experience.',
+        isPartOf: { '@id': 'https://recruitmentinstitute.in/#website' },
+        breadcrumb: { '@id': 'https://recruitmentinstitute.in/trainers#breadcrumb' },
+        inLanguage: 'en-IN',
       },
-    })),
+      {
+        '@type': 'BreadcrumbList',
+        '@id': 'https://recruitmentinstitute.in/trainers#breadcrumb',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://recruitmentinstitute.in' },
+          { '@type': 'ListItem', position: 2, name: 'Faculty & Trainers', item: 'https://recruitmentinstitute.in/trainers' },
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        '@id': 'https://recruitmentinstitute.in/trainers#faculty',
+        name: 'Faculty & Industry Mentors',
+        numberOfItems: allTrainers.length,
+        itemListElement: allTrainers.map((t, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Person',
+            name: t.name,
+            jobTitle: t.designation,
+            description: t.bio,
+            image: t.image ? (t.image.startsWith('http') ? t.image : `https://recruitmentinstitute.in${t.image}`) : undefined,
+            knowsAbout: t.specializationTags,
+            worksFor: {
+              '@type': 'EducationalOrganization',
+              '@id': 'https://recruitmentinstitute.in/#organization',
+              name: 'Recruitment Institute',
+              url: 'https://recruitmentinstitute.in',
+            },
+            sameAs: t.linkedinUrl ? [t.linkedinUrl] : undefined,
+          },
+        })),
+      },
+    ],
   }
-
-  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
-    { name: 'Home', url: '/' },
-    { name: 'Faculty & Trainers', url: '/trainers' },
-  ])
 
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC' }}>
       {/* Schema.org */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(trainersSchema) }}
       />
 
       {/* ── HERO SECTION ─────────────────────────────────────────────── */}

@@ -25,6 +25,7 @@ import {
   PlayCircle,
 } from 'lucide-react'
 import WhatsAppIcon from '@/components/shared/WhatsAppIcon'
+import { generateBreadcrumbJsonLd } from '@/lib/seo'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
@@ -256,9 +257,18 @@ export default async function StudentMembershipPage() {
       }))
     : defaultTestimonials
 
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Student Membership', url: '/student-membership' },
+  ])
+
   return (
     <>
-      {/* â"€â"€ CSS â"€â"€ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {/* ── CSS ── */}
       <style>{`
         /* Breadcrumb */
         .sm-crumb { color: #94A3B8; text-decoration: none; font-size: 13px; font-weight: 500; transition: color .18s; }

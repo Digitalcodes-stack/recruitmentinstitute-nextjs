@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getPaginationData, buildPaginationPages } from '@/utils/pagination'
 import CommunityClient from '@/components/home/CommunityClient'
 
-import { DEFAULT_OG_IMAGE } from '@/lib/seo'
+import { DEFAULT_OG_IMAGE, generateBreadcrumbJsonLd } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Community — HR & Recruiter Q&A Forum | Recruitment Institute',
@@ -82,14 +82,25 @@ export default async function CommunityPage({ searchParams }: Props) {
   const pagination = getPaginationData(page, limit, total)
   const pages = buildPaginationPages(pagination.page, pagination.totalPages)
 
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Community', url: '/community' },
+  ])
+
   return (
-    <CommunityClient
-      questions={questions}
-      pagination={pagination}
-      pages={pages}
-      query={query}
-      totalQuestions={stats[0]}
-      totalMembers={stats[1]}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <CommunityClient
+        questions={questions}
+        pagination={pagination}
+        pages={pages}
+        query={query}
+        totalQuestions={stats[0]}
+        totalMembers={stats[1]}
+      />
+    </>
   )
 }
