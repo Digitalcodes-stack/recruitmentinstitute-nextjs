@@ -11,14 +11,14 @@ import {
 import { generateFaqJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
+  title: 'Recruitment Training Guide & FAQs in India | Recruitment Institute',
   description:
-    'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and practical recruiter resources from Recruitment Institute Pune.',
+    'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and recruiter resources from Recruitment Institute in India.',
   keywords: [
     'Recruitment Training Guide',
+    'Recruitment Training Guide in India',
     'recruitment interview FAQs',
     'HR knowledge base',
-    'recruitment Q&A pune',
     'boolean search tips',
     'ATS workflows',
     'talent acquisition FAQ',
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     canonical: 'https://recruitmentinstitute.in/knowledge',
   },
   openGraph: {
-    title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
+    title: 'Recruitment Training Guide & FAQs in India | Recruitment Institute',
     description:
-      'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and practical recruiter resources from Recruitment Institute Pune.',
+      'Access expert recruitment training guides, interview FAQs, Boolean search tips, ATS workflows, and recruiter resources from Recruitment Institute in India.',
     url: 'https://recruitmentinstitute.in/knowledge',
     type: 'website',
     images: [
@@ -39,15 +39,15 @@ export const metadata: Metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Recruitment Training Guide & FAQs - Recruitment Institute',
+        alt: 'Recruitment Training Guide & FAQs in India - Recruitment Institute',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recruitment Training Guide & Interview FAQs | Recruitment Institute',
+    title: 'Recruitment Training Guide & FAQs in India | Recruitment Institute',
     description:
-      'Access expert recruitment training guides, interview FAQs, Boolean search tips, and ATS workflows.',
+      'Access expert recruitment training guides, interview FAQs, Boolean search tips, and ATS workflows in India.',
     images: [DEFAULT_OG_IMAGE],
   },
 }
@@ -192,7 +192,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
               <h1 style={{ fontSize: 'clamp(34px,4vw,56px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.08, letterSpacing: '-.04em', marginBottom: 18 }}>
                 Recruitment Training{' '}
                 <span style={{ background: 'linear-gradient(120deg,#1D4ED8,#7C3AED)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                  Guide &amp; FAQs
+                  Guide &amp; FAQs in India
                 </span>
               </h1>
               <p style={{ fontSize: 17, color: '#475569', lineHeight: 1.85, maxWidth: 500, marginBottom: 36 }}>

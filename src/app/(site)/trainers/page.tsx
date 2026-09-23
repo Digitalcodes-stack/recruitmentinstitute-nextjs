@@ -9,6 +9,7 @@ import TrainersListClient from '@/components/site/TrainersListClient'
 import { DEFAULT_TRAINERS } from '@/lib/data/trainingData'
 import { prisma } from '@/lib/prisma'
 import { TrainerItem } from '@/types/training'
+import { generateBreadcrumbJsonLd } from '@/lib/seo'
 
 export const metadata: Metadata = {
   title: 'Expert Trainer & Business Coach: Recruitment & HR Training in India | Recruitment Institute',
@@ -350,12 +351,21 @@ export default async function TrainersPage() {
     })),
   }
 
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Faculty & Trainers', url: '/trainers' },
+  ])
+
   return (
     <div style={{ minHeight: '100vh', background: '#F8FAFC' }}>
       {/* Schema.org */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* ── HERO SECTION ─────────────────────────────────────────────── */}

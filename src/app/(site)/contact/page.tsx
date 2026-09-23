@@ -4,21 +4,28 @@ import ContactClient from '@/components/home/ContactClient'
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Contact Recruitment Institute Pune | HR Course Enquiries',
+  title: 'Contact Recruitment Institute | Recruitment Training Admissions in India',
   description:
-    'Contact Recruitment Institute in Pune for HR course enquiries, admissions guidance and batch details. Call +91 7385204165 or email support@recruitmentinstitute.in.',
-  keywords: 'Recruitment Institute Pune Contact, contact recruitment institute, HR course enquiry pune, admissions recruitment training, recruitment institute pune',
+    'Contact Recruitment Institute for recruitment training course admissions, online batches, and career guidance across India. Call +91 7385204165.',
+  keywords: [
+    'Contact Recruitment Institute',
+    'Recruitment Training Admissions India',
+    'contact recruitment institute',
+    'HR course enquiry India',
+    'recruitment training admissions',
+    'recruitment institute contact',
+  ],
   alternates: { canonical: `${BASE_URL}/contact` },
   openGraph: {
-    title: 'Contact Recruitment Institute Pune | HR Course Enquiries',
-    description: 'Reach out to India\'s #1 recruitment training academy in Pune for course enquiries and admissions.',
+    title: 'Contact Recruitment Institute | Recruitment Training Admissions in India',
+    description: 'Reach out to India\'s premier recruitment training institute for course enquiries and admissions.',
     url: `${BASE_URL}/contact`,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Contact Recruitment Institute Pune | HR Course Enquiries',
-    description: 'Get in touch for recruitment and HR course enquiries in Pune.',
+    title: 'Contact Recruitment Institute | Recruitment Training Admissions in India',
+    description: 'Get in touch for recruitment and HR course enquiries across India.',
   },
 }
 

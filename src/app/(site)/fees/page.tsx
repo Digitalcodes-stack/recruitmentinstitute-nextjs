@@ -6,22 +6,22 @@ import { Check, MessageSquare, ArrowRight, ShieldCheck, Tag, Monitor, Building2,
 import { generateFaqJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+  title: 'Recruitment Course Fees & EMI Plans in India | Recruitment Institute',
   description:
-    'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online. Up to 50% discount on interactive live batches with placement support.',
+    'Transparent tuition fees and flexible EMI options for recruitment courses in India (Online & Classroom). Up to 50% discount on live batches with placement support.',
   keywords: [
-    'Recruitment Course Fees Pune',
+    'Recruitment Course Fees in India',
     'recruitment course fees',
-    'HR training cost pune',
+    'HR training cost India',
     'talent acquisition course fees',
     'HR course EMI options',
     'Recruitment Institute pricing',
   ],
   alternates: { canonical: 'https://recruitmentinstitute.in/fees' },
   openGraph: {
-    title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+    title: 'Recruitment Course Fees & EMI Plans in India | Recruitment Institute',
     description:
-      'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online. Up to 50% discount on interactive live batches with placement support.',
+      'Transparent tuition fees and flexible EMI options for recruitment courses in India (Online & Classroom). Up to 50% discount on live batches with placement support.',
     url: 'https://recruitmentinstitute.in/fees',
     type: 'website',
     images: [
@@ -29,15 +29,15 @@ export const metadata: Metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Recruitment Course Fees in Pune - Recruitment Institute',
+        alt: 'Recruitment Course Fees in India - Recruitment Institute',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recruitment Course Fees in Pune & Online | Recruitment Institute',
+    title: 'Recruitment Course Fees & EMI Plans in India | Recruitment Institute',
     description:
-      'Transparent tuition fees and flexible EMI options for all recruitment courses in Pune and online.',
+      'Transparent tuition fees and flexible EMI options for recruitment courses in India (Online & Classroom).',
     images: [DEFAULT_OG_IMAGE],
   },
 }
@@ -113,7 +113,7 @@ export default async function FeesPage() {
     },
     {
       question: 'What is the discount for online vs classroom batches?',
-      answer: 'Save 50% on live interactive online batches or 10% on classroom programs in Pune.',
+      answer: 'Save 50% on live interactive online batches across India or 10% on classroom programs in Pune.',
     },
     {
       question: 'Is placement assistance included in the fee?',
@@ -140,7 +140,7 @@ export default async function FeesPage() {
       <div className="relative bg-gradient-to-br from-slate-950 via-[#131b31] to-brand-bg-dark text-white py-16 overflow-hidden border-b border-slate-900">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#e0e0e0_1px,transparent_1px)] [background-size:20px_20px]" />
         <div className="container mx-auto px-4 relative z-10">
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight text-white">Recruitment Course Fees &amp; Training Modes in Pune</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 tracking-tight text-white">Recruitment Course Fees &amp; Training Modes in India</h1>
           <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider flex gap-2 items-center">
             <Link href="/" className="hover:text-brand-red transition-colors">Home</Link>
             <span>/</span>

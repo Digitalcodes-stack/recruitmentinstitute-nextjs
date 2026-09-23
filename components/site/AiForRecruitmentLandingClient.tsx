@@ -274,7 +274,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
               margin: '0 auto 20px',
             }}
           >
-            AI Recruitment Course:{' '}
+            AI for Recruitment Course{' '}
             <span
               style={{
                 background: 'linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #0284C7 100%)',
@@ -282,7 +282,7 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              AI for Talent Acquisition
+              in India
             </span>
           </h1>
 

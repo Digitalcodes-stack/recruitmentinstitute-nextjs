@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma'
 import BlogListClient from '@/components/home/BlogListClient'
 import { getPaginationData } from '@/utils/pagination'
 
+import { generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
+
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const revalidate = 600
@@ -20,7 +22,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   return {
     title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
     description:
-      'Read expert recruitment training guides, Boolean search tips, ATS tutorials, talent acquisition strategies, and career insights from Recruitment Institute Pune.',
+      'Read expert recruitment training guides, Boolean search tips, ATS tutorials, talent acquisition strategies, and career insights from Recruitment Institute in India.',
     keywords: [
       'Recruitment Training Guides',
       'HR blog india',
@@ -36,7 +38,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     openGraph: {
       title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
       description:
-        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute Pune.',
+        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute in India.',
       url: `${BASE_URL}/blogs`,
       type: 'website',
       images: [
@@ -52,7 +54,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
       card: 'summary_large_image',
       title: 'Recruitment & HR Training Insights, Guides & Trends | Recruitment Institute',
       description:
-        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute Pune.',
+        'Read expert recruitment training guides, Boolean search tips, ATS tutorials, and career insights from Recruitment Institute in India.',
       images: [`${BASE_URL}/assets/images/og-blog.jpg`],
     },
   }
@@ -94,12 +96,23 @@ export default async function BlogsPage({ searchParams }: Props) {
 
   const pagination = getPaginationData(page, limit, total)
 
+  const breadcrumbJsonLd = generateBreadcrumbJsonLd([
+    { name: 'Home', url: '/' },
+    { name: 'Blog', url: '/blogs' },
+  ])
+
   return (
-    <BlogListClient
-      blogs={blogs}
-      recentBlogs={recentBlogs}
-      pagination={pagination}
-      search={search}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <BlogListClient
+        blogs={blogs}
+        recentBlogs={recentBlogs}
+        pagination={pagination}
+        search={search}
+      />
+    </>
   )
 }

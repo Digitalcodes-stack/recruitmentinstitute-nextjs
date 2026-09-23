@@ -6,13 +6,14 @@ import { Star, Quote, ChevronRight, Users, Award, TrendingUp } from 'lucide-reac
 import { generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
 
 export const metadata: Metadata = {
-  title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+  title: 'Recruitment Course Reviews & Placements in India | Recruitment Institute',
   description:
-    'Read real student reviews and alumni placement success stories from Recruitment Institute Pune. 95% placement rate, corporate HR transitions, and verified testimonials.',
+    'Read real student reviews and alumni placement success stories from Recruitment Institute in India. 95% placement rate, corporate HR transitions, and verified testimonials.',
   keywords: [
-    'Recruitment Course Reviews Pune',
+    'Recruitment Course Reviews India',
+    'Recruitment Training Reviews',
     'recruitment institute reviews',
-    'HR course testimonials pune',
+    'HR course testimonials',
     'recruitment course placements',
     'recruitment institute student feedback',
     'HR alumni placement reviews',
@@ -22,9 +23,9 @@ export const metadata: Metadata = {
     canonical: 'https://recruitmentinstitute.in/testimonials',
   },
   openGraph: {
-    title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+    title: 'Recruitment Course Reviews & Placements in India | Recruitment Institute',
     description:
-      'Read real student reviews and alumni placement success stories from Recruitment Institute Pune. 95% placement rate, corporate HR transitions, and verified testimonials.',
+      'Read real student reviews and alumni placement success stories from Recruitment Institute in India. 95% placement rate, corporate HR transitions, and verified testimonials.',
     url: 'https://recruitmentinstitute.in/testimonials',
     type: 'website',
     images: [
@@ -32,15 +33,15 @@ export const metadata: Metadata = {
         url: DEFAULT_OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: 'Recruitment Course Reviews & Placements - Recruitment Institute Pune',
+        alt: 'Recruitment Course Reviews & Placements in India - Recruitment Institute',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recruitment Course Reviews & Placements Pune | Recruitment Institute',
+    title: 'Recruitment Course Reviews & Placements in India | Recruitment Institute',
     description:
-      'Read real student reviews and alumni placement success stories from Recruitment Institute Pune.',
+      'Read real student reviews and alumni placement success stories from Recruitment Institute in India.',
     images: [DEFAULT_OG_IMAGE],
   },
 }
@@ -111,7 +112,7 @@ export default async function TestimonialsPage() {
             <h1 style={{ fontSize: 'clamp(34px,4.5vw,56px)', fontWeight: 900, color: 'white', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 20 }}>
               Recruitment Course Reviews &amp;{' '}
               <span style={{ background: 'linear-gradient(135deg,#60A5FA,#818CF8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                Success Stories
+                Success Stories in India
               </span>
             </h1>
 

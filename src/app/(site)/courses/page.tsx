@@ -31,22 +31,35 @@ import {
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
+  title: 'Recruitment Training Courses in India | Online & Classroom Programs | Recruitment Institute',
   description:
-    'Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.',
-  keywords: 'Recruitment Training Courses, HR courses, recruitment training programs, talent acquisition course, HR certification course, recruitment institute',
+    'Explore job-oriented recruitment training courses in India. Master AI for recruitment, corporate hiring, & talent acquisition with online & classroom training.',
+  keywords:
+    'Recruitment Training, Recruitment Training Courses, Recruitment Training Courses in India, Recruitment Training Institute in India, Recruitment Business Accelerator, Recruitment Career Starter, Corporate Recruitment, Professional Recruitment Specialist, AI for Recruitment, HR & Recruitment Training Courses, HR Courses in India, Talent Acquisition Training, Online Recruitment Training, Online Recruitment Training in India, Recruitment Courses for Freshers',
   alternates: { canonical: `${BASE_URL}/courses` },
   openGraph: {
-    title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
-    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
+    title: 'Recruitment Training Courses in India | Online & Classroom Programs | Recruitment Institute',
+    description:
+      'Explore top job-oriented recruitment training courses in India. Learn AI for recruitment, corporate hiring, and talent acquisition with online & classroom programs.',
     url: `${BASE_URL}/courses`,
+    siteName: 'Recruitment Institute',
+    locale: 'en_IN',
     type: 'website',
-    images: [{ url: `${BASE_URL}/assets/images/og-courses.jpg`, width: 1200, height: 630, alt: 'Recruitment Training Courses at Recruitment Institute' }],
+    images: [
+      {
+        url: `${BASE_URL}/assets/images/og-courses.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'Recruitment Training Courses in India - Recruitment Institute',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recruitment Training Courses & Programs in India | Recruitment Institute',
-    description: "Explore job-oriented recruitment training courses and HR programs at Recruitment Institute. Practitioner-led modules, live simulations, ATS tools, and placement assistance.",
+    title: 'Recruitment Training Courses in India | Online & Classroom Programs | Recruitment Institute',
+    description:
+      'Explore top job-oriented recruitment training courses in India. Master AI for recruitment, talent acquisition, and corporate hiring.',
+    images: [`${BASE_URL}/assets/images/og-courses.jpg`],
   },
 }
 
@@ -671,7 +684,19 @@ export default async function CoursesPage() {
   const coursesSchema = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'CollectionPage', '@id': `${BASE_URL}/courses#webpage`, url: `${BASE_URL}/courses`, name: 'HR & Recruitment Training Courses - Recruitment Institute', description: 'All HR and recruitment training programs at Recruitment Institute Pune', isPartOf: { '@id': `${BASE_URL}/#website` } },
+      {
+        '@type': 'CollectionPage',
+        '@id': `${BASE_URL}/courses#webpage`,
+        url: `${BASE_URL}/courses`,
+        name: 'Recruitment Training Courses in India | Online & Classroom Programs | Recruitment Institute',
+        description:
+          'Explore job-oriented recruitment training courses in India. Master AI for recruitment, corporate hiring, and talent acquisition with online and classroom training.',
+        isPartOf: { '@id': `${BASE_URL}/#website` },
+        about: { '@id': `${BASE_URL}/#organization` },
+        mainEntity: { '@id': `${BASE_URL}/courses#course-list` },
+        breadcrumb: { '@id': `${BASE_URL}/courses#breadcrumb` },
+        inLanguage: 'en-IN',
+      },
       {
         '@type': 'BreadcrumbList',
         '@id': `${BASE_URL}/courses#breadcrumb`,
@@ -680,7 +705,66 @@ export default async function CoursesPage() {
           { '@type': 'ListItem', position: 2, name: 'Courses', item: `${BASE_URL}/courses` },
         ],
       },
-      { '@type': 'ItemList', name: 'HR & Recruitment Training Programs', numberOfItems: allCards.length, itemListElement: allCards.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Course', name: c.title, description: c.description, url: `${BASE_URL}${c.route}`, provider: { '@type': 'Organization', name: 'Recruitment Institute', url: BASE_URL } } })) },
+      {
+        '@type': ['EducationalOrganization', 'Organization'],
+        '@id': `${BASE_URL}/#organization`,
+        name: 'Recruitment Institute',
+        url: BASE_URL,
+        logo: `${BASE_URL}/assets/images/logo.png`,
+        description:
+          'India\'s premier HR and recruitment training institute offering online and classroom recruitment training courses, AI for recruitment, and talent acquisition programs across India.',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Pune',
+          addressRegion: 'Maharashtra',
+          addressCountry: 'IN',
+        },
+        sameAs: [
+          'https://www.linkedin.com/company/recruitment-institute',
+          'https://www.facebook.com/recruitmentinstitute',
+          'https://www.instagram.com/recruitmentinstitute',
+        ],
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${BASE_URL}/courses#course-list`,
+        name: 'Recruitment Training Courses in India',
+        description: 'Comprehensive industry-recognized recruitment training courses offered across India.',
+        numberOfItems: allCards.length,
+        itemListElement: allCards.map((c, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Course',
+            name: c.title,
+            description: c.description,
+            url: `${BASE_URL}${c.route}`,
+            provider: {
+              '@type': 'EducationalOrganization',
+              name: 'Recruitment Institute',
+              url: BASE_URL,
+            },
+            hasCourseInstance: [
+              {
+                '@type': 'CourseInstance',
+                courseMode: 'Online',
+                courseWorkload: c.duration,
+              },
+              {
+                '@type': 'CourseInstance',
+                courseMode: 'Blended',
+                courseWorkload: c.duration,
+              },
+            ],
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'INR',
+              availability: 'https://schema.org/InStock',
+              url: `${BASE_URL}${c.route}`,
+            },
+          },
+        })),
+      },
     ],
   }
 

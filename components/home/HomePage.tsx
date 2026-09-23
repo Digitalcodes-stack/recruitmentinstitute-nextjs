@@ -260,7 +260,7 @@ export default function HomePage({
               </div>
 
               <h1 className="hero-h1">
-                Recruitment Training for <span className="hero-h1--gradient">Career &amp; Professional Growth</span>
+                Recruitment Training in India for <span className="hero-h1--gradient">Career &amp; Professional Growth</span>
               </h1>
 
               <p className="hero-sub">

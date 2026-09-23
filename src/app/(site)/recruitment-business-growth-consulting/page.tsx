@@ -13,11 +13,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const ogImage = course.image || DEFAULT_OG_IMAGE
 
   return {
-    title: `${course.title} - 1-to-1 Agency Advisory | Recruitment Institute`,
-    description: course.description,
+    title: 'Recruitment Business Growth Consulting in India | Recruitment Institute',
+    description:
+      'Scale your recruitment agency and staffing firm with 1-on-1 growth consulting in India. B2B client acquisition, recruiter hiring, and operational scaling advisory.',
     keywords: [
       'recruitment business growth consulting',
-      'staffing firm advisory pune',
+      'recruitment business growth consulting in India',
+      'staffing firm advisory India',
       'recruitment agency scaling mentor',
       'B2B client acquisition for recruiters',
       'recruitment founder coaching',
@@ -25,8 +27,9 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     alternates: { canonical: `https://recruitmentinstitute.in/${SLUG}` },
     openGraph: {
-      title: `${course.title} - Recruitment Institute`,
-      description: course.description,
+      title: 'Recruitment Business Growth Consulting in India | Recruitment Institute',
+      description:
+        'Scale your recruitment agency and staffing firm with 1-on-1 growth consulting in India. B2B client acquisition, recruiter hiring, and operational scaling advisory.',
       url: `https://recruitmentinstitute.in/${SLUG}`,
       type: 'website',
       images: [
@@ -34,14 +37,15 @@ export async function generateMetadata(): Promise<Metadata> {
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${course.title} - Recruitment Institute`,
+          alt: 'Recruitment Business Growth Consulting in India - Recruitment Institute',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${course.title} | Recruitment Institute`,
-      description: course.description,
+      title: 'Recruitment Business Growth Consulting in India | Recruitment Institute',
+      description:
+        'Scale your recruitment agency and staffing firm with 1-on-1 growth consulting in India.',
       images: [ogImage],
     },
   }
@@ -49,11 +53,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RecruitmentBusinessGrowthConsultingPage() {
   const course = await getDynamicCourseData('business-consulting')
-  const courseJsonLd = generateCourseJsonLd(course, SLUG)
+  const pageH1 = 'Recruitment Business Growth Consulting in India'
+  const courseJsonLd = generateCourseJsonLd(course, SLUG, course.image || DEFAULT_OG_IMAGE, pageH1)
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
     { name: 'Courses', url: '/courses' },
-    { name: course.title, url: `/${SLUG}` },
+    { name: pageH1, url: `/${SLUG}` },
   ])
 
   return (
@@ -66,7 +71,7 @@ export default async function RecruitmentBusinessGrowthConsultingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <DynamicCourseLandingClient course={course} />
+      <DynamicCourseLandingClient course={course} h1Title={pageH1} />
     </>
   )
 }

@@ -395,7 +395,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-950 leading-[1.1]">
               Recruitment Business{' '}
               <span className="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-700 bg-clip-text text-transparent">
-                Accelerator
+                Accelerator in India
               </span>
             </h1>
 
