@@ -10,16 +10,27 @@ const courseLinks = [
   { label: 'AI for Recruitment (Flagship)', href: '/ai-for-recruitment' },
   { label: 'End-to-End Recruitment Training', href: '/end-to-end-recruitment-training' },
   { label: 'HR Courses for Beginners', href: '/hr-courses-for-beginners' },
-  { label: 'Recruitment Business Accelerator', href: '/recruitment-business-accelerator' },
-  { label: 'HR Corporate Training Course', href: '/hr-corporate-training-course' },
+  { label: 'Recruitment Career Starter', href: '/recruitment-career-starter' },
+  { label: 'Professional Recruitment Specialist', href: '/professional-recruitment-specialist' },
+  { label: 'Advanced TA Masterclass', href: '/advanced-recruitment-ta-masterclass' },
   { label: 'View All Courses', href: '/courses' },
+]
+
+const ecosystemLinks = [
+  { label: 'Recruitment Business Accelerator', href: '/recruitment-business-accelerator' },
+  { label: '1-on-1 Growth Consulting', href: '/recruitment-business-growth-consulting' },
+  { label: 'HR Entrepreneurship Program', href: '/hr-entrepreneurship-program' },
+  { label: 'Corporate Recruitment Training', href: '/corporate-recruitment-training' },
+  { label: 'HR Corporate Training Course', href: '/hr-corporate-training-course' },
+  { label: 'Mentors & Faculty', href: '/trainers' },
+  { label: 'Knowledge Base & SOPs', href: '/knowledge' },
 ]
 
 const quickLinks = [
   { label: 'About Us', href: '/about' },
   { label: 'Blog & Articles', href: '/blogs' },
-  { label: 'Knowledge Base', href: '/knowledge' },
   { label: 'Community Forum', href: '/community' },
+  { label: 'Success Stories', href: '/testimonials' },
   { label: 'Student Membership', href: '/student-membership' },
   { label: 'Contact Us', href: '/contact' },
   { label: 'Student Login', href: '/student-login' },
@@ -78,7 +89,7 @@ export default function Footer() {
             </Link>
 
             <p className="footer-desc">
-              India&apos;s #1 Recruitment Training Institute. Empowering HR professionals, recruiters and beginners with industry-leading practical training programs.
+              India&apos;s Recruitment &amp; HR Growth Ecosystem. Empowering professionals to TRAIN, agency founders to BUILD &amp; SCALE, and enterprises to TRANSFORM talent capability.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -98,7 +109,7 @@ export default function Footer() {
                 <span className="footer-icon-box mt-0.5">
                   <MapPin className="w-3.5 h-3.5 footer-icon-blue" />
                 </span>
-                Pune, Maharashtra, India | Online Training Worldwide
+                Pune, Maharashtra, India | Online Worldwide
               </div>
             </div>
           </div>
@@ -106,13 +117,13 @@ export default function Footer() {
           {/* Courses column */}
           <div className="flex flex-col gap-5">
             <div>
-              <h3 className="footer-col-heading">Our Courses</h3>
+              <h3 className="footer-col-heading">Train &amp; Certify</h3>
               <div className="footer-col-divider" />
             </div>
-            <ul className="flex flex-col gap-3 list-none m-0 p-0">
+            <ul className="flex flex-col gap-2.5 list-none m-0 p-0">
               {courseLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="footer-nav-link">
+                  <Link href={link.href} className="footer-nav-link text-xs">
                     <ArrowRight className="w-3.5 h-3.5 shrink-0 footer-nav-arrow" />
                     {link.label}
                   </Link>
@@ -121,16 +132,16 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Quick links column */}
+          {/* Accelerator & Growth column */}
           <div className="flex flex-col gap-5">
             <div>
-              <h3 className="footer-col-heading">Quick Links</h3>
+              <h3 className="footer-col-heading">Build, Scale &amp; Enterprise</h3>
               <div className="footer-col-divider" />
             </div>
-            <ul className="flex flex-col gap-3 list-none m-0 p-0">
-              {quickLinks.map((link) => (
+            <ul className="flex flex-col gap-2.5 list-none m-0 p-0">
+              {ecosystemLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="footer-nav-link">
+                  <Link href={link.href} className="footer-nav-link text-xs">
                     <ArrowRight className="w-3.5 h-3.5 shrink-0 footer-nav-arrow" />
                     {link.label}
                   </Link>
@@ -189,6 +200,18 @@ export default function Footer() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Links & Portals strip */}
+        <div className="border-t border-slate-800/80 pt-6 mt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-400">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <span className="text-slate-200 font-semibold">Portals &amp; Community:</span>
+            {quickLinks.map((ql) => (
+              <Link key={ql.href} href={ql.href} className="hover:text-blue-400 transition-colors">
+                {ql.label}
+              </Link>
+            ))}
           </div>
         </div>
 

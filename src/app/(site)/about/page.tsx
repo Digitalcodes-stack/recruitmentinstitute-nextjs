@@ -6,16 +6,16 @@ import { getSiteStats } from '@/lib/site-stats'
 const BASE_URL = 'https://recruitmentinstitute.in'
 
 export const metadata: Metadata = {
-  title: 'About Recruitment Institute | Recruitment Training in Pune & India',
+  title: 'About Recruitment Institute | India\'s Recruitment & HR Growth Ecosystem',
   description:
-    'Learn about Recruitment Institute, India\'s premier recruitment training institute in Pune. Practical recruiter courses, AI hiring tools & 100% placement help.',
+    'Discover Recruitment Institute: India\'s unified recruitment & HR growth ecosystem. Master recruitment careers, launch 6-7 figure staffing agencies, scale with 1-on-1 consulting, and adopt cutting-edge AI hiring technology.',
   keywords:
-    'Recruitment Training, Recruitment Training Institute in India, Recruitment Training in Pune, Recruitment Business Accelerator, Recruitment Career Starter, Corporate Recruitment, Professional Recruitment Specialist, AI for Recruitment, HR & Recruitment Training, Recruitment Institute Pune, HR training institute Pune, recruitment certification Pune',
+    'Recruitment Institute, Recruitment Training Institute India, HR Growth Ecosystem, Recruitment Business Accelerator, AI for Recruitment, Recruitment Career Starter, Corporate Recruitment Training, HR training institute Pune, Staffing Agency Incubator, HR Entrepreneurship',
   alternates: { canonical: `${BASE_URL}/about` },
   openGraph: {
-    title: 'About Recruitment Institute | Recruitment Training in Pune & India',
+    title: 'About Recruitment Institute | India\'s Recruitment & HR Growth Ecosystem',
     description:
-      'India\'s premier recruitment training institute in Pune. Master practical recruiter skills, AI hiring workflows, and top corporate recruitment strategies.',
+      'India\'s unified recruitment & HR growth ecosystem: TRAIN → BUILD → SCALE → TRANSFORM → INNOVATE. Practical recruitment training, agency incubation, corporate talent upskilling & AI tools.',
     url: `${BASE_URL}/about`,
     siteName: 'Recruitment Institute',
     locale: 'en_IN',
@@ -25,15 +25,15 @@ export const metadata: Metadata = {
         url: `${BASE_URL}/assets/images/og-about.jpg`,
         width: 1200,
         height: 630,
-        alt: 'About Recruitment Institute - Recruitment Training in Pune',
+        alt: 'About Recruitment Institute - India\'s Recruitment & HR Growth Ecosystem',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Recruitment Institute | Recruitment Training in Pune & India',
+    title: 'About Recruitment Institute | India\'s Recruitment & HR Growth Ecosystem',
     description:
-      'India\'s premier recruitment training institute in Pune. Practical recruiter training, AI recruitment tools, and career placement support.',
+      'India\'s unified recruitment & HR growth ecosystem: TRAIN, BUILD, SCALE, TRANSFORM, INNOVATE.',
     images: [`${BASE_URL}/assets/images/og-about.jpg`],
   },
 }
@@ -47,9 +47,9 @@ const aboutSchema = {
       '@type': 'AboutPage',
       '@id': `${BASE_URL}/about#webpage`,
       url: `${BASE_URL}/about`,
-      name: 'About Recruitment Institute | Recruitment Training in Pune & India',
+      name: 'About Recruitment Institute | India\'s Recruitment & HR Growth Ecosystem',
       description:
-        'Learn about Recruitment Institute, India\'s premier recruitment training institute in Pune offering practical recruiter programs and AI hiring tools.',
+        'Learn about Recruitment Institute: India\'s unified ecosystem for recruitment career training, staffing agency incubation, founder consulting, corporate upskilling, and AI hiring innovation.',
       isPartOf: { '@id': `${BASE_URL}/#website` },
       about: { '@id': `${BASE_URL}/#organization` },
       mainEntity: { '@id': `${BASE_URL}/#organization` },
