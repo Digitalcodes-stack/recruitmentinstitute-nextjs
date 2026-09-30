@@ -189,9 +189,7 @@ export default function Footer() {
               <h4 className="footer-hours-title">Working Hours</h4>
               <div className="flex flex-col gap-2">
                 {[
-                  ['Monday - Friday', '9:00 AM - 7:00 PM', false],
-                  ['Saturday', '10:00 AM - 5:00 PM', false],
-                  ['Sunday', 'Closed', true],
+                  ['Monday - Sunday', '9:00 AM - 7:00 PM', false],
                 ].map(([day, hrs, isClosed]) => (
                   <div key={day as string} className="footer-hours-row">
                     <span className="footer-hours-day">{day}</span>

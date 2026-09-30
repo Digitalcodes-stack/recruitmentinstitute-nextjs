@@ -1694,22 +1694,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hero-h1 {
-  font-size: clamp(32px, 5.2vw, 64px);
+  font-size: clamp(30px, 3.3vw, 45px);
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1.14;
   letter-spacing: -0.035em;
   color: #0F172A;
   margin: 0;
-  word-break: break-word;
+  word-break: normal;
 }
 
 .hero-h1--gradient {
-  font-size: clamp(32px, 5.2vw, 64px);
+  font-size: clamp(30px, 3.3vw, 45px);
   font-weight: 900;
-  line-height: 1.08;
+  line-height: 1.14;
   letter-spacing: -0.035em;
   margin: 0;
-  word-break: break-word;
+  word-break: normal;
   background: linear-gradient(90deg, #1E40AF 0%, #6366F1 50%, #0EA5E9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

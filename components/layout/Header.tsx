@@ -397,7 +397,7 @@ export default function Header({ navOverrides }: HeaderProps) {
 
       {/* Top Bar */}
       <div className="header-topbar">
-        <div className="container h-full flex items-center justify-between px-3 sm:px-4 md:px-6">
+        <div className="container h-full flex items-center justify-between">
           {/* Left: Phone (Always visible) + Email (Desktop only) */}
           <div className="flex items-center gap-3 sm:gap-6 shrink-0">
             <a
@@ -480,7 +480,7 @@ export default function Header({ navOverrides }: HeaderProps) {
 
       {/* Main Nav */}
       <nav className={`header-nav${scrolled ? ' header-nav--scrolled' : ''}`}>
-        <div className="max-w-[1536px] w-full mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 h-full flex items-center justify-between gap-2" ref={navContainerRef}>
+        <div className="container h-full flex items-center justify-between gap-2" ref={navContainerRef}>
 
           <Link href="/" aria-label="Recruitment Institute" className="shrink-0">
             <div className="header-logo-wrap">
@@ -488,7 +488,7 @@ export default function Header({ navOverrides }: HeaderProps) {
                 src="/assets/images/recruitment_insti_final_02.png"
                 alt="Recruitment Institute"
                 fill
-                className="object-contain"
+                className="object-contain object-left"
                 priority
               />
             </div>
