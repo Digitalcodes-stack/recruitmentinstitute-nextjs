@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import {
   Calculator,
   FileText,
@@ -123,11 +124,28 @@ Generated via Recruitment Institute Tools (recruitmentinstitute.in/tools)`
   return (
     <div className="min-h-screen bg-slate-50">
       {/* ── HERO SECTION ─────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#0A1628] via-[#0F213A] to-[#0A1628] pt-28 pb-20 text-white">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-blue-600/15 blur-3xl" />
-        <div className="pointer-events-none absolute top-1/3 -right-20 h-80 w-80 rounded-full bg-emerald-600/10 blur-3xl" />
+      <section className="relative overflow-hidden bg-[#0A1628] pt-28 pb-24 text-white">
+        {/* Background Image with Cinematic Vignette Overlay */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/assets/images/hero/tools_workspace_hero.jpg"
+            alt="Recruitment Tools and Calculators - Recruitment Institute"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.72] contrast-[1.08] saturate-[1.10]"
+          />
+          {/* Subtle multi-layer cinematic overlay: allows the high-tech command center and data visualizations to shine through while keeping typography crisp */}
+          <div className="absolute inset-0 bg-[#0A1628]/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0A1628]/75 via-transparent to-[#0A1628]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0A1628]/60 via-transparent to-[#0A1628]/60" />
+        </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* Glow ambient backdrops */}
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-blue-600/20 blur-3xl z-0" />
+        <div className="pointer-events-none absolute top-1/3 -right-20 h-80 w-80 rounded-full bg-emerald-600/15 blur-3xl z-0" />
+
+        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="mb-6 flex items-center gap-2 text-xs font-medium text-slate-400">
             <Link href="/" className="hover:text-white transition-colors">
