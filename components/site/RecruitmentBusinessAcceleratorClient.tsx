@@ -42,7 +42,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedPlanForModal, setSelectedPlanForModal] = useState<string>(
-    'Plan 2 — Accelerator (₹75,000 – ₹99,000 | Recommended)'
+    'Plan 2 — Incubator (₹75,000 – ₹99,000 | Recommended)'
   )
 
   // Accordion states
@@ -65,7 +65,10 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
   }
 
   // 3-Tier Pricing Configuration with Price Ranges (No Fixed Prices)
-  const plans = [
+  // Admin-editable fields (name, priceRange, duration, badge, bestFor) are overridden
+  // from course.pricingTiers (matched by position) when Admin has configured them.
+  const t = (idx: number) => course.pricingTiers?.[idx]
+  const staticPlans = [
     {
       id: 'launch',
       name: 'Plan 1 — Launch',
@@ -177,6 +180,21 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
     },
   ]
 
+  const plans = staticPlans.map((plan, idx) => {
+    const tier = t(idx)
+    if (!tier) return plan
+    return {
+      ...plan,
+      name: tier.name || plan.name,
+      priceRange: tier.priceRange || plan.priceRange,
+      duration: tier.duration || plan.duration,
+      badge: tier.badge || plan.badge,
+      bestFor: tier.bestFor || plan.bestFor,
+      isHero: tier.isHighlighted,
+    }
+  })
+  const heroPlan = plans.find((p) => p.isHero) || plans[1]
+
   // Comparison Matrix Rows
   const comparisonCategories = [
     {
@@ -224,8 +242,8 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
     {
       name: '5. Mentorship & Founder Handholding',
       features: [
-        { label: 'Program Duration', launch: '8 Weeks', acc: '6 Months', mastery: '12 Months' },
-        { label: 'Price Range', launch: '₹29,999 – ₹39,999', acc: '₹75,000 – ₹99,000', mastery: '₹1.50L – ₹2.50L / yr' },
+        { label: 'Program Duration', launch: plans[0].duration, acc: plans[1].duration, mastery: plans[2].duration },
+        { label: 'Price Range', launch: plans[0].priceRange, acc: plans[1].priceRange, mastery: plans[2].priceRange },
         { label: 'Mentoring Format', launch: 'Weekly Live Group', acc: 'Weekly Business Review + 1-on-1', mastery: 'Weekly Private 1-on-1 Founder Call' },
         { label: 'Monthly P&L & Revenue Dashboard Review', launch: false, acc: 'Revenue Dashboard', mastery: 'Full P&L Review' },
         { label: 'Handholding Till Independent Operation', launch: false, acc: true, mastery: true },
@@ -348,7 +366,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
   ]
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-amber-400 selection:text-slate-950 font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-amber-400 selection:text-slate-950 font-sans pb-20 sm:pb-16">
       {/* ── Enquiry / Enrollment Modal ── */}
       <EnquiryModal
         isOpen={isModalOpen}
@@ -367,7 +385,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
             Applications Open • Limited to 15 Agency Founders per Cohort
           </span>
           <button
-            onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
+            onClick={() => openEnrollModal(`${heroPlan.name} (${heroPlan.priceRange})`)}
             className="text-amber-400 hover:text-amber-300 underline font-bold cursor-pointer transition-colors"
           >
             Apply for Incubator (Plan 2) →
@@ -523,6 +541,39 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                 Add high-margin RPO contracts, executive headhunting and expand into global cross-border hiring.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          2B. WHO SHOULD JOIN
+      ══════════════════════════════════════════════ */}
+      <section className="py-16 bg-[#F8FAFC] border-b border-slate-200">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold uppercase tracking-wider mb-3">
+              Is This Program For You?
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-3">
+              Who Should Join the Accelerator
+            </h2>
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Every tier is built for a different stage of your recruitment agency journey.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {plans.map((plan) => (
+              <div
+                key={plan.id}
+                className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-amber-300 transition-all"
+              >
+                <span className={`inline-block text-[10px] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full border mb-3 ${plan.badgeBg}`}>
+                  {plan.name}
+                </span>
+                <p className="text-sm text-slate-700 leading-relaxed">{plan.bestFor}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -744,15 +795,15 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                   <th className="py-4 px-4 text-sm font-bold text-slate-800 w-2/5">Capabilities & Deliverables</th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-emerald-800 w-1/5 bg-slate-100/60">
                     Plan 1: Launch
-                    <div className="text-[11px] font-medium text-slate-500">8 Wks • ₹29,999 – ₹39,999</div>
+                    <div className="text-[11px] font-medium text-slate-500">{plans[0].duration} • {plans[0].priceRange}</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-slate-950 w-1/5 bg-amber-50 border-x-2 border-amber-400">
                     Plan 2: Incubator
-                    <div className="text-[11px] font-black text-amber-700">Recommended • ₹75,000 – ₹99,000</div>
+                    <div className="text-[11px] font-black text-amber-700">Recommended • {plans[1].priceRange}</div>
                   </th>
                   <th className="py-4 px-4 text-center text-sm font-bold text-rose-800 w-1/5 bg-slate-100/60">
                     Plan 3: Accelerator
-                    <div className="text-[11px] font-medium text-slate-500">12 Mo • ₹1.50L – ₹2.50L / yr</div>
+                    <div className="text-[11px] font-medium text-slate-500">{plans[2].duration} • {plans[2].priceRange}</div>
                   </th>
                 </tr>
               </thead>
@@ -821,7 +872,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
 
           <div className="text-center mt-10">
             <button
-              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
+              onClick={() => openEnrollModal(`${heroPlan.name} (${heroPlan.priceRange})`)}
               className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-sm tracking-wide shadow-lg shadow-slate-900/10 transition-all cursor-pointer"
             >
               Get Started with Plan 2 (Incubator)
@@ -1210,7 +1261,7 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000)')}
+              onClick={() => openEnrollModal(`${heroPlan.name} (${heroPlan.priceRange})`)}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-base tracking-wide shadow-xl shadow-slate-900/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
               Apply for Plan 2 (Incubator) →
@@ -1240,23 +1291,23 @@ export default function RecruitmentBusinessAcceleratorClient({ course }: Props) 
                 Hero Recommendation
               </div>
               <div className="text-sm font-extrabold text-slate-900">
-                Plan 2 — Incubator (6 Months)
+                {heroPlan.name} ({heroPlan.duration})
               </div>
             </div>
             <div className="sm:hidden">
-              <div className="text-xs font-bold text-slate-900">Plan 2 — Incubator</div>
-              <div className="text-xs font-black text-amber-600">₹75,000 – ₹99,000</div>
+              <div className="text-xs font-bold text-slate-900">{heroPlan.name}</div>
+              <div className="text-xs font-black text-amber-600">{heroPlan.priceRange}</div>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden md:block text-right">
-              <div className="text-base font-black text-slate-950">₹75,000 – ₹99,000</div>
-              <div className="text-[10px] text-slate-500 font-medium">6 Months Handholding</div>
+              <div className="text-base font-black text-slate-950">{heroPlan.priceRange}</div>
+              <div className="text-[10px] text-slate-500 font-medium">{heroPlan.duration} Handholding</div>
             </div>
 
             <button
-              onClick={() => openEnrollModal('Plan 2 — Incubator (₹75,000 – ₹99,000 | Sticky Bar)')}
+              onClick={() => openEnrollModal(`${heroPlan.name} (${heroPlan.priceRange} | Sticky Bar)`)}
               className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs sm:text-sm tracking-wide shadow-md transition-all whitespace-nowrap cursor-pointer"
             >
               Apply for Incubator →

@@ -3,9 +3,12 @@ steps:
     args:
       - 'build'
       - '-f'
-      - 'docker/Dockerfile.nextjs'
+      - 'Dockerfile'
       - '-t'
-      - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest'
+      - 'asia-south1-docker.pkg.dev/recruitmentinstitute-510113/recruitmentinstitute/recruitmentinstitute-web:latest'
       - '.'
 images:
-  - 'gcr.io/recruitmentinstitute-501106/recruitmentinstitute-web:latest'
+  - 'asia-south1-docker.pkg.dev/recruitmentinstitute-510113/recruitmentinstitute/recruitmentinstitute-web:latest'
+timeout: '1200s'
+options:
+  machineType: 'E2_HIGHCPU_8'

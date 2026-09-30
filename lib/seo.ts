@@ -356,3 +356,63 @@ export function generateBlogPostingJsonLd(blog: {
     inLanguage: 'en-IN',
   }
 }
+
+/**
+ * Generates a Service + WebPage + BreadcrumbList (+ FAQPage if provided) schema
+ * graph for business/consulting/incubator pages that are not purchasable Courses
+ * (no fixed price, curriculum or CourseInstance — Schema.org Course is the wrong
+ * type for these; Service is correct for an advisory/incubation/consulting offering).
+ */
+export function generateServicePageSchemaGraph(options: {
+  slug: string
+  name: string
+  description: string
+  breadcrumbLabel: string
+  serviceType: string
+  faqs?: FaqItemInput[]
+}) {
+  const { slug, name, description, breadcrumbLabel, serviceType, faqs } = options
+  const pageUrl = `${BASE_URL}/${slug}`
+
+  const graph: any[] = [
+    {
+      '@type': 'Service',
+      '@id': `${pageUrl}#service`,
+      name,
+      description,
+      serviceType,
+      provider: {
+        '@type': 'Organization',
+        '@id': `${BASE_URL}/#organization`,
+        name: 'Recruitment Institute',
+        url: BASE_URL,
+        logo: LOGO_IMAGE,
+      },
+      areaServed: { '@type': 'Country', name: 'India' },
+      url: pageUrl,
+    },
+    {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}#webpage`,
+      url: pageUrl,
+      name,
+      description,
+      inLanguage: 'en-IN',
+      isPartOf: { '@id': `${BASE_URL}/#website` },
+    },
+    generateBreadcrumbJsonLd([
+      { name: 'Home', url: '/' },
+      { name: breadcrumbLabel, url: `/${slug}` },
+    ]),
+  ]
+
+  if (faqs && faqs.length > 0) {
+    const faqSchema = generateFaqJsonLd(faqs)
+    if (faqSchema) graph.push(faqSchema)
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  }
+}

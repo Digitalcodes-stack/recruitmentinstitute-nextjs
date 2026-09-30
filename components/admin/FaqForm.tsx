@@ -16,16 +16,17 @@ interface Faq {
 interface Props {
   categories: Category[]
   faq?: Faq
+  defaultCategoryId?: number
 }
 
-export default function FaqForm({ categories, faq }: Props) {
+export default function FaqForm({ categories, faq, defaultCategoryId }: Props) {
   const router = useRouter()
   const isEdit = !!faq
 
   const [form, setForm] = useState({
     question:   faq?.question   ?? '',
     answer:     faq?.answer     ?? '',
-    categoryId: faq?.categoryId ? String(faq.categoryId) : '',
+    categoryId: faq?.categoryId ? String(faq.categoryId) : (defaultCategoryId ? String(defaultCategoryId) : ''),
   })
   const [errors, setErrors]     = useState<Record<string, string>>({})
   const [saving, setSaving]     = useState(false)

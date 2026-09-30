@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getAdminSession, hashPassword } from '@/lib/auth'
 import { z } from 'zod'
 import { trainerAvailabilitySlotSchema } from '@/lib/validations'
+import { slugifyName } from '@/lib/trainer-profile'
 
 const updateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -13,6 +14,8 @@ const updateSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().optional(),
+  isPublic: z.boolean().optional(),
+  slug: z.string().optional(),
   profileJson: z.record(z.string(), z.any()).optional(),
   designation: z.string().optional(),
   experienceYears: z.coerce.number().optional(),
@@ -28,7 +31,7 @@ const updateSchema = z.object({
 
 const trainerSelect = {
   id: true, name: true, email: true, phone: true, specialization: true,
-  bio: true, image: true, isActive: true, profileJson: true, createdAt: true,
+  bio: true, image: true, isActive: true, isPublic: true, slug: true, profileJson: true, createdAt: true,
   availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
 } as const
 
@@ -62,9 +65,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const trainerId = parseInt(id)
   const existing = await prisma.trainer.findUnique({
     where: { id: trainerId },
-    select: { profileJson: true },
+    select: { profileJson: true, name: true, slug: true },
   })
-  const existingProfile = (existing?.profileJson && typeof existing.profileJson === 'object')
+  if (!existing) return NextResponse.json({ success: false, message: 'Trainer not found' }, { status: 404 })
+  const existingProfile = (existing.profileJson && typeof existing.profileJson === 'object')
     ? (existing.profileJson as Record<string, any>)
     : {}
 
@@ -111,6 +115,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 
   if (password) {
     data.password = await hashPassword(password)
+  }
+
+  // Resolve slug: explicit input wins, falls back to the trainer's name, keeps
+  // the existing slug untouched if nothing changed, and de-dupes on collision.
+  if (rest.slug !== undefined || rest.name !== undefined) {
+    const desiredSource = rest.slug?.trim() || rest.name?.trim() || existing.name
+    const desiredSlug = slugifyName(desiredSource)
+    if (desiredSlug && desiredSlug !== existing.slug) {
+      const collision = await prisma.trainer.findFirst({ where: { slug: desiredSlug, id: { not: trainerId } } })
+      data.slug = collision ? `${desiredSlug}-${trainerId}` : desiredSlug
+    }
   }
 
   // Availability has no stable per-slot identity from the client — replace the whole set.

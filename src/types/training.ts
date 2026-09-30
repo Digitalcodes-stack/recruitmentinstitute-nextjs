@@ -34,6 +34,7 @@ export interface BatchItem {
 export interface TrainerItem {
   id: number
   name: string
+  slug?: string
   email?: string
   phone?: string
   designation: string

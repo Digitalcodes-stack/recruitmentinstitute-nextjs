@@ -138,6 +138,11 @@ const ecosystemPillars = [
     ctaText: 'Explore Agency Incubator',
     icon: Rocket,
     stat: '₹1 Cr Blueprint',
+    relatedLinks: [
+      { label: 'Starting from Scratch? Business Incubator', href: '/recruitment-business-incubator' },
+      { label: 'Staffing Business Accelerator', href: '/staffing-business-accelerator' },
+      { label: 'RPO Business Accelerator', href: '/rpo-business' },
+    ],
   },
   {
     step: '03',
@@ -159,6 +164,10 @@ const ecosystemPillars = [
     ctaText: 'Explore Growth Advisory',
     icon: TrendingUp,
     stat: '1-to-1 Advisory',
+    relatedLinks: [
+      { label: 'HR & Recruitment Consulting', href: '/hr-recruitment-consulting' },
+      { label: 'HR Outsourcing Business', href: '/hr-outsourcing-business' },
+    ],
   },
   {
     step: '04',
@@ -201,6 +210,9 @@ const ecosystemPillars = [
     ctaText: 'Explore AI Recruitment',
     icon: Sparkles,
     stat: 'AI Certified',
+    relatedLinks: [
+      { label: 'Building a Recruitment/HR-Tech Product? Startup Incubator', href: '/recruitment-hr-tech-incubator' },
+    ],
   },
 ]
 
@@ -613,6 +625,21 @@ export default function HomePage({
                     <span>Free Consultation Call</span>
                   </button>
                 </div>
+
+                {activePillar.relatedLinks && activePillar.relatedLinks.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">Also explore:</span>
+                    {activePillar.relatedLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="text-xs font-bold text-blue-700 hover:text-blue-900 hover:underline underline-offset-2"
+                      >
+                        {link.label} →
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Right Column: High-End Intelligence / Proof Card */}

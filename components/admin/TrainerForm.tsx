@@ -37,6 +37,8 @@ interface Trainer {
   bio: string | null
   image: string | null
   isActive: boolean
+  isPublic?: boolean
+  slug?: string | null
   profileJson?: any
   availability?: AvailabilitySlot[]
 }
@@ -75,6 +77,8 @@ export default function TrainerForm({ trainer }: Props) {
     bio: trainer?.bio ?? (pj.bio || ''),
     image: trainer?.image ?? '',
     isActive: trainer?.isActive ?? true,
+    isPublic: trainer?.isPublic ?? false,
+    slug: trainer?.slug ?? '',
     // Extended fields
     designation: pj.designation ?? '',
     experienceYears: pj.experienceYears !== undefined && pj.experienceYears !== null ? String(pj.experienceYears) : '',
@@ -176,6 +180,8 @@ export default function TrainerForm({ trainer }: Props) {
         bio: form.bio.trim(),
         image: form.image.trim(),
         isActive: form.isActive,
+        isPublic: form.isPublic,
+        slug: form.slug.trim() || undefined,
         designation: form.designation.trim(),
         experienceYears: form.experienceYears ? Number(form.experienceYears) : undefined,
         companyEx: form.companyEx.trim(),
@@ -605,7 +611,7 @@ export default function TrainerForm({ trainer }: Props) {
               />
             </div>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, fontWeight: 600, color: '#1e293b', cursor: 'pointer', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 16px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, fontWeight: 600, color: '#1e293b', cursor: 'pointer', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 16px', marginBottom: 12 }}>
               <input
                 type="checkbox"
                 checked={form.isActive}
@@ -614,6 +620,32 @@ export default function TrainerForm({ trainer }: Props) {
               />
               Active Trainer (can be assigned to batches, can log in, and listed on the faculty directory)
             </label>
+
+            <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13.5, fontWeight: 600, color: '#1e293b', cursor: 'pointer', background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '12px 16px', marginBottom: 12 }}>
+              <input
+                type="checkbox"
+                checked={form.isPublic}
+                onChange={(e) => setForm((f) => ({ ...f, isPublic: e.target.checked }))}
+                style={{ width: 18, height: 18, accentColor: '#059669' }}
+              />
+              Publish public profile page at /trainers/{form.slug || '...'} (indexable by Google — only enable once bio, expertise and courses look complete)
+            </label>
+
+            <div>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: '#374151', marginBottom: 6 }}>
+                Public Profile URL Slug
+              </label>
+              <input
+                type="text"
+                value={form.slug}
+                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                placeholder="e.g. rahul-limaye"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: 10, fontSize: 14, border: '1px solid #e2e8f0', outline: 'none', color: '#0f172a', background: '#fff' }}
+              />
+              <p style={{ fontSize: 11.5, color: '#94a3b8', marginTop: 4 }}>
+                Leave blank to auto-generate from the trainer's name.
+              </p>
+            </div>
           </div>
 
           {/* SECTION 6: WEEKLY AVAILABILITY */}

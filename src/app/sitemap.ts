@@ -21,6 +21,16 @@ const coursePages = [
   { url: `${BASE_URL}/ai-for-recruitment`, tag: 'ai-for-recruitment', priority: 0.95 },
 ]
 
+// New flagship business/consulting/incubator pages (static content, not DB-backed courses)
+const flagshipServicePages = [
+  `${BASE_URL}/recruitment-business-incubator`,
+  `${BASE_URL}/staffing-business-accelerator`,
+  `${BASE_URL}/rpo-business`,
+  `${BASE_URL}/hr-outsourcing-business`,
+  `${BASE_URL}/hr-recruitment-consulting`,
+  `${BASE_URL}/recruitment-hr-tech-incubator`,
+]
+
 // Fallback published blog slugs (ensures sitemap never returns empty blogs during DB cold-start)
 const fallbackBlogSlugs = [
   'Creating-a-Successful-Mentorship-Relationship-Dos-and-Don-ts',
@@ -191,6 +201,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   }
 
-  return [...staticPages, ...courseEntries, ...blogPages]
+  const flagshipEntries: MetadataRoute.Sitemap = flagshipServicePages.map((url) => ({
+    url,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.85,
+  }))
+
+  return [...staticPages, ...courseEntries, ...flagshipEntries, ...blogPages]
 }
 

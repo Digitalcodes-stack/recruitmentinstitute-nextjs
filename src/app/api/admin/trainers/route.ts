@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getAdminSession, hashPassword } from '@/lib/auth'
 import { z } from 'zod'
 import { trainerAvailabilitySlotSchema } from '@/lib/validations'
+import { slugifyName } from '@/lib/trainer-profile'
 
 const createSchema = z.object({
   name: z.string().min(2),
@@ -13,6 +14,8 @@ const createSchema = z.object({
   bio: z.string().max(2000).optional(),
   image: z.string().optional(),
   isActive: z.boolean().default(true),
+  isPublic: z.boolean().optional(),
+  slug: z.string().optional(),
   designation: z.string().optional(),
   experienceYears: z.coerce.number().optional(),
   companyEx: z.string().optional(),
@@ -40,7 +43,7 @@ export async function GET() {
     orderBy: { id: 'asc' },
     select: {
       id: true, name: true, email: true, phone: true, specialization: true,
-      bio: true, image: true, isActive: true, createdAt: true,
+      bio: true, image: true, isActive: true, isPublic: true, slug: true, createdAt: true,
       availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
     },
   })
@@ -87,9 +90,16 @@ export async function POST(req: NextRequest) {
   if (certifications) profileJson.certifications = certifications
   if (coursesTaught) profileJson.coursesTaught = coursesTaught
 
+  let slug = rest.slug?.trim() ? slugifyName(rest.slug.trim()) : slugifyName(rest.name)
+  if (slug) {
+    const slugTaken = await prisma.trainer.findUnique({ where: { slug } })
+    if (slugTaken) slug = `${slug}-${Date.now().toString().slice(-4)}`
+  }
+
   const trainer = await prisma.trainer.create({
     data: {
       ...rest,
+      slug,
       specialization: rest.specialization || designation || '',
       profileJson,
       password: await hashPassword(password),
@@ -97,7 +107,7 @@ export async function POST(req: NextRequest) {
     },
     select: {
       id: true, name: true, email: true, phone: true, specialization: true,
-      bio: true, image: true, isActive: true, createdAt: true,
+      bio: true, image: true, isActive: true, isPublic: true, slug: true, createdAt: true,
       availability: { select: { id: true, dayOfWeek: true, startTime: true, endTime: true } },
     },
   })

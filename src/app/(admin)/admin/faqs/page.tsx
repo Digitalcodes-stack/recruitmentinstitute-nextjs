@@ -6,14 +6,27 @@ import AdminLayout from '@/components/admin/AdminLayout'
 import { HelpCircle, MessageSquare, ListChecks, Layers3, Plus } from 'lucide-react'
 import FaqActions from '@/components/admin/FaqActions'
 
-export default async function AdminFaqsPage() {
+interface Props {
+  searchParams: Promise<{ categoryId?: string }>
+}
+
+export default async function AdminFaqsPage({ searchParams }: Props) {
   const session = await getAdminSession()
   if (!session || session.type !== 'admin') redirect('/admin/login')
 
-  const faqs = await prisma.faq.findMany({
-    include: { category: true },
-    orderBy: { createdAt: 'desc' },
-  })
+  const { categoryId } = await searchParams
+  const filterCategoryId = categoryId ? parseInt(categoryId) : undefined
+
+  const [faqs, filteredCategory] = await Promise.all([
+    prisma.faq.findMany({
+      where: filterCategoryId ? { categoryId: filterCategoryId } : undefined,
+      include: { category: true },
+      orderBy: { createdAt: 'desc' },
+    }),
+    filterCategoryId
+      ? prisma.courseCategory.findUnique({ where: { id: filterCategoryId } })
+      : Promise.resolve(null),
+  ])
 
   const total        = faqs.length
   const courseLinked = faqs.filter((f) => !!f.categoryId).length
@@ -33,7 +46,9 @@ export default async function AdminFaqsPage() {
             FAQs
           </h2>
           <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 5 }}>
-            Review, search and organize FAQ content.
+            {filteredCategory
+              ? <>Showing FAQs for <strong style={{ color: '#334155' }}>{filteredCategory.name}</strong>. <Link href="/admin/faqs" style={{ color: '#2563eb', fontWeight: 600 }}>View all FAQs</Link></>
+              : 'Review, search and organize FAQ content.'}
           </p>
         </div>
 
@@ -57,7 +72,7 @@ export default async function AdminFaqsPage() {
           ))}
 
           <Link
-            href="/admin/faqs/new"
+            href={filterCategoryId ? `/admin/faqs/new?categoryId=${filterCategoryId}` : '/admin/faqs/new'}
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 12, background: 'linear-gradient(135deg,#3b82f6,#2563eb)', color: '#fff', fontSize: 13, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 14px rgba(37,99,235,0.3)' }}
           >
             <Plus style={{ width: 14, height: 14 }} />

@@ -239,10 +239,22 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
         }
         .ri-hero-mesh {
           background-color: #FFFFFF;
-          background-image: 
+          background-image:
             radial-gradient(at 15% 15%, rgba(219, 234, 254, 0.6) 0px, transparent 50%),
             radial-gradient(at 85% 20%, rgba(238, 242, 255, 0.7) 0px, transparent 50%),
             radial-gradient(at 50% 80%, rgba(240, 253, 250, 0.5) 0px, transparent 50%);
+        }
+        .ri-split-panel {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+        }
+        .ri-cert-panel {
+          grid-template-columns: 1.1fr 1fr;
+        }
+        @media (max-width: 820px) {
+          .ri-split-panel {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
 
@@ -725,13 +737,12 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
             const cur = PIPELINE_STAGES[activeStage]
             return (
               <div
+                className="ri-split-panel"
                 style={{
                   borderRadius: 24,
                   background: '#F8FAFC',
                   border: '1px solid #E2E8F0',
                   padding: 'clamp(24px, 4vw, 40px)',
-                  display: 'grid',
-                  gridTemplateColumns: '1.2fr 1fr',
                   gap: 32,
                   alignItems: 'center',
                 }}
@@ -1265,14 +1276,13 @@ export default function AiForRecruitmentLandingClient({ course }: Props) {
       >
         <div style={{ maxWidth: 1040, margin: '0 auto' }}>
           <div
+            className="ri-split-panel ri-cert-panel"
             style={{
               background: '#FFFFFF',
               borderRadius: 24,
               border: '1px solid #E2E8F0',
               boxShadow: '0 12px 40px rgba(0,0,0,0.06)',
               padding: 'clamp(26px, 4vw, 44px)',
-              display: 'grid',
-              gridTemplateColumns: '1.1fr 1fr',
               gap: 32,
               alignItems: 'center',
             }}

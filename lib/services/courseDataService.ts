@@ -74,6 +74,15 @@ export interface DynamicCourseData {
   faqs: DynamicFaqItem[]
   lmsStructure: Array<{ week: string; title: string; desc: string }>
   features: Array<{ title: string; desc: string }>
+  pricingTiers: Array<{
+    id: number
+    name: string
+    priceRange: string
+    duration: string | null
+    badge: string | null
+    bestFor: string | null
+    isHighlighted: boolean
+  }>
 }
 
 export const CANONICAL_COURSE_CONFIGS: Record<string, {
@@ -1203,6 +1212,9 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         faqs: {
           orderBy: { id: 'asc' },
         },
+        pricingTiers: {
+          orderBy: { sortOrder: 'asc' },
+        },
       },
     })
 
@@ -1376,6 +1388,15 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         { title: 'Dedicated Career Support', desc: '1-on-1 resume building, mock interviews and direct placement assistance.' },
         { title: 'Lifetime LMS Access', desc: 'Full access to class recordings, templates, spreadsheets and scripts.' },
       ],
+      pricingTiers: (category?.pricingTiers || []).map((t) => ({
+        id: t.id,
+        name: t.name,
+        priceRange: t.priceRange,
+        duration: t.duration,
+        badge: t.badge,
+        bestFor: t.bestFor,
+        isHighlighted: t.isHighlighted,
+      })),
     }
   } catch (err) {
     console.error(`Error loading dynamic course data for ${categorySlug}:`, err)
@@ -1437,6 +1458,7 @@ export async function getDynamicCourseData(categorySlug: string): Promise<Dynami
         { title: 'Dedicated Career Support', desc: '1-on-1 resume building, mock interviews and direct placement assistance.' },
         { title: 'Lifetime LMS Access', desc: 'Full access to class recordings, templates, spreadsheets and scripts.' },
       ],
+      pricingTiers: [],
     }
   }
 }

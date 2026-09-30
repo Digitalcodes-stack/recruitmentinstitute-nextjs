@@ -8,7 +8,7 @@ import {
   ExternalLink, Sparkles, GraduationCap, Users,
   CheckCircle2, Target, Wrench, Layers, ShieldCheck,
   Layout, HelpCircle, MessageSquare, Star, ChevronRight,
-  Compass
+  Compass, IndianRupee
 } from 'lucide-react'
 import type { DynamicCourseData } from '@/lib/services/courseDataService'
 
@@ -448,12 +448,39 @@ export default function CourseForm({ categories, course, dynamicData }: Props) {
                 </div>
               </div>
 
+              {dynamicData.pricingTiers.length > 0 && (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <h4 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <IndianRupee style={{ width: 14, height: 14, color: '#059669' }} /> Pricing Tiers ({dynamicData.pricingTiers.length})
+                    </h4>
+                    <Link
+                      href={course?.categoryId ? `/admin/pricing-tiers?categoryId=${course.categoryId}` : '/admin/pricing-tiers'}
+                      style={{ fontSize: 12, fontWeight: 700, color: '#2563eb', textDecoration: 'none' }}
+                    >
+                      Manage Pricing Tiers →
+                    </Link>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 8 }}>
+                    {dynamicData.pricingTiers.map((t) => (
+                      <div key={t.id} style={{ background: t.isHighlighted ? '#fffbeb' : '#f8fafc', border: `1px solid ${t.isHighlighted ? '#fde68a' : '#e2e8f0'}`, borderRadius: 12, padding: 12 }}>
+                        <p style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>{t.name}</p>
+                        <p style={{ fontSize: 12, fontWeight: 800, color: '#059669', margin: 0 }}>{t.priceRange}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                   <h4 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <MessageSquare style={{ width: 14, height: 14, color: '#2563eb' }} /> Course FAQs ({dynamicData.faqs.length})
                   </h4>
-                  <Link href="/admin/faqs" style={{ fontSize: 12, fontWeight: 700, color: '#2563eb', textDecoration: 'none' }}>
+                  <Link
+                    href={course?.categoryId ? `/admin/faqs?categoryId=${course.categoryId}` : '/admin/faqs'}
+                    style={{ fontSize: 12, fontWeight: 700, color: '#2563eb', textDecoration: 'none' }}
+                  >
                     Manage FAQs →
                   </Link>
                 </div>

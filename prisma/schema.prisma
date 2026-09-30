@@ -83,6 +83,7 @@ model CourseCategory {
   faqs      Faq[]
   fees      CourseFee[]
   reviews   CourseReview[]
+  pricingTiers CoursePricingTier[]
 
   @@map("course_category")
 }
@@ -205,6 +206,23 @@ model FaqCategory {
   title String
 
   @@map("faq_category")
+}
+
+model CoursePricingTier {
+  id           Int            @id @default(autoincrement())
+  categoryId   Int            @map("course_category_id")
+  name         String
+  priceRange   String         @map("price_range")
+  duration     String?
+  badge        String?
+  bestFor      String?        @map("best_for")
+  isHighlighted Boolean       @default(false) @map("is_highlighted")
+  sortOrder    Int            @default(0) @map("sort_order")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  category     CourseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("course_pricing_tiers")
 }
 
 model KnowledgeItem {
@@ -424,6 +442,7 @@ model SiteSettings {
   defaultPageSize Int      @default(20) @map("default_page_size")
   defaultTimeZone String   @default("Asia/Kolkata") @map("default_time_zone")
   statsJson       Json?    @map("stats_json")
+  navJson         Json?    @map("nav_json")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   @@map("site_settings")
@@ -450,6 +469,8 @@ model Trainer {
   isActive       Boolean               @default(true) @map("status")
   profileJson    Json?                 @default("{}") @map("profile_json")
   timezone       String                @default("Asia/Kolkata")
+  slug           String?               @unique
+  isPublic       Boolean               @default(false) @map("is_public")
   createdAt      DateTime              @default(now()) @map("created_at")
   updatedAt      DateTime              @updatedAt @map("updated_at")
   batches        Batch[]

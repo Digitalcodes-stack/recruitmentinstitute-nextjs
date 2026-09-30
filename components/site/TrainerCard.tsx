@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { Star, ArrowRight, Briefcase, CheckCircle } from 'lucide-react'
 import { TrainerItem } from '@/types/training'
 
@@ -252,10 +253,21 @@ export default function TrainerCard({ trainer, onSelect }: TrainerCardProps) {
             <span>{trainer.studentsMentored}+ Trained</span>
           </div>
 
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 800, color: '#0F172A' }}>
-            <span>View Profile</span>
-            <ArrowRight style={{ width: '13px', height: '13px' }} />
-          </div>
+          {trainer.slug ? (
+            <Link
+              href={`/trainers/${trainer.slug}`}
+              onClick={(e) => e.stopPropagation()}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 800, color: '#0F172A', textDecoration: 'none' }}
+            >
+              <span>View Full Profile</span>
+              <ArrowRight style={{ width: '13px', height: '13px' }} />
+            </Link>
+          ) : (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 800, color: '#0F172A' }}>
+              <span>View Profile</span>
+              <ArrowRight style={{ width: '13px', height: '13px' }} />
+            </div>
+          )}
         </div>
       </div>
     </div>

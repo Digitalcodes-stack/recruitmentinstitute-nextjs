@@ -9,6 +9,8 @@ import {
   BookOpen, Award, Briefcase, GraduationCap, User, ArrowRight, Users, Building2, LogOut, Sparkles,
   TrendingUp, FileText, CheckCircle2
 } from 'lucide-react'
+import type { NavOverride } from '@/lib/nav-config-constants'
+import { DEFAULT_NAV_OVERRIDES } from '@/lib/nav-config-constants'
 
 type SessionUser = { name: string; email: string; type: string }
 
@@ -42,6 +44,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
+    id: 'home',
+    label: 'Home',
+    href: '/',
+  },
+  {
     id: 'training',
     label: 'Training',
     headTitle: 'TRAIN & CERTIFY',
@@ -50,6 +57,10 @@ const navItems: NavItem[] = [
     dropdownWidth: 520,
     footerNote: 'All programs include practical assignments & certifications',
     footerLink: { label: 'Explore All Courses', href: '/courses' },
+    // Target spec also lists "Recruitment Training", "HR Training" and "Recruitment
+    // Certification" as generic dropdown entries — no dedicated page exists for any
+    // of those (each is already covered by one of the specific programs below), so
+    // per rule 3/4 they're omitted here rather than linked to a placeholder page.
     children: [
       {
         label: 'AI for Recruitment',
@@ -94,17 +105,34 @@ const navItems: NavItem[] = [
         icon: <Users className="w-4 h-4" />,
         iconStyle: { color: '#7C3AED', background: '#F5F3FF' },
       },
+      {
+        label: 'Corporate Recruitment Training',
+        description: 'Custom capability programs for internal TA teams & hiring managers',
+        href: '/corporate-recruitment-training',
+        icon: <Building2 className="w-4 h-4" />,
+        iconStyle: { color: '#7C3AED', background: '#F5F3FF' },
+      },
+      {
+        label: 'HR Corporate Training Course',
+        description: 'Upskill your corporate recruiter cohort with enterprise workflows',
+        href: '/hr-corporate-training-course',
+        icon: <BookOpen className="w-4 h-4" />,
+        iconStyle: { color: '#0284C7', background: '#F0F9FF' },
+      },
     ],
   },
   {
     id: 'accelerator',
-    label: 'Agency Accelerator',
+    label: 'Business Accelerator',
     headTitle: 'BUILD & SCALE',
     headSub: 'Launch, Scale & Systemize Your Recruitment & Staffing Firm',
     dropdownAlign: 'center',
     dropdownWidth: 480,
     footerNote: 'Zero-to-scale agency infrastructure & founder advisory',
     footerLink: { label: 'Explore Accelerator Program', href: '/recruitment-business-accelerator' },
+    // Target spec also lists "Start a Recruitment Agency" as a separate item —
+    // that is what Recruitment Business Incubator already covers, so it is not
+    // duplicated as its own link.
     children: [
       {
         label: 'Recruitment Business Accelerator',
@@ -113,6 +141,27 @@ const navItems: NavItem[] = [
         icon: <Award className="w-4 h-4" />,
         iconStyle: { color: '#059669', background: '#ECFDF5' },
         badge: 'High Impact',
+      },
+      {
+        label: 'Recruitment Business Incubator',
+        description: 'Start a recruitment agency from scratch: registration, contracts & first client',
+        href: '/recruitment-business-incubator',
+        icon: <Sparkles className="w-4 h-4" />,
+        iconStyle: { color: '#D97706', background: '#FFFBEB' },
+      },
+      {
+        label: 'Staffing Business Accelerator',
+        description: 'Scale a contract staffing or temp-to-hire business with compliant models',
+        href: '/staffing-business-accelerator',
+        icon: <Users className="w-4 h-4" />,
+        iconStyle: { color: '#0284C7', background: '#F0F9FF' },
+      },
+      {
+        label: 'RPO Business Accelerator',
+        description: 'Move from contingency fees to retained Recruitment Process Outsourcing',
+        href: '/rpo-business',
+        icon: <Building2 className="w-4 h-4" />,
+        iconStyle: { color: '#E11D48', background: '#FFF1F2' },
       },
       {
         label: '1-on-1 Growth Consulting',
@@ -131,80 +180,101 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    id: 'corporate',
-    label: 'Enterprise',
-    headTitle: 'TRANSFORM',
-    headSub: 'Custom Capability Building for Corporate HR & Talent Teams',
+    id: 'startup-tech',
+    label: 'Startup & Tech',
+    headTitle: 'INNOVATE',
+    headSub: 'Domain-Expert Incubation for Recruitment, HR & Talent Tech Founders',
     dropdownAlign: 'center',
-    dropdownWidth: 450,
-    footerNote: 'Customized modules tailored to your corporate hiring goals',
-    footerLink: { label: 'Schedule Corporate Consultation', href: '/contact' },
+    dropdownWidth: 420,
+    footerNote: 'Recruitment-tech and HR-tech product validation from real practitioners',
+    footerLink: { label: 'Apply for Incubation', href: '/recruitment-hr-tech-incubator' },
+    // Target spec also lists "HR-Tech Accelerator", "Talent-Tech Accelerator", "AI
+    // Recruitment Startup" and "Recruitment SaaS Growth" as separate items — all are
+    // currently served by the single Recruitment, HR & Talent Tech Startup Incubator
+    // page, so they are not duplicated as separate links until dedicated pages exist.
     children: [
       {
-        label: 'Corporate Recruitment Training',
-        description: 'Custom capability programs for internal TA teams & hiring managers',
-        href: '/corporate-recruitment-training',
-        icon: <Building2 className="w-4 h-4" />,
-        iconStyle: { color: '#7C3AED', background: '#F5F3FF' },
+        label: 'Recruitment, HR & Talent Tech Incubator',
+        description: 'Domain-expert product feedback & go-to-market guidance for tech founders',
+        href: '/recruitment-hr-tech-incubator',
+        icon: <Sparkles className="w-4 h-4" />,
+        iconStyle: { color: '#4F46E5', background: '#EEF2FF' },
+      },
+    ],
+  },
+  {
+    id: 'consulting',
+    label: 'Consulting',
+    headTitle: 'ADVISE',
+    headSub: '1-on-1 Advisory for Recruitment, HR, Staffing & RPO Businesses',
+    dropdownAlign: 'center',
+    dropdownWidth: 420,
+    footerNote: 'Practitioner-led advisory, not generic business consulting',
+    footerLink: { label: 'Book a Consulting Call', href: '/hr-recruitment-consulting' },
+    // Target spec also lists "Talent Acquisition Consulting", "Recruitment Technology
+    // Consulting" and "AI HR Transformation" as separate items — all are currently
+    // served by the single HR & Recruitment Consulting page above.
+    children: [
+      {
+        label: 'HR & Recruitment Consulting',
+        description: 'Business audits, pricing strategy & growth roadmaps for agency owners',
+        href: '/hr-recruitment-consulting',
+        icon: <Award className="w-4 h-4" />,
+        iconStyle: { color: '#059669', background: '#ECFDF5' },
       },
       {
-        label: 'HR Corporate Training Course',
-        description: 'Upskill your corporate recruiter cohort with enterprise workflows',
-        href: '/hr-corporate-training-course',
-        icon: <BookOpen className="w-4 h-4" />,
-        iconStyle: { color: '#0284C7', background: '#F0F9FF' },
+        label: '1-on-1 Growth Consulting',
+        description: 'Founder advisory, client acquisition pipelines & enterprise MSAs',
+        href: '/recruitment-business-growth-consulting',
+        icon: <TrendingUp className="w-4 h-4" />,
+        iconStyle: { color: '#2563EB', background: '#EFF6FF' },
       },
     ],
   },
   {
     id: 'trainers',
-    label: 'Faculty',
+    label: 'Trainers',
     href: '/trainers',
   },
   {
-    id: 'resources',
-    label: 'Resources',
-    headTitle: 'ECOSYSTEM KNOWLEDGE',
-    headSub: 'Playbooks, Community, Industry Research & Alumni Journeys',
+    id: 'recruitment-hub',
+    label: 'Recruitment Hub',
+    headTitle: 'HUB & COMMUNITY',
+    headSub: 'Knowledge, Community, Success Stories & Our Mission',
     dropdownAlign: 'right',
     dropdownWidth: 460,
-    footerNote: 'Join 10,000+ HR professionals, recruiters & agency founders',
-    footerLink: { label: 'Visit Knowledge Hub', href: '/knowledge' },
+    footerNote: 'Empowering 10,000+ recruiters across India & globally',
+    footerLink: { label: 'Explore Knowledge Center', href: '/knowledge' },
     children: [
       {
-        label: 'Knowledge Base & SOPs',
-        description: 'Recruitment frameworks, sourcing cheatsheets & ready SOPs',
+        label: 'Knowledge Center',
+        description: 'Comprehensive guides, candidate sourcing templates & FAQs',
         href: '/knowledge',
-        icon: <FileText className="w-4 h-4" />,
-        iconStyle: { color: '#D97706', background: '#FFFBEB' },
-      },
-      {
-        label: 'Industry Insights & Blog',
-        description: 'Market trends, AI recruitment guides & deep talent analysis',
-        href: '/blogs',
-        icon: <BookOpen className="w-4 h-4" />,
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="Knowledge Center">📚</span>,
         iconStyle: { color: '#2563EB', background: '#EFF6FF' },
       },
       {
-        label: 'HR Community & Events',
-        description: 'Peer networking, live masterclasses & recruitment meetups',
-        href: '/community',
-        icon: <Users className="w-4 h-4" />,
-        iconStyle: { color: '#4F46E5', background: '#EEF2FF' },
-      },
-      {
-        label: 'Alumni Success Stories',
-        description: 'Real career transformations & agency launch testimonials',
+        label: 'Success Stories',
+        description: 'Real student placements, agency launches & recruiter reviews',
         href: '/testimonials',
-        icon: <CheckCircle2 className="w-4 h-4" />,
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="Success Stories">🚀</span>,
         iconStyle: { color: '#059669', background: '#ECFDF5' },
       },
+      {
+        label: 'Recruitment Community',
+        description: 'Connect, network & discuss with HR leaders and peers nationwide',
+        href: '/community',
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="Recruitment Community">🤝</span>,
+        iconStyle: { color: '#7C3AED', background: '#F5F3FF' },
+      },
+      {
+        label: 'About Recruitment Institute',
+        description: "India's #1 premier recruitment & staffing education academy",
+        href: '/about',
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="About Recruitment Institute">ℹ️</span>,
+        iconStyle: { color: '#0284C7', background: '#F0F9FF' },
+      },
     ],
-  },
-  {
-    id: 'about',
-    label: 'About',
-    href: '/about',
   },
   {
     id: 'contact',
@@ -213,15 +283,18 @@ const navItems: NavItem[] = [
   },
 ]
 
-export default function Header() {
+interface HeaderProps {
+  navOverrides?: NavOverride[]
+}
+
+export default function Header({ navOverrides }: HeaderProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({
     training: true,
     accelerator: false,
-    corporate: false,
-    resources: false,
+    'recruitment-hub': false,
   })
   const [loginOpen, setLoginOpen] = useState(false)
   const [user, setUser] = useState<SessionUser | null>(null)
@@ -282,6 +355,18 @@ export default function Header() {
   const toggleMobileGroup = (id: string) => {
     setMobileExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
   }
+
+  // Apply Admin-controlled visibility/order/label overrides to the top-level
+  // nav items only — dropdown children, icons and styling are untouched.
+  const overrides = navOverrides && navOverrides.length > 0 ? navOverrides : DEFAULT_NAV_OVERRIDES
+  const visibleNavItems = navItems
+    .map((item) => {
+      const override = overrides.find((o) => o.id === item.id)
+      return { item, override }
+    })
+    .filter(({ override }) => !override || override.visible)
+    .sort((a, b) => (a.override?.order ?? 0) - (b.override?.order ?? 0))
+    .map(({ item, override }) => (override?.label ? { ...item, label: override.label } : item))
 
   return (
     <header className={`header-root${scrolled ? ' header-root--scrolled' : ''}`}>
@@ -371,9 +456,9 @@ export default function Header() {
 
       {/* Main Nav */}
       <nav className={`header-nav${scrolled ? ' header-nav--scrolled' : ''}`}>
-        <div className="container h-full flex items-center justify-between" ref={navContainerRef}>
+        <div className="max-w-[1536px] w-full mx-auto px-3 sm:px-5 lg:px-6 xl:px-8 h-full flex items-center justify-between gap-2" ref={navContainerRef}>
 
-          <Link href="/" aria-label="Recruitment Institute">
+          <Link href="/" aria-label="Recruitment Institute" className="shrink-0">
             <div className="header-logo-wrap">
               <Image
                 src="/assets/images/recruitment_insti_final_02.png"
@@ -385,13 +470,13 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <ul className="hidden lg:flex items-center gap-0.5 xl:gap-1 h-full list-none m-0 p-0">
-            {navItems.map((item) =>
+          {/* Desktop nav - Guaranteed One Line (No Wrapping) */}
+          <ul className="hidden lg:flex items-center flex-nowrap gap-0.5 xl:gap-1.5 h-full list-none m-0 p-0">
+            {visibleNavItems.map((item) =>
               item.children ? (
                 <li
                   key={item.id}
-                  className="relative h-full flex items-center"
+                  className="relative h-full flex items-center shrink-0"
                   onMouseEnter={() => setOpenDropdown(item.id)}
                   onMouseLeave={() => setOpenDropdown(null)}
                 >
@@ -464,7 +549,7 @@ export default function Header() {
                   )}
                 </li>
               ) : (
-                <li key={item.id} className="h-full flex items-center">
+                <li key={item.id} className="h-full flex items-center shrink-0">
                   <Link
                     href={item.href || '#'}
                     className={`header-nav-link${isNavActive(item) ? ' header-nav-link--active' : ''}`}
@@ -474,15 +559,6 @@ export default function Header() {
                 </li>
               )
             )}
-
-            <li className="header-nav-cta-wrap header-nav-cta-wrap--group ml-2 xl:ml-3">
-              <Link href="/student-membership" className="header-cta-btn header-cta-btn--outline whitespace-nowrap">
-                Enroll Now
-              </Link>
-              <Link href="/contact" className="header-cta-btn whitespace-nowrap">
-                Demo Video
-              </Link>
-            </li>
           </ul>
 
           {/* Mobile toggle */}
@@ -521,7 +597,7 @@ export default function Header() {
 
           <div className="flex-1 overflow-y-auto py-4 px-3">
             <ul className="space-y-1 list-none m-0 p-0">
-              {navItems.map((item) =>
+              {visibleNavItems.map((item) =>
                 item.children ? (
                   <li key={item.id} className="border-b border-slate-100 last:border-b-0 pb-1 mb-1">
                     <button
@@ -639,17 +715,23 @@ export default function Header() {
               >
                 Enroll Now
               </Link>
-              <Link
-                href="/contact"
-                className="header-mobile-demo-btn"
-                onClick={() => setMobileOpen(false)}
-              >
-                Demo Video
-              </Link>
+
             </div>
           </div>
         </div>
       </div>
+
+      {/* Fixed Right-Side Center-Vertical "Enroll Now" Action Button */}
+      <Link
+        href="/student-membership"
+        id="fixed-enroll-now-btn"
+        className="fixed-side-enroll-btn group"
+        aria-label="Enroll Now in Training or Membership"
+      >
+        <span className="beacon-ping" aria-hidden="true" />
+        <GraduationCap className="cap-icon" aria-hidden="true" />
+        <span>Enroll Now</span>
+      </Link>
     </header>
   )
 }
