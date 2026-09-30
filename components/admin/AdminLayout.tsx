@@ -9,7 +9,7 @@ import {
   Database, UserCheck, GraduationCap, CreditCard, Users2, IndianRupee,
   MessageCircleQuestion, BarChart3, Bell, Search, ChevronDown, Building2,
   Presentation, Layers3, ClipboardList, ListChecks, CalendarDays, Plus,
-  ShieldCheck, ArrowUpRight, Sparkles, PhoneCall, UserPlus,
+  ShieldCheck, ArrowUpRight, Sparkles, PhoneCall, UserPlus, FileCheck,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -56,6 +56,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: 'Content & LMS',
     items: [
       { label: 'Courses',          href: '/admin/courses',   icon: BookOpen },
+      { label: 'Tools & Templates',href: '/admin/templates', icon: FileCheck, badge: '11 Ready' },
       { label: 'Course Brochures', href: '/admin/brochures', icon: Sparkles, badge: 'New' },
       { label: 'FAQs',             href: '/admin/faqs',      icon: HelpCircle },
       { label: 'Knowledge Base',   href: '/admin/knowledge', icon: Lightbulb },

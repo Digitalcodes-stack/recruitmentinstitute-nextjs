@@ -23,7 +23,12 @@ import {
   SlidersHorizontal,
   Mail,
   Scale,
-  Briefcase
+  Briefcase,
+  Send,
+  X,
+  Phone,
+  User,
+  MessageSquare
 } from 'lucide-react'
 import { ToolItem, ToolCategory, TOOL_CATEGORIES } from './tools-data'
 
@@ -34,6 +39,40 @@ interface ToolsClientProps {
 export default function ToolsClient({ tools }: ToolsClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<ToolCategory>('All Tools')
   const [searchQuery, setSearchQuery] = useState('')
+
+  // ── TEMPLATE REQUEST MODAL STATE ─────────────────────────
+  const [modalTool, setModalTool] = useState<ToolItem | null>(null)
+  const [reqName, setReqName] = useState('')
+  const [reqEmail, setReqEmail] = useState('')
+  const [reqPhone, setReqPhone] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+
+  const handleRequestSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!modalTool || !reqEmail) return
+    try {
+      setIsSubmitting(true)
+      const res = await fetch('/api/tools/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          slug: modalTool.slug,
+          templateId: modalTool.id,
+          name: reqName,
+          email: reqEmail,
+          phone: reqPhone,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to dispatch template')
+      setSubmitSuccess(true)
+    } catch (err: any) {
+      alert(err.message || 'Error requesting template. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   // ── LIVE RECRUITMENT FEE CALCULATOR STATE ────────────────
   const [annualCtc, setAnnualCtc] = useState<number>(1000000)
@@ -505,13 +544,30 @@ Generated via Recruitment Institute Tools (recruitmentinstitute.in/tools)`
 
                     {/* CTA Button */}
                     <div className="pt-4 border-t border-slate-100">
-                      <Link
-                        href={tool.ctaLink}
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white group-hover:bg-blue-600 shadow-xs transition-all text-center"
-                      >
-                        <span>{tool.ctaText}</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
+                      {tool.ctaLink === '#calculator' ? (
+                        <a
+                          href="#calculator"
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-blue-600 shadow-xs transition-all text-center"
+                        >
+                          <span>{tool.ctaText}</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </a>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setModalTool(tool)
+                            setSubmitSuccess(false)
+                            setReqName('')
+                            setReqEmail('')
+                            setReqPhone('')
+                          }}
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white group-hover:bg-blue-600 shadow-xs transition-all text-center cursor-pointer"
+                        >
+                          <span>{tool.ctaText}</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      )}
                     </div>
                   </article>
                 )
@@ -520,6 +576,131 @@ Generated via Recruitment Institute Tools (recruitmentinstitute.in/tools)`
           )}
         </div>
       </section>
+
+      {/* ── MODAL: INSTANT TEMPLATE DISPATCH TO USER ──────── */}
+      {modalTool && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#0A1628] to-[#1E3A8A] px-6 py-4 text-white flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-semibold text-blue-300 uppercase tracking-wider">
+                  Instant Resource Delivery
+                </span>
+                <h3 className="text-lg font-bold">{modalTool.title}</h3>
+              </div>
+              <button
+                onClick={() => setModalTool(null)}
+                className="rounded-lg p-1 text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {submitSuccess ? (
+              <div className="p-8 text-center space-y-4">
+                <div className="mx-auto w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                  <Check className="h-6 w-6" />
+                </div>
+                <h4 className="text-lg font-bold text-slate-900">Template Sent to Your Inbox!</h4>
+                <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
+                  We have dispatched the <strong>{modalTool.title}</strong> directly to <strong>{reqEmail}</strong>. Please check your inbox or spam folder.
+                </p>
+                <div className="pt-2 flex justify-center gap-3">
+                  <button
+                    onClick={() => setModalTool(null)}
+                    className="rounded-xl bg-blue-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-blue-700 transition-all"
+                  >
+                    Done / Close
+                  </button>
+                  <a
+                    href={`https://wa.me/917385204165?text=${encodeURIComponent(`Hi, I just requested the ${modalTool.title}. Please guide me.`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>WhatsApp Mentor</span>
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleRequestSubmit} className="p-6 space-y-4">
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Enter your details below to receive the complete <strong>{modalTool.title}</strong> ({modalTool.format}) immediately in your email.
+                </p>
+
+                {/* Name */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Your Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                      type="text"
+                      required
+                      value={reqName}
+                      onChange={(e) => setReqName(e.target.value)}
+                      placeholder="e.g. Priya Sharma"
+                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Work or Personal Email <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                      type="email"
+                      required
+                      value={reqEmail}
+                      onChange={(e) => setReqEmail(e.target.value)}
+                      placeholder="e.g. priya.sharma@example.com"
+                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    WhatsApp / Contact Number (Optional)
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                      type="tel"
+                      value={reqPhone}
+                      onChange={(e) => setReqPhone(e.target.value)}
+                      placeholder="e.g. 9876543210"
+                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-50 transition-all shadow-xs cursor-pointer"
+                >
+                  <Send className="h-4 w-4" />
+                  <span>{isSubmitting ? 'Sending to Your Inbox...' : `Send Me This ${modalTool.format}`}</span>
+                </button>
+
+                <p className="text-[11px] text-slate-400 text-center">
+                  100% Free. No spam. Instant delivery to your email address.
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ── BOTTOM CTA SECTION ───────────────────────────── */}
       <section className="bg-white border-t border-slate-200 py-16">
