@@ -237,6 +237,16 @@ const navItems: NavItem[] = [
     href: '/trainers',
   },
   {
+    id: 'events',
+    label: 'Events',
+    href: '/events',
+  },
+  {
+    id: 'tools',
+    label: 'Tools',
+    href: '/tools',
+  },
+  {
     id: 'recruitment-hub',
     label: 'Recruitment Hub',
     headTitle: 'HUB & COMMUNITY',
@@ -246,6 +256,20 @@ const navItems: NavItem[] = [
     footerNote: 'Empowering 10,000+ recruiters across India & globally',
     footerLink: { label: 'Explore Knowledge Center', href: '/knowledge' },
     children: [
+      {
+        label: 'Events & Masterclasses',
+        description: 'Workshops, live masterclasses, founder meets & HR summits',
+        href: '/events',
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="Events & Masterclasses">📅</span>,
+        iconStyle: { color: '#D97706', background: '#FFFBEB' },
+      },
+      {
+        label: 'Tools & Calculators',
+        description: 'Placement fee calculator, JD templates & practical checklists',
+        href: '/tools',
+        icon: <span className="text-xl leading-none select-none" role="img" aria-label="Tools & Calculators">🛠️</span>,
+        iconStyle: { color: '#059669', background: '#ECFDF5' },
+      },
       {
         label: 'Knowledge Center',
         description: 'Comprehensive guides, candidate sourcing templates & FAQs',
