@@ -343,6 +343,7 @@ export default function Header({ navOverrides }: HeaderProps) {
   })
   const [loginOpen, setLoginOpen] = useState(false)
   const [joinOpen, setJoinOpen] = useState(false)
+  const [flashAdOpen, setFlashAdOpen] = useState(true)
   const [user, setUser] = useState<SessionUser | null>(null)
   const pathname = usePathname()
   const navContainerRef = useRef<HTMLDivElement>(null)
@@ -422,6 +423,49 @@ export default function Header({ navOverrides }: HeaderProps) {
 
   return (
     <header className={`header-root${scrolled ? ' header-root--scrolled' : ''}`}>
+
+      {/* Top Flash Advertisement Bar */}
+      {flashAdOpen && (
+        <aside
+          aria-label="Flash Announcement: Get Free Certificate for Experts"
+          className="header-flash-ad relative z-70 text-white overflow-hidden shadow-xs"
+          style={{
+            background: 'linear-gradient(90deg, #7C2D12 0%, #EA580C 25%, #D97706 50%, #B45309 75%, #7C2D12 100%)',
+            borderBottom: '1px solid rgba(254, 215, 170, 0.35)',
+          }}
+        >
+          <div className="container mx-auto px-3 sm:px-4 py-1.5 sm:py-2 flex items-center justify-between gap-2.5 text-xs">
+            <div className="flex-1 flex items-center justify-center gap-2 sm:gap-3 flex-wrap text-center">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[10px] font-black uppercase tracking-wider text-amber-100 border border-white/30 animate-pulse">
+                <Sparkles className="w-3 h-3 text-amber-200" />
+                <span>FLASH OFFER</span>
+              </span>
+              <span className="font-extrabold text-white text-[12px] sm:text-[13.5px] tracking-wide drop-shadow-xs">
+                Get Free Certificate for Experts
+              </span>
+              <span className="text-amber-200/80 hidden md:inline">•</span>
+              <span className="text-amber-100/90 text-[11px] sm:text-xs hidden md:inline">
+                Accreditation & Faculty Recognition for Senior HR & Recruitment Leaders
+              </span>
+              <Link
+                href="/contact?interest=teach-and-earn"
+                className="inline-flex items-center gap-1 bg-white text-amber-950 font-extrabold text-[11px] sm:text-xs px-3.5 py-1 rounded-full hover:bg-amber-100 transition-all shadow-sm hover:scale-105 shrink-0"
+              >
+                <span>Claim Free Certificate</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <button
+              onClick={() => setFlashAdOpen(false)}
+              className="text-amber-200 hover:text-white p-1 rounded-md hover:bg-black/15 transition-colors shrink-0 cursor-pointer"
+              aria-label="Dismiss flash advertisement"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </aside>
+      )}
 
       {/* Top Bar */}
       <div className="header-topbar">
