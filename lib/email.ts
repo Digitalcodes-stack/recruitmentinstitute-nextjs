@@ -132,8 +132,11 @@ export async function sendContactEmail(data: {
   email: string
   mobile: string
   message: string
+  interest?: string
 }) {
+  const interestText = data.interest || 'Course Admissions & General Inquiry'
   const rows: EmailRow[] = [
+    { label: 'Inquiry Option / Program', value: interestText },
     { label: 'Full Name', value: data.name },
     { label: 'Email Address', value: data.email, isEmail: true },
     { label: 'Mobile Number', value: data.mobile, isPhone: true },
@@ -146,19 +149,19 @@ export async function sendContactEmail(data: {
     to: ADMIN_EMAIL,
     cc: getEmailCC(),
     replyTo: data.email,
-    subject: `🎯 New Lead: Contact Form Submission from ${data.name}`,
+    subject: `🎯 New Lead [${interestText}]: Contact Form Submission from ${data.name}`,
     html: renderExecutiveEmailHtml({
-      badgeText: 'New Lead Enquiry',
+      badgeText: data.interest ? `Join Us: ${data.interest}` : 'New Lead Enquiry',
       badgeBg: '#eff6ff',
       badgeColor: '#1d4ed8',
       badgeBorder: '#bfdbfe',
       title: 'Contact Form Submission',
-      subtitle: `Enquiry submitted by ${data.name}`,
+      subtitle: `Enquiry submitted by ${data.name} for ${interestText}`,
       introText: 'A new visitor has submitted an enquiry through the Recruitment Institute contact form:',
       rows,
       actionButton: {
         text: 'Reply to Candidate',
-        url: `mailto:${data.email}?subject=Re:%20Inquiry%20at%20Recruitment%20Institute`,
+        url: `mailto:${data.email}?subject=Re:%20Inquiry%20regarding%20${encodeURIComponent(interestText)}%20at%20Recruitment%20Institute`,
         color: '#2563eb',
       },
       footerNote: `Delivered to Administrator: ${ADMIN_EMAIL}`,
@@ -176,15 +179,16 @@ export async function sendContactEmail(data: {
       badgeColor: '#15803d',
       badgeBorder: '#bbf7d0',
       title: `Thank You, ${data.name}!`,
-      subtitle: 'We have received your enquiry and our admissions team is reviewing it.',
-      introText: 'Thank you for reaching out to <strong>Recruitment Institute</strong> — the leading training institute for End-to-End Recruitment, HR Operations and Talent Acquisition.<br/><br/><strong>What happens next?</strong><br/>• Our Senior Course Advisor will contact you within 30 minutes.<br/>• We will share the comprehensive syllabus, batch schedules and customized fee options.<br/>• You will receive an invitation to attend a Free Live Demo Session.',
+      subtitle: `We have received your enquiry regarding ${interestText} and our team is reviewing it.`,
+      introText: `Thank you for reaching out to <strong>Recruitment Institute</strong> regarding <strong>${interestText}</strong>.<br/><br/><strong>What happens next?</strong><br/>• A dedicated representative will contact you within 30 minutes.<br/>• We will share relevant details, documentation, or schedules.<br/>• Feel free to reply directly to this email or connect on WhatsApp.`,
       rows: [
+        { label: 'Selected Program / Option', value: interestText },
         { label: 'Inquiry Reference', value: data.name },
         { label: 'Contact Phone', value: data.mobile, isPhone: true },
       ],
       actionButton: {
         text: '💬 Chat on WhatsApp Helpline',
-        url: 'https://wa.me/917385204165?text=Hi%2C%20I%20have%20an%20enquiry%20regarding%20HR%20courses',
+        url: `https://wa.me/917385204165?text=${encodeURIComponent(`Hi, I submitted an enquiry regarding ${interestText}`)}`,
         color: '#059669',
       },
       secondaryButton: {

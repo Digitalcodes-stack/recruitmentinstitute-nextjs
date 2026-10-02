@@ -20,6 +20,20 @@ const loginOptions = [
   { label: 'Trainer Login', href: '/trainer-login', icon: <Building2 className="w-4 h-4" /> },
 ]
 
+interface JoinOption {
+  label: string
+  href: string
+  emoji: string
+  badge?: string
+}
+
+const joinOptions: JoinOption[] = [
+  { label: 'Teach & Earn', href: '/contact?interest=teach-and-earn', emoji: '🎓' },
+  { label: 'Investor Network', href: '/contact?interest=investor-network', emoji: '💼' },
+  { label: 'Advisory Council', href: '/contact?interest=advisory-council', emoji: '🌟' },
+  { label: 'Employer Partner', href: '/contact?interest=employer-partner', emoji: '🏆' },
+]
+
 interface SubNavItem {
   label: string
   description: string
@@ -33,6 +47,7 @@ interface NavItem {
   id: string
   label: string
   href?: string
+  badge?: string
   children?: SubNavItem[]
   headTitle?: string
   headSub?: string
@@ -237,6 +252,12 @@ const navItems: NavItem[] = [
     href: '/trainers',
   },
   {
+    id: 'employer-advisory-council',
+    label: 'Employer Advisory Council',
+    href: '/employer-advisory-council',
+    badge: 'Coming Soon',
+  },
+  {
     id: 'events',
     label: 'Events',
     href: '/events',
@@ -321,10 +342,12 @@ export default function Header({ navOverrides }: HeaderProps) {
     'recruitment-hub': false,
   })
   const [loginOpen, setLoginOpen] = useState(false)
+  const [joinOpen, setJoinOpen] = useState(false)
   const [user, setUser] = useState<SessionUser | null>(null)
   const pathname = usePathname()
   const navContainerRef = useRef<HTMLDivElement>(null)
   const loginDropdownRef = useRef<HTMLDivElement>(null)
+  const joinDropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)
@@ -343,6 +366,7 @@ export default function Header({ navOverrides }: HeaderProps) {
     await fetch('/api/auth/logout', { method: 'POST' })
     setUser(null)
     setLoginOpen(false)
+    setJoinOpen(false)
     window.location.href = '/'
   }
 
@@ -351,6 +375,7 @@ export default function Header({ navOverrides }: HeaderProps) {
     setMobileOpen(false)
     setOpenDropdown(null)
     setLoginOpen(false)
+    setJoinOpen(false)
   }, [pathname])
 
   // Handle outside clicks
@@ -361,6 +386,9 @@ export default function Header({ navOverrides }: HeaderProps) {
       }
       if (loginDropdownRef.current && !loginDropdownRef.current.contains(e.target as Node)) {
         setLoginOpen(false)
+      }
+      if (joinDropdownRef.current && !joinDropdownRef.current.contains(e.target as Node)) {
+        setJoinOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -433,9 +461,60 @@ export default function Header({ navOverrides }: HeaderProps) {
 
             <span className="header-topbar-sep" aria-hidden="true">|</span>
 
+            {/* Join With Us Dropdown near Login */}
+            <div ref={joinDropdownRef} className="relative">
+              <button
+                onClick={() => {
+                  setJoinOpen((v) => !v)
+                  setLoginOpen(false)
+                }}
+                className="header-topbar-link header-topbar-login-btn group"
+                aria-expanded={joinOpen}
+                aria-label="Join With Us Menu"
+              >
+                <Users className="w-3 h-3 text-sky-400 group-hover:text-white transition-colors shrink-0" />
+                <span className="text-[11px] sm:text-xs font-bold text-slate-200 group-hover:text-white transition-colors tracking-wide">
+                  JOIN US
+                </span>
+                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform duration-200 ${joinOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {joinOpen && (
+                <div className="header-login-dropdown animate-in fade-in slide-in-from-top-2 duration-150 !w-[275px]">
+                  <div className="px-3 py-2 border-b border-slate-100 mb-1">
+                    <p className="text-[10px] font-extrabold tracking-wider uppercase text-blue-600">JOIN US</p>
+                    <p className="text-[11px] text-slate-500">Partner & collaborate with Institute</p>
+                  </div>
+                  {joinOptions.map((opt) => (
+                    <Link
+                      key={opt.href}
+                      href={opt.href}
+                      className="header-login-dropdown-item flex items-center justify-between"
+                      onClick={() => setJoinOpen(false)}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-base leading-none select-none">{opt.emoji}</span>
+                        <span className="text-[12.5px] font-semibold text-slate-700 hover:text-blue-600">{opt.label}</span>
+                      </div>
+                      {opt.badge && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase tracking-wide">
+                          {opt.badge}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <span className="header-topbar-sep" aria-hidden="true">|</span>
+
             <div ref={loginDropdownRef} className="relative">
               <button
-                onClick={() => setLoginOpen((v) => !v)}
+                onClick={() => {
+                  setLoginOpen((v) => !v)
+                  setJoinOpen(false)
+                }}
                 className="header-topbar-link header-topbar-login-btn group"
                 aria-expanded={loginOpen}
                 aria-label="Account Login Menu"
@@ -578,7 +657,12 @@ export default function Header({ navOverrides }: HeaderProps) {
                     href={item.href || '#'}
                     className={`header-nav-link${isNavActive(item) ? ' header-nav-link--active' : ''}`}
                   >
-                    {item.label}
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="ml-1.5 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-700 border border-amber-300 tracking-wider">
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 </li>
               )
@@ -674,10 +758,15 @@ export default function Header({ navOverrides }: HeaderProps) {
                   <li key={item.id}>
                     <Link
                       href={item.href || '#'}
-                      className={`header-mobile-nav-link text-sm font-semibold py-2 px-3 block rounded-lg text-slate-800 hover:bg-slate-50 hover:text-blue-600 transition-colors${pathname === item.href ? ' header-mobile-nav-link--active text-blue-700 font-bold bg-blue-50' : ''}`}
+                      className={`header-mobile-nav-link text-sm font-semibold py-2 px-3 flex items-center justify-between rounded-lg text-slate-800 hover:bg-slate-50 hover:text-blue-600 transition-colors${pathname === item.href ? ' header-mobile-nav-link--active text-blue-700 font-bold bg-blue-50' : ''}`}
                       onClick={() => setMobileOpen(false)}
                     >
-                      {item.label}
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">
+                          {item.badge}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 )
@@ -689,6 +778,27 @@ export default function Header({ navOverrides }: HeaderProps) {
             <a href="tel:+917385204165" className="header-mobile-phone">
               <Phone className="w-4 h-4 header-mobile-phone-icon" /> +91 7385204165
             </a>
+            {/* Mobile JOIN US */}
+            <div className="mb-2.5 pt-2 border-t border-slate-200">
+              <p className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider mb-1.5 px-1">JOIN US</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {joinOptions.map((opt) => (
+                  <Link
+                    key={opt.href}
+                    href={opt.href}
+                    className="header-mobile-login-btn !text-[11.5px] !py-2 !px-2 flex items-center justify-between"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <span className="truncate flex items-center gap-1.5">
+                      <span className="text-sm select-none">{opt.emoji}</span>
+                      <span>{opt.label}</span>
+                    </span>
+                    {opt.badge && <span className="text-[8px] font-bold px-1 py-0.2 rounded bg-amber-100 text-amber-800 shrink-0">Soon</span>}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
             {user ? (
               <div className="grid grid-cols-2 gap-2 mb-2">
                 <Link href="/profile" className="header-mobile-login-btn" onClick={() => setMobileOpen(false)}>

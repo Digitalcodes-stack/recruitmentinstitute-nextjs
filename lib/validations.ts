@@ -5,6 +5,7 @@ export const contactSchema = z.object({
   email: z.string().email('Invalid email address'),
   mobile: z.string().min(10, 'Mobile number must be at least 10 digits'),
   message: z.string().min(10, 'Message must be at least 10 characters').max(2000),
+  interest: z.string().optional(),
 })
 
 export const courseEnquirySchema = z.object({

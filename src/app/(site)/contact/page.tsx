@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import ContactClient from '@/components/home/ContactClient'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
@@ -84,7 +85,9 @@ export default function ContactPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }} />
-      <ContactClient />
+      <Suspense fallback={<div className="min-h-screen bg-[#F8FAFC]" />}>
+        <ContactClient />
+      </Suspense>
     </>
   )
 }

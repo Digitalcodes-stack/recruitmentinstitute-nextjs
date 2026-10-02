@@ -15,13 +15,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, email, mobile, message } = validated.data
+    const { name, email, mobile, message, interest } = validated.data
+
+    const savedMessage = interest
+      ? `[Inquiry Option: ${interest}]\n\n${message}`
+      : message
 
     await prisma.contactSubmission.create({
-      data: { name, email, message, mobile },
+      data: { name, email, message: savedMessage, mobile },
     })
 
-    await sendContactEmail({ name, email, mobile, message }).catch(console.error)
+    await sendContactEmail({ name, email, mobile, message, interest }).catch(console.error)
 
     return NextResponse.json({ success: true, message: 'Message sent successfully' })
   } catch (error) {
