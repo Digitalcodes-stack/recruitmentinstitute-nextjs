@@ -5,7 +5,7 @@ import { getPaginationData, buildPaginationPages } from '@/utils/pagination'
 import {
   BookOpen, Lightbulb, Users, MessageSquare, ChevronRight,
   ChevronDown, HelpCircle, GraduationCap, Briefcase, Target,
-  TrendingUp, Award, Phone, ArrowRight,
+  TrendingUp, Award, Phone, ArrowRight, Sparkles,
 } from 'lucide-react'
 
 import { generateFaqJsonLd, generateBreadcrumbJsonLd, DEFAULT_OG_IMAGE } from '@/lib/seo'
@@ -52,18 +52,13 @@ export const metadata: Metadata = {
   },
 }
 
+import { BOOLEAN_FAQ_PAGES } from '@/lib/data/boolean-knowledge-data'
+
 export const revalidate = 3600
 
 interface Props {
   searchParams: Promise<{ page?: string }>
 }
-
-const fallbackItems = [
-  { id: 1, question: 'What is the difference between active and passive candidate sourcing?', answer: 'Active candidate sourcing targets professionals who are actively searching for new roles. Passive candidate sourcing involves identifying and engaging talent who are currently employed but might be open to a career progression opportunity.', addedBy: 'Admissions Lead' },
-  { id: 2, question: 'What are Boolean search strings in recruitment?', answer: 'Boolean strings use operators AND, OR and NOT alongside keywords to filter candidate databases on LinkedIn, Naukri and ATS tools. Mastering Boolean search is one of the highest-impact skills a recruiter can develop.', addedBy: 'IT Recruitment Trainer' },
-  { id: 3, question: 'How can an ATS help in talent acquisition?', answer: 'An ATS manages recruitment stages electronically — posting jobs, parsing resumes, tracking interview status and archiving communication pipelines, saving hours of manual work every week.', addedBy: 'Operations Director' },
-  { id: 4, question: 'What is structured competency interviewing?', answer: 'Structured interviewing uses pre-determined, standardized questions mapped to role-specific competencies, ensuring fair grading and reducing interviewer bias for more consistent hiring decisions.', addedBy: 'Corporate Recruiter Trainer' },
-]
 
 const accentColors = [
   { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', light: '#F0F7FF' },
@@ -83,28 +78,20 @@ export default async function KnowledgePage({ searchParams }: Props) {
   const page = parseInt(params.page || '1')
   const limit = 10
 
-  let dbItems: { id: number; question: string; answer: string; addedBy: string | null }[] = []
-  let total = 0
+  const total = BOOLEAN_FAQ_PAGES.length
+  const pagination = getPaginationData(page, limit, total)
+  const pages = buildPaginationPages(pagination.page, pagination.totalPages)
+  const startIdx = (page - 1) * limit
+  const displayItems = BOOLEAN_FAQ_PAGES.slice(startIdx, startIdx + limit)
 
-  try {
-    const fetched = await prisma.knowledgeItem.findMany({
-      orderBy: { createdAt: 'asc' },
-      take: limit,
-      skip: (page - 1) * limit,
-    })
-    dbItems = fetched.map(i => ({ id: i.id, question: i.question, answer: i.answer, addedBy: i.addedBy }))
-    total = await prisma.knowledgeItem.count()
-  } catch {
-    // fallback used
-  }
-
-  const displayItems = dbItems.length > 0 ? dbItems : fallbackItems
-  const displayTotal  = dbItems.length > 0 ? total : fallbackItems.length
-  const pagination    = getPaginationData(page, limit, displayTotal)
-  const pages         = buildPaginationPages(pagination.page, pagination.totalPages)
-  const startIdx      = (page - 1) * limit
-
-  const faqJsonLd = generateFaqJsonLd(displayItems)
+  const faqJsonLd = generateFaqJsonLd(
+    displayItems.map((item) => ({
+      id: item.id,
+      question: item.question,
+      answer: item.fullAnswer.split(/\n\n+/)[0],
+      addedBy: item.category,
+    }))
+  )
   const breadcrumbJsonLd = generateBreadcrumbJsonLd([
     { name: 'Home', url: '/' },
     { name: 'Knowledge Base', url: '/knowledge' },
@@ -200,7 +187,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' as const }}>
                 {[
-                  { label: `${displayTotal}+ Q&As`, color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
+                  { label: `${total}+ Dedicated Playbooks`, color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
                   { label: 'Updated 2026', color: '#059669', bg: '#F0FDF4', border: '#BBF7D0' },
                   { label: 'Industry Experts', color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
                 ].map(b => (
@@ -214,7 +201,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
             {/* Right — stat cards */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }} className="kb-hero-stats">
               {[
-                { icon: BookOpen,      value: '36+',  label: 'Expert Q&As',        color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
+                { icon: BookOpen,      value: `${total}+`,  label: 'Dedicated Playbooks', color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
                 { icon: Users,         value: '5K+',  label: 'Professionals Helped', color: '#059669', bg: '#F0FDF4', border: '#BBF7D0' },
                 { icon: GraduationCap, value: '95%',  label: 'Placement Rate',     color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
                 { icon: Award,         value: '10+',  label: 'Years of Training',  color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
@@ -260,11 +247,35 @@ export default async function KnowledgePage({ searchParams }: Props) {
 
             {/* LEFT: Accordion */}
             <div>
+              {/* Featured Topic Masterclass Banner */}
+              <div style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%)', borderRadius: 20, padding: '24px 28px', color: '#fff', marginBottom: 24, border: '1.5px solid #1E40AF', boxShadow: '0 8px 30px rgba(15,23,42,0.12)' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 12px', borderRadius: 50, background: 'rgba(59,130,246,0.2)', border: '1px solid rgba(147,197,253,0.3)', color: '#93C5FD', fontSize: 11, fontWeight: 800, letterSpacing: '.12em', textTransform: 'uppercase', marginBottom: 12 }}>
+                  <Sparkles style={{ width: 12, height: 12 }} /> Featured Masterclass Topic
+                </div>
+                <h3 style={{ fontSize: 20, fontWeight: 900, color: '#fff', margin: '0 0 8px', letterSpacing: '-.02em' }}>
+                  Boolean Search in Recruitment: Complete Guide
+                </h3>
+                <p style={{ fontSize: 13, color: '#CBD5E1', lineHeight: 1.6, margin: '0 0 16px', maxWidth: 600 }}>
+                  Master LinkedIn sourcing, Google X-Ray operators, ATS candidate mining, and 62 standalone FAQ playbooks with production-ready search strings.
+                </p>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <Link
+                    href="/knowledge/boolean-search-in-recruitment-guide"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 20px', borderRadius: 12, background: '#2563EB', color: '#fff', fontSize: 13, fontWeight: 700, textDecoration: 'none', transition: 'all .2s' }}
+                  >
+                    Open Complete Guide <ArrowRight style={{ width: 14, height: 14 }} />
+                  </Link>
+                  <span style={{ fontSize: 12, color: '#94A3B8', fontWeight: 600 }}>
+                    &bull; All {total} Dedicated Playbooks Included
+                  </span>
+                </div>
+              </div>
+
               {/* Page indicator */}
               {pagination.totalPages > 1 && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, padding: '12px 18px', background: '#fff', borderRadius: 14, border: '1.5px solid #E8EDF5' }}>
                   <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>
-                    Showing <strong style={{ color: '#0F172A' }}>{startIdx + 1}–{Math.min(startIdx + limit, displayTotal)}</strong> of <strong style={{ color: '#0F172A' }}>{displayTotal}</strong> questions
+                    Showing <strong style={{ color: '#0F172A' }}>{startIdx + 1}–{Math.min(startIdx + limit, total)}</strong> of <strong style={{ color: '#0F172A' }}>{total}</strong> playbooks
                   </span>
                   <span style={{ fontSize: 12, fontWeight: 700, color: '#1D4ED8', background: '#EFF6FF', padding: '4px 12px', borderRadius: 50 }}>
                     Page {page} of {pagination.totalPages}
@@ -276,6 +287,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
               {displayItems.map((item, idx) => {
                 const globalIdx = startIdx + idx
                 const ac = accentColors[globalIdx % accentColors.length]
+                const leadAnswer = item.fullAnswer ? item.fullAnswer.split(/\n\n+/)[0] : ''
                 return (
                   <details key={item.id} className="kb-item">
                     <summary className="kb-summary">
@@ -298,15 +310,26 @@ export default async function KnowledgePage({ searchParams }: Props) {
                         <div style={{ display: 'flex', gap: 16 }}>
                           <div style={{ width: 3, borderRadius: 3, background: ac.text, flexShrink: 0, alignSelf: 'stretch', opacity: 0.5 }} />
                           <div style={{ flex: 1 }}>
-                            <p style={{ fontSize: 14.5, color: '#334155', lineHeight: 1.9, margin: 0 }}>{item.answer}</p>
-                            {item.addedBy && (
-                              <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, marginTop: 16, padding: '5px 12px', borderRadius: 50, background: ac.bg, border: `1px solid ${ac.border}` }}>
-                                <HelpCircle style={{ width: 12, height: 12, color: ac.text }} />
-                                <span style={{ fontSize: 11, fontWeight: 700, color: ac.text, letterSpacing: '.1em', textTransform: 'uppercase' as const }}>
-                                  {item.addedBy}
-                                </span>
-                              </div>
-                            )}
+                            <p style={{ fontSize: 14.5, color: '#334155', lineHeight: 1.9, margin: 0 }}>{leadAnswer}</p>
+                            
+                            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginTop: 16 }}>
+                              {item.category && (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 12px', borderRadius: 50, background: ac.bg, border: `1px solid ${ac.border}` }}>
+                                  <HelpCircle style={{ width: 12, height: 12, color: ac.text }} />
+                                  <span style={{ fontSize: 11, fontWeight: 700, color: ac.text, letterSpacing: '.1em', textTransform: 'uppercase' as const }}>
+                                    {item.category}
+                                  </span>
+                                </div>
+                              )}
+                              
+                              <Link
+                                href={`/knowledge/${item.slug}`}
+                                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-200 transition-all font-bold text-xs shadow-2xs"
+                              >
+                                <span>Read Full Playbook &amp; Copy Search Strings</span>
+                                <ArrowRight style={{ width: 13, height: 13 }} />
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -382,6 +405,7 @@ export default async function KnowledgePage({ searchParams }: Props) {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {[
+                      { href: '/knowledge/boolean-search-in-recruitment-guide', icon: BookOpen, label: 'Boolean Search Master Guide', color: '#1E40AF', bg: '#EFF6FF' },
                       { href: '/courses', icon: GraduationCap, label: 'Explore Our Courses', color: '#1D4ED8', bg: '#EFF6FF' },
                       { href: '/community', icon: Users, label: 'HR Community Forum', color: '#059669', bg: '#F0FDF4' },
                       { href: '/contact', icon: Phone, label: 'Talk to a Counsellor', color: '#7C3AED', bg: '#F5F3FF' },

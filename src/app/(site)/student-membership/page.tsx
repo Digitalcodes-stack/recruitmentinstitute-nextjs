@@ -23,9 +23,11 @@ import {
   Zap,
   Shield,
   PlayCircle,
+  HelpCircle,
 } from 'lucide-react'
 import WhatsAppIcon from '@/components/shared/WhatsAppIcon'
 import { generateBreadcrumbJsonLd } from '@/lib/seo'
+import EnrollmentTriggers from '@/components/site/EnrollmentTriggers'
 
 const BASE_URL = 'https://recruitmentinstitute.in'
 
@@ -447,11 +449,17 @@ export default async function StudentMembershipPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link href="/student-login" className="sm-hero-cta">
+                <Link
+                  href="/student-login"
+                  className="sm-hero-cta"
+                  data-open-enrollment-modal="true"
+                  data-track="free-starter"
+                  id="hero-enroll-now-btn"
+                >
                   Join Now - It&apos;s Free <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
-                <Link href="#benefits" className="sm-hero-ghost">
-                  <PlayCircle style={{ width: 15, height: 15 }} /> See Benefits
+                <Link href="#how-to-enroll" className="sm-hero-ghost">
+                  <PlayCircle style={{ width: 15, height: 15 }} /> How to Enroll
                 </Link>
               </div>
             </div>
@@ -602,13 +610,18 @@ export default async function StudentMembershipPage() {
           {/* Primary CTAs */}
           <div style={{ textAlign: 'center' }}>
             <div className="sm-cta-btns" style={{ display: 'inline-flex', gap: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link href="/student-login" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 9,
-                background: 'linear-gradient(135deg,#1D4ED8,#2563EB)',
-                color: '#fff', fontWeight: 700, fontSize: 15,
-                padding: '15px 34px', borderRadius: 11, textDecoration: 'none',
-                boxShadow: '0 8px 28px rgba(29,78,216,.42)',
-              }}>
+              <Link
+                href="/student-login"
+                data-open-enrollment-modal="true"
+                data-track="free-starter"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 9,
+                  background: 'linear-gradient(135deg,#1D4ED8,#2563EB)',
+                  color: '#fff', fontWeight: 700, fontSize: 15,
+                  padding: '15px 34px', borderRadius: 11, textDecoration: 'none',
+                  boxShadow: '0 8px 28px rgba(29,78,216,.42)',
+                }}
+              >
                 Join Now - Free <ArrowRight style={{ width: 16, height: 16 }} />
               </Link>
               <Link href="/contact" style={{
@@ -861,37 +874,182 @@ export default async function StudentMembershipPage() {
       {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
           HOW IT WORKS - 3 steps
       â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
-      <section style={{ background: '#fff', padding: '80px 0 88px', borderTop: '1px solid #E2E8F0' }}>
+      {/* ──────────────────────────────────────────────────────────────────────────
+          HOW TO ENROLL - 4 Progressive Steps
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section id="how-to-enroll" style={{ background: '#fff', padding: '88px 0 96px', borderTop: '1px solid #E2E8F0' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', maxWidth: 560, margin: '0 auto 56px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 15px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
+          <div style={{ textAlign: 'center', maxWidth: 660, margin: '0 auto 60px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 16px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
               <CheckCircle2 style={{ width: 11, height: 11 }} />
-              How It Works
+              Frictionless Onboarding • 60 Seconds
             </div>
-            <h2 style={{ fontSize: 'clamp(24px,2.8vw,40px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.14, letterSpacing: '-.03em', margin: 0 }}>
-              Get started in 3 simple steps.
+            <h2 style={{ fontSize: 'clamp(26px,3.2vw,44px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.14, letterSpacing: '-.035em', margin: '0 0 16px' }}>
+              How to Claim Your Student Membership
             </h2>
+            <p style={{ fontSize: 16, color: '#64748B', lineHeight: 1.8, margin: 0 }}>
+              Get instant, unrestricted access to recruiter toolkits, industry templates, and peer networking in 4 simple steps.
+            </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 32, position: 'relative' }}>
-            {/* Connector line */}
-            <div aria-hidden style={{ position: 'absolute', top: 40, left: '16.67%', right: '16.67%', height: 2, background: 'linear-gradient(90deg,#BFDBFE,#99F6E4,#BBF7D0)', zIndex: 0 }} />
-
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 24, position: 'relative' }} className="sm-trust-grid">
             {[
-              { step: '01', icon: Users,       color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE', title: 'Register an Account',    desc: 'Sign up with your email in under 60 seconds. No credit card required to start.' },
-              { step: '02', icon: BookOpen,     color: '#0D9488', bg: '#F0FDFA', border: '#99F6E4', title: 'Choose Your Plan',       desc: 'Pick the free Starter plan or upgrade to Pro for full access to all benefits.' },
-              { step: '03', icon: TrendingUp,   color: '#059669', bg: '#F0FDF4', border: '#BBF7D0', title: 'Unlock & Accelerate',    desc: 'Access resources, join the community, attend events and fast-track your HR career.' },
-            ].map(({ step, icon: Icon, color, bg, border, title, desc }) => (
-              <div key={step} style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-                {/* Icon circle */}
-                <div style={{ width: 80, height: 80, borderRadius: '50%', background: bg, border: `2px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 4px 20px rgba(15,23,42,.06)' }}>
-                  <Icon style={{ width: 32, height: 32, color }} />
+              {
+                step: '01',
+                title: 'Account Registration',
+                subtitle: 'Name, Phone & Email',
+                desc: 'Enter your basic details and select your current profile (Student, Fresher, or Recruiter). Takes under 30 seconds.',
+                icon: Users,
+                color: '#1D4ED8',
+                bg: '#EFF6FF',
+                border: '#BFDBFE',
+              },
+              {
+                step: '02',
+                title: 'Instant Verification',
+                subtitle: 'Zero Paperwork Hassle',
+                desc: 'Confirm your contact info via email/SMS. Verified college credentials grant full student status instantly.',
+                icon: Shield,
+                color: '#0D9488',
+                bg: '#F0FDFA',
+                border: '#99F6E4',
+              },
+              {
+                step: '03',
+                title: 'Select Track',
+                subtitle: 'Free Starter vs. Pro Cohort',
+                desc: 'Select the Free Starter Membership or upgrade to the Flagship Pro Track for 100% placement support.',
+                icon: BookOpen,
+                color: '#7C3AED',
+                bg: '#F5F3FF',
+                border: '#DDD6FE',
+              },
+              {
+                step: '04',
+                title: 'Instant LMS Access',
+                subtitle: 'Unrestricted Portal Entry',
+                desc: 'Unlock 200+ recruitment toolkits, Boolean cheat sheets, community groups, and verifiable certificate tracking.',
+                icon: GraduationCap,
+                color: '#059669',
+                bg: '#F0FDF4',
+                border: '#BBF7D0',
+              },
+            ].map(({ step, title, subtitle, desc, icon: Icon, color, bg, border }) => (
+              <div
+                key={step}
+                style={{
+                  background: '#fff',
+                  borderRadius: 18,
+                  border: `1.5px solid ${border}`,
+                  padding: '30px 24px',
+                  boxShadow: '0 4px 20px rgba(15,23,42,.05)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  position: 'relative',
+                  transition: 'transform .25s ease, box-shadow .25s ease',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                  <div style={{ width: 50, height: 50, borderRadius: 14, background: bg, border: `1.5px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Icon style={{ width: 22, height: 22, color }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 900, color, background: bg, padding: '4px 10px', borderRadius: 50, border: `1px solid ${border}`, letterSpacing: '.1em' }}>
+                    STEP {step}
+                  </span>
                 </div>
-                <div style={{ display: 'inline-block', padding: '2px 10px', borderRadius: 50, background: bg, border: `1px solid ${border}`, marginBottom: 14 }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, color, letterSpacing: '.14em' }}>STEP {step}</span>
+                <h3 style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', margin: '0 0 6px', letterSpacing: '-.02em' }}>{title}</h3>
+                <p style={{ fontSize: 11, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '.08em', margin: '0 0 12px' }}>{subtitle}</p>
+                <p style={{ fontSize: 13, color: '#64748B', lineHeight: 1.7, margin: 0, flex: 1 }}>{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Quick Trigger CTA inside Step Section */}
+          <div style={{ textAlign: 'center', marginTop: 44 }}>
+            <button
+              type="button"
+              data-open-enrollment-modal="true"
+              data-track="free-starter"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 9,
+                background: 'linear-gradient(135deg,#1D4ED8,#2563EB)',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: 15,
+                padding: '16px 36px',
+                borderRadius: 12,
+                boxShadow: '0 8px 28px rgba(29,78,216,.4)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'transform .2s, box-shadow .2s',
+              }}
+            >
+              <span>Claim Your Free Student Membership</span>
+              <ArrowRight style={{ width: 16, height: 16 }} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ──────────────────────────────────────────────────────────────────────────
+          ENROLLMENT FAQS SECTION
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section style={{ background: '#F8FAFC', padding: '88px 0 96px', borderTop: '1px solid #E2E8F0' }}>
+        <div className="container" style={{ maxWidth: 900 }}>
+          <div style={{ textAlign: 'center', margin: '0 auto 52px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '5px 16px', borderRadius: 50, background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1D4ED8', fontSize: 11, fontWeight: 800, letterSpacing: '.18em', textTransform: 'uppercase', marginBottom: 18 }}>
+              <HelpCircle style={{ width: 12, height: 12 }} />
+              Clear Answers Before You Join
+            </div>
+            <h2 style={{ fontSize: 'clamp(24px,3vw,38px)', fontWeight: 900, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-.03em', margin: '0 0 14px' }}>
+              Frequently Asked Questions Regarding Enrollment
+            </h2>
+            <p style={{ fontSize: 15, color: '#64748B', lineHeight: 1.75, margin: 0 }}>
+              Got questions about claiming your student membership or accessing our recruitment training materials?
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {[
+              {
+                q: 'Is student membership completely free?',
+                a: 'Yes, 100% free! The Starter Student Membership gives you complimentary, lifelong access to 200+ recruiter cheat sheets, JD blueprints, Boolean sourcing guides, community forums, and weekly live masterclasses. There are no hidden fees, credit cards required, or forced trial periods.',
+                tag: '100% Free Forever',
+              },
+              {
+                q: 'What documents are required to verify student status?',
+                a: 'Zero tedious paperwork is required. You can rapidly confirm your status using a college ID card photo, student email address (.edu / .ac.in), or current degree enrollment letter. Active recruiters and career transitioners can also sign up immediately using their verified mobile number (+91) and email.',
+                tag: 'Frictionless Verification',
+              },
+              {
+                q: 'How soon do I get access to the course materials and community after enrolling?',
+                a: 'Instant access! As soon as you complete the 60-second registration form, your LMS portal account is activated immediately. You will receive direct login credentials and links to join our exclusive recruiter WhatsApp network and community forums within seconds.',
+                tag: 'Instant Access',
+              },
+            ].map(({ q, a, tag }) => (
+              <div
+                key={q}
+                style={{
+                  background: '#fff',
+                  borderRadius: 18,
+                  border: '1.5px solid #E2E8F0',
+                  padding: '28px 30px',
+                  boxShadow: '0 4px 18px rgba(15,23,42,.05)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+                  <h3 style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-.015em' }}>
+                    {q}
+                  </h3>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: '#1D4ED8', background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '3px 10px', borderRadius: 50, letterSpacing: '.06em', textTransform: 'uppercase' }}>
+                    {tag}
+                  </span>
                 </div>
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', lineHeight: 1.3, letterSpacing: '-.018em', margin: '0 0 10px' }}>{title}</h3>
-                <p style={{ fontSize: 14, color: '#64748B', lineHeight: 1.8, margin: 0, maxWidth: 260, marginLeft: 'auto', marginRight: 'auto' }}>{desc}</p>
+                <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.82, margin: 0 }}>
+                  {a}
+                </p>
               </div>
             ))}
           </div>
@@ -924,7 +1082,13 @@ export default async function StudentMembershipPage() {
               </p>
 
               <div className="sm-cta-btns" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
-                <Link href="/student-login" className="sm-cta-red">
+                <Link
+                  href="/student-login"
+                  className="sm-cta-red"
+                  data-open-enrollment-modal="true"
+                  data-track="free-starter"
+                  id="bottom-enroll-now-btn"
+                >
                   Join Free Now <ArrowRight style={{ width: 16, height: 16 }} />
                 </Link>
                 <a href="https://wa.me/917385204165" target="_blank" rel="noopener noreferrer" className="sm-cta-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
@@ -945,6 +1109,9 @@ export default async function StudentMembershipPage() {
           </div>
         </div>
       </section>
+
+      {/* Floating & Modal Interactive Triggers */}
+      <EnrollmentTriggers showFloatingButton={true} />
     </>
   )
 }
